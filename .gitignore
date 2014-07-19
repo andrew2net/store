@@ -1,0 +1,5 @@
+/index-test.php
+/images/demark/*
+/images/tornado/*
+!.gitignore
+/nbproject

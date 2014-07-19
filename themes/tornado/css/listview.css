@@ -1,0 +1,40 @@
+.list-view .sorter, .list-view .sizer, .list-view .pager{
+  font-size: 0.9em;
+  margin: 0 0 5px;
+}
+.list-view .sorter, .list-view .sizer{
+  display: inline;
+}
+.list-view .sizer{
+  float: right;
+}
+.list-view .pager{
+  float: right;
+}
+.list-view .sorter ul{
+  display: inline;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.list-view .sorter li{
+  display: inline;
+  margin: 0 0 0 5px;
+  padding: 0;
+}
+.list-view .empty{
+  font-size: 16pt;
+}
+.list-view .table-header{
+  display: table;
+  height: 40px;
+  clear: both;
+}
+.list-view .table-header > div{
+  display: table-cell;
+  vertical-align: middle;
+  padding: 0 5px;
+  background: whitesmoke;
+  border: 1px solid white;
+  text-align: center;
+}

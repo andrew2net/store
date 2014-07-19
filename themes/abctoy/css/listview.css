@@ -1,0 +1,21 @@
+.list-view .sorter, .list-view .sizer, .list-view .pager{
+  font-size: 0.9em;
+  margin: 0 0 5px;
+}
+.list-view .sorter, .list-view .sizer{
+  /*display: inline;*/
+}
+.list-view .pager{
+  float: right;
+}
+.list-view .sorter ul{
+  display: inline;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.list-view .sorter li{
+  display: inline;
+  margin: 0 0 0 5px;
+  padding: 0;
+}
