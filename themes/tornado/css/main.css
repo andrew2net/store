@@ -17,8 +17,8 @@ blue-light{
 .yellow{
   color: #ffd900;
 }
-.yellow-background{
-  background: #ffd900;
+.yellow-background, .left-menu-item:hover{
+  background: #FCF6D5;
 }
 .bold{
   font-weight: bolder;
@@ -121,7 +121,7 @@ fieldset{
   line-height: 33px;
   padding: 8px;
 }
-#mainmenu ul, #mainmenu ul li a, .left-menu-active > a, .left-menu-item > span{
+#mainmenu ul, #mainmenu ul li a, .left-menu-item > span{
   color: white !important;
   text-shadow: 0 -1px 1px #AA6806;
 }
@@ -984,9 +984,6 @@ td.text-right{
 #left-menu-cont{
   border: 2px solid #FFD324; width: 200px; font-size: 12pt; margin: 0px 14px 0 0; min-height: 650px;
 }
-.left-menu-item:hover{
-  background: #ffd900;
-}
 .left-menu-item > a, .left-menu-item > span{
   text-decoration: none;
   color: #1135bf;
@@ -998,7 +995,10 @@ td.text-right{
   font-weight: bold;
 }
 .left-menu-active{
-  background: #F89D17 !important;
+  background: #FCBF65 !important;
+}
+.left-menu-active > a{
+  color: white;
 }
 tbody#cart-items > tr > td:first-child{
   text-align: center;
