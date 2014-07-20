@@ -13,10 +13,6 @@ $this->pageTitle = Yii::app()->name . $title;
 <?php // $this->renderPartial('_topmenu');  ?>
 
 <div class="container" id="page">
-  <?php $this->renderPartial('//site/_topblock', array('search' => $search,)); ?>
-  <?php
-  $this->renderPartial('//site/_mainmenu', array('groups' => $groups,));
-  ?>
   <div style="margin: 20px 0">
     <?php
     if (isset($brand)) {
@@ -69,4 +65,3 @@ $this->pageTitle = Yii::app()->name . $title;
     </div>
   </div>
 </div>
-<?php $this->renderPartial('//site/_footer', array('groups' => $groups)); ?>

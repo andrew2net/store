@@ -4,7 +4,7 @@
  * Description of ProfileController
  *
  */
-class ProfileController extends CController {
+class ProfileController extends Controller {
 
   private static $countries = array('RU' => 'Россия', 'KZ' => 'Казахстан');
 

@@ -10,8 +10,6 @@
 $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
 ?>
 <div class="container" id="page">
-  <?php $this->renderPartial('/site/_topblock'); ?>
-  <?php $this->renderPartial('/site/_mainmenu'); ?>
   <?php
   Yii::import('application.modules.delivery.models.Delivery');
   Yii::import('application.modules.catalog.models.Product');

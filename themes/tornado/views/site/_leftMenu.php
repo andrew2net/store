@@ -3,10 +3,11 @@
 /* @var $group Category */
 ?>
 
-<div style="border: 1px solid #999; width: 200px; font-size: 12pt; margin: 0px 14px 0 0">
+<div id="left-menu-cont">
   <?php
   $groups = Category::model()->roots()->findAll();
   $items = array();
+  $items[] = array('label' => 'Категории:');
   foreach ($groups as $value) {
     /* @var $value Category */
     $items[] = array(

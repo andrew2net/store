@@ -1,3 +1,29 @@
+.blue{
+  color: #1135bf;
+}
+blue-light{
+  color: #607ef3;
+}
+.gray{
+  color: #666666;
+}
+.red, span.required{
+  color: #c00;
+}
+.green{
+  color: #99cc33;
+}
+
+.yellow{
+  color: #ffd900;
+}
+.yellow-background{
+  background: #ffd900;
+}
+.bold{
+  font-weight: bolder;
+}
+
 body
 {
   margin: 0;
@@ -31,11 +57,6 @@ fieldset{
   padding: 20px;
 }
 
-/*#sidebar
-{
-  padding: 20px 20px 20px 0;
-}*/
-
 #footer
 {
   padding: 10px;
@@ -62,10 +83,6 @@ fieldset{
   text-decoration: underline;
   -moz-text-decoration-line: underline;
 }
-.top-menu-item{
-  font: 10pt Arial,Helvetica,sans-serif;
-  color: #555;
-}
 .top-menu-item:before{
   content: '|';
   margin: 5px;
@@ -77,22 +94,21 @@ fieldset{
   text-transform: lowercase !important;
 }
 
+#mainmenuarea, .left-menu-item > span{
+  background: linear-gradient(#F8E37D, #F89D17);
+}
 #mainmenucont{
-  background: #2f386b;
-  /*width: 950px;*/
   margin: 0 auto;
   position: relative;
 }
-/*#mainmenuarea.f-menu{
+#mainmenuarea.f-menu{
   position: fixed;
   z-index: 100;
   width: 100%;
   left: 0;
   top: 0;
+  box-shadow: 0 5px 5px;
 }
-#mainmenucont.f-menucont{
-  width: 100%;
-}*/
 #mainmenu{
   /*width: 950px;*/
   margin: 0 auto;
@@ -105,11 +121,13 @@ fieldset{
   line-height: 33px;
   padding: 8px;
 }
-#mainmenu ul, #mainmenu ul li a{
-  color: whitesmoke;
+#mainmenu ul, #mainmenu ul li a, .left-menu-active > a, .left-menu-item > span{
+  color: white !important;
+  text-shadow: 0 -1px 1px #AA6806;
 }
 #mainmenu ul li a:hover{
-  color: #80CFFF;
+  color: #1135bf;
+  text-shadow: none;
 }
 
 div.flash-error, div.flash-notice, div.flash-success
@@ -321,43 +339,6 @@ input[type=checkbox]:checked + label:before, .weekcarousel-prev,
   color: gray;
   font-weight: bold;
   margin-top: 15px;
-}
-.breadcrumbs a{
-  /*text-decoration: none;*/
-  /*color: gray;*/
-}
-
-.lager{
-  font-size: larger;
-}
-
-.x-lage{
-  font-size: x-large;
-}
-
-.blue{
-  color: #2f386b;
-}
-blue-light{
-  color: #66ccff;
-}
-.gray{
-  color: #666666;
-}
-
-.bold{
-  font-weight: bolder;
-}
-.red, span.required{
-  color: #cc3333;
-}
-
-.green{
-  color: #99cc33;
-}
-
-.yellow{
-  color: #ff9933;
 }
 
 .items{
@@ -887,30 +868,6 @@ input[type=checkbox]:checked + label:before
   background-color: whitesmoke;
 }
 
-/*#popup-window{
-  overflow: visible;
-}
-.popup-window {
-  border-radius: 0 !important;
-  overflow: visible !important;
-}
-.popup-window .ui-dialog-titlebar{
-  display: none;
-}
-#bottom-bar{
-  display: none;
-  background: url('/themes/abctoy/css/bottom-bar.png') repeat-x;
-  z-index: 10;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  text-align: center;
-  height: 44px;
-  line-height: 50px;
-  font-weight: bold;
-  font-size: 11pt;
-}*/
-
 .loading{
   background: url(/images/loading.gif) center no-repeat;
   height: 125px;
@@ -974,7 +931,7 @@ td.text-right{
 }
 #open-login:before{
   content: '';
-  background: url(/themes/demark/img/login.png) no-repeat;
+  background: url(/themes/tornado/img/login.png) no-repeat;
   left: 35px;
   top: -4px
 }
@@ -997,7 +954,7 @@ td.text-right{
   position: absolute;
   width: 20px;
   height: 10px;
-  background: url(/themes/demark/img/top_corner.png) no-repeat;
+  background: url(/themes/tornado/img/top_corner.png) no-repeat;
   right: 8px;
   top: -10px;
 }
@@ -1014,7 +971,7 @@ td.text-right{
   position: relative;
   width: 16px;
   height: 16px;
-  background: url(/themes/demark/img/cross.png);
+  background: url(/themes/tornado/img/cross.png);
   margin: 3px 5px;
   cursor: pointer;
 }
@@ -1024,14 +981,24 @@ td.text-right{
   margin: 20px 0;
 }
 
-.left-menu-item{
-  padding: 8px 15px;
+#left-menu-cont{
+  border: 2px solid #FFD324; width: 200px; font-size: 12pt; margin: 0px 14px 0 0; min-height: 650px;
 }
 .left-menu-item:hover{
-  background: #FFF6BF;
+  background: #ffd900;
+}
+.left-menu-item > a, .left-menu-item > span{
+  text-decoration: none;
+  color: #1135bf;
+  padding: 8px 15px;
+  display: block;
+  border-top: 1px solid #ddd;
+}
+.left-menu-item > span{
+  font-weight: bold;
 }
 .left-menu-active{
-  background: #FFD324 !important;
+  background: #F89D17 !important;
 }
 tbody#cart-items > tr > td:first-child{
   text-align: center;

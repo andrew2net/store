@@ -1,74 +1,77 @@
-<div class="container">
-  <div class="table" style="padding-bottom: 10px; margin: 0">
-    <div class="table-cell valign-middle">
-      <a href="/"><img width="300" height="65" alt="Tornado" src="/themes/<?php echo Yii::app()->theme->name; ?>/img/logo.png"></a>
-      <div style="font-size: 14pt; display: inline-block; position: relative; bottom: 14px; margin-left: 40px">Оптовая<br>компания</div>
-    </div>
-    <div class="table-cell">
-      <div class="inline-blocks" style="text-align: right; margin-bottom: 15px; position: relative">
-        <?php
-        Yii::import('application.modules.admin.models.Page');
-        Yii::import('application.controllers.ProfileController');
-        if (Yii::app()->user->isGuest) {
-          $login_display = '';
-          $logout_display = ' style="display:none"';
-          $profile_display = ' style="display:none"';
-        }
-        else if ($this instanceof ProfileController) {
-          $login_display = ' style="display:none"';
-          $logout_display = '';
-          $profile_display = ' style="display:none"';
-        }
-        else {
-          $login_display = ' style="display:none"';
-          $logout_display = ' style="display:none"';
-          $profile_display = '';
-        }
-        ?>
-        <div style="position: relative; width: 200px; vertical-align: middle;">
-          <span id="open-login"<?php echo $login_display; ?>>вход</span>
-          <a id="profile-link" href="/profile"<?php echo $profile_display; ?>>личный кабинет</a>
-          <a id="logout-link" href="/logout"<?php echo $logout_display; ?>>выход</a>
-          <div id="login-dialog">
-            <span class="close-dialog right" title="Закрыть диалог"></span>
-            <div style="margin-top: 10px"><?php echo CHtml::label('Имя или Email', 'login'); ?></div>
-            <div><?php echo CHtml::textField('login', ''); ?></div>
-            <div style="margin-top: 10px"><?php echo CHtml::label('Пароль', 'password'); ?></div>
-            <div><?php echo CHtml::passwordField('password', ''); ?></div>
-            <div style="text-align: right"><a href="/user/recovery">восстановить пароль</a></div>
-            <div style="text-align: center; height: 16px; margin: 8px auto 2px">
-              <span id="error-msg" class="red" style="display: none">неверное имя или пароль</span>
+<div class="yellow-background">
+  <div class="container">
+    <div class="red" style="text-align: center; font-size: 22pt">Сайт находится в разработке</div>
+    <div class="table" style="padding-bottom: 10px; margin: 0">
+      <div class="table-cell valign-middle">
+        <a href="/"><img width="300" height="65" alt="Tornado" src="/themes/<?php echo Yii::app()->theme->name; ?>/img/logo.png"></a>
+        <div style="font-size: 14pt; display: inline-block; position: relative; bottom: 14px; margin-left: 40px">Оптовая<br>компания</div>
+      </div>
+      <div class="table-cell">
+        <div class="inline-blocks" style="text-align: right; margin-bottom: 15px; position: relative">
+          <?php
+          Yii::import('application.modules.admin.models.Page');
+          Yii::import('application.controllers.ProfileController');
+          if (Yii::app()->user->isGuest) {
+            $login_display = '';
+            $logout_display = ' style="display:none"';
+            $profile_display = ' style="display:none"';
+          }
+          else if ($this instanceof ProfileController) {
+            $login_display = ' style="display:none"';
+            $logout_display = '';
+            $profile_display = ' style="display:none"';
+          }
+          else {
+            $login_display = ' style="display:none"';
+            $logout_display = ' style="display:none"';
+            $profile_display = '';
+          }
+          ?>
+          <div style="position: relative; width: 200px; vertical-align: middle;">
+            <span id="open-login"<?php echo $login_display; ?>>вход</span>
+            <a id="profile-link" href="/profile"<?php echo $profile_display; ?>>личный кабинет</a>
+            <a id="logout-link" href="/logout"<?php echo $logout_display; ?>>выход</a>
+            <div id="login-dialog">
+              <span class="close-dialog right" title="Закрыть диалог"></span>
+              <div style="margin-top: 10px"><?php echo CHtml::label('Имя или Email', 'login'); ?></div>
+              <div><?php echo CHtml::textField('login', ''); ?></div>
+              <div style="margin-top: 10px"><?php echo CHtml::label('Пароль', 'password'); ?></div>
+              <div><?php echo CHtml::passwordField('password', ''); ?></div>
+              <div style="text-align: right"><a href="/user/recovery">восстановить пароль</a></div>
+              <div style="text-align: center; height: 16px; margin: 8px auto 2px">
+                <span id="error-msg" class="red" style="display: none">неверное имя или пароль</span>
+              </div>
+              <div class="login-submit"><div>Войти</div></div>
+              <div style="text-align: center; margin: 10px auto 5px;"><a href="/user/recovery">зарегистрироваться</a></div>
             </div>
-            <div class="login-submit"><div>Войти</div></div>
-            <div style="text-align: center; margin: 10px auto 5px;"><a href="/user/recovery">зарегистрироваться</a></div>
+          </div>
+        </div>
+        <div class="inline-blocks" style="text-align: right">
+          <div class="gray" style="margin-right: 40px">
+            <span style="vertical-align: middle; font-size: 12pt"><?php echo Yii::app()->params['phone']['cod']; ?></span>
+            <span class="bold" style="font-size: 18pt; vertical-align: middle"><?php echo Yii::app()->params['phone']['num']; ?></span>
+          </div>
+          <div style="">
+            <?php
+            echo CHtml::beginForm('/search', 'get', array('id' => 'search-form', 'style' => 'display:inline-block; margin: 0'));
+            $search = new Search;
+            echo CHtml::activeTextField($search, 'text', array(
+              'style' => 'border: none; width: 180px; height: 23px; padding: 0 0 2px 10px; float: left; background:whitesmoke; 
+            box-shadow: 0 0 1px inset; border-radius: 0; margin: 0',
+              'placeholder' => 'Поиск'
+            ));
+            echo CHtml::submitButton('', array(
+              'style' => 'margin: 0 0 0 -4px; border: none; float: left; box-shadow: 0 0 1px inset',
+              'class' => 'iconsearch'
+            ));
+            echo CHtml::endForm();
+            ?>
           </div>
         </div>
       </div>
-      <div class="inline-blocks" style="text-align: right">
-        <div class="gray" style="margin-right: 40px">
-          <span style="vertical-align: middle; font-size: 12pt"><?php echo Yii::app()->params['phone']['cod']; ?></span>
-          <span class="bold" style="font-size: 18pt; vertical-align: middle"><?php echo Yii::app()->params['phone']['num']; ?></span>
-        </div>
-        <div style="">
-          <?php
-          echo CHtml::beginForm('/search', 'get', array('id' => 'search-form', 'style' => 'display:inline-block; margin: 0'));
-          $search = new Search;
-          echo CHtml::activeTextField($search, 'text', array(
-            'style' => 'border: none; width: 180px; height: 23px; padding: 0 0 2px 10px; float: left; background:whitesmoke; 
-            box-shadow: 0 0 1px inset; border-radius: 0; margin: 0',
-            'placeholder' => 'Поиск'
-          ));
-          echo CHtml::submitButton('', array(
-            'style' => 'margin: 0 0 0 -4px; border: none; float: left; box-shadow: 0 0 1px inset',
-            'class' => 'iconsearch'
-          ));
-          echo CHtml::endForm();
-          ?>
-        </div>
-      </div>
-    </div>
 
-    <?php // $this->renderPartial('//site/_city');      ?>
+      <?php // $this->renderPartial('//site/_city');      ?>
+    </div>
   </div>
 </div>
 <div id="callback-overlay" style="position: fixed; left: 0; top: 0; width: 100%; height: 100%; display: none; background: rgba(102,102, 102, 0.4); z-index: 100">

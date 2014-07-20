@@ -10,9 +10,12 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
 ?>
 <div class="container" id="page">
   <?php
-  $this->renderPartial('//site/_topblock');
-  $this->renderPartial('//site/_mainmenu');
-
+  $this->breadcrumbs = array(
+    'Корзина',
+  );
+  $this->widget('zii.widgets.CBreadcrumbs', array(
+    'links' => $this->breadcrumbs,
+  ));
   $form = $this->beginWidget('CActiveForm', array(
     'id' => 'item-submit',
     'action' => $this->createUrl('') . "#prof",

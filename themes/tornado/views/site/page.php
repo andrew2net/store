@@ -5,15 +5,13 @@
 ?>
 <?php // $this->renderPartial('_topmenu'); ?>
 <div class="container" id="page">
-  <?php $this->renderPartial('_topblock'); ?>
-  <?php  $this->renderPartial('_mainmenu');  ?>
   <?php
-//  $this->breadcrumbs = array(
-//    $model->title,
-//  );
-//  $this->widget('zii.widgets.CBreadcrumbs', array(
-//    'links' => $this->breadcrumbs,
-//  ));
+  $this->breadcrumbs = array(
+    $model->title,
+  );
+  $this->widget('zii.widgets.CBreadcrumbs', array(
+    'links' => $this->breadcrumbs,
+  ));
   ?>
   <?php // echo $model->id; ?>
   <div style="margin-top: 20px">
@@ -22,4 +20,3 @@
     ?>
   </div>
 </div>
-<?php $this->renderPartial('_footer'); ?>

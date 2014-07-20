@@ -10,9 +10,13 @@ Yii::import('application.modules.payments.models.Currency');
 $this->pageTitle = Yii::app()->name . ' - Личный кабинет';
 ?>
 <div class="container" id="page">
-  <?php $this->renderPartial('//site/_topblock', array('profile' => $customer_profile)); ?>
-  <?php $this->renderPartial('//site/_mainmenu'); ?>
   <?php
+  $this->breadcrumbs = array(
+    'Личный кабинет',
+  );
+  $this->widget('zii.widgets.CBreadcrumbs', array(
+    'links' => $this->breadcrumbs,
+  ));
   $form = $this->beginWidget('CActiveForm', array('id' => 'profile'));
   /* @var $form CActiveForm */
   ?>
@@ -137,7 +141,6 @@ $this->pageTitle = Yii::app()->name . ' - Личный кабинет';
     ?>
   </fieldset>
 </div>
-<?php $this->renderPartial('//site/_footer'); ?>
 <script type="text/javascript">
 
   var change_passw_bt = $('#change-passw');

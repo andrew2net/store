@@ -1,4 +1,5 @@
 <?php
+Yii::import('application.modules.catalog.models.Category');
 $groups = Category::model()->roots()->findAll();
 ?>
 <div id="footer">
@@ -39,7 +40,7 @@ $groups = Category::model()->roots()->findAll();
                 ?>
                 <div><?php
                   echo CHtml::link($group->name
-                      , $this->createUrl('group', array('id' => $group->id)));
+                      , Yii::app()->createUrl('group', array('id' => $group->id)));
                   ?></div>
               <?php } ?>
             </div>

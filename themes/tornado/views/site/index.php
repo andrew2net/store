@@ -12,22 +12,16 @@ $cs->registerScriptFile('/js/slider.tooltip.js', CClientScript::POS_HEAD);
 $cs->registerScriptFile($cs->getCoreScriptUrl() . '/jui/js/jquery-ui-i18n.min.js', CClientScript::POS_HEAD);
 $this->pageTitle = Yii::app()->name . ' - аксессуары для мобильных устройств оптом';
 
-//$this->renderPartial('_topmenu');
+Yii::import('application.modules.admin.models.Page');
+
 ?>
 <div class="container" id="page">
   <?php
-  $this->renderPartial('_topblock');
-  $this->renderPartial('_mainmenu');
   $this->renderPartial('_slider');
-  // $this->renderPartial('_advantage'); 
-//  $this->renderPartial('_giftSelection', array(
-//    'giftSelection' => $giftSelection,
-//    'groups' => $groups,
-//  ));
   ?>
   <div class="inline-blocks" style="margin-top: 20px">
     <?php $this->renderPartial('_leftMenu'); ?>
-    <div style="width: 980px">
+    <div style="width: 970px">
       <?php
       echo CHtml::beginForm('', 'post', array('id' => 'item-submit'));
       echo CHtml::hiddenField('url', Yii::app()->request->url);
@@ -45,4 +39,3 @@ $this->pageTitle = Yii::app()->name . ' - аксессуары для мобил
     </div>
   </div>
 </div><!-- page -->
-<?php $this->renderPartial('_footer'); ?>

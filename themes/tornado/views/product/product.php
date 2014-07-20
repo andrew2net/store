@@ -8,8 +8,6 @@
 
 <div class="container" id="page">
   <?php
-  $this->renderPartial('//site/_topblock', array('search' => $search));
-  $this->renderPartial('//site/_mainmenu');
   $categories = $product->category;
   if (isset($categories[0])) {
     $breadcrumbs = array();
@@ -117,7 +115,6 @@
   </div>
   <?php $this->endWidget(); ?>
 </div>
-<?php $this->renderPartial('//site/_footer'); ?>
 <script>
   $(document).ready(function() {
     $(".fancybox").fancybox();

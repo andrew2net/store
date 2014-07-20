@@ -167,6 +167,7 @@ class SiteController extends Controller {
    * @return string
    */
   public static function cartLabel() {
+    Yii::import('application.controllers.ProfileController');
     $quantity = Cart::model()->countProduct(ProfileController::getSession())->findAll();
     if (!$quantity[0]->quantity)
       return 'Козина пуста';

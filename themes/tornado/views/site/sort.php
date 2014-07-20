@@ -13,13 +13,6 @@ $this->pageTitle = Yii::app()->name . ' - Подбор товара';
 <?php $this->renderPartial('_topmenu'); ?>
 
 <div class="container" id="page">
-  <?php $this->renderPartial('_topblock'); ?>
-  <?php
-  $this->renderPartial('_mainmenu', array(
-    'search' => $search,
-    'groups' => $groups,
-  ));
-  ?>
   <div style="margin: 20px 0">
     <?php
     $this->renderPartial('_giftSelection', array(
@@ -56,5 +49,3 @@ $this->pageTitle = Yii::app()->name . ' - Подбор товара';
     </div>
   </div>
 </div>
-<?php $this->renderPartial('_footer', array('groups' => $groups)); ?>
-<?php $this->renderPartial('_addProductModal'); ?>
