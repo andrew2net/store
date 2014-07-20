@@ -242,7 +242,7 @@ class CartController extends Controller {
       $cart = Cart::model()->shoppingCart(ProfileController::getSession())
               ->with('product.brand')->findAll();
       $profile = ProfileController::getProfile();
-      echo $this->renderPartial('_cartItems', array('cart' => $cart, 'profile' => $profile), TRUE);
+      echo $this->renderPartial('_cartItems', array('cart' => $cart, 'customer_profile' => $profile), TRUE);
     }
     Yii::app()->end();
   }

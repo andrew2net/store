@@ -939,7 +939,6 @@ td.text-right{
   display: none;
   position: absolute;
   border: solid 1px #BBB;
-  background: #D3E3F0;
   z-index: 400;
   text-align: left;
   box-shadow: 1px 1px 2px -1px;
@@ -954,7 +953,7 @@ td.text-right{
   position: absolute;
   width: 20px;
   height: 10px;
-  background: url(/themes/tornado/img/top_corner.png) no-repeat;
+  background: url(/themes/tornado/img/top_corner.png) no-repeat #FCF6D5;
   right: 8px;
   top: -10px;
 }

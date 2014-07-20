@@ -31,7 +31,7 @@
             <span id="open-login"<?php echo $login_display; ?>>вход</span>
             <a id="profile-link" href="/profile"<?php echo $profile_display; ?>>личный кабинет</a>
             <a id="logout-link" href="/logout"<?php echo $logout_display; ?>>выход</a>
-            <div id="login-dialog">
+            <div id="login-dialog" class="yellow-background">
               <span class="close-dialog right" title="Закрыть диалог"></span>
               <div style="margin-top: 10px"><?php echo CHtml::label('Имя или Email', 'login'); ?></div>
               <div><?php echo CHtml::textField('login', ''); ?></div>
@@ -122,7 +122,7 @@
 
   function getLoginPos() {
     var pos = open_login.position();
-    return {top: pos.top - 20, left: pos.left + 150};
+    return {top: pos.top - 20, left: pos.left + 60};
   }
 
   function closeLoginDialog() {
