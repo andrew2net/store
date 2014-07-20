@@ -1,0 +1,81 @@
+10
+
+dir
+61
+svn+ssh://smillman@svn.nhbs.com/var/svn/nhbs_yii_system/trunk/backend/extensions/widgets/jstree/assets
+svn+ssh://smillman@svn.nhbs.com/var/svn/nhbs_yii_system
+
+
+
+2011-08-02T07:56:11.310190Z
+58
+Sam Millman
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+681542a5-91db-4940-aa60-375369440dbb
+
+
+
+
+
+
+0
+
+_demo
+dir
+
+_docs
+dir
+
+_lib
+dir
+
+jquery.jstree.js
+file
+
+
+
+
+2011-07-18T12:09:18.650000Z
+b9e0248d03d6b1a18cd90d14d58850d9
+2011-08-02T07:56:11.310190Z
+58
+Sam Millman
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+184228
+
+themes
+dir
+
