@@ -9,20 +9,46 @@ Number.prototype.formatMoney = function(c, d, t) {
   return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
 };
 
+var price_mess;
+function showTooltip(id, data) {
+//  price_mess.html($('#price-header').attr('title'));
+//  price_mess.show('bounce');
+//  setTimeout(function() {
+//    price_mess.hide('blind')
+//  }, 2000);
+}
 
 $(document).ready(function() {
+  price_mess = $('#price-mess');
 
-//  $('#aSubmit').click(function() {
-//    $('#giftSelect').submit();
-//  });
-//  $('#GiftCategory').val($('#currentGroup').val());
-
-//  $('#categoryOnly').change(function() {
-//    if (this.checked)
-//      $('#GiftCategory').val($('#currentGroup').val());
-//    else
-//      $('#GiftCategory').val('');
-//  });
+  $().ready(function($) {
+    var menu = $('#mainmenuarea');
+    if (menu.attr('cart'))
+      return false;
+    var page = $('#page');
+    var offset = menu.offset();
+    var fix = false;
+    $(window).scroll(function() {
+      if (fix) {
+        menu.css({left: -$(document).scrollLeft()});
+      }
+      if ($(this).scrollTop() > offset.top && !fix) {
+        login_dialog.hide();
+        menu.addClass('f-menu');
+        page.css('margin-top', '50px')
+        menu.css({left: -$(document).scrollLeft(), width: $(document).width()});
+        fix = true;
+      }
+      else if ($(this).scrollTop() < offset.top && fix) {
+        menu.removeClass('f-menu');
+        page.css('margin-top', '10px')
+        fix = false;
+      }
+    });
+    $(window).resize(function() {
+      menu.css({left: -$(document).scrollLeft(), width: $(document).width()});
+    });
+  });
 
   $(document).on('click', '.addToCart > input, .addToCart', function(event) {
     event.preventDefault();
@@ -76,9 +102,27 @@ $(document).ready(function() {
         cart.html(result.cart);
         button.addClass('addToCart');
         $(this).remove();
+
+        if (result.refresh) {
+          if ($('#inline-product-list').length > 0)
+            $.fn.yiiListView.update('inline-product-list');
+          else if ($('#top10').length) {
+            $.get('/site/price', function(data) {
+              var result = $.parseJSON(data);
+              if (result.top10 !== undefined)
+                for (var key in result.top10) {
+                  $('.item[product="' + key + '"] .item-price').html(result.top10[key].price);
+                  $('.item[product="' + key + '"] .item-disc').html(result.top10[key].disc);
+                }
+            });
+          }
+          price_mess.html(result.price);
+          price_mess.show('bounce');
+          setTimeout(function() {
+            price_mess.hide('blind')
+          }, 2000);
+        }
       });
-      if (result.refresh)
-        $.fn.yiiListView.update('#inline-product-list');
     });
   });
 

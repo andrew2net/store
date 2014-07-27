@@ -13,6 +13,8 @@
  */
 class Cart extends CActiveRecord {
 
+  public $summ;
+
   /**
    * @return string the associated database table name
    */
@@ -102,8 +104,8 @@ class Cart extends CActiveRecord {
   public function countProduct($session) {
     $this->shoppingCart($session);
     $this->getDbCriteria()->mergeWith(array(
-        'select' => array('SUM(quantity) AS quantity'),
-      ));
+      'select' => array('SUM(quantity) AS quantity'),
+    ));
     return $this;
   }
 

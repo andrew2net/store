@@ -6,6 +6,8 @@
 /* @var $payment Payment */
 /* @var $currency Currency */
 /* @var $has_err string */
+/* @var $price_type Price */
+
 $this->pageTitle = Yii::app()->name . ' - Корзина';
 ?>
 <div class="container" id="page">
@@ -29,12 +31,20 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
     <table class="striped" style="font-size: 11pt">
       <tr style="font-size: 12pt; background: #414FA5 !important; color: whitesmoke">
         <th colspan="2" style="width: 319px; text-align: center">товар</th><th style="width: 85px">артикул</th>
-        <th id="price-label" class="text-right" style="width: 75px">цена <?php echo $currency->class; ?></th>
-        <th style="width: 100px">кол-во</th><th class="text-right" style="width: 110px">сумма <?php echo $currency->class; ?></th><th></th>
+        <th id="price-label" class="text-right" style="width: 75px">
+      <div id="price-header" title="Ваша цена &quot<?php echo $price_type->name; ?>&quot" style="display: inline-block; text-align: center">цена<?php echo $currency->class; ?><br>
+        <span id="price-name" style="font-weight: normal; font-size: 8pt; text-transform: lowercase"><?php echo "($price_type->name)"; ?></span>
+      </div>
+      </th>
+      <th style="width: 100px">кол-во</th><th class="text-right" style="width: 110px">сумма<?php echo $currency->class; ?></th><th></th>
       </tr>
       <tbody id="cart-items">
         <?php
-        $this->renderPartial('_cartItems', array('cart' => $cart, 'customer_profile' => $customer_profile));
+        $this->renderPartial('_cartItems', array(
+          'cart' => $cart,
+          'customer_profile' => $customer_profile,
+          'price_type' => $price_type,
+        ));
         ?>
       </tbody>
       <tr style="font-size: 12pt; background: #414FA5; color: whitesmoke">
@@ -64,76 +74,15 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
     </table>
     <p><span class="red">*</span> - скидка по купону предоставляется только на товары без скидки</p>
   </fieldset>
-  <fieldset>
-    <legend><span class="page-title blue bold">Контактная информация</span></legend>
-    <div class="inline-blocks">
-      <div style="vertical-align: top; width: 290px">
-        <div style="margin-bottom: 1em"><span id="<?php echo $has_err; ?>"></span>
-          <?php echo $form->labelEx($profile, 'first_name'); ?>
-          <div><?php echo $form->textField($profile, 'first_name'); ?></div>
-          <?php echo $form->error($profile, 'first_name', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
-        </div>
-        <div style="margin-bottom: 1em"><span id="<?php echo $has_err; ?>"></span>
-          <?php echo $form->labelEx($profile, 'last_name'); ?>
-          <div><?php echo $form->textField($profile, 'last_name'); ?></div>
-          <?php echo $form->error($profile, 'last_name', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
-        </div>
-        <div style="margin-bottom: 1em">
-          <?php echo $form->labelEx($user, 'email'); ?>
-          <div><?php echo CHtml::activeEmailField($user, 'email'); ?></div>
-          <?php echo $form->error($user, 'email', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
-        </div>
-      </div>
-      <div style="vertical-align: top; width: 290px; margin: 0 35px">
-        <div style="margin-bottom: 1em">
-          <?php echo $form->labelEx($customer_profile, 'city'); ?>
-          <div>
-            <?php
-            $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
-              'id' => 'cart-city',
-              'model' => $customer_profile,
-              'attribute' => 'city',
-              'source' => new CJavaScriptExpression('function (request, response){citySuggest(request, response);}'),
-            ));
-            ?>
-          </div>
-          <?php echo $form->error($customer_profile, 'city', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
-        </div>
-        <div style="margin-bottom: 1em">
-          <?php echo $form->labelEx($customer_profile, 'address'); ?>
-          <div><?php echo $form->textField($customer_profile, 'address'); ?></div>
-          <?php echo $form->error($customer_profile, 'address'); ?>
-        </div>
-        <div style="margin-bottom: 1em">
-          <?php echo $form->labelEx($customer_profile, 'phone'); ?>
-          <div><?php echo $form->telField($customer_profile, 'phone'); ?></div>
-          <?php echo $form->error($customer_profile, 'phone', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
-        </div>
-      </div>
-      <div style="vertical-align: top; width: 290px">
-        <div class="bold gray">Информация о доставке</div>
-        <div style="font-size: 10pt; margin-top: 10px; border: 1px dashed #DDD">
-          <div style="padding: 10px">Чтобы узнать доступные способы и стоимость доставки, выберите страну и укажите Ваш почтовый индекс.</div>
-          <div style="padding: 0 10px 10px">Товар будет отправлена по указанному адресу.</div>
-          <div style="padding: 0 10px 10px">Подробности о доставке, можно узнать в разделе <a href="/info/delivery">ДОСТАВКА</a></div>
-        </div>
-      </div>
-    </div>
-    <div style="margin-bottom: 1em">
-      <?php echo $form->labelEx($order, 'description'); ?>
-      <div>
-        <?php
-        echo $form->textArea($order, 'description', array(
-//          'class' => 'input-text',
-//        'cols' => 81,
-          'rows' => 4,
-          'style' => 'width:558px'
-        ));
-        ?>
-      </div>
-    </div>
-    <p class="gray" style="font-size: 10pt"><span class="red">*</span> - поля обязательные для заполнения</p>
-  </fieldset>
+  <?php
+  $this->renderPartial('//site/_contact_form', array(
+    'profile' => $profile,
+    'customer_profile' => $customer_profile,
+    'user' => $user,
+    'order' => $order,
+    'form' => $form,
+  ));
+  ?>
   <fieldset>
     <legend><span class="page-title blue bold">Доставка и оплата</span></legend>
     <div class="inline-blocks">
@@ -166,7 +115,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
     </div>
     <div id="cart-submit" class="main-submit">
       <div>Оформить заказ</div>
-      <?php // echo CHtml::button('', array('id' => 'cart-submit')); ?>
+      <?php // echo CHtml::button('', array('id' => 'cart-submit'));   ?>
     </div>
   </div>
   <div id="cart-login-dialog">
@@ -185,6 +134,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
   </div>
   <?php
   $this->endWidget();
-  Yii::app()->getClientScript()->registerScriptFile('/js/shoppingCart.js', CClientScript::POS_END);
+  Yii::app()->getClientScript()->registerCoreScript('jquery.ui');
+  Yii::app()->getClientScript()->registerScriptFile("/themes/tornado/js/shoppingCart.js", CClientScript::POS_END);
   ?>
 </div>

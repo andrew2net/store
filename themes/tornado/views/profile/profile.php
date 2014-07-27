@@ -2,7 +2,7 @@
 /* @var $customer_profile CustomerProfile */
 /* @var $user User */
 /* @var $profile Profile */
-/* @var $order Order */
+/* @var $order CActiveDataProvider */
 /* @var $new_passw NewPassword */
 
 Yii::import('application.modules.payments.models.Currency');
@@ -19,71 +19,14 @@ $this->pageTitle = Yii::app()->name . ' - Личный кабинет';
   ));
   $form = $this->beginWidget('CActiveForm', array('id' => 'profile'));
   /* @var $form CActiveForm */
+  $this->renderPartial('//site/_contact_form', array(
+    'profile' => $profile,
+    'customer_profile' => $customer_profile,
+    'user' => $user,
+    'form' => $form,
+  ));
+  $this->endWidget();
   ?>
-  <fieldset>
-    <legend><span class="bold blue page-title">Контактная информация</span></legend>
-    <div style="margin-bottom: 20px"><?php echo $form->errorSummary(array($profile, $customer_profile, $user)); ?></div>
-    <?php
-    foreach (Yii::app()->user->flashes as $key => $flash) {
-      ?>
-      <div style="height: 20px; margin: 10px 0">
-        <span class="red" style="margin-bottom: 10px"><?php echo $flash; ?></span>
-      </div>
-    <?php } ?>
-    <!--</div>-->
-    <div class="inline-blocks" style="margin-bottom: 20px">
-      <div style="width: 250px">
-        <div><?php echo $form->labelEx($profile, 'first_name'); ?></div>
-        <div><?php echo $form->textField($profile, 'first_name', array('style' => 'width:230px')); ?></div>
-        <?php echo $form->error($profile, 'first_name', array('class' => 'red')); ?>
-      </div>
-      <div style="width: 250px">
-        <div><?php echo $form->labelEx($profile, 'last_name'); ?></div>
-        <div><?php echo $form->textField($profile, 'last_name', array('style' => 'width:230px')); ?></div>
-        <?php echo $form->error($profile, 'last_name', array('class' => 'red')); ?>
-      </div>
-      <div style="width: 170px">
-        <div><?php echo $form->labelEx($user, 'email'); ?></div>
-        <div><?php echo $form->emailField($user, 'email', array('style' => 'width:150px')); ?></div>
-        <?php echo $form->error($user, 'email', array('class' => 'red')); ?>
-      </div>
-      <div style="width: 160px">
-        <div><?php echo $form->labelEx($customer_profile, 'phone'); ?></div>
-        <div><?php echo $form->telField($customer_profile, 'phone', array('style' => 'width:150px')); ?></div>
-        <?php echo $form->error($customer_profile, 'phone', array('class' => 'red')); ?>
-      </div>
-    </div>
-    <div class="inline-blocks">
-      <div style="width: 250px">
-        <div><?php echo $form->labelEx($customer_profile, 'post_code'); ?></div>
-        <div>
-          <?php echo $form->textField($customer_profile, 'post_code', array('style' => 'width:120px')); ?>
-        </div>
-        <?php echo $form->error($customer_profile, 'post_code', array('class' => 'red')); ?>
-      </div>
-      <div style="width: 250px">
-        <div><?php echo $form->labelEx($customer_profile, 'city'); ?></div>
-        <div><?php
-          $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
-            'id' => 'cart-city',
-            'model' => $customer_profile,
-            'attribute' => 'city',
-            'sourceUrl' => '/site/suggestcity',
-            'htmlOptions' => array('class' => 'input-text')
-          ));
-          ?>
-        </div>
-        <?php echo $form->error($customer_profile, 'city', array('style' => 'width:230px', 'class' => 'red')); ?>
-      </div>
-      <div style="width: 350px">
-        <div><?php echo $form->labelEx($customer_profile, 'address'); ?></div>
-        <div><?php echo $form->textField($customer_profile, 'address', array('style' => 'width:330px')); ?></div>
-        <?php echo $form->error($customer_profile, 'address', array('class' => 'red')); ?>
-      </div>
-    <div style="margin: 15px 0 30px"><?php echo CHtml::submitButton('Сохранить'); ?></div>
-    </div>
-  </fieldset>
-  <?php $this->endWidget(); ?>
   <fieldset>
     <legend><span class="page-title blue bold">Изменение пароля</span></legend>
     <div class="inline-blocks">

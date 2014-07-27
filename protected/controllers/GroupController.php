@@ -9,6 +9,7 @@ class GroupController extends CController {
   public function actionIndex($id) {
     Yii::import('application.modules.catalog.models.Product');
     Yii::import('application.modules.catalog.models.Category');
+    Yii::import('application.modules.catalog.models.Brand');
     Yii::import('application.modules.discount.models.Discount');
 
     $groups = Category::model()->roots()->findAll();
@@ -17,17 +18,25 @@ class GroupController extends CController {
     $giftSelection = new GiftSelection;
     $product = Product::model();
 
-    $params = array(
-      'product' => $product,
-      'search' => $searc,
-      'giftSelection' => $giftSelection,
-      'groups' => $groups,
-      'group' => $group,
-    );
-    if (isset($_POST['currentPage']))
-      $params['page'] = $_POST['currentPage'];
+    if (Yii::app()->request->isAjaxRequest) {
+      $this->render('//site/_items_inline', array(
+        'group' => $group,
+        'product' => $product,));
+    }
+    else {
+      $params = array(
+        'product' => $product,
+        'search' => $searc,
+        'giftSelection' => $giftSelection,
+        'groups' => $groups,
+        'group' => $group,
+      );
 
-    $this->render('group', $params);
+      if (isset($_POST['currentPage']))
+        $params['page'] = $_POST['currentPage'];
+
+      $this->render('group', $params);
+    }
   }
 
 }

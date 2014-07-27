@@ -22,8 +22,8 @@ class SiteController extends Controller {
    */
   public function actionIndex() {
     Yii::import('application.modules.discount.models.Discount');
-    Yii::import('application.modules.catalog.models.Product');
     Yii::import('application.modules.catalog.models.Category');
+    Yii::import('application.modules.catalog.models.Price');
 
     if (!Yii::app()->user->isGuest)
       Yii::app()->request->cookies['popup'] = new CHttpCookie('popup', '2', array(
@@ -31,15 +31,42 @@ class SiteController extends Controller {
         'path' => '/',
       ));
 
-    $searc = new Search;
-    $giftSelection = new GiftSelection;
-
-    $product = Product::model();
+//    $searc = new Search;
+    $price_type = Price::getPrice();
 
     $this->render('index', array(
-      'product' => $product,
-      'giftSelection' => $giftSelection,
+      'price_type' => $price_type,
     ));
+  }
+
+  public function actionPrice() {
+    Yii::import('application.modules.catalog.models.Top10');
+    Yii::import('application.modules.catalog.models.Product');
+    Yii::import('application.modules.catalog.models.Price');
+    Yii::import('application.modules.payments.models.Currency');
+
+    $currecy = Currency::model()->findByAttributes(array('country_code' => 'RU'));
+    /* @var $currecy Currency */
+
+    $price_type = Price::getPrice();
+    $top10 = Product::model()->availableOnly()->top()->findAll();
+    $result = array();
+
+    foreach ($top10 as $item) {
+      /* @var $item Product */
+      $discount = $item->getActualDiscount();
+      $price = $item->getTradePrice($price_type);
+      if ($discount) {
+        $result['top10'][$item->id]['disc'] = '<span>' . number_format($price, 0, '.', ' ') . '</span>' . $currecy->class;
+        $price = number_format(round($price * (1 - $discount / 100)), 0, '.', ' ');
+      }
+      else {
+        $price = number_format($price, 0, '.', ' ');
+      }
+      $result['top10'][$item->id]['price'] = $price . $currecy->class;
+    }
+    echo json_encode($result);
+    Yii::app()->end();
   }
 
   /**
@@ -111,16 +138,15 @@ class SiteController extends Controller {
   }
 
   public function actionAddToCart() {
+    Yii::import('application.modules.catalog.models.Price');
 
-    $this->addToCart($_POST['id'], $_POST['quantity']);
-    echo $this->cartLabel();
-    Yii::app()->end();
-  }
-
-  public function actionChangeCart() {
-
-    $this->addToCart($_POST['id'], $_POST['quantity'], TRUE);
-    echo ' ';
+    $old_price_type = Price::getPrice();
+    self::addToCart($_POST['id'], $_POST['quantity']);
+    $new_price_type = Price::getPrice();
+    $result = array('refresh' => $old_price_type != $new_price_type);
+    $result['cart'] = $this->cartLabel();
+    $result['price'] = 'Ваша цена (' . $new_price_type->name . ')';
+    echo json_encode($result);
     Yii::app()->end();
   }
 
@@ -131,7 +157,7 @@ class SiteController extends Controller {
    * @param type $change true if it's update, not add new item
    * @return type
    */
-  private function addToCart($id, $quantity, $change = FALSE) {
+  public static function addToCart($id, $quantity, $change = FALSE) {
 
     if (!is_numeric($quantity))
       return;

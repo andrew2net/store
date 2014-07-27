@@ -2,6 +2,9 @@
 /* @var $group Category */
 /* @var $limit int */
 
+Yii::import('application.modules.catalog.models.Price');
+Yii::import('application.modules.payments.models.Currency');
+
 if (!isset($limit))
   $limit = 15;
 ?>
@@ -10,22 +13,27 @@ if (!isset($limit))
   $pagination = array();
   if (isset($page))
     $pagination['currentPage'] = $page;
-  
+
   $pagination['pageSize'] = Yii::app()->request->getQuery('size', 25);
   $sizes = array(25, 50, 100);
+
+  $trade_price = Price::getPrice();
+  $currency = Currency::model()->findByAttributes(array('country_code' => 'RU'));
 
   $data = Product::model()->searchCategory($group->id);
   $data->setPagination($pagination);
   $widget = $this->widget('ListView', array(
+    'id' => 'inline-product-list',
     'dataProvider' => $data,
     'emptyText' => 'Товар отсутствует',
     'headerView' => '//site/_items_inline_header',
     'itemView' => '//site/_item_inline',
-    'cssFile' => '/themes/' . Yii::app()->theme->name . '/css/listview.css',
+    'cssFile' => Yii::app()->theme->baseUrl . '/css/listview.css',
     'template' => "{sizer}{sorter}{header}{items}{pager}",
     'sorterHeader' => 'Сортировать:',
     'sortableAttributes' => array('price'),
-    'viewData' => array('sizes' => $sizes),
+    'afterAjaxUpdate' => 'showTooltip',
+    'viewData' => array('sizes' => $sizes, 'trade_price' => $trade_price, 'currency' => $currency),
       )
   );
   ?>

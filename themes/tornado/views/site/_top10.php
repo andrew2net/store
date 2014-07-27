@@ -1,4 +1,6 @@
 <?php
+/* @var $price_type Price */
+
 Yii::import('application.modules.catalog.models.Top10');
 Yii::import('application.modules.catalog.models.Product');
 $top10 = Product::model()->availableOnly()->top()->findAll();
@@ -10,7 +12,7 @@ if (count($top10)) {
       <ul>
         <?php foreach ($top10 as $value) { ?>
           <li>
-            <?php $this->renderPartial('_item', array('data' => $value)); ?>
+            <?php $this->renderPartial('_item', array('data' => $value, 'price_type' => $price_type)); ?>
           </li>
         <?php } ?>
       </ul>

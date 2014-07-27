@@ -1,15 +1,11 @@
 <?php
 /* @var $product Cart */
 /* @var $customer_profile CustomerProfile */
-?>
-<?php
-switch ($customer_profile->price_country) {
-  case 'KZ':
-    $price = $product->product->price_tenge;
-    break;
-  default :
-    $price = $product->product->price;
-}
+/* @var $price_type Price */
+
+//$price = $product->product->price;
+$price = $product->product->getTradePrice($price_type);
+
 $discount = $product->product->getActualDiscount();
 if ($discount) {
   $old_price = number_format($price, 0, '.', ' ');
@@ -34,7 +30,7 @@ $summ = $price * $product->quantity;
     <?php echo $product->product->name; ?>
   </td>
   <td><?php echo $product->product->article; ?></td>
-  <!--<div>Производитель: <?php // echo $product->product->brand->name;     ?></div>-->
+  <!--<div>Производитель: <?php // echo $product->product->brand->name;        ?></div>-->
   <td class="text-right">
     <div style="text-decoration: line-through"><?php echo $old_price; ?></div>
     <div class="<?php echo $price_class; ?>"><?php echo number_format($price, 0, '.', ' '); ?></div>
@@ -46,9 +42,9 @@ $summ = $price * $product->quantity;
       'price' => $price,
       'disc' => $disc,
       'product' => $product->product_id,
-      'max' => 99,
+      'max' => 999,
       'min' => 0,
-      'maxlength' => 2,
+      'maxlength' => 3,
     ));
     ?>
     <span style="position: relative; top: 5px; font-size: 12pt"> шт.</span>

@@ -25,7 +25,7 @@ class ListView extends CListView {
   public function renderHeader() {
     if ($this->dataProvider->getTotalItemCount() > 0) {
       $view_file = $this->getOwner()->getViewFile($this->headerView);
-      $this->renderFile($view_file);
+      $this->renderFile($view_file, $this->viewData);
     }
   }
 

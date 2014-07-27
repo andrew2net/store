@@ -1,5 +1,6 @@
 <?php
 /* @var $customer_profile CustomerProfile */
+/* @var $profile Profile */
 
 Yii::import('application.modules.catalog.models.Price');
 ?>
@@ -19,7 +20,7 @@ Yii::import('application.modules.catalog.models.Price');
   <?php echo $form->errorSummary(array($model, $profile, $customer_profile)); ?>
 
   <div class="inline-blocks">
-    <div>
+    <div style="vertical-align: top">
       <div class="row">
         <?php echo $form->labelEx($model, 'username'); ?>
         <?php echo $form->textField($model, 'username', array('size' => 20, 'maxlength' => 20)); ?>
@@ -49,6 +50,8 @@ Yii::import('application.modules.catalog.models.Price');
         <?php echo $form->dropDownList($model, 'status', User::itemAlias('UserStatus')); ?>
         <?php echo $form->error($model, 'status'); ?>
       </div>
+    </div>
+    <div style="vertical-align: top">
       <?php
       $profileFields = $profile->getFields();
       if ($profileFields) {

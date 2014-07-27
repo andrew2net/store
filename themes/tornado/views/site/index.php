@@ -1,6 +1,6 @@
 <?php
-/* @var $giftSelection GiftSelection */
 /* @var $product Product */
+/* @var $price_type Price */
 ?>
 <?php
 $cs = Yii::app()->getClientScript();
@@ -13,7 +13,6 @@ $cs->registerScriptFile($cs->getCoreScriptUrl() . '/jui/js/jquery-ui-i18n.min.js
 $this->pageTitle = Yii::app()->name . ' - аксессуары для мобильных устройств оптом';
 
 Yii::import('application.modules.admin.models.Page');
-
 ?>
 <div class="container" id="page">
   <?php
@@ -26,7 +25,11 @@ Yii::import('application.modules.admin.models.Page');
       echo CHtml::beginForm('', 'post', array('id' => 'item-submit'));
       echo CHtml::hiddenField('url', Yii::app()->request->url);
       $this->renderPartial('_weekDiscount');
-      $this->renderPartial('_top10');
+      ?>
+      <div id="top10">
+        <?php $this->renderPartial('_top10', array('price_type' => $price_type)); ?>
+      </div>
+      <?php
       echo CHtml::endForm();
       // $this->renderPartial('_brands');  
       $seo = Page::model()->findByAttributes(array('url' => '/'));

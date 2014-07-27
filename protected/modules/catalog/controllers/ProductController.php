@@ -262,7 +262,8 @@ class ProductController extends Controller {
 
           $tr->commit();
           $this->moveImg($model, 'img');
-//          $this->moveImg($model, 'small_img');
+          if ($_POST['Product']['small_img'])
+            $this->moveImg($model, 'small_img');
           $model->save();
           $this->redirect(array('index'));
         }
@@ -277,8 +278,12 @@ class ProductController extends Controller {
     $old_file = Yii::getPathOfAlias('webroot') . $model->$img;
     $old_img = $model->$img;
     $model->$img = $_POST['Product'][$img];
+    $ext = substr($_POST['Product'][$img], strrpos($_POST['Product'][$img], '.'));
+    $img_storage = '/images/' . Yii::app()->params['img_storage'] . '/product/';
+    $file_path = Yii::getPathOfAlias('webroot') . $img_storage;
+    $img_name = $model->id . ($img == 'img' ? '' : 's') . $ext;
+
     if ($_POST['Product'][$img] != $old_img) {
-      $img_storage = '/images/' . Yii::app()->params['img_storage'] . '/product/';
       if (strlen($_POST['Product'][$img]) > 0) {
         $uploaded_file = Yii::getPathOfAlias('webroot') . $_POST['Product'][$img];
         if (file_exists($uploaded_file)) {
@@ -287,29 +292,30 @@ class ProductController extends Controller {
               return;
           if (strlen($old_img) > 0 && file_exists($old_file))
             unlink($old_file);
-          $ext = substr($_POST['Product'][$img], strrpos($_POST['Product'][$img], '.'));
-          $img_name = $model->id . ($img == 'img' ? '' : 's') . $ext;
-          $small_img_name = $model->id . 's' . $ext;
-          $file_path = Yii::getPathOfAlias('webroot') . $img_storage;
           rename(Yii::getPathOfAlias('webroot') . $_POST['Product'][$img], $file_path . $img_name);
-
-          $image = new Imagick($file_path . $img_name);
-          if ($image->getimagewidth() > $image->getimageheight())
-            $image->thumbnailimage(100, 0);
-          else
-            $image->thumbnailimage(0, 100);
-          $image->writeimage($file_path . $small_img_name);
-          $image->destroy();
         }
       }
-      if (isset($file_path)) {
-        $model->$img = $img_storage . basename($file_path . $img_name);
-        $model->small_img = $img_storage . basename($file_path . $small_img_name);
-      }
-      else {
-        $model->$img = '';
+    }
+
+    if (!$_POST['Product']['small_img'] && $_POST['Product']['img']) {
+      $small_img_name = $model->id . 's' . $ext;
+      $image = new Imagick($file_path . $img_name);
+      if ($image->getimagewidth() > $image->getimageheight())
+        $image->thumbnailimage(100, 0);
+      else
+        $image->thumbnailimage(0, 100);
+      $image->writeimage($file_path . $small_img_name);
+      $image->destroy();
+      $model->small_img = $img_storage . basename($file_path . $small_img_name);
+    }
+
+    if ($_POST['Product'][$img]) {
+      $model->$img = $img_storage . basename($file_path . $img_name);
+    }
+    else {
+      $model->$img = '';
+      if (!$_POST['Product']['small_img'] && !$_POST['Product']['img'])
         $model->small_img = '';
-      }
     }
   }
 

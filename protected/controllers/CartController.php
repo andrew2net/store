@@ -121,11 +121,12 @@ class CartController extends Controller {
     }
 
     Yii::import('application.modules.payments.models.Currency');
+    Yii::import('application.modules.catalog.models.Price');
     $currency = Currency::model()->findByAttributes(array(
       'country_code' => $country_code));
-    /* @var $currency Currency */
 
-//    $delivery_hint =
+    $price_type = Price::getPrice();
+
     $this->render('shoppingCart', array(
       'cart' => $cart,
       'customer_profile' => $customer_profile,
@@ -137,6 +138,7 @@ class CartController extends Controller {
       'coupon' => $coupon_data,
       'has_err' => $has_err,
       'currency' => $currency,
+      'price_type' => $price_type,
     ));
   }
 
@@ -229,22 +231,55 @@ class CartController extends Controller {
       throw new Exception('Ошибка записи заказа');
   }
 
+  public function actionChangeCart() {
+    Yii::import('application.modules.catalog.models.Price');
+    Yii::import('application.controllers.SiteController');
+    Yii::import('application.modules.catalog.models.Product');
+    Yii::import('application.modules.catalog.models.Brand');
+    Yii::import('application.controllers.ProfileController');
+    $old_price_type = Price::getPrice();
+    SiteController::addToCart($_POST['id'], $_POST['quantity'], TRUE);
+    $new_price_type = Price::getPrice();
+
+    if ($old_price_type == $new_price_type)
+      echo FALSE;
+    else
+      $this->renderCartBody();
+
+    Yii::app()->end();
+  }
+
   public function actionDelItem() {
     Yii::import('application.modules.catalog.models.Product');
     Yii::import('application.modules.catalog.models.Brand');
     Yii::import('application.controllers.ProfileController');
+    Yii::import('application.modules.catalog.models.Price');
 
+    $old_price_type = Price::getPrice();
     if (isset($_POST['id'])) {
       $carts = Cart::model()->cartItem(ProfileController::getSession(), $_POST['id'])->findAll();
       foreach ($carts as $item) {
         $item->delete();
       }
-      $cart = Cart::model()->shoppingCart(ProfileController::getSession())
-              ->with('product.brand')->findAll();
-      $profile = ProfileController::getProfile();
-      echo $this->renderPartial('_cartItems', array('cart' => $cart, 'customer_profile' => $profile), TRUE);
+      $new_price_type = Price::getPrice();
+      $this->renderCartBody($old_price_type != $new_price_type);
     }
     Yii::app()->end();
+  }
+
+  private function renderCartBody($refreshPriceName = TRUE) {
+    $cart = Cart::model()->shoppingCart(ProfileController::getSession())
+            ->with('product.brand')->findAll();
+    $profile = ProfileController::getProfile();
+    $price_type = Price::getPrice();
+    $result = array(
+      'html' => $this->renderPartial('_cartItems', array(
+        'cart' => $cart,
+        'customer_profile' => $profile,
+        'price_type' => $price_type,
+          ), TRUE));
+    $result['price_name'] = $refreshPriceName ? $price_type->name : $refreshPriceName;
+    echo json_encode($result);
   }
 
   public function actionCoupon() {

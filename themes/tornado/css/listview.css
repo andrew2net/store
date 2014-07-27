@@ -29,6 +29,7 @@
   display: table;
   height: 40px;
   clear: both;
+  width: 940px;
 }
 .list-view .table-header > div{
   display: table-cell;

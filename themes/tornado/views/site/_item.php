@@ -1,11 +1,11 @@
 <?php
-/* @var $data CActiveDataProvider */
-?>
-<?php
+/* @var $data Product */
+/* @var $price_type Price */
+
 Yii::import('application.modules.payments.models.Currency');
 $currecy = Currency::model()->findByAttributes(array('country_code' => 'RU'));
 /* @var $currecy Currency */
-$price = $data->price;
+$price = $data->getTradePrice($price_type);
 
 $discount = $data->getActualDiscount();
 if ($discount) {
@@ -33,7 +33,7 @@ if (isset($index) && $index == 0)
 echo CHtml::hiddenField('url', Yii::app()->request->url);
 ?>
 <div class="helper"></div>
-<div class="item" title="<?php echo$data->name; ?>">
+<div product="<?php echo $data->id; ?>" class="item" title="<?php echo $data->name; ?>">
   <div class="box-item">
     <?php if ($discount) { ?>
       <div class="discount-label" txt="<?php echo $percent; ?>"></div>

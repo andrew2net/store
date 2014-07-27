@@ -14,14 +14,26 @@
  * @property integer $post_code
  * @property string $price_country
  * @property string $price_id 
+ * @property integer $entity_id 
  *
  * The followings are the available model relations:
  * @property Order[] $orders
  * @property Country $country 
  * @property User $user 
  * @property Price $price 
+ * @property string $entity 
  */
 class CustomerProfile extends CActiveRecord {
+
+  private static $entities = array('Юридическое лицо / ИП', 'Частное лицо');
+
+  public static function getEntities() {
+    return self::$entities;
+  }
+
+  public function getEntity() {
+    return self::$entities[$this->entity_id];
+  }
 
   /**
    * @return string the associated database table name
@@ -38,7 +50,7 @@ class CustomerProfile extends CActiveRecord {
     // will receive user inputs.
     $rules = array(
       array('city, country_code, address', 'required'),
-      array('user_id, price_id', 'numerical', 'integerOnly' => true),
+      array('user_id, price_id, entity_id', 'numerical', 'integerOnly' => true),
       array('session_id', 'length', 'max' => 32),
       array('post_code', 'postCodeValidate'),
       array('address', 'length', 'max' => 255),
@@ -54,10 +66,10 @@ class CustomerProfile extends CActiveRecord {
       $rules = array_merge($rules, array(array('post_code', 'required')));
     return $rules;
   }
-  
-  public function postCodeValidate($attr, $param){
-    if (Yii::app()->params['post_code']){
-      if (!preg_match('/^\d{6}$/', $this->$attr)){
+
+  public function postCodeValidate($attr, $param) {
+    if (Yii::app()->params['post_code']) {
+      if (!preg_match('/^\d{6}$/', $this->$attr)) {
         $this->addError($attr, 'Почтовый индекс должен содержать 6 цифр');
       }
     }
@@ -72,7 +84,8 @@ class CustomerProfile extends CActiveRecord {
     return array(
       'orders' => array(self::HAS_MANY, 'Order', 'profile_id'),
       'country' => array(self::HAS_ONE, 'Country', 'code'),
-      'user' => array(self::HAS_ONE, 'User', 'id'),
+      'user' => array(self::HAS_ONE, 'User', '', 'on' => 'user_id=user.id'),
+      'price' => array(self::HAS_ONE, 'Price', '', 'on' => 'price_id=price.id')
     );
   }
 
@@ -91,6 +104,7 @@ class CustomerProfile extends CActiveRecord {
       'address' => 'Адрес',
       'price_country' => 'Валюта цен',
       'price_id' => 'Прайс',
+      'entity_id' => 'Юр./физ. лицо'
     );
   }
 
@@ -133,6 +147,17 @@ class CustomerProfile extends CActiveRecord {
    */
   public static function model($className = __CLASS__) {
     return parent::model($className);
+  }
+
+  public function afterConstruct() {
+    parent::afterConstruct();
+    $this->entity_id = Yii::app()->params['legal_entity'];
+  }
+
+  public function afterFind() {
+    parent::afterFind();
+    if (is_null($this->entity_id))
+      $this->entity_id = Yii::app()->params['legal_entity'];
   }
 
 }
