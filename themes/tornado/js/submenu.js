@@ -111,7 +111,9 @@ $(document).ready(function() {
               var result = $.parseJSON(data);
               if (result.top10 !== undefined)
                 for (var key in result.top10) {
-                  $('.item[product="' + key + '"] .item-price').html(result.top10[key].price);
+                  var p = $('.item[product="' + key + '"] .item-price'); 
+                  p.html(result.top10[key].price);
+                  p.attr('title', result.title);
                   $('.item[product="' + key + '"] .item-disc').html(result.top10[key].disc);
                 }
             });
@@ -120,7 +122,7 @@ $(document).ready(function() {
           price_mess.show('bounce');
           setTimeout(function() {
             price_mess.hide('blind')
-          }, 2000);
+          }, 3000);
         }
       });
     });

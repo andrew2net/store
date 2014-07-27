@@ -50,8 +50,8 @@ class SiteController extends Controller {
 
     $price_type = Price::getPrice();
     $top10 = Product::model()->availableOnly()->top()->findAll();
-    $result = array();
-
+    
+    $result = array('title' => 'Ваша цена "' . $price_type->name . '"');
     foreach ($top10 as $item) {
       /* @var $item Product */
       $discount = $item->getActualDiscount();
@@ -145,7 +145,7 @@ class SiteController extends Controller {
     $new_price_type = Price::getPrice();
     $result = array('refresh' => $old_price_type != $new_price_type);
     $result['cart'] = $this->cartLabel();
-    $result['price'] = 'Ваша цена (' . $new_price_type->name . ')';
+    $result['price'] = 'Установлена цена "' . $new_price_type->name . '"';
     echo json_encode($result);
     Yii::app()->end();
   }

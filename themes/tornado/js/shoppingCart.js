@@ -281,14 +281,13 @@ function refreshCart(data) {
   var result = $.parseJSON(data)
   cart_items.html(result.html);
   if (result.price_name) {
-    var title = 'Ваша цена "' + result.price_name + '"';
-    price_header.attr('title', title);
+    price_header.attr('title', 'Ваша цена "' + result.price_name + '"');
     price_name.html('(' + result.price_name + ')');
-    price_mess.html(title);
+    price_mess.html('Установлена цена "' + result.price_name + '"');
     price_mess.show('bounce');
     setTimeout(function() {
       price_mess.hide('blind');
-    }, 2000);
+    }, 3000);
   }
   calcCartSumm();
 }

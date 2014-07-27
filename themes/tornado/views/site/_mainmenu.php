@@ -33,6 +33,4 @@
     Yii::import('application.modules.catalog.models.Price');
     $price = Price::getPrice();
     ?>
-    <div id="price-mess" class="yellow-background red" style="display: none; position: fixed; z-index: 101; right: 50px; bottom: 50px; padding: 20px; font-size: 12pt">
-      Ваша цена &quot;<?php echo $price->name; ?>&quot;
-    </div>
+    <div id="price-mess" class="yellow-background red" style="display: none; position: fixed; z-index: 101; right: 50px; bottom: 50px; padding: 20px; font-size: 12pt"></div>
