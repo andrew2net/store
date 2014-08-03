@@ -9,15 +9,16 @@ class DalyCommand extends CConsoleCommand {
   public function run($args) {
     list($action, $options, $args) = $this->resolveRequest($args);
     if (isset($options['connectionID']))
-      $command = Yii::app()->$options['connectionID']->createCommand();
+      $db = Yii::app()->$options['connectionID'];
     else
-      $command = Yii::app()->db->createCommand();
+      $db = Yii::app()->db;
+    $command = $db->createCommand();
     /* @var $command CDbCommand */
 
     //get Energy locations
     $nrj = $command->select('id')->from('store_delivery')->where('zone_type_id=2')->queryRow();
     if ($nrj) {
-      $tr = Yii::app()->$options['connectionID']->beginTransaction();
+      $tr = $db->beginTransaction();
       try {
         $nrj_ch = curl_init('http://api.nrg-tk.ru/api/rest/?method=nrg.get.locations');
         curl_setopt($nrj_ch, CURLOPT_RETURNTRANSFER, TRUE);
