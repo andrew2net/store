@@ -7,18 +7,18 @@
 class DalyCommand extends CConsoleCommand {
 
   public function run($args) {
-    echo '1';
     list($action, $options, $args) = $this->resolveRequest($args);
-    echo '2';
     if (isset($options['connectionID']))
       $db = Yii::app()->$options['connectionID'];
     else
       $db = Yii::app()->db;
     $command = $db->createCommand();
+    echo 'comm';
     /* @var $command CDbCommand */
 
     //get Energy locations
     $nrj = $command->select('id')->from('store_delivery')->where('zone_type_id=2')->queryRow();
+    echo 'nrj';
     if ($nrj) {
       $tr = $db->beginTransaction();
       try {
