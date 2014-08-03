@@ -8,7 +8,10 @@ class DalyCommand extends CConsoleCommand {
 
   public function run($args) {
     list($action, $options, $args) = $this->resolveRequest($args);
-    $command = Yii::app()->$options['connectionID']->createCommand();
+    if (isset(Yii::app()->$options['connectionID']))
+      $command = Yii::app()->$options['connectionID']->createCommand();
+    else
+      $command = Yii::app()->db->createCommand();
     /* @var $command CDbCommand */
 
     //get Energy locations
