@@ -8,7 +8,7 @@ class DalyCommand extends CConsoleCommand {
 
   public function run($args) {
     list($action, $options, $args) = $this->resolveRequest($args);
-    if (isset(Yii::app()->$options['connectionID']))
+    if (isset($options['connectionID']))
       $command = Yii::app()->$options['connectionID']->createCommand();
     else
       $command = Yii::app()->db->createCommand();
