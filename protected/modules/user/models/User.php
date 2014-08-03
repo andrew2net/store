@@ -203,7 +203,7 @@ class User extends CActiveRecord {
     }
   }
 
-  public function generate_password($length = '') {
+  public static function generate_password($length = '') {
     $str = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_0123456789';
     $max = strlen($str);
     $length = @round($length);

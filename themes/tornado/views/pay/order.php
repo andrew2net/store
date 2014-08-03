@@ -14,13 +14,12 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
   Yii::import('application.modules.delivery.models.Delivery');
   Yii::import('application.modules.catalog.models.Product');
   Yii::import('application.modules.payments.models.Payment');
+  Yii::import('application.controllers.ProfileController');
   ?>
   <h1 class="bold blue" style="margin: 20px 0">Информация о заказе:</h1>
   <div>Заказ №: <?php echo $order->id; ?></div>
   <div>Покупатель: <?php echo $order->fio; ?></div>
   <div>Телефон: <?php echo $order->phone; ?></div>
-  <div>Страна: <?php echo ProfileController::getCountryName($order->country_code); ?></div>
-  <div>Почтовый индекс: <?php echo $order->post_code; ?></div>
   <div>Город: <?php echo $order->city; ?></div>
   <div>Адрес: <?php echo $order->address; ?></div>
   <div style="margin-bottom: 10px">Вид доставки: <?php echo $order->delivery->name; ?></div>

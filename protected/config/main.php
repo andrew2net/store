@@ -107,6 +107,7 @@ $site_config = array(
       'loginUrl' => array('/profile/login'),
       'class' => 'auth.components.AuthWebUser',
       'admins' => array('admin'), // users with full access
+      'autoUpdateFlash' => FALSE,
     ),
     'authManager' => array(
       'class' => 'CDbAuthManager',
@@ -135,6 +136,7 @@ $site_config = array(
         '<_c:(login|logout)>' => 'profile/<_c>',
         'info/<_p:\w+>' => 'site/page/url/<_p>',
         '<controller:\w+>/<id:\d+>' => '<controller>',
+        'user/recovery/<activkey>/<email>' => 'user/recovery',
 //        '<action:\w+>/<id:\d+>' => 'site/<action>',
 //        '<action:\w+>' => 'site/<action>',
 //        '<controller:\w+>/<id:\d+>' => '<controller>/view',

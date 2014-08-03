@@ -17,6 +17,9 @@ blue-light{
 .yellow{
   color: #ffd900;
 }
+.yellow-border{
+  border: 1px solid #ffd900;
+}
 .yellow-background, .left-menu-item:hover{
   background: #FCF6D5;
 }
@@ -209,38 +212,6 @@ div.search-form
   display: inline;
 }
 
-/*.operations
-{
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}*/
-
-/*.operations li
-{
-  padding-bottom: 2px;
-}
-
-.operations li a
-{
-  font: bold 12px Arial;
-  color: #0066A4;
-  display: block;
-  padding: 2px 0 2px 8px;
-  line-height: 15px;
-  text-decoration: none;
-}
-
-.operations li a:visited
-{
-  color: #0066A4;
-}
-
-.operations li a:hover
-{
-  background: #80CFFF;
-}*/
-
 .table{
   display: table;
   width: 100%;
@@ -256,29 +227,6 @@ div.search-form
 .footer-menu div{
   height: 2em;
 }
-
-/*.icon-sklad{
-  background: url(/themes/abctoy/css/icons.png) no-repeat;
-  background-position: -95px 0px;
-  width: 95px;
-  height: 95px;
-  margin: 0 auto;
-}
-
-.icon-dicount, .icon-top10, .icon-recom{
-  width: 55px;
-  height: 55px;
-  background: url(/themes/abctoy/css/icons_small.png) no-repeat;
-}
-.icon-dicount{
-  background-position: -108px -55px;
-}
-.icon-top10{
-  background-position: -108px -114px;
-}
-.icon-recom{
-  background-position: -162px -55px;
-}*/
 
 .iconsearch, input[type=radio] + label:before,
 input[type=radio]:checked + label:before, input[type=checkbox] + label:before,
@@ -824,19 +772,18 @@ input[type=checkbox]:checked + label:before
 }
 
 .payment-cash, .payment-cart{
-  background: url(/themes/demark/img/pay-icons.png) no-repeat;
+  background: url(./../img/pay-icons.png) no-repeat;
   width: 48px;
   display: inline-block;
   margin-right: 10px
 }
-.payment-cash{
-  height: 45px;
-  margin-bottom: 5px;
-}
 .payment-cart{
-  height: 33px;
+  height: 45px;
+}
+.payment-cash{
+  height: 38px;
   background-position: 0 -45px;
-  margin-bottom: 15px;
+  margin-top: 3px;
 }
 
 .error{

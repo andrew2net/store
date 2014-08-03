@@ -43,9 +43,6 @@ class CartController extends Controller {
       $coupon = NULL;
 
     $has_err = '';
-    $order = new Order;
-
-    $order->payment_id = 1;
 
     if (!Yii::app()->params['country'])
       if (isset($_POST['CustomerProfile']['post_code']))
@@ -63,30 +60,32 @@ class CartController extends Controller {
     else
       $post_code = '';
 
-    $delivery = Delivery::model()->getDeliveryList($country_code, $post_code, $cart);
-    if (isset($_POST['Order']))
-      $order->delivery_id = $_POST['Order']['delivery_id'];
-    elseif (is_array($delivery))
-      $order->delivery_id = key($delivery);
+    if (isset($_POST['CustomerProfile']['city']))
+      $city = $_POST['CustomerProfile']['city'];
     else
-      $order->delivery_id = 1;
+      $city = $customer_profile->city;
+
+    $order = new Order;
+    if (isset($_POST['Order']))
+      $order->attributes = $_POST['Order'];
+
+//    $delivery = Delivery::model()->getDeliveryList($country_code, $post_code, '', $cart, $order);
+    $delivery = array();
+    if (isset($_SESSION['storage']['deliveries'])) {
+      $delivery = $_SESSION['storage']['deliveries'];
+      unset($_SESSION['storage']['deliveries']);
+    }
 
     $payment = Payment::model()->getPaymentList();
-    if (is_array($payment))
-      $order->payment_id = key($payment);
-    else
-      $order->payment_id = 1;
 
     if (isset($_POST['CustomerProfile'])) {
       $customer_profile->attributes = $_POST['CustomerProfile'];
-      if (isset($_POST['Order']))
-        $order->attributes = $_POST['Order'];
       if ($customer_profile->save()) {
         if (Yii::app()->user->isGuest) {
-          $user = User::model()->findByAttributes(array(
-            'email' => $customer_profile->email));
-          if (is_null($user)) {
-            ProfileController::registerUser($customer_profile);
+          $u = User::model()->findByAttributes(array(
+            'email' => $_POST['User']['email']));
+          if (is_null($u)) {
+            ProfileController::registerUser($customer_profile, $user);
           }
         }
         if (isset($_POST['Cart'])) {
@@ -98,7 +97,7 @@ class CartController extends Controller {
             $tr = $order->dbConnection->beginTransaction();
             try {
               if (count($cart) > 0) {
-                $this->saveOrderProducts($order, $customer_profile, $coupon, $count_products);
+                $this->saveOrderProducts($order, $customer_profile, $profile, $user, $coupon, $count_products);
 
                 foreach ($cart as $item)
                   $item->delete();
@@ -110,7 +109,7 @@ class CartController extends Controller {
               throw $e;
             }
             if ($fl) {
-              $this->sendConfirmOrderMessage($order, $customer_profile, $count_products['couponDisc']);
+              $this->sendConfirmOrderMessage($order, $customer_profile, $profile, $count_products['couponDisc']);
               $this->redirect('orderSent');
             }
           }
@@ -118,6 +117,16 @@ class CartController extends Controller {
       }
       else
         $has_err = 'prof';
+    }else {
+      if (is_array($delivery))
+        $order->delivery_id = key($delivery);
+      else
+        $order->delivery_id = 0;
+
+      if (is_array($payment))
+        $order->payment_id = key($payment);
+      else
+        $order->payment_id = 0;
     }
 
     Yii::import('application.modules.payments.models.Currency');
@@ -178,19 +187,29 @@ class CartController extends Controller {
     return $result;
   }
 
-  private function saveOrderProducts(Order $order, CustomerProfile $profile, $coupon, $count_products) {
+  private function saveOrderProducts(Order $order, CustomerProfile $customer_profile, Profile $profile, User $user, $coupon, $count_products) {
+    Yii::import('application.modules.payments.models.Currency');
 
     $order->attributes = $_POST['Order'];
     $order->delivery_summ = $_SESSION['storage']['delivery'][$_POST['Order']['delivery_id']]['summ'];
-    $order->profile_id = $profile->id;
-    $order->fio = $profile->fio;
-    $order->email = $profile->email;
-    $order->phone = $profile->phone;
-    $order->country_code = $profile->country_code;
-    $order->post_code = $profile->post_code;
-    $order->city = $profile->city;
-    $order->address = $profile->address;
-    $order->currency_code = Currency::model()->findByCountry($profile->price_country)->code;
+    $order->profile_id = $customer_profile->id;
+
+    if ($customer_profile->entity_id == 1) {
+      $field = ProfileField::model()->findByAttributes(array('varname' => 'legal_form'));
+      $legal_forms = Profile::range($field->range);
+      $order->fio = $legal_forms[$profile->legal_form] . ' ' . $profile->entity_name;
+    }
+    else
+      $order->fio = $profile->first_name . ' ' . $profile->last_name;
+
+    $order->email = $user->email;
+    $order->phone = $customer_profile->phone;
+    $order->country_code = $customer_profile->country_code;
+    $order->post_code = $customer_profile->post_code;
+    $order->city = (empty($customer_profile->city) ? $customer_profile->city_l : $customer_profile->city);
+    $order->address = $customer_profile->address;
+    $price_country = Yii::app()->params['mcurrency'] ? $customer_profile->price_country : Yii::app()->params['country'];
+    $order->currency_code = Currency::model()->findByCountry($price_country)->code;
     $order->status_id = Yii::app()->params['order_new_status'];
     $order->time = date('Y-m-d H:i:s');
 
@@ -198,6 +217,7 @@ class CartController extends Controller {
       $order->coupon_id = $coupon->id;
 
     if ($order->save()) {
+      $price = Price::getPrice();
       foreach ($_POST['Cart'] as $key => $value) {
         if ($value['quantity'] > 0) {
           $order_product = new OrderProduct;
@@ -312,7 +332,7 @@ class CartController extends Controller {
     Yii::app()->end();
   }
 
-  public function actionDelivery($ccode, $pcode) {
+  public function actionDelivery($ccode, $pcode, $city, $delivery_id) {
     Yii::import('application.modules.delivery.models.Delivery');
     Yii::import('application.controllers.ProfileController');
     Yii::import('application.modules.catalog.models.Product');
@@ -320,7 +340,8 @@ class CartController extends Controller {
 
     $cart = Cart::model()->shoppingCart(ProfileController::getSession())->findAll();
     $order = new Order;
-    $delivery = Delivery::model()->getDeliveryList($ccode, trim($pcode), $cart);
+    $delivery = Delivery::model()->getDeliveryList($ccode, trim($pcode), $city, $cart, $order);
+    $_SESSION['storage']['deliveries'] = $delivery;
     if (is_array($delivery))
       $order->delivery_id = key($delivery);
     else
@@ -328,8 +349,12 @@ class CartController extends Controller {
 
 
     $profile = ProfileController::getProfile();
-    $currency = Currency::model()->findByAttributes(array(
-      'country_code' => $profile->price_country));
+    if (Yii::app()->params['mcurrency'])
+      $currency = Currency::model()->findByAttributes(array(
+        'country_code' => $profile->price_country));
+    else
+      $currency = Currency::model()->findByAttributes(array(
+        'country_code' => Yii::app()->params['country']));
     /* @var $currency Currency */
     echo $this->renderPartial('_delivery', array(
       'order' => $order,
@@ -339,18 +364,18 @@ class CartController extends Controller {
     Yii::app()->end();
   }
 
-  private function sendConfirmOrderMessage($order, $profile, $coupon_discount = NULL) {
+  private function sendConfirmOrderMessage(Order $order, $customer_profile, $profile, $coupon_discount = NULL) {
     $message = new YiiMailMessage('Ваш заказ');
     $message->view = 'confirmOrder';
     $params = array(
-      'profile' => $profile,
+      'profile' => $customer_profile,
       'order' => $order,
     );
     if ($coupon_discount > 0)
       $params['coupon_discount'] = $coupon_discount;
     $message->setBody($params, 'text/html');
     $message->setFrom(Yii::app()->params['infoEmail']);
-    $message->setTo(array($profile->email => $profile->fio));
+    $message->setTo(array($order->email => $customer_profile->fio));
     Yii::app()->mail->send($message);
 
     $message->setSubject('Оповещение о заказе');
@@ -358,6 +383,30 @@ class CartController extends Controller {
     $message->setBody($params, 'text/html');
     $message->setTo(array(Yii::app()->params['adminEmail']));
     Yii::app()->mail->send($message);
+  }
+
+  public function actionCheckEmail() {
+    if (isset($_POST['email'])) {
+      $user = User::model()->findByAttributes(array('email' => $_POST['email']));
+      if (Yii::app()->user->isGuest)
+        if (is_null($user))  //new user
+          echo 'ok';
+        else                 //need sign up
+          $this->renderPartial('_cart-dialog', array('email' => $_POST['email']));
+      else {
+        if (is_null($user)) { //new email
+//          Yii::app()->user->update(array('email' => $_POST['email']));
+          echo 'ok';
+        }
+        else if ($user->id != Yii::app()->user->id)  //there is user with same email
+          echo '';
+        else                //signed up
+          echo 'ok';
+      }
+    }
+    else
+      echo '';
+    Yii::app()->end();
   }
 
 }

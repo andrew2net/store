@@ -18,6 +18,7 @@
  * @property string $size_method_id
  * @property integer $size_summ
  * @property string $zone_type_id
+ * @property string $transport_type_id 
  *
  * The followings are the available model relations:
  * @property DeliveryRate[] $deliveryRates
@@ -27,10 +28,17 @@
  * @property string $size_method
  * @property array $zone_types
  * @property string $zone_type
+ * @property array $nrjTypes
+ * @property string $nrjType 
+ * @property array $transportTypes 
+ * @property string $transportType 
  */
 class Delivery extends CActiveRecord {
 
-  private static $size_methods = array('Сумма длины и окружности', 'Ограничение дл. шир. выс.');
+  private static $size_methods = array(1 => 'Сумма длины и окружности', 2 => 'Ограничение дл. шир. выс.');
+  private static $zone_type = array(1 => 'КазПочта', 2 => 'EMS-Казахстан', 3 => 'т/к Энергия', 4 => 'т/к покупателя', 5 => 'Курьер', 6 => 'Самовывоз');
+  private static $nrj_types = array(1 => 'avto', 2 => 'avia', 3 => 'rw');
+  private static $transport_types = array(1 => 'авто', 2 => 'авиа', 3 => 'ж/д');
 
   public static function getSize_methods() {
     return self::$size_methods;
@@ -40,14 +48,28 @@ class Delivery extends CActiveRecord {
     return self::$size_methods[$this->size_method_id];
   }
 
-  private static $zone_type = array('Зоны почты', 'Зоны EMS');
-
   public static function getZone_types() {
     return self::$zone_type;
   }
 
   public function getZone_type() {
     return self::$zone_type[$this->zone_type_id];
+  }
+
+  public static function getNrjTypes() {
+    return self::$nrj_types;
+  }
+
+  public function getNrjType() {
+    return self::$nrj_types[$this->transport_type_id];
+  }
+
+  public static function getTransportTypes() {
+    return self::$transport_types;
+  }
+
+  public function getTransportType() {
+    return isset(self::$transport_types[$this->transport_type_id]) ? self::$transport_types[$this->transport_type_id] : '';
   }
 
   /**
@@ -67,6 +89,8 @@ class Delivery extends CActiveRecord {
       array('name', 'required'),
       array('length, width, height, oversize, insurance, size_method_id, size_summ, zone_type_id', 'numerical', 'integerOnly' => true),
       array('max_weight', 'numerical', 'numberPattern' => '/\d{1,2}\.?\d{0,2}/'),
+      array('transport_type_id', 'numerical', 'integerOnly' => true),
+      array('transport_type_id', 'length', 'max' => 1),
       array('length, width, height, oversize, size_summ', 'length', 'max' => 4),
       array('oversize, currency_code', 'length', 'max' => 3),
       array('insurance, zone_type_id', 'length', 'max' => 2),
@@ -112,6 +136,7 @@ class Delivery extends CActiveRecord {
       'size_method_id' => 'Способ расчета',
       'size_summ' => 'Сумма размеров',
       'zone_type_id' => 'Тарифные зоны',
+      'transport_type_id' => 'Вид транспорта',
     );
   }
 
@@ -151,7 +176,7 @@ class Delivery extends CActiveRecord {
     return parent::model($className);
   }
 
-  public function region($country_code, $post_code) {
+  public function region($country_code, $post_code, $city) {
     Yii::import('application.modules.delivery.models.RegionDelivery');
     Yii::import('application.modules.delivery.models.Zone');
     $this->getDbCriteria()->mergeWith(array(
@@ -163,13 +188,13 @@ class Delivery extends CActiveRecord {
           ),
         ),
       ),
-      'condition' => ':pcode REGEXP zones.post_code AND region.country_code=:ccode AND zones.country_code=:ccode AND t.active=1',
-      'params' => array(':ccode' => $country_code, ':pcode' => $post_code)
+      'condition' => '(:pcode REGEXP zones.post_code AND region.country_code=:ccode AND zones.country_code=:ccode OR t.zone_type_id IN (4,6) OR t.zone_type_id=3 AND :city=0 OR t.zone_type_id=5 AND :city=1) AND t.active=1',
+      'params' => array(':ccode' => $country_code, ':pcode' => $post_code, ':city' => empty($city))
     ));
     return $this;
   }
 
-  public static function getDeliveryList($country_code, $post_code, $model) {
+  public static function getDeliveryList($country_code, $post_code, $city, $model, Order $order) {
 
     Yii::import('application.modules.delivery.models.DeliveryRate');
     Yii::import('application.modules.delivery.models.Region');
@@ -216,7 +241,15 @@ class Delivery extends CActiveRecord {
     array_multisort($product_lengths, SORT_DESC, $product_widths, SORT_DESC
         , $product_heights, SORT_DESC, $product_widths, SORT_DESC, $product_sizes);
 
-    $models = self::model()->region($country_code, $post_code)->findAll();
+    Yii::import('application.modules.delivery.models.NrjLocation');
+    $pref = '^';
+    $suff = '($|\\(|\\*|\\,|\\ )';
+    $location = NrjLocation::model()->find('LOWER(name) REGEXP :name', array(':name' => $pref . mb_strtolower(quotemeta(trim($city)), 'UTF-8') . $suff));
+    $location_from = NrjLocation::model()->find('LOWER(name) REGEXP :name', array(':name' => $pref . mb_strtolower(quotemeta(trim(Yii::app()->params['city'])), 'UTF-8') . $suff));
+    if (!$location || $location == $location_from)
+      $city = ''; //exclude Energy delivery
+
+    $models = self::model()->region($country_code, $post_code, $city)->findAll();
 
     $list = array();
     $list_oversize = array();
@@ -235,33 +268,48 @@ class Delivery extends CActiveRecord {
         }
 
         $price = 0;
+        $nrj_weght = 0;
+        $nrj_places = 0;
         foreach ($parcels['parcels'] as $parcel) {
 
           $oversize = isset($parcel['oversize']) && $parcel['oversize'] ? 1 + $delivery->oversize / 100 : 1;
 
-          $deliveryRate = self::getDeliveryRate($delivery, $parcel['weight']);
-          if ($deliveryRate)
-            $price += $deliveryRate->price * $oversize;
-          else {
-            $deliveryMaxRate = DeliveryRate::model()->findByAttributes(array(
-              'delivery_id' => $delivery->id,
-              'region_id' => $delivery->regionDeliveries[0]->region_id,
-                ), array(
-              'order' => 'weight DESC',
-            ));
-            /* @var $deliveryMaxRate DeliveryRate */
-            $addition_weight = ceil($parcel['weight'] - $deliveryMaxRate->weight);
-            $price += ($deliveryMaxRate->price + $delivery->regionDeliveries[0]->weight_rate * $addition_weight) *
-                $oversize;
+          switch ($delivery->zone_type_id) {
+            case 3:
+              $nrj_places++;
+              $nrj_weght += $parcel['weight'];
+              break;
+            case 4:
+            case 5:
+            case 6:
+              break;
+            default :
+              $deliveryRate = self::getDeliveryRate($delivery, $parcel['weight']);
+              if ($deliveryRate)
+                $price += $deliveryRate->price * $oversize;
+              else {
+                $deliveryMaxRate = DeliveryRate::model()->findByAttributes(array(
+                  'delivery_id' => $delivery->id,
+                  'region_id' => $delivery->regionDeliveries[0]->region_id,
+                    ), array(
+                  'order' => 'weight DESC',
+                ));
+                /* @var $deliveryMaxRate DeliveryRate */
+                $addition_weight = ceil($parcel['weight'] - $deliveryMaxRate->weight);
+                $price += ($deliveryMaxRate->price + $delivery->regionDeliveries[0]->weight_rate * $addition_weight) * $oversize;
+              }
           }
         }
 
         Yii::import('application.modules.payments.models.Currency');
         Yii::import('application.modules.payments.models.CurrencyRate');
-        if ($item instanceof Cart)
-          $currency = Currency::model()->findByCountry(ProfileController::getProfile()->price_country);
+        if (Yii::app()->params['mcurrency'])
+          if ($item instanceof Cart)
+            $currency = Currency::model()->findByCountry(ProfileController::getProfile()->price_country);
+          else
+            $currency = Currency::model()->findByPk($model->currency_code);
         else
-          $currency = Currency::model()->findByPk($model->currency_code);
+          $currency = Currency::model()->findByCountry(Yii::app()->params['country']);
         /* @var $currency Currency */
         if ($delivery->currency_code != $currency->code) {
           $curency_rate = CurrencyRate::model()->findByAttributes(array(
@@ -277,15 +325,57 @@ class Delivery extends CActiveRecord {
         else
           $price = round($price);
 
-        if (is_array($model)) {
+        if (is_array($model)) { //if model is carts array
           $output = CHtml::tag('span', array(
                 'class' => 'bold',
                 'price' => $price,
                   ), $delivery->name);
 
-          $_SESSION['storage']['delivery'][$delivery->id]['summ'] = $price;
-
-          $output .= ' (' . $delivery->description . ') ' . CHtml::tag('span', array('class' => 'red delivery-price'), $price . $currency->class);
+          switch ($delivery->zone_type_id) {
+            case 3: //it's Energy delivery company
+              if (!isset($nrj_deliveries))
+                if ($location && $location != $location_from) {
+                  $nrj_ch = curl_init("http://api.nrg-tk.ru/api/rest/?method=nrg.calculate&from=$location_from->id&to=$location->id&weight=$nrj_weght&volume=0&place=$nrj_places");
+                  curl_setopt($nrj_ch, CURLOPT_RETURNTRANSFER, TRUE);
+                  curl_setopt($nrj_ch, CURLOPT_HEADER, FALSE);
+                  $nrj_get = curl_exec($nrj_ch);
+                  curl_close($nrj_ch);
+                  $nrj_deliveries = json_decode($nrj_get, TRUE);
+                }
+                else
+                  continue 2;
+              if (isset($nrj_deliveries['rsp']['stat']) && $nrj_deliveries['rsp']['stat'] == 'ok') {
+                reset($nrj_deliveries['rsp']['values']);
+                $value = FALSE;
+                while ($v = each($nrj_deliveries['rsp']['values']))
+                  if ($v[1]['type'] == $delivery->nrjType) {
+                    $value = $v[1];
+                    break;
+                  }
+                if ($value) {
+                  $output = CHtml::tag('span', array(
+                        'class' => 'bold',
+                        'price' => $value['price'],
+                          ), $delivery->name);
+                  $_SESSION['storage']['delivery'][$delivery->id]['summ'] = $value['price']; //save price for order edit
+                  $output .= ' (' . $delivery->transportType . " доставка {$value['term']}) " . CHtml::tag('span', array('class' => 'red delivery-price'), $value['price'] . $currency->class);
+                  break;
+                }
+              }
+              continue 2;
+            case 4: //it's customer delivery company
+              $_SESSION['storage']['delivery'][$delivery->id]['summ'] = $price; //save price for order
+              $output .= '<br>' . CHtml::activeTextField($order, 'customer_delivery') . '<br>(' . $delivery->description . ')';
+              break;
+            case 5:
+            case 6:
+              $_SESSION['storage']['delivery'][$delivery->id]['summ'] = $price; //save price for order
+              $output .= ' (' . $delivery->description . ') ';
+              break;
+            default :
+              $_SESSION['storage']['delivery'][$delivery->id]['summ'] = $price; //save price for order
+              $output .= ' (' . $delivery->description . ') ' . CHtml::tag('span', array('class' => 'red delivery-price'), $price . $currency->class);
+          }
           $list[$delivery->id] = $output;
         }
         else {
@@ -293,7 +383,7 @@ class Delivery extends CActiveRecord {
           $list['options'][$delivery->id] = $delivery->name;
         }
       }
-    if (is_array($model)) {
+    if (is_array($model)) {//if model is carts array
       $output = '';
       if (count($list) > 0)
         return $list;
@@ -346,7 +436,7 @@ class Delivery extends CActiveRecord {
     //check if there are items that oversize for size method 0 or overweight for size method 1
     $oversize_items = array();
     switch ($delivery->size_method_id) {
-      case 0:
+      case 1:
         foreach ($items as $item)
           if ($item[0] > $volume[0] || $item[1] > $volume[1] || $item[2] > $volume[2] ||
               $item[0] > $volume[0] || $item[2] > $volume[1] || $item[1] > $volume[2] ||
@@ -364,7 +454,7 @@ class Delivery extends CActiveRecord {
               $oversize_items[] = $item[4];
           }
 //        break;
-      case 1:
+      case 2:
         foreach ($items as $item)
           if ($item[3] > $delivery->max_weight)
             $oversize_items[] = $item[4];
@@ -375,13 +465,13 @@ class Delivery extends CActiveRecord {
 
     $parcels = array();
     switch ($delivery->size_method_id) {
-      case 0:
+      case 1:
         while (count($items) > 0) {
           $parcels['parcels'][] = array('weight' => self::makeParcel(&$items, $volume, $delivery));
         }
         $parcels['result'] = true;
         break;
-      case 1:
+      case 2:
         while (count($items) > 0) {
           $parcel_items = array();
           $weight = 0;
@@ -448,12 +538,12 @@ class Delivery extends CActiveRecord {
           $height = max(array($data['height'], $volume[5] + $item[$orientation[2]]));
 
           switch ($delivery->size_method_id) {
-            case 0:
+            case 1:
               $size_summ = $length + ($width + $height) * 2;
               if ($size_summ > $delivery->size_summ)
                 continue 2;
               break;
-            case 1:
+            case 2:
 //              $data['oversize'] = ($length > $delivery->length) || $data['oversize'];
               break;
           }

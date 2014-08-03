@@ -7,7 +7,7 @@ $this->pageTitle = Yii::app()->name . ' - ' . 'Восстановить паро
 ?>
 
 <div class="container" id="page">
-  <h1 style="margin-top: 2em" class="cufon blue bold">Восстановить пароль</h1>
+  <h1 style="margin-top: 2em" class="blue bold">Восстановить пароль</h1>
     <?php if (Yii::app()->user->hasFlash('recoveryMessage')): ?>
     <div class="success">
     <?php echo Yii::app()->user->getFlash('recoveryMessage'); ?>

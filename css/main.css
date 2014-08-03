@@ -291,6 +291,7 @@ div.search-form
 
 .inline-blocks > div{
   display: inline-block;
+  vertical-align: top;
 }
 
 .table{

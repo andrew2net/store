@@ -248,6 +248,9 @@ class SiteController extends Controller {
     if (isset($_GET['country'])) {
       $condition .= ' AND net_country.code=:country';
       $params[':country'] = $_GET['country'];
+    }elseif (Yii::app()->params['country']) {
+      $condition .= ' AND net_country.code=:country';
+      $params[':country'] = Yii::app()->params['country'];
     }
 
     $suggest_cities = Yii::app()->db->createCommand()

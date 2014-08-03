@@ -22,10 +22,14 @@
  * @property User $user 
  * @property Price $price 
  * @property string $entity 
+ * 
+ * @property string $city_l City from Enegy list
  */
 class CustomerProfile extends CActiveRecord {
 
-  private static $entities = array('Юридическое лицо / ИП', 'Частное лицо');
+  public $city_l; //city from Energy list
+  public $other_city;
+  private static $entities = array(1 => 'Юридическое лицо / ИП', 2 => 'Частное лицо');
 
   public static function getEntities() {
     return self::$entities;
@@ -55,8 +59,9 @@ class CustomerProfile extends CActiveRecord {
       array('post_code', 'postCodeValidate'),
       array('address', 'length', 'max' => 255),
       array('phone', 'length', 'max' => 20),
+      array('other_city', 'boolean'),
       array('country_code, price_country', 'length', 'max' => 2),
-      array('city', 'length', 'max' => 100),
+      array('city, city_l', 'length', 'max' => 100),
       array('phone, city, post_code, address', 'filter', 'filter' => array($obj = new CHtmlPurifier(), 'purify')),
       // The following rule is used by search().
       // @todo Please remove those attributes that should not be searched.
@@ -104,7 +109,8 @@ class CustomerProfile extends CActiveRecord {
       'address' => 'Адрес',
       'price_country' => 'Валюта цен',
       'price_id' => 'Прайс',
-      'entity_id' => 'Юр./физ. лицо'
+      'entity_id' => 'Юр./физ. лицо',
+      'other_city' => 'Другой населенный пункт',
     );
   }
 
@@ -155,9 +161,45 @@ class CustomerProfile extends CActiveRecord {
   }
 
   public function afterFind() {
+    Yii::import('application.modules.delivery.models.NrjLocation');
     parent::afterFind();
     if (is_null($this->entity_id))
       $this->entity_id = Yii::app()->params['legal_entity'];
+
+    $pref = '^';
+    $suff = '($|\\(|\\*|\\,|\\ )';
+    $nrj = NrjLocation::model()->find('LOWER(name) REGEXP :name', array(':name' => $pref . mb_strtolower(quotemeta(trim($this->city)), 'UTF-8') . $suff));
+    if ($nrj) {
+      $this->city_l = $nrj->name;
+      $this->city = '';
+      $this->other_city = FALSE;
+    }
+    else
+      $this->other_city = TRUE;
+  }
+
+  public function beforeSave() {
+    if (!$this->other_city)
+      $this->city = $this->city_l;
+    return parent::beforeSave();
+  }
+
+  public function afterSave() {
+    if (!$this->other_city)
+      $this->city = '';
+    parent::afterSave();
+  }
+
+  public function beforeValidate() {
+    if (!$this->other_city)
+      $this->city = $this->city_l;
+    return parent::beforeValidate();
+  }
+
+  public function afterValidate() {
+    if (!$this->other_city)
+      $this->city = '';
+    parent::afterValidate();
   }
 
 }

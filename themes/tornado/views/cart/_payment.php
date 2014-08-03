@@ -1,6 +1,6 @@
 <?php
 /* @var $order Order */
-/* @var $payment Payment */
+/* @var $payment array */
 ?>
 
 <div style="width: 445px; vertical-align: top">

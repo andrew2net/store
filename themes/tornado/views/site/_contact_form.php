@@ -19,7 +19,7 @@
     echo $form->radioButtonList($customer_profile, 'entity_id', CustomerProfile::getEntities()
         , array('separator' => ' ', 'id' => 'entity_id'));
     ?></div>
-  <div class="legal-entity" style="display: <?php echo ($customer_profile->entity_id == 0 ? 'inherit' : 'none'); ?>">
+  <div class="legal-entity" style="display: <?php echo ($customer_profile->entity_id == 1 ? 'inherit' : 'none'); ?>">
     <div class="inline-blocks" style="margin-bottom: 20px">
       <div style="width: 70px">
         <?php
@@ -82,7 +82,7 @@
   </div>
   <div class="inline-blocks" style="margin-bottom: 20px">
     <!--      <div style="width: 250px">
-            <div><?php // echo $form->labelEx($customer_profile, 'post_code');               ?></div>
+            <div><?php // echo $form->labelEx($customer_profile, 'post_code');                       ?></div>
             <div>
     <?php // echo $form->textField($customer_profile, 'post_code', array('style' => 'width:120px'));   ?>
             </div>
@@ -91,21 +91,43 @@
     <div style="width: 250px">
       <div><?php echo $form->labelEx($customer_profile, 'city'); ?></div>
       <div><?php
-        $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
-          'id' => 'cart-city',
-          'model' => $customer_profile,
-          'attribute' => 'city',
-          'sourceUrl' => '/site/suggestcity',
-          'htmlOptions' => array('class' => 'input-text')
-        ));
-        ?>
-      </div>
-      <?php echo $form->error($customer_profile, 'city', array('style' => 'width:230px', 'class' => 'red')); ?>
+        $city_options = array('empty' => 'Выберите населенный пункт');
+        $other_options = array('class' => 'input-text');
+        if ($customer_profile->other_city)
+          $city_options['disabled'] = TRUE;
+        else
+          $other_options['disabled'] = TRUE;
+
+        echo $form->dropDownList($customer_profile, 'city_l'
+            , CHtml::listData(NrjLocation::model()->findAll(array('order' => 'name')), 'name', 'name')
+            , $city_options);
+        ?></div>
     </div>
     <div style="width: 425px">
       <div><?php echo $form->labelEx($customer_profile, 'address'); ?></div>
       <div><?php echo $form->textField($customer_profile, 'address', array('style' => 'width:405px')); ?></div>
       <?php echo $form->error($customer_profile, 'address', array('class' => 'red')); ?>
+    </div>
+  </div>
+  <div class="inline-blocks" style="margin-bottom: 10px">
+    <div>
+      <?php echo $form->checkBox($customer_profile, 'other_city'); ?>
+      <?php echo $form->label($customer_profile, 'other_city'); ?>
+    </div>
+  </div>
+  <div class="inline-blocks" style="margin-bottom: 20px">
+    <div style="width: 250px">
+      <div><?php
+        $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
+          'id' => 'cart-city',
+          'model' => $customer_profile,
+          'attribute' => 'city',
+          'sourceUrl' => '/site/suggestcity',
+          'htmlOptions' => $other_options,
+        ));
+        ?>
+      </div>
+      <?php echo $form->error($customer_profile, 'city', array('style' => 'width:230px', 'class' => 'red')); ?>
     </div>
   </div>
   <?php if (isset($order)) { ?>
@@ -131,17 +153,35 @@
   <?php } ?>
 </fieldset>
 <script type="text/javascript">
-  var entity = $('#CustomerProfile_entity_id');
-  var legalEntity = $('.legal-entity');
+  $(document).ready(function() {
+    var entity = $('#CustomerProfile_entity_id');
+    var legalEntity = $('.legal-entity');
+    var cartSubmit = $('#cart-submit');
 
-  $('#CustomerProfile_entity_id > input').change(function() {
-    var id = entity.find('input:checked').val();
-    switch (id) {
-      case '0':
-        legalEntity.show();
-        break;
-      default:
-        legalEntity.hide();
-    }
+    $('#CustomerProfile_entity_id > input').change(function() {
+      var id = entity.find('input:checked').val();
+      switch (id) {
+        case '1':
+          legalEntity.show();
+          break;
+        default:
+          legalEntity.hide();
+      }
+
+    });
+    var city = $('#CustomerProfile_city_l');
+    var other = $('#cart-city');
+    $('#CustomerProfile_other_city').change(function() {
+      cartSubmit.hide();
+      if ($('input#CustomerProfile_other_city:checkbox:checked').val()) {
+        city.prop('disabled', true);
+        other.prop('disabled', false);
+        other.focus();
+      }else{
+        city.prop('disabled', false);
+        other.prop('disabled', true);
+        city.focus();
+      }
+    });
   });
 </script>

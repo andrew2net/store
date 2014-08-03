@@ -27,12 +27,16 @@ $this->widget('ext.bootstrap.widgets.TbGridView', array(
   'dataProvider' => $dataProvider,
   'columns' => array(
     'name',
+    array(
+      'name' => 'transport_type_id',
+      'value' => '$data->transportType'
+    ),
     'description',
     array(
-      'name'=>'active',
+      'name' => 'active',
       'value' => '$data->active ? "&#10003;" : ""',
       'type' => 'html',
-      ),
+    ),
     array(
       'class' => 'bootstrap.widgets.TbButtonColumn',
       'template' => '{update}{delete}',

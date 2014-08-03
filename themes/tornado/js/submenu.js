@@ -11,11 +11,6 @@ Number.prototype.formatMoney = function(c, d, t) {
 
 var price_mess;
 function showTooltip(id, data) {
-//  price_mess.html($('#price-header').attr('title'));
-//  price_mess.show('bounce');
-//  setTimeout(function() {
-//    price_mess.hide('blind')
-//  }, 2000);
 }
 
 $(document).ready(function() {

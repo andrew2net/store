@@ -10,6 +10,15 @@ $this->beginContent('/layout/menu');
 ?>
 <h3>Виды оплаты</h3>
 
+<div class="btn-toolbar">
+  <?php
+  echo TbHtml::linkButton('Добавить вид оплаты', array(
+    'color' => TbHtml::BUTTON_COLOR_PRIMARY,
+    'url' => '/admin/payments/default/create',
+  ));
+  ?>
+</div>
+
 <?php
 $this->widget('ext.bootstrap.widgets.TbGridView', array(
   'dataProvider' => $payment,

@@ -22,6 +22,7 @@
  * @property integer $call_time_id
  * @property string $description
  * @property string $currency_code
+ * @property string $customer_delivery 
  *
  * The followings are the available model relations:
  * @property Coupon $coupon
@@ -98,8 +99,8 @@ class Order extends CActiveRecord {
   public function rules() {
     // NOTE: you should only define rules for those attributes that
     // will receive user inputs.
-    return array(
-      array('profile_id, delivery_id, payment_id, status_id, post_code, country_code, currency_code', 'required'),
+    $rules = array(
+      array('profile_id, delivery_id, payment_id, status_id, country_code, currency_code', 'required'),
       array('profile_id, delivery_id, payment_id, coupon_id', 'length', 'max' => 11),
       array('status_id', 'length', 'max' => 1),
       array('profile_id, delivery_id, payment_id, status_id, coupon_id',
@@ -107,17 +108,21 @@ class Order extends CActiveRecord {
       array('phone', 'length', 'max' => 20),
       array('delivery_summ', 'numerical'),
       array('email', 'email'),
-      array('fio, email', 'length', 'max' => 255),
+      array('fio, email, customer_delivery', 'length', 'max' => 255),
       array('post_code', 'length', 'min' => 6, 'max' => 6),
       array('country_code', 'length', 'max' => 2),
       array('currency_code', 'length', 'max' => 3),
       array('city', 'length', 'max' => 100),
       array('time, address, description', 'safe'),
-      array('fio, email, phone, address, description, post_code, city', 'filter', 'filter' => array($obj = new CHtmlPurifier(), 'purify')),
+      array('fio, email, phone, address, description, post_code, city, customer_delivery',
+        'filter', 'filter' => array($obj = new CHtmlPurifier(), 'purify')),
       // The following rule is used by search().
       // @todo Please remove those attributes that should not be searched.
       array('id, email, profile_email, fio, profile_fio, phone, profile_phone, city, address, delivery_id, payment_id, status_id, coupon_id, time', 'safe', 'on' => 'search'),
     );
+    if (Yii::app()->params['post_code'])
+      $rules = array_merge($rules, array(array('post_code', 'required')));
+    return $rules;
   }
 
   /**
@@ -167,6 +172,7 @@ class Order extends CActiveRecord {
       'description' => 'Коменнтарий',
       'summ' => 'Сумма',
       'currency_code' => 'Валюта заказа',
+      'customer_delivery' => 'Транспортная компания покупателя',
     );
   }
 

@@ -109,10 +109,10 @@ class RecoveryController extends Controller {
     Yii::app()->end();
   }
 
-  private function sendMail($user) {
-    $profile = CustomerProfile::model()->findByAttributes(array('user_id' => $user->id));
-    if (is_null($profile))
-      $profile = CustomerProfile::model()->findByAttributes(array(
+  private function sendMail(User $user) {
+    $customer_profile = CustomerProfile::model()->findByAttributes(array('user_id' => $user->id));
+    if (is_null($customer_profile))
+      $customer_profile = CustomerProfile::model()->findByAttributes(array(
         'session_id' => SiteController::getSession()));
     $activation_url = 'http://' . $_SERVER['HTTP_HOST'] . $this->createUrl(implode(Yii::app()->controller->module->recoveryUrl), array("activkey" => $user->activkey, "email" => $user->email));
     $subject = UserModule::t("You have requested the password recovery site {site_name}", array(
@@ -125,12 +125,12 @@ class RecoveryController extends Controller {
     $mail = new YiiMailMessage($subject);
     $mail->view = 'recoveryPassword';
     $params = array(
-      'profile' => $profile,
+      'profile' => $user->profile,
       'message' => $message,
     );
     $mail->setBody($params, 'text/html');
     $mail->setFrom(Yii::app()->params['infoEmail']);
-    $mail->setTo(array($user->email => is_null($profile) ? '' : $profile->fio));
+    $mail->setTo(array($user->email => $user->profile->first_name . ' ' . $user->profile->last_name));
     Yii::app()->mail->send($mail);
   }
 

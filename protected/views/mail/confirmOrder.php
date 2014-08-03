@@ -10,7 +10,7 @@
   </head>
   <body>
     <?php
-    echo CHtml::tag('div', array('style' => 'font-size:16pt;font-weight:bold;margin-bottom:1em'), 'Здравствуйте ' . $profile->fio . '!');
+    echo CHtml::tag('div', array('style' => 'font-size:16pt;font-weight:bold;margin-bottom:1em'), 'Здравствуйте ' . $order->fio . '!');
     echo CHtml::tag('div', array(), 'Ваш заказ принят. В ближайшее время наши менеджеры свяжутся Вами.');
     $params = array(
       'order' => $order,

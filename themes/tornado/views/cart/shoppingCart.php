@@ -3,7 +3,7 @@
 /* @var $customer_profile CustomerProfile */
 /* @var $order Order */
 /* @var $delivery array */
-/* @var $payment Payment */
+/* @var $payment array */
 /* @var $currency Currency */
 /* @var $has_err string */
 /* @var $price_type Price */
@@ -90,14 +90,16 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
         <div class="bold gray" style="font-size: 12pt; margin-bottom: 20px">Способ доставки</div>
         <div id="cart-delivery">
           <?php
-          $this->renderPartial('_delivery', array(
-            'order' => $order,
-            'delivery' => $delivery,
-            'currency' => $currency,
-          ));
+          if (isset($delivery))
+            $this->renderPartial('_delivery', array(
+              'order' => $order,
+              'delivery' => $delivery,
+              'currency' => $currency,
+            ));
           ?>
         </div>
-        <div id="delivery-hint" class="red" <?php echo ($delivery ? 'style="display: none"' : ''); ?>>Укажите страну и индекс</div>
+        <div id="delivery-loading" class="loading" style="position: relative; display: none; top: 15px"></div>
+        <div id="delivery-hint" class="red" style="display: none">Укажите город или населенный пункт</div>
       </div>
       <div style="vertical-align: top">
         <?php
@@ -113,28 +115,20 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
     <div class="bold" style="font-size: 18pt; width: 600px; vertical-align: bottom">
       <span>общая сумма заказа: </span><span class="red"><span id="cart-total"></span><?php echo $currency->class; ?></span>
     </div>
-    <div id="cart-submit" class="main-submit">
+    <div id="cart-submit" class="main-submit" style="display: none">
       <div>Оформить заказ</div>
       <?php // echo CHtml::button('', array('id' => 'cart-submit'));   ?>
     </div>
   </div>
   <div id="cart-login-dialog">
-    <div>Пользователь с адресом электройнной почты <span id="email-dialog" style="color: rgb(51, 153, 204)"></span> уже зарегистрирован на этом сайте.</div>
-    <div style="margin: 1em 0 2em">Чтобы войти в личный кабинет, небходимо ввести пароль.</div>
-    <?php echo CHtml::label('Пароль', 'password'); ?>
-    <?php echo CHtml::passwordField('password'); ?>
-    <?php echo CHtml::Button('Вход', array('id' => 'submit-password')); ?>
-    <span class="red" id="passw-err"></span>
-    <div style="margin-top: 1em">
-      Забыли пароль? <?php echo CHtml::Button('Восстановить', array('id' => 'recover-password')); ?>
-      <img src="/images/process.gif" style="display: none; vertical-align: middle; margin-left: 15px" id="loading-dialog" />
-    </div>
-    <div id="sent-mail-recovery" style="height: 40px"></div>
-    <div id="close-cart-dialog" class="blue" style="text-align: right; font-size: 9pt; margin-top: 1em; cursor: pointer">Закрыть окно</div>
   </div>
   <?php
   $this->endWidget();
-  Yii::app()->getClientScript()->registerCoreScript('jquery.ui');
-  Yii::app()->getClientScript()->registerScriptFile("/themes/tornado/js/shoppingCart.js", CClientScript::POS_END);
+  $cart_css = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'cart.css';
+  $url = Yii::app()->getAssetManager()->publish($cart_css);
+  $cs = Yii::app()->getClientScript();
+  $cs->registerCssFile($url);
+  $cs->registerCoreScript('jquery.ui');
+  $cs->registerScriptFile("/themes/tornado/js/shoppingCart.js", CClientScript::POS_END);
   ?>
 </div>

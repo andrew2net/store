@@ -49,6 +49,7 @@ class ProfileController extends Controller {
         if ($valid) {
           Yii::app()->user->setFlash('saveProfile', "Контактная информация обновлена");
           $tr->commit();
+          $this->redirect('profile');
         }
         else
           $tr->rollback();
@@ -224,7 +225,7 @@ class ProfileController extends Controller {
         $profile->user_id = Yii::app()->user->id;
     }
 
-    if (empty($profile->city) || empty($profile->price_country)) {
+    if (empty($profile->city) && empty($profile->city_l) || empty($profile->price_country)) {
       $req = new CHttpRequest;
       if (isset(Yii::app()->params['ip']))
         $ip = Yii::app()->params['ip'];
@@ -232,7 +233,7 @@ class ProfileController extends Controller {
         $ip = $req->userHostAddress;
       
       $int = sprintf("%u", ip2long($ip));
-      if (empty($profile->city)) {
+      if (empty($profile->city) && empty($profile->city_l)) {
         $ru_data = Yii::app()->db->createCommand("select * from (select * from net_ru where begin_ip<=$int order by begin_ip desc limit 1) as t where end_ip>=$int")->query();
         if ($row = $ru_data->read()) {
           $city_id = $row['city_id'];
@@ -240,7 +241,7 @@ class ProfileController extends Controller {
           if ($city = $ru_city->read())
             $profile->city = $city['name_ru'];
         }
-        if (empty($profile->city)) {
+        if (empty($profile->city) && empty($profile->city_l)) {
           $glob_data = Yii::app()->db->createCommand("select * from (select * from net_city_ip where begin_ip<=$int order by begin_ip desc limit 1) as t where end_ip>=$int")->query();
           if ($row = $glob_data->read()) {
             $city_id = $row['city_id'];
@@ -303,35 +304,11 @@ class ProfileController extends Controller {
     return self::$countries[$code];
   }
 
-  public function actionCheckEmail() {
-    if (isset($_POST['email'])) {
-      $user = User::model()->findByAttributes(array('email' => $_POST['email']));
-      if (Yii::app()->user->isGuest)
-        if (is_null($user))  //new user
-          echo 'ok';
-        else                 //need sign up
-          echo '';
-      else {
-        if (is_null($user)) { //new email
-//          Yii::app()->user->update(array('email' => $_POST['email']));
-          echo 'ok';
-        }
-        else if ($user->id != Yii::app()->user->id)  //there is user with same email
-          echo '';
-        else                //signed up
-          echo 'ok';
-      }
-    }
-    else
-      echo 'ok';
-    Yii::app()->end();
-  }
-
-  public static function registerUser($profile) {
-    $user = new User;
-    $user->email = $profile->email;
+  public static function registerUser(CustomerProfile $profile, User $user) {
+//    $user = new User;
+//    $user->email = $profile->email;
     $user->usernameGenerator();
-    $sourcePassword = $user->generate_password();
+    $sourcePassword = User::generate_password();
     $user->activkey = UserModule::encrypting(microtime() . $sourcePassword);
     $user->password = UserModule::encrypting($sourcePassword);
     $user->superuser = 0;

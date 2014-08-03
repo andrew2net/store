@@ -20,14 +20,14 @@
  */
 class Payment extends CActiveRecord {
 
-  private $types = array('Наличными', 'Монета', 'Wallet One');
+  private static $types = array('Наличными', 'Монета', 'Wallet One', 'На расчетный счет');
 
-  public function getTypes() {
-    return $this->types;
+  public static function getTypes() {
+    return self::$types;
   }
 
   public function getType() {
-    return $this->types[$this->type_id];
+    return self::$types[$this->type_id];
   }
 
   /**
@@ -125,7 +125,7 @@ class Payment extends CActiveRecord {
       /* @var $payment Payment */
       $output = CHtml::tag('div', array('class' => 'payment-' . ($payment->type_id > 0 ? 'cart' : 'cash')));
       $output .= CHtml::closeTag('div');
-      $output .= CHtml::tag('div', array('style' => 'display:inline-block;width:320px'));
+      $output .= CHtml::tag('div', array('style' => 'display:inline-block;width:320px;position:relative;bottom:8px'));
       $output .= CHtml::tag('div', array(
             'class' => 'bold',
             'style' => 'margin-bottom:5px',

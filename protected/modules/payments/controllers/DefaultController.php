@@ -12,6 +12,18 @@ class DefaultController extends Controller {
     );
   }
 
+  public function actionCreate() {
+    $payment = new Payment;
+
+    if (isset($_POST['Payment'])) {
+      $payment->attributes = $_POST['Payment'];
+      if ($payment->save())
+        $this->redirect('/admin/payments');
+    }
+
+    $this->render('create', array('payment' => $payment));
+  }
+
   public function actionIndex() {
     $payment = new CActiveDataProvider(Payment::model());
     $this->render('index', array('payment' => $payment));
