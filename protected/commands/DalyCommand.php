@@ -16,7 +16,8 @@ class DalyCommand extends CConsoleCommand {
     /* @var $command CDbCommand */
 
     //get Energy locations
-    $nrj = $command->select('id')->from('store_delivery')->where('zone_type_id=2')->queryRow();
+    $nrj = $command->select('id')->from('store_delivery')->where('zone_type_id=3')->queryRow();
+    echo $nrj;
     if ($nrj) {
       echo $db;
       $tr = $db->beginTransaction();
