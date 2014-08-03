@@ -24,6 +24,8 @@ class DalyCommand extends CConsoleCommand {
         curl_setopt($nrj_ch, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($nrj_ch, CURLOPT_HEADER, FALSE);
         $nrj_get = curl_exec($nrj_ch);
+        echo 'nrj';
+        echo $nrj_get;
         curl_close($nrj_ch);
         $locations = json_decode($nrj_get, TRUE);
         if (isset($locations['rsp']) && $locations['rsp']['stat'] == 'ok') {
