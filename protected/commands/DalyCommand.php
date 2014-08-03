@@ -13,16 +13,17 @@ class DalyCommand extends CConsoleCommand {
     else
       $db = Yii::app()->db;
     $command = $db->createCommand();
-    echo 'comm';
     /* @var $command CDbCommand */
 
     //get Energy locations
     $nrj = $command->select('id')->from('store_delivery')->where('zone_type_id=2')->queryRow();
-    echo 'nrj';
     if ($nrj) {
       $tr = $db->beginTransaction();
+      echo 'tr\n';
       try {
+        echo 'try\n';
         $nrj_ch = curl_init('http://api.nrg-tk.ru/api/rest/?method=nrg.get.locations');
+        echo 'curl\n';
         curl_setopt($nrj_ch, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($nrj_ch, CURLOPT_HEADER, FALSE);
         $nrj_get = curl_exec($nrj_ch);
