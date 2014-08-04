@@ -122,6 +122,8 @@ class Order extends CActiveRecord {
     );
     if (Yii::app()->params['post_code'])
       $rules = array_merge($rules, array(array('post_code', 'required')));
+    if (Yii::app()->params['country'])
+      $rules = array_merge($rules, array(array('country_code', 'default', 'value' => Yii::app()->params['country'])));
     return $rules;
   }
 

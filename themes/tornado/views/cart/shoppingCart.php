@@ -7,6 +7,7 @@
 /* @var $currency Currency */
 /* @var $has_err string */
 /* @var $price_type Price */
+/* @var $minsumm float */
 
 $this->pageTitle = Yii::app()->name . ' - Корзина';
 ?>
@@ -72,7 +73,8 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
         <td></td>
       </tr>
     </table>
-    <p><span class="red">*</span> - скидка по купону предоставляется только на товары без скидки</p>
+    <span class="right bold" style="font-size: 12pt; margin-right: 90px">Минимальная сумма заказа <span class="red"><?php echo $minsumm . $currency->class; ?></span></span>
+    <span><span class="red">*</span> - скидка по купону предоставляется только на товары без скидки</span>
   </fieldset>
   <?php
   $this->renderPartial('//site/_contact_form', array(
@@ -132,3 +134,6 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
   $cs->registerScriptFile("/themes/tornado/js/shoppingCart.js", CClientScript::POS_END);
   ?>
 </div>
+<script type="text/javascript">
+  var minsumm = <?php echo $minsumm ; ?>;
+</script>

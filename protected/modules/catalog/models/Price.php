@@ -126,10 +126,13 @@ class Price extends CActiveRecord {
     else
       $price = self::model()->find(array('order' => 'summ'));
     $profile = ProfileController::getProfile();
-    if ($profile->price && $profile->price->summ > $price->summ)
+    if ($profile->price_id && $profile->price->summ > $price->summ)
       return $profile->price;
     else
       return $price;
   }
 
+  public static function getMinimalSumm(){
+    return self::model()->find(array('order' => 'summ'))->summ;
+  }
 }

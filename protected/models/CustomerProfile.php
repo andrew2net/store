@@ -53,8 +53,9 @@ class CustomerProfile extends CActiveRecord {
     // NOTE: you should only define rules for those attributes that
     // will receive user inputs.
     $rules = array(
-      array('city, country_code, address', 'required'),
+      array('city, address', 'required'),
       array('user_id, price_id, entity_id', 'numerical', 'integerOnly' => true),
+      array('entity_id', 'default', 'value' => Yii::app()->params['legal_entity']),
       array('session_id', 'length', 'max' => 32),
       array('post_code', 'postCodeValidate'),
       array('address', 'length', 'max' => 255),
@@ -69,6 +70,10 @@ class CustomerProfile extends CActiveRecord {
     );
     if (Yii::app()->params['post_code'])
       $rules = array_merge($rules, array(array('post_code', 'required')));
+    if (Yii::app()->params['country'])
+      $rules = array_merge($rules, array(array('country_code', 'default', 'value' => Yii::app()->params['country'])));
+    else
+      array('country_code', 'required');
     return $rules;
   }
 
@@ -89,7 +94,7 @@ class CustomerProfile extends CActiveRecord {
     return array(
       'orders' => array(self::HAS_MANY, 'Order', 'profile_id'),
       'country' => array(self::HAS_ONE, 'Country', 'code'),
-      'user' => array(self::HAS_ONE, 'User', '', 'on' => 'user_id=user.id'),
+      'user' => array(self::HAS_ONE, 'User', '', 'on' => 't.user_id=user.id'),
       'price' => array(self::HAS_ONE, 'Price', '', 'on' => 'price_id=price.id')
     );
   }
@@ -163,19 +168,20 @@ class CustomerProfile extends CActiveRecord {
   public function afterFind() {
     Yii::import('application.modules.delivery.models.NrjLocation');
     parent::afterFind();
-    if (is_null($this->entity_id))
-      $this->entity_id = Yii::app()->params['legal_entity'];
 
-    $pref = '^';
-    $suff = '($|\\(|\\*|\\,|\\ )';
-    $nrj = NrjLocation::model()->find('LOWER(name) REGEXP :name', array(':name' => $pref . mb_strtolower(quotemeta(trim($this->city)), 'UTF-8') . $suff));
-    if ($nrj) {
-      $this->city_l = $nrj->name;
-      $this->city = '';
-      $this->other_city = FALSE;
+    $this->other_city = FALSE;
+    if ($this->city) {
+      $pref = '^';
+      $suff = '($|\\(|\\*|\\,|\\ )';
+      $nrj = NrjLocation::model()->find('LOWER(name) REGEXP :name', array(':name' => $pref . mb_strtolower(quotemeta(trim($this->city)), 'UTF-8') . $suff));
+      if ($nrj) {
+        $this->city_l = $nrj->name;
+        $this->city = '';
+        $this->other_city = FALSE;
+      }
+      else
+        $this->other_city = true;
     }
-    else
-      $this->other_city = TRUE;
   }
 
   public function beforeSave() {

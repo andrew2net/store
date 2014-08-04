@@ -11,7 +11,7 @@
   </head>
   <body>
     <div style="font-size:16pt;font-weight:bold;margin-bottom:1em">Здравствуйте!</div>
-    <p style="font-weight:bold">Благодарим Вас за регистрацию в интернет-магазине <a href="<?php echo Yii::app()->createAbsoluteUrl(''); ?>">abc-toy.ru</a></p><br>
+    <p style="font-weight:bold">Благодарим Вас за регистрацию в интернет-магазине <a href="<?php echo Yii::app()->createAbsoluteUrl(''); ?>"><?php echo Yii::app()->name; ?></a></p><br>
     <p>Ваши регистрационные данные:</p>
     <p style="font-weight:bold">Логин: <?php echo $login; ?></p>
     <p style="font-weight:bold">Пароль: <?php echo $passw; ?></p><br>

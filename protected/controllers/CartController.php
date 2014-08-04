@@ -16,6 +16,7 @@ class CartController extends Controller {
 
     $customer_profile = ProfileController::getProfile();
     $cart = Cart::model()->shoppingCart(ProfileController::getSession())->findAll();
+    $minimal_summ = Price::getMinimalSumm();
 
     if ($customer_profile->user) {
       $user = $customer_profile->user;
@@ -80,42 +81,55 @@ class CartController extends Controller {
 
     if (isset($_POST['CustomerProfile'])) {
       $customer_profile->attributes = $_POST['CustomerProfile'];
-      if ($customer_profile->save()) {
-        if (Yii::app()->user->isGuest) {
-          $u = User::model()->findByAttributes(array(
-            'email' => $_POST['User']['email']));
-          if (is_null($u)) {
-            ProfileController::registerUser($customer_profile, $user);
-          }
+      $valid = $customer_profile->save();
+      if (isset($_POST['Profile'])) {
+        $profile->attributes = $_POST['Profile'];
+        $valid = $profile->validate() && $valid;
+      }
+      if (isset($_POST['User'])) {
+        $user->attributes = $_POST['User'];
+        $valid = $user->validate(array('email')) && $valid;
+      }
+      if ($valid && Yii::app()->user->isGuest) {
+        $u = User::model()->findByAttributes(array(
+          'email' => $_POST['User']['email']));
+        if (is_null($u)) {
+          ProfileController::registerUser($customer_profile, $profile, $user);
         }
-        if (isset($_POST['Cart'])) {
-          $count_products = $this->countProducts($coupon);
-          $count_products['summ'] -= $count_products['couponDisc'];
+      }
+      if ($valid) {
+        $valid = $user->save() && $valid;
+        $profile->user_id = $user->id;
+        $valid = $profile->save() && $valid;
+      }
 
-          $fl = FALSE;
-          if ($count_products['summ'] >= 700) {
-            $tr = $order->dbConnection->beginTransaction();
-            try {
-              if (count($cart) > 0) {
-                $this->saveOrderProducts($order, $customer_profile, $profile, $user, $coupon, $count_products);
+      if ($valid && isset($_POST['Cart'])) {
+        $count_products = $this->countProducts($coupon);
+        $count_products['summ'] -= $count_products['couponDisc'];
 
-                foreach ($cart as $item)
-                  $item->delete();
-                $fl = TRUE;
-              }
-              $tr->commit();
-            } catch (Exception $e) {
-              $tr->rollback();
-              throw $e;
+        $fl = FALSE;
+        if ($count_products['summ'] >= $minimal_summ) {
+          $tr = $order->dbConnection->beginTransaction();
+          try {
+            if (count($cart) > 0) {
+              $this->saveOrderProducts($order, $customer_profile, $profile, $user, $coupon, $count_products);
+
+              foreach ($cart as $item)
+                $item->delete();
+              $fl = TRUE;
             }
-            if ($fl) {
-              $this->sendConfirmOrderMessage($order, $customer_profile, $profile, $count_products['couponDisc']);
-              $this->redirect('orderSent');
-            }
+            $tr->commit();
+          } catch (Exception $e) {
+            $tr->rollback();
+            throw $e;
+          }
+          if ($fl) {
+            $this->sendConfirmOrderMessage($order, $customer_profile, $profile, $count_products['couponDisc']);
+            $this->redirect('orderSent');
           }
         }
       }
-      else
+      if (!$valid)
         $has_err = 'prof';
     }else {
       if (is_array($delivery))
@@ -148,6 +162,7 @@ class CartController extends Controller {
       'has_err' => $has_err,
       'currency' => $currency,
       'price_type' => $price_type,
+      'minsumm' => $minimal_summ,
     ));
   }
 
@@ -375,7 +390,7 @@ class CartController extends Controller {
       $params['coupon_discount'] = $coupon_discount;
     $message->setBody($params, 'text/html');
     $message->setFrom(Yii::app()->params['infoEmail']);
-    $message->setTo(array($order->email => $customer_profile->fio));
+    $message->setTo(array($order->email => $profile->first_name . ' ' . $profile->last_name));
     Yii::app()->mail->send($message);
 
     $message->setSubject('Оповещение о заказе');

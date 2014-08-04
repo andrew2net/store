@@ -211,10 +211,10 @@ class ProfileController extends Controller {
   public static function getProfile() {
     Yii::import('application.modules.catalog.models.Price');
     if (Yii::app()->user->isGuest)
-      $profile = CustomerProfile::model()->with('price')->findByAttributes(array(
+      $profile = CustomerProfile::model()->with('price', 'user')->findByAttributes(array(
         'session_id' => self::getSession()));
     else
-      $profile = CustomerProfile::model()->with('price')->findByAttributes(array(
+      $profile = CustomerProfile::model()->with('price', 'user')->findByAttributes(array(
         'user_id' => Yii::app()->user->id));
 
     if (is_null($profile)) {
@@ -304,7 +304,7 @@ class ProfileController extends Controller {
     return self::$countries[$code];
   }
 
-  public static function registerUser(CustomerProfile $profile, User $user) {
+  public static function registerUser(CustomerProfile $customer_profile, Profile $profile, User $user) {
 //    $user = new User;
 //    $user->email = $profile->email;
     $user->usernameGenerator();
@@ -315,29 +315,29 @@ class ProfileController extends Controller {
     $user->lastvisit = time();
     $user->status = User::STATUS_ACTIVE;
     if ($user->save()) {
-      $user_prof = new Profile;
-      $user_prof->user_id = $user->id;
-      $user_prof->save();
+//      $profile = new Profile;
+      $profile->user_id = $user->id;
+      $profile->save();
       $identity = new UserIdentity($user->username, $sourcePassword);
       if ($identity->authenticate()) {
         Yii::app()->user->login($identity, 3600 * 24 * 7);
 
-        $cart = Cart::model()->findAllByAttributes(array('session_id' => $profile->session_id));
+        $cart = Cart::model()->findAllByAttributes(array('session_id' => $customer_profile->session_id));
         foreach ($cart as $item) {
           $item->session_id = NULL;
           $item->user_id = Yii::app()->user->id;
           $item->update(array('session_id', 'user_id'));
         }
 
-        $profile->session_id = null;
-        $profile->user_id = $user->id;
-        $profile->update(array(
+        $customer_profile->session_id = null;
+        $customer_profile->user_id = $user->id;
+        $customer_profile->update(array(
           'session_id',
           'user_id',
         ));
 
         $params = array(
-          'profile' => $profile,
+          'profile' => $customer_profile,
           'login' => $user->email,
           'passw' => $sourcePassword,
         );
@@ -345,7 +345,7 @@ class ProfileController extends Controller {
         $message->view = 'registrInfo';
         $message->setBody($params, 'text/html');
         $message->setFrom(Yii::app()->params['infoEmail']);
-        $message->setTo(array($profile->email => $profile->fio));
+        $message->setTo(array($user->email => $user->profile->first_name . ' ' . $user->profile->last_name));
         Yii::app()->mail->send($message);
       }
     }

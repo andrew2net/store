@@ -77,7 +77,8 @@ $(document).ready(function() {
       var price_f = priceDelivery.formatMoney();
       $('#delivery-summ').html(price_f);
       $('#cart-total').html((priceDelivery + summ).formatMoney());
-      cartSubmit.show();
+      if (summ >= minsumm)
+        cartSubmit.show();
     }
     else {
       $('#delivery-summ').html('');

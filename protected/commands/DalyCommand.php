@@ -19,16 +19,11 @@ class DalyCommand extends CConsoleCommand {
     $nrj = $command->select('id')->from('store_delivery')->where('zone_type_id=3')->queryRow();
     if ($nrj) {
       $tr = $db->beginTransaction();
-      echo 'tr ';
       try {
-        echo 'try ';
         $nrj_ch = curl_init('http://api.nrg-tk.ru/api/rest/?method=nrg.get.locations');
-        echo 'curl ';
         curl_setopt($nrj_ch, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($nrj_ch, CURLOPT_HEADER, FALSE);
         $nrj_get = curl_exec($nrj_ch);
-        echo 'nrj';
-        echo $nrj_get;
         curl_close($nrj_ch);
         $locations = json_decode($nrj_get, TRUE);
         if (isset($locations['rsp']) && $locations['rsp']['stat'] == 'ok') {

@@ -6,15 +6,14 @@
 $this->pageTitle = Yii::app()->name . ' - Вход';
 ?>
 <div class="container" id="page">
-  <?php $this->renderPartial('//site/_topblock'); ?>
 
-  <h1 class="cufon bold blue" style="margin-top: 40px">Вход в личный кабинет</h1>
+  <h1 class="bold blue" style="margin-top: 40px">Вход в личный кабинет</h1>
 
   <?php $form = $this->beginWidget('CActiveForm'); ?>
   <div style="margin: 20px 0">
     <?php
     echo $form->label($loginForm, 'username', array(
-      'class' => 'cufon bold'
+      'class' => 'bold'
     ));
     ?><br>
     <?php
@@ -27,7 +26,7 @@ $this->pageTitle = Yii::app()->name . ' - Вход';
   <div>
     <?php
     echo CHtml::activeLabel($loginForm, 'password', array(
-      'class' => 'cufon bold'
+      'class' => 'bold'
     ));
     ?><br>
     <?php
