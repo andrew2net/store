@@ -181,6 +181,7 @@ class Swift_Transport_EsmtpTransport
    */
   public function executeCommand($command, $codes = array(), &$failures = null)
   {
+    Yii::trace('sent command: '.$command);
     $failures = (array) $failures;
     $stopSignal = false;
     $response = null;
