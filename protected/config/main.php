@@ -210,6 +210,4 @@ $site_config['params'] = $sites_config[$path]['params'];
 $site_config['components']['mail']['transportOptions'] = $sites_config[$path]['transportOptions'];
 $site_config['components']['db'] = $sites_connect[$path];
 
-print $site_config['components']['mail']['transportOptions']['host'];
-
 return $site_config;
