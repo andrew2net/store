@@ -169,7 +169,7 @@ $site_config = array(
       'routes' => array(
         array(
           'class' => 'CFileLogRoute',
-          'levels' => 'trace, error, warning',
+//          'levels' => 'trace, error, warning',
         ),
       // uncomment the following to show log messages on web pages
       /*

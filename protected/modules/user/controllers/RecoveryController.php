@@ -110,6 +110,7 @@ class RecoveryController extends Controller {
   }
 
   private function sendMail(User $user) {
+    Yii::trace('email: '.$user->email);
     $customer_profile = CustomerProfile::model()->findByAttributes(array('user_id' => $user->id));
     if (is_null($customer_profile))
       $customer_profile = CustomerProfile::model()->findByAttributes(array(
