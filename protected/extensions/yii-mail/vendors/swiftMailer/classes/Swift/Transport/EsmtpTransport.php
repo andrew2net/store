@@ -278,6 +278,7 @@ class Swift_Transport_EsmtpTransport
       $params = array_merge($params, (array) $handler->getRcptParams());
     }
     $paramStr = !empty($params) ? ' ' . implode(' ', $params) : '';
+    Yii::trace('sent: ' .$address);
     $this->executeCommand(
       sprintf("RCPT TO: <%s>%s\r\n", $address, $paramStr), array(250, 251, 252)
       );
