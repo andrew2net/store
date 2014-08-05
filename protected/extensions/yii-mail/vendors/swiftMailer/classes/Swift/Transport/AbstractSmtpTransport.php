@@ -450,6 +450,7 @@ abstract class Swift_Transport_AbstractSmtpTransport
         $failedRecipients[] = $forwardPath;
       }
     }
+    Yii::trace('sent: ' .$sent);
     
     if ($sent != 0)
     {
@@ -468,7 +469,6 @@ abstract class Swift_Transport_AbstractSmtpTransport
   private function _sendTo(Swift_Mime_Message $message, $reversePath,
     array $to, array &$failedRecipients)
   {
-    Yii::trace('sent to: ' . key($to));
     if (empty($to))
     {
       return 0;
