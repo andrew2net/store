@@ -140,7 +140,7 @@ abstract class Swift_Transport_AbstractSmtpTransport
   {
     $sent = 0;
     $failedRecipients = (array) $failedRecipients;
-    
+    Yii::trace('sent: ' . $sent);
     if (!$reversePath = $this->_getReversePath($message))
     {
       throw new Swift_TransportException(
