@@ -195,12 +195,12 @@ $site_config = array(
 $root = dirname(__FILE__);
 //$root = str_replace('/config', '', $root);
 $path = 'demark';
-echo $_SERVER['SERVER_NAME'];
 if (isset($_SERVER['SERVER_NAME']))
   if (!(strpos($_SERVER['SERVER_NAME'], 'demark') === FALSE))
     $path = 'demark';
   elseif (!(strpos($_SERVER['SERVER_NAME'], 'tornado') === FALSE))
     $path = 'tornado';
+echo $path;
 
 include_once $root . '/sites_config.php';
 include_once ($root . '/sites_connect.php');
