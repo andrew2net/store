@@ -110,12 +110,12 @@ class RecoveryController extends Controller {
   }
 
   private function sendMail(User $user) {
-    Yii::trace('email: '.$user->email);
     $customer_profile = CustomerProfile::model()->findByAttributes(array('user_id' => $user->id));
     if (is_null($customer_profile))
       $customer_profile = CustomerProfile::model()->findByAttributes(array(
         'session_id' => SiteController::getSession()));
     $activation_url = 'http://' . $_SERVER['HTTP_HOST'] . $this->createUrl(implode(Yii::app()->controller->module->recoveryUrl), array("activkey" => $user->activkey, "email" => $user->email));
+    Yii::trace('aurl: '.$activation_url);
     $subject = UserModule::t("You have requested the password recovery site {site_name}", array(
           '{site_name}' => Yii::app()->name,
     ));
