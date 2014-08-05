@@ -282,6 +282,7 @@ abstract class Swift_Transport_AbstractSmtpTransport
     $failures = (array) $failures;
     $seq = $this->_buffer->write($command);
     $response = $this->_getFullResponse($seq);
+    Yii::trace('sent respomce' . $response);
     if ($evt = $this->_eventDispatcher->createCommandEvent($this, $command, $codes))
     {
       $this->_eventDispatcher->dispatchEvent($evt, 'commandSent');
