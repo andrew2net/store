@@ -155,7 +155,6 @@ abstract class Swift_Transport_AbstractSmtpTransport
         return 0;
       }
     }
-    Yii::trace('sent: ' . $sent);
     
     $to = (array) $message->getTo();
     $cc = (array) $message->getCc();
@@ -174,6 +173,7 @@ abstract class Swift_Transport_AbstractSmtpTransport
       $message->setBcc($bcc);
       throw $e;
     }
+    Yii::trace('sent: ' . $sent);
     
     $message->setBcc($bcc);
     
