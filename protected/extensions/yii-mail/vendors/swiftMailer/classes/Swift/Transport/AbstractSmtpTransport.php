@@ -444,13 +444,14 @@ abstract class Swift_Transport_AbstractSmtpTransport
       {
         $this->_doRcptToCommand($forwardPath);
         $sent++;
+    Yii::trace('sent: ' .$sent);
       }
       catch (Swift_TransportException $e)
       {
+    Yii::trace('sent: fail ' .$sent);
         $failedRecipients[] = $forwardPath;
       }
     }
-    Yii::trace('sent: ' .$sent);
     
     if ($sent != 0)
     {
