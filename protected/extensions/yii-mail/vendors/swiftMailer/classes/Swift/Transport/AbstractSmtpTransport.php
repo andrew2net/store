@@ -165,11 +165,8 @@ abstract class Swift_Transport_AbstractSmtpTransport
     try
     {
       $sent += $this->_sendTo($message, $reversePath, $to, $failedRecipients);
-    Yii::trace('sent: ' . $sent);
       $sent += $this->_sendCc($message, $reversePath, $cc, $failedRecipients);
-    Yii::trace('sent: ' . $sent);
       $sent += $this->_sendBcc($message, $reversePath, $bcc, $failedRecipients);
-    Yii::trace('sent: ' . $sent);
     }
     catch (Exception $e)
     {
@@ -471,6 +468,7 @@ abstract class Swift_Transport_AbstractSmtpTransport
   private function _sendTo(Swift_Mime_Message $message, $reversePath,
     array $to, array &$failedRecipients)
   {
+    Yii::trace('sent to: ' . key($to));
     if (empty($to))
     {
       return 0;
