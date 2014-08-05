@@ -170,6 +170,7 @@ abstract class Swift_Transport_AbstractSmtpTransport
     }
     catch (Exception $e)
     {
+      Yii::trace('sent exception');
       $message->setBcc($bcc);
       throw $e;
     }
