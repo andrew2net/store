@@ -165,16 +165,17 @@ abstract class Swift_Transport_AbstractSmtpTransport
     try
     {
       $sent += $this->_sendTo($message, $reversePath, $to, $failedRecipients);
+    Yii::trace('sent: ' . $sent);
       $sent += $this->_sendCc($message, $reversePath, $cc, $failedRecipients);
+    Yii::trace('sent: ' . $sent);
       $sent += $this->_sendBcc($message, $reversePath, $bcc, $failedRecipients);
+    Yii::trace('sent: ' . $sent);
     }
     catch (Exception $e)
     {
-      Yii::trace('sent exception');
       $message->setBcc($bcc);
       throw $e;
     }
-    Yii::trace('sent: ' . $sent);
     
     $message->setBcc($bcc);
     

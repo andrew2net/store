@@ -131,8 +131,7 @@ class RecoveryController extends Controller {
     $mail->setBody($params, 'text/html');
     $mail->setFrom(Yii::app()->params['infoEmail']);
     $mail->setTo(array($user->email => $user->profile->first_name . ' ' . $user->profile->last_name));
-    $res = Yii::app()->mail->send($mail);
-    Yii::trace('sent result' . $res);
+    Yii::app()->mail->send($mail);
   }
 
 }
