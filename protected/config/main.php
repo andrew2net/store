@@ -200,7 +200,6 @@ if (isset($_SERVER['SERVER_NAME']))
     $path = 'demark';
   elseif (!(strpos($_SERVER['SERVER_NAME'], 'tornado') === FALSE))
     $path = 'tornado';
-echo $path;
 
 include_once $root . '/sites_config.php';
 include_once ($root . '/sites_connect.php');
@@ -210,5 +209,7 @@ $site_config['theme'] = $sites_config[$path]['theme'];
 $site_config['params'] = $sites_config[$path]['params'];
 $site_config['components']['mail']['transportOptions'] = $sites_config[$path]['transportOptions'];
 $site_config['components']['db'] = $sites_connect[$path];
+
+print $site_config['components']['mail']['transportOptions']['host'];
 
 return $site_config;
