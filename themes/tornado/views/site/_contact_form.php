@@ -16,7 +16,7 @@
     </div>
   <?php } ?>
   <div style="margin-bottom: 20px"><?php
-    Yii::trace($customer_profile->entity_id . ' ' . $customer_profile->session_id);
+    Yii::trace('entity: '.$customer_profile->entity_id . ' ' . $customer_profile->session_id);
     echo $form->radioButtonList($customer_profile, 'entity_id', CustomerProfile::getEntities()
         , array('separator' => ' ', 'id' => 'entity_id'));
     ?></div>
