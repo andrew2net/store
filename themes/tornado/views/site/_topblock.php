@@ -4,7 +4,7 @@
     <div class="table" style="padding-bottom: 10px; margin: 0">
       <div class="table-cell valign-middle" style="padding-top: 10px">
         <a href="/"><img width="300" height="65" alt="Tornado" src="/themes/<?php echo Yii::app()->theme->name; ?>/img/logo.png"></a>
-        <div class="blue" style="font-size: 20pt; display: inline-block; position: relative; bottom: 23px; margin-left: 20px">оптовая компания</div>
+        <div class="blue" style="font-size: 20pt; font-style: italic; display: inline-block; position: relative; bottom: 23px; margin-left: 20px">оптовая компания</div>
       </div>
       <div class="table-cell">
         <div class="inline-blocks" style="text-align: right; position: relative">

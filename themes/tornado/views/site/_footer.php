@@ -53,7 +53,7 @@ $groups = Category::model()->roots()->findAll();
                     ?>
                     <div>
                       <span style="vertical-align: middle; font-size: 12pt"><?php echo $phone['cod']; ?></span>
-                      <span class="gray bold" style="font-size: 16pt; vertical-align: middle"><?php echo $phone['num']; ?></span>
+                      <span class="gray bold" style="font-size: 18pt; vertical-align: middle"><?php echo $phone['num']; ?></span>
                     </div>
                     <?php
                   }

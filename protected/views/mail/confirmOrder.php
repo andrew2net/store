@@ -12,7 +12,7 @@
   <body>
     <?php
     echo CHtml::tag('div', array('style' => 'font-size:16pt;font-weight:bold;margin-bottom:1em'), 'Здравствуйте ' . $profile->first_name . ' ' . $profile->last_name . '!');
-    echo CHtml::tag('div', array(), 'Ваш заказ принят. Товар будет зарезервирован в течении.');
+    echo CHtml::tag('div', array(), 'Ваш заказ принят. Товар будет зарезервирован в ближайшее время.');
     $params = array(
       'order' => $order,
       'profile' => $customer_profile,
