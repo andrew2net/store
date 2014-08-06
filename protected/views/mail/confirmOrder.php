@@ -1,5 +1,6 @@
 <?php
-/* @var $profile CustomerProfile */
+/* @var $customer_profile CustomerProfile */
+/* @var $profile Profile */
 /* @var $order Order */
 ?>
 <!DOCTYPE html>
@@ -10,11 +11,11 @@
   </head>
   <body>
     <?php
-    echo CHtml::tag('div', array('style' => 'font-size:16pt;font-weight:bold;margin-bottom:1em'), 'Здравствуйте ' . $order->fio . '!');
-    echo CHtml::tag('div', array(), 'Ваш заказ принят. В ближайшее время наши менеджеры свяжутся Вами.');
+    echo CHtml::tag('div', array('style' => 'font-size:16pt;font-weight:bold;margin-bottom:1em'), 'Здравствуйте ' . $profile->first_name . ' ' . $profile->last_name . '!');
+    echo CHtml::tag('div', array(), 'Ваш заказ принят. Товар будет зарезервирован в течении.');
     $params = array(
       'order' => $order,
-      'profile' => $profile,
+      'profile' => $customer_profile,
     );
     if (isset($coupon_discount))
       $params['coupon_discount'] = $coupon_discount;

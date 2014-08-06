@@ -17,12 +17,27 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
   Yii::import('application.controllers.ProfileController');
   ?>
   <h1 class="bold blue" style="margin: 20px 0">Информация о заказе:</h1>
-  <div>Заказ №: <?php echo $order->id; ?></div>
-  <div>Покупатель: <?php echo $order->fio; ?></div>
-  <div>Телефон: <?php echo $order->phone; ?></div>
-  <div>Город: <?php echo $order->city; ?></div>
-  <div>Адрес: <?php echo $order->address; ?></div>
-  <div style="margin-bottom: 10px">Вид доставки: <?php echo $order->delivery->name; ?></div>
+  <div style="display: table; width: 100%">
+    <div style="display: table-cell">
+      <div><b>Заказ №: </b><?php echo $order->id. ' <b>от</b> ' . Yii::app()->dateFormatter->format('dd.MM.yyyy', $order->time); ?></div>
+      <div><b>Статус: </b><?php echo $order->status; ?></div>
+      <div><b>Покупатель: </b><?php echo $order->fio; ?></div>
+      <div><b>Телефон: </b><?php echo $order->phone; ?></div>
+      <div><b>Город: </b><?php echo $order->city; ?></div>
+      <div><b>Адрес: </b><?php echo $order->address; ?></div>
+      <div><b>Вид доставки: </b><?php echo $order->delivery->name . ($order->delivery->zone_type_id == 3 ? ' (' . $order->delivery->transportType . ')' : ''); ?></div>
+      <div style="margin-bottom: 10px"><b>Вид оплаты: </b><?php echo $order->payment->name; ?></div>
+    </div>
+    <div style="display: table-cell">
+      <div class="bold">Реквизиты для оплаты</div>
+      <div><b>Получатель: </b><?php echo Yii::app()->params['enterprise']['name']; ?></div>
+      <div><b>ИНН: </b><?php echo Yii::app()->params['enterprise']['inn']; ?></div>
+      <div><b>Банк получателя: </b><?php echo Yii::app()->params['enterprise']['bank']['name']; ?></div>
+      <div><b>БИК: </b><?php echo Yii::app()->params['enterprise']['bank']['bik']; ?></div>
+      <div><b>Корр. счет: </b><?php echo Yii::app()->params['enterprise']['bank']['ks']; ?></div>
+      <div><b>Расч. счет: </b><?php echo Yii::app()->params['enterprise']['bank']['rs']; ?></div>
+    </div>
+  </div>
   <table cellpadding="4" style="border-collapse: collapse">
     <tr style="background: whitesmoke">
       <th>Артикул</th>
@@ -77,12 +92,5 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
   foreach ($pay_values as $key => $value)
     echo CHtml::hiddenField($key, $value);
   ?>
-  <?php if ($to_pay > 0) { ?>
-    <div style="margin-top: 40px">
-      <div class="main-submit submit">
-        <div>ОПЛАТИТЬ</div>
-      </div>
-    </div>
-  <?php } ?>
   <?php echo CHtml::endForm(); ?>
 </div>

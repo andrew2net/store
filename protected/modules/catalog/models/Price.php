@@ -111,7 +111,7 @@ class Price extends CActiveRecord {
         ->leftJoin('store_discount_category discat', 'discat.category_id=cat.category_id')
         ->leftJoin('store_discount disc1', "disc1.product_id=1 and disc1.actual=1 and (disc1.begin_date='0000-00-00' or disc1.begin_date<=CURDATE()) and (disc1.end_date='0000-00-00' or disc1.end_date>=CURDATE())")
         ->leftJoin('store_discount_product dispro', 'dispro.product_id=product.id')
-        ->leftJoin('store_discount disc2', "disc2.product_id=2 and disc2.actual=1 and (disc2.begin_date='0000-00-00' or disc2.begin_date<=CURDATE()) and (disc2.end_date='0000-00-00' or disc2.end_date>=CURDATE())")
+        ->leftJoin('store_discount disc2', "disc2.product_id=2 and disc2.id=dispro.discount_id and disc2.actual=1 and (disc2.begin_date='0000-00-00' or disc2.begin_date<=CURDATE()) and (disc2.end_date='0000-00-00' or disc2.end_date>=CURDATE())")
         ->where("(session_id=:sid AND :sid<>'') OR (user_id=:uid AND :sid='')", array(
           ':sid' => ProfileController::getSession(),
           ':uid' => Yii::app()->user->isGuest ? '' : Yii::app()->user->id,
@@ -119,7 +119,7 @@ class Price extends CActiveRecord {
         ->order('price.summ DESC')
         ->group('prices.price_id, price.summ')
         ->having('c_summ>price.summ');
-//    $text = $query->getText();
+    $text = $query->getText();
     $row = $query->queryRow();
     if ($row)
       $price = self::model()->findByPk($row['price_id']);

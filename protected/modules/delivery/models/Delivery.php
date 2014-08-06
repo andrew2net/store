@@ -245,7 +245,7 @@ class Delivery extends CActiveRecord {
     $pref = '^';
     $suff = '($|\\(|\\*|\\,|\\ )';
     $location = NrjLocation::model()->find('LOWER(name) REGEXP :name', array(':name' => $pref . mb_strtolower(quotemeta(trim($city)), 'UTF-8') . $suff));
-    $location_from = NrjLocation::model()->find('LOWER(name) REGEXP :name', array(':name' => $pref . mb_strtolower(quotemeta(trim(Yii::app()->params['city'])), 'UTF-8') . $suff));
+    $location_from = NrjLocation::model()->find('LOWER(name) REGEXP :name', array(':name' => $pref . mb_strtolower(quotemeta(trim(Yii::app()->params['enterprise']['city'])), 'UTF-8') . $suff));
     if (!$location || $location == $location_from)
       $city = ''; //exclude Energy delivery
 

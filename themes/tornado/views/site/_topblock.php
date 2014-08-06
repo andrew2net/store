@@ -2,12 +2,12 @@
   <div class="container">
     <div class="red" style="text-align: center; font-size: 22pt">Сайт находится в разработке</div>
     <div class="table" style="padding-bottom: 10px; margin: 0">
-      <div class="table-cell valign-middle">
+      <div class="table-cell valign-middle" style="padding-top: 10px">
         <a href="/"><img width="300" height="65" alt="Tornado" src="/themes/<?php echo Yii::app()->theme->name; ?>/img/logo.png"></a>
-        <div style="font-size: 14pt; display: inline-block; position: relative; bottom: 14px; margin-left: 40px">Оптовая<br>компания</div>
+        <div class="blue" style="font-size: 20pt; display: inline-block; position: relative; bottom: 23px; margin-left: 20px">оптовая компания</div>
       </div>
       <div class="table-cell">
-        <div class="inline-blocks" style="text-align: right; margin-bottom: 15px; position: relative">
+        <div class="inline-blocks" style="text-align: right; position: relative">
           <?php
           Yii::import('application.modules.admin.models.Page');
           Yii::import('application.controllers.ProfileController');
@@ -47,11 +47,26 @@
           </div>
         </div>
         <div class="inline-blocks" style="text-align: right">
-          <div class="gray" style="margin-right: 40px">
-            <span style="vertical-align: middle; font-size: 12pt"><?php echo Yii::app()->params['phone']['cod']; ?></span>
-            <span class="bold" style="font-size: 18pt; vertical-align: middle"><?php echo Yii::app()->params['phone']['num']; ?></span>
+          <div class="blue" style="margin-right: 40px">
+            <?php
+            foreach (Yii::app()->params['enterprise']['phone'] as $phone) {
+              if (is_array($phone)) {
+                ?>
+                <div>
+                  <span style="vertical-align: middle; font-size: 12pt"><?php echo $phone['cod']; ?></span>
+                  <span class="bold" style="font-size: 18pt; vertical-align: middle"><?php echo $phone['num']; ?></span>
+                </div>
+                <?php
+              }
+              else {
+                ?>
+                <div><span class="blue" style="font-size: 16pt; vertical-align: middle"><?php echo $phone; ?></span></div>
+                <?php
+              }
+            }
+            ?>
           </div>
-          <div style="">
+          <div style="vertical-align: bottom">
             <?php
             echo CHtml::beginForm('/search', 'get', array('id' => 'search-form', 'style' => 'display:inline-block; margin: 0'));
             $search = new Search;
@@ -70,7 +85,7 @@
         </div>
       </div>
 
-      <?php // $this->renderPartial('//site/_city');      ?>
+      <?php // $this->renderPartial('//site/_city');          ?>
     </div>
   </div>
 </div>

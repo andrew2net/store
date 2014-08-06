@@ -77,7 +77,7 @@ $this->pageTitle = Yii::app()->name . ' - Личный кабинет';
         array(
           'name' => 'status_id',
           'type' => 'html',
-          'value' => '$data->status_id==3 && $data->payment->type_id!=0 && $data->productSumm>$data->paySumm ? CHtml::link($data->status, Yii::app()->createUrl("pay/order", array("id"=>$data->id))) : $data->status',
+          'value' => 'CHtml::link($data->status, Yii::app()->createUrl("pay/order", array("id"=>$data->id)))',
         ),
       )
     ));

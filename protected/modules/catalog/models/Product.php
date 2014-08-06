@@ -264,10 +264,8 @@ class Product extends CActiveRecord {
             , array(':date' => date('Y-m-d')))
         ->queryRow();
 
-    if (!is_null($percenr['discount'])) {
+    if ($percenr['discount']) {
       return $percenr['discount'];
-//      $new_price = round($this->price * (1 - $percenr['discount'] / 100));
-//      return array('discount' => $percenr['discount'], 'price' => $new_price);
     }
     return 0;
   }

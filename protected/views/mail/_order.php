@@ -2,15 +2,29 @@
 /* @var $coupon_discount float */
 /* @var $order Order */
 
+echo CHtml::tag('table');
+echo CHtml::tag('td');
 echo CHtml::tag('div', array('style' => 'font-weight:bold;margin-top:1em'), 'Информация о заказе:');
+echo CHtml::tag('div', array(), 'Заказ №' . $order->id . ' от ' . Yii::app()->dateFormatter->format('dd.MM.yyyy', $order->time));
 echo CHtml::tag('div', array(), 'Покупатель: ' . $order->fio);
 echo CHtml::tag('div', array(), 'E-mail: ' . $order->email);
 echo CHtml::tag('div', array(), 'Телефон: ' . $order->phone);
 echo CHtml::tag('div', array(), 'Город: ' . $order->city);
 echo CHtml::tag('div', array(), 'Адрес: ' . $order->address);
-echo CHtml::tag('div', array(), 'Заказ №' . $order->id . ' от ' . Yii::app()->dateFormatter->format('dd.MM.yyyy', $order->time));
-echo CHtml::tag('div', array(), 'Вид доставки: ' . $order->delivery->name);
+echo CHtml::tag('div', array(), 'Вид доставки: ' . $order->delivery->name . ($order->delivery->zone_type_id == 3 ? ' (' . $order->delivery->transportType . ')' : ''));
 echo CHtml::tag('div', array('style' => 'margin-bottom:1em'), 'Вид оплаты: ' . $order->payment->name);
+echo CHtml::closeTag('td');
+echo CHtml::tag('td', array('style' => 'vertical-align: top'));
+echo CHtml::tag('div', array('style' => 'font-weight:bold;margin-top:1em'), 'Реквизиты для оплаты:');
+echo CHtml::tag('div', array(), 'Получатель: ' . Yii::app()->params['enterprise']['name']);
+echo CHtml::tag('div', array(), 'ИНН: ' . Yii::app()->params['enterprise']['inn']);
+echo CHtml::tag('div', array(), 'Банк получателя: ' . Yii::app()->params['enterprise']['bank']['name']);
+echo CHtml::tag('div', array(), 'БИК: ' . Yii::app()->params['enterprise']['bank']['bik']);
+echo CHtml::tag('div', array(), 'Корр. счет: ' . Yii::app()->params['enterprise']['bank']['ks']);
+echo CHtml::tag('div', array(), 'Расч. счет: ' . Yii::app()->params['enterprise']['bank']['rs']);
+echo CHtml::closeTag('td');
+echo CHtml::closeTag('table');
+
 echo CHtml::tag('table', array('cellpadding' => 4, 'style' => 'border:2px solid;border-collapse:collapse'));
 echo CHtml::tag('tr', array('style' => 'border:2px solid'));
 echo CHtml::tag('th', array('style' => 'border-right:1px solid'), 'Артикул');

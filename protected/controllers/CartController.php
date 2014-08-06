@@ -125,7 +125,7 @@ class CartController extends Controller {
           }
           if ($fl) {
             $this->sendConfirmOrderMessage($order, $customer_profile, $profile, $count_products['couponDisc']);
-            $this->redirect('orderSent');
+            $this->redirect(Yii::app()->createUrl('/pay/order', array('id' => $order->id)));
           }
         }
       }
@@ -232,7 +232,7 @@ class CartController extends Controller {
       $order->coupon_id = $coupon->id;
 
     if ($order->save()) {
-      $price = Price::getPrice();
+      $price_type = Price::getPrice();
       foreach ($_POST['Cart'] as $key => $value) {
         if ($value['quantity'] > 0) {
           $order_product = new OrderProduct;
@@ -240,15 +240,25 @@ class CartController extends Controller {
           $order_product->product_id = $key;
           $order_product->quantity = $value['quantity'];
           $product = Product::model()->findByPk($key);
+          /* @var $product Product */
+
+          if ($price_type)
+            $price = $product->getTradePrice($price_type);
+          else
+          if (Yii::app()->params['mcurrency'])
+            switch ($order->currency_code) {
+              case 'KZT':
+                $price = $product->price_tenge;
+                break;
+              default :
+                $price = $product->price;
+            }
+          else
+            $price = $product->price;
+
           $discount = $product->getActualDiscount();
-          if (is_array($discount)) {
-            $order_product->price = $discount['price'];
-            $order_product->discount = $product->price - $discount['price'];
-          }
-          else {
-            $order_product->price = $product->price;
-            $order_product->discount = 0;
-          }
+          $order_product->price = round($price * (1 - $discount / 100));
+          $order_product->discount = $product->price - $order_product->price;
           $order_product->save();
         }
       }
@@ -383,7 +393,8 @@ class CartController extends Controller {
     $message = new YiiMailMessage('Ваш заказ');
     $message->view = 'confirmOrder';
     $params = array(
-      'profile' => $customer_profile,
+      'customer_profile' => $customer_profile,
+      'profile' => $profile,
       'order' => $order,
     );
     if ($coupon_discount > 0)

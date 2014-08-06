@@ -4,7 +4,6 @@ $(document).ready(function() {
   var discountText = $('#discount-text');
   var cartDiscount = $('#cart-discount');
   var cartSubmit = $('#cart-submit');
-//  var post_code = $('#CustomerProfile_post_code');
   var cart_items = $('#cart-items');
   var price_name = $('#price-name');
   var price_header = $('#price-header');
@@ -89,7 +88,6 @@ $(document).ready(function() {
 
   calcCartSumm();
   getDeliveries();
-//  calcTotal();
 
   cartSubmit.click(function() {
     var email = $('#User_email').val();
@@ -248,7 +246,7 @@ $(document).ready(function() {
   });
 
   var quantityTimeOut;
-  $(document).on('change', '.cart-quantity', function() {
+  cart_items.on('change', '.cart-quantity', function() {
     cartSubmit.hide();
     clearTimeout(quantityTimeOut);
     var id = $(this).attr('product');
@@ -267,7 +265,7 @@ $(document).ready(function() {
   });
 
   var cartQuantity;
-  $(document).on('keyup', '.cart-quantity', function(event) {
+  cart_items.on('keyup', '.cart-quantity', function(event) {
     clearTimeout(quantityTimeOut);
     cartSubmit.hide();
     var id = $(this).attr('product');
@@ -288,7 +286,7 @@ $(document).ready(function() {
     }, 1000);
   });
 
-  $(document).on('keydown', '.cart-quantity', function(event) {
+  cart_items.on('keydown', '.cart-quantity', function(event) {
     clearTimeout(quantityTimeOut);
     cartQuantity = this.value;
   });
@@ -310,12 +308,12 @@ $(document).ready(function() {
         clearTimeout(cartTimeout);
         cartTimeout = setTimeout(function() {
           getDeliveries();
-        }, 5000);
+        }, 3000);
       }
     });
   }
 
-  $(document).on('click', '.cart-item-del', function() {
+  cart_items.on('click', '.cart-item-del', function() {
     var id = $(this).attr('product');
     $.post('/cart/delitem', {
       'id': id
@@ -345,25 +343,6 @@ $(document).ready(function() {
     var summ = elm.value * $(elm).attr('price');
     $(elm).parent().parent().find('.summ').html(summ.formatMoney());
   }
-
-//  $(function() {
-//    $("#cart-login-dialog").dialog({
-//      autoOpen: false,
-//      modal: true,
-//      draggable: false,
-//      resizable: false,
-//      width: 500,
-//      dialogClass: "cart-login-alert",
-//      show: {
-//        effect: "blind",
-//        duration: 500
-//      },
-//      hide: {
-//        effect: "explode",
-//        duration: 500
-//      }
-//    });
-//  });
 
   login_dialog.on('click', '#close-cart-dialog', function() {
     login_dialog.hide();

@@ -16,7 +16,7 @@ class PayController extends Controller {
     if (Yii::app()->user->isGuest)
       $this->redirect('/profile');
     $order = Order::model()->with(array('profile', 'payment'))->findByPk($id
-        , 'profile.user_id=:uid AND t.status_id=3 AND payment.type_id<>0'
+        , 'profile.user_id=:uid'
         , array(':uid' => Yii::app()->user->id));
     /* @var $order Order */
 
