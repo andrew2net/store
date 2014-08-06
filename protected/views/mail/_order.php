@@ -14,7 +14,7 @@ echo CHtml::tag('div', array(), 'Адрес: ' . $order->address);
 echo CHtml::tag('div', array(), 'Вид доставки: ' . $order->delivery->name . ($order->delivery->zone_type_id == 3 ? ' (' . $order->delivery->transportType . ')' : ''));
 echo CHtml::tag('div', array('style' => 'margin-bottom:1em'), 'Вид оплаты: ' . $order->payment->name);
 echo CHtml::closeTag('td');
-echo CHtml::tag('td', array('style' => 'vertical-align: top'));
+echo CHtml::tag('td', array('style' => 'vertical-align: top; padding-left: 20px'));
 echo CHtml::tag('div', array('style' => 'font-weight:bold;margin-top:1em'), 'Реквизиты для оплаты:');
 echo CHtml::tag('div', array(), 'Получатель: ' . Yii::app()->params['enterprise']['name']);
 echo CHtml::tag('div', array(), 'ИНН: ' . Yii::app()->params['enterprise']['inn']);
