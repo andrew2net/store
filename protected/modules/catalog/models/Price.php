@@ -109,7 +109,7 @@ class Price extends CActiveRecord {
         ->leftJoin('store_discount disc', "disc.product_id=0 and disc.actual=1 and (disc.begin_date='0000-00-00' or disc.begin_date<=CURDATE()) and (disc.end_date='0000-00-00' or disc.end_date>=CURDATE())")
         ->leftJoin('store_product_category cat', 'cat.product_id=product.id')
         ->leftJoin('store_discount_category discat', 'discat.category_id=cat.category_id')
-        ->leftJoin('store_discount disc1', "disc1.product_id=1 and disc1.actual=1 and (disc1.begin_date='0000-00-00' or disc1.begin_date<=CURDATE()) and (disc1.end_date='0000-00-00' or disc1.end_date>=CURDATE())")
+        ->leftJoin('store_discount disc1', "disc1.product_id=1 and disc1.id=discat.discount_id and disc1.actual=1 and (disc1.begin_date='0000-00-00' or disc1.begin_date<=CURDATE()) and (disc1.end_date='0000-00-00' or disc1.end_date>=CURDATE())")
         ->leftJoin('store_discount_product dispro', 'dispro.product_id=product.id')
         ->leftJoin('store_discount disc2', "disc2.product_id=2 and disc2.id=dispro.discount_id and disc2.actual=1 and (disc2.begin_date='0000-00-00' or disc2.begin_date<=CURDATE()) and (disc2.end_date='0000-00-00' or disc2.end_date>=CURDATE())")
         ->where("(session_id=:sid AND :sid<>'') OR (user_id=:uid AND :sid='')", array(

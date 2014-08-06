@@ -88,7 +88,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
   <fieldset>
     <legend><span class="page-title blue bold">Доставка и оплата</span></legend>
     <div class="inline-blocks">
-      <div style="width: 450px; vertical-align: top; margin-right: 50px; height: 250px">
+      <div style="width: 450px; vertical-align: top; margin-right: 50px; min-height: 260px">
         <div class="bold gray" style="font-size: 12pt; margin-bottom: 20px">Способ доставки</div>
         <div id="cart-delivery">
           <?php

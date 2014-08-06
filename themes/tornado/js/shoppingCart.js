@@ -324,15 +324,17 @@ $(document).ready(function() {
     );
   });
 
+  var newPriceTimeout;
   function refreshCart(data) {
     var result = $.parseJSON(data)
     cart_items.html(result.html);
     if (result.price_name) {
+      clearTimeout(newPriceTimeout)
       price_header.attr('title', 'Ваша цена "' + result.price_name + '"');
       price_name.html('(' + result.price_name + ')');
       price_mess.html('Установлена цена "' + result.price_name + '"');
       price_mess.show('bounce');
-      setTimeout(function() {
+      newPriceTimeout = setTimeout(function() {
         price_mess.hide('blind');
       }, 3000);
     }
