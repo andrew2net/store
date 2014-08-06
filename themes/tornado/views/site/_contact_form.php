@@ -16,6 +16,7 @@
     </div>
   <?php } ?>
   <div style="margin-bottom: 20px"><?php
+    Yii::trace($customer_profile->entity_id . ' ' . $customer_profile->session_id);
     echo $form->radioButtonList($customer_profile, 'entity_id', CustomerProfile::getEntities()
         , array('separator' => ' ', 'id' => 'entity_id'));
     ?></div>
@@ -82,7 +83,7 @@
   </div>
   <div class="inline-blocks" style="margin-bottom: 20px">
     <!--      <div style="width: 250px">
-            <div><?php // echo $form->labelEx($customer_profile, 'post_code');                       ?></div>
+            <div><?php // echo $form->labelEx($customer_profile, 'post_code');                        ?></div>
             <div>
     <?php // echo $form->textField($customer_profile, 'post_code', array('style' => 'width:120px'));   ?>
             </div>
@@ -177,7 +178,7 @@
         city.prop('disabled', true);
         other.prop('disabled', false);
         other.focus();
-      }else{
+      } else {
         city.prop('disabled', false);
         other.prop('disabled', true);
         city.focus();

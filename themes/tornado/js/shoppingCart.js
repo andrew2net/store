@@ -304,11 +304,14 @@ $(document).ready(function() {
       }
       cart_delivery.hide();
       cart_delivery.val('');
-      delivery_loading.show();
-      clearTimeout(cartTimeout);
-      cartTimeout = setTimeout(function() {
-        getDeliveries();
-      }, 5000);
+      var city = getCity();
+      if (city.length > 0) {
+        delivery_loading.show();
+        clearTimeout(cartTimeout);
+        cartTimeout = setTimeout(function() {
+          getDeliveries();
+        }, 5000);
+      }
     });
   }
 
