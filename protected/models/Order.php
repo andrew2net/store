@@ -75,11 +75,6 @@ class Order extends CActiveRecord {
     return self::$call_times[$this->call_time_id];
   }
 
-//  public $profile_fio;
-//  public $profile_email;
-//  public $profile_phone;
-//  public $paiment_name;
-
   public function getPaymentOptions() {
     Yii::import('application.modules.payments.models.Payment');
     $payment = Payment::model()->findAll();

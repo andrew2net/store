@@ -242,6 +242,10 @@ $(document).ready(function() {
   }
 
   cart_delivery.on('change', 'input[name="Order[delivery_id]"]', function() {
+    var parent = $(this).parent();
+    parent.find('input[type="text"]').prop('disabled', true);
+    var input = parent.find('label[for="' + this.id + '"] > input[type="text"]');
+    input.prop('disabled', false);
     calcTotal();
   });
 

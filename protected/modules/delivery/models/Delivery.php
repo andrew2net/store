@@ -353,19 +353,23 @@ class Delivery extends CActiveRecord {
                     break;
                   }
                 if ($value) {
+                  $price = ceil($value['price']);
                   $output = CHtml::tag('span', array(
                         'class' => 'bold',
-                        'price' => $value['price'],
+                        'price' => $price,
                           ), $delivery->name);
-                  $_SESSION['storage']['delivery'][$delivery->id]['summ'] = $value['price']; //save price for order edit
-                  $output .= ' (' . $delivery->transportType . " доставка {$value['term']}) " . CHtml::tag('span', array('class' => 'red delivery-price'), $value['price'] . $currency->class);
+                  $_SESSION['storage']['delivery'][$delivery->id]['summ'] = $price; //save price for order edit
+                  $output .= ' (' . $delivery->transportType . " доставка {$value['term']}) " . CHtml::tag('span', array('class' => 'red delivery-price'), $price . $currency->class);
                   break;
                 }
               }
               continue 2;
             case 4: //it's customer delivery company
               $_SESSION['storage']['delivery'][$delivery->id]['summ'] = $price; //save price for order
-              $output .= '<br>' . CHtml::activeTextField($order, 'customer_delivery') . '<br>(' . $delivery->description . ')';
+              $html_options = array();
+              if ($list) //if it's not first item
+                $html_options['disabled'] = true;
+              $output .= '<br>' . CHtml::activeTextField($order, 'customer_delivery', $html_options) . '<br>(' . $delivery->description . ')';
               break;
             case 5:
             case 6:

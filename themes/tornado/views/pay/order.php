@@ -15,23 +15,34 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
   Yii::import('application.modules.catalog.models.Product');
   Yii::import('application.modules.payments.models.Payment');
   Yii::import('application.controllers.ProfileController');
+  switch ($order->delivery->zone_type_id){
+    case 3:
+      $delivery = $order->delivery->name . ' (' . $order->delivery->transportType . ')';
+      break;
+    case 4:
+      $delivery = $order->customer_delivery;
+      break;
+    default :
+      $delivery = $order->delivery->name;
+  }
   ?>
   <h1 class="bold blue" style="margin: 20px 0">Информация о заказе:</h1>
   <div style="display: table; width: 100%">
     <div style="display: table-cell">
       <div><b>Заказ №: </b><?php echo $order->id. ' <b>от</b> ' . Yii::app()->dateFormatter->format('dd.MM.yyyy', $order->time); ?></div>
       <div><b>Статус: </b><?php echo $order->status; ?></div>
-      <div><b>Покупатель: </b><?php echo $order->fio; ?></div>
-      <div><b>Телефон: </b><?php echo $order->phone; ?></div>
-      <div><b>Город: </b><?php echo $order->city; ?></div>
-      <div><b>Адрес: </b><?php echo $order->address; ?></div>
-      <div><b>Вид доставки: </b><?php echo $order->delivery->name . ($order->delivery->zone_type_id == 3 ? ' (' . $order->delivery->transportType . ')' : ''); ?></div>
+      <div><b>Покупатель: </b><?php echo CHtml::encode($order->fio); ?></div>
+      <div><b>Телефон: </b><?php echo CHtml::encode($order->phone); ?></div>
+      <div><b>Город: </b><?php echo CHtml::encode($order->city); ?></div>
+      <div><b>Адрес: </b><?php echo CHtml::encode($order->address); ?></div>
+      <div><b>Вид доставки: </b><?php echo CHtml::encode($delivery); ?></div>
       <div style="margin-bottom: 10px"><b>Вид оплаты: </b><?php echo $order->payment->name; ?></div>
     </div>
     <div style="display: table-cell">
       <div class="bold">Реквизиты для оплаты</div>
       <div><b>Получатель: </b><?php echo Yii::app()->params['enterprise']['name']; ?></div>
-      <div><b>ИНН: </b><?php echo Yii::app()->params['enterprise']['inn']; ?></div>
+      <div><b>ИНН: </b><?php echo Yii::app()->params['enterprise']['inn']; ?> <b>КПП: </b><?php echo Yii::app()->params['enterprise']['kpp']; ?></div>
+      <div><b>Юр. адрес: </b><?php echo Yii::app()->params['enterprise']['legal_address']; ?></div>
       <div><b>Банк получателя: </b><?php echo Yii::app()->params['enterprise']['bank']['name']; ?></div>
       <div><b>БИК: </b><?php echo Yii::app()->params['enterprise']['bank']['bik']; ?></div>
       <div><b>Корр. счет: </b><?php echo Yii::app()->params['enterprise']['bank']['ks']; ?></div>
