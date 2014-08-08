@@ -207,7 +207,7 @@ include_once ($root . '/sites_connect.php');
 $site_config['name'] = $sites_config[$path]['name'];
 $site_config['theme'] = $sites_config[$path]['theme'];
 $site_config['params'] = $sites_config[$path]['params'];
-$site_config['components']['mail']['transportOptions'] = $sites_config[$path]['transportOptions'];
+$site_config['components']['mail'] = array_merge($site_config['components']['mail'], $sites_config[$path]['mail']);
 $site_config['components']['db'] = $sites_connect[$path];
 
 return $site_config;

@@ -8,16 +8,28 @@ class CartController extends Controller {
 
   public function actionIndex() {
     Yii::import('application.modules.catalog.models.Product');
+    Yii::import('application.modules.catalog.models.Price');
     Yii::import('application.modules.catalog.models.Brand');
     Yii::import('application.modules.delivery.models.Delivery');
     Yii::import('application.modules.payments.models.Payment');
     Yii::import('application.modules.discount.models.Coupon');
     Yii::import('application.controllers.ProfileController');
 
-    $customer_profile = ProfileController::getProfile();
-    $cart = Cart::model()->shoppingCart(ProfileController::getSession())->findAll();
     $minimal_summ = Price::getMinimalSumm();
-
+    $customer_profile = ProfileController::getProfile();
+    $session = ProfileController::getSession();
+    if (isset($_POST['Cart'])) {
+      $cart = array();
+      foreach ($_POST['Cart'] as $key => $item) {
+        $c = Cart::model()->shoppingCart($session)->findByAttributes(array('product_id' => $key));
+        /* @var $c Cart */
+        $c->attributes = $_POST['Cart'];
+        $cart[] = $c;
+      }
+    }
+    else {
+      $cart = Cart::model()->shoppingCart($session)->findAll();
+    }
     if ($customer_profile->user) {
       $user = $customer_profile->user;
       $profile = $user->profile;
@@ -61,12 +73,6 @@ class CartController extends Controller {
     else
       $post_code = '';
 
-//    if (isset($_POST['CustomerProfile']['city']))
-//      $city = $_POST['CustomerProfile']['city'];
-//    else if (isset($_POST['CustomerProfile']['city_l']))
-//      $city = $_POST['CustomerProfile']['city_l'];
-//    else
-//      $city = $customer_profile->city;
 
     $order = new Order;
     if (isset($_POST['Order'])) {
@@ -76,13 +82,7 @@ class CartController extends Controller {
         $_SESSION['storage']['order']['customer_delivery'] = $order->customer_delivery;
     }
 
-//    $delivery = Delivery::model()->getDeliveryList($country_code, $post_code, '', $cart, $order);
-//    $delivery = Delivery::model()->getDeliveryList($ccode, trim($pcode), $city, $cart, $order);
     $delivery = array();
-//    if (isset($_SESSION['storage']['deliveries'])) {
-//      $delivery = $_SESSION['storage']['deliveries'];
-//      unset($_SESSION['storage']['deliveries']);
-//    }
 
     $payment = Payment::model()->getPaymentList();
 
@@ -122,8 +122,9 @@ class CartController extends Controller {
             if (count($cart) > 0) {
               $this->saveOrderProducts($order, $customer_profile, $profile, $user, $coupon, $count_products);
 
-              foreach ($cart as $item)
-                $item->delete();
+//              foreach ($cart as $item)
+//                $item->delete();
+              Cart::model()->shoppingCart($session)->deleteAll();
               $fl = TRUE;
             }
             $tr->commit();
@@ -214,9 +215,20 @@ class CartController extends Controller {
     Yii::import('application.modules.payments.models.Currency');
 
     $order->attributes = $_POST['Order'];
-    $order->delivery_summ = $_SESSION['storage']['delivery'][$_POST['Order']['delivery_id']]['summ'];
-    $order->profile_id = $customer_profile->id;
+    if (isset($_SESSION['storage']['delivery'][$_POST['Order']['delivery_id']]['summ']))
+      $order->delivery_summ = $_SESSION['storage']['delivery'][$_POST['Order']['delivery_id']]['summ'];
+    else {
+      if ($customer_profile->other_city)
+        $city = $customer_profile->city;
+      else
+        $city = $customer_profile->city_l;
+      $cart = Cart::model()->shoppingCart(ProfileController::getSession())->findAll();
+      $delivery = Delivery::getDeliveryList($customer_profile->country_code, $customer_profile->post_code, $city, $cart, $order, $$_POST['Order']['delivery_id']);
+      $order->delivery_summ = $_SESSION['storage']['delivery'][$_POST['Order']['delivery_id']]['summ'];
+    }
+    unset($_SESSION['storage']['delivery']);
 
+    $order->profile_id = $customer_profile->id;
     if ($customer_profile->entity_id == 1) {
       $field = ProfileField::model()->findByAttributes(array('varname' => 'legal_form'));
       $legal_forms = Profile::range($field->range);
@@ -384,8 +396,6 @@ class CartController extends Controller {
     }
     $order->validate(array('customer_delivery'));
     $delivery = Delivery::model()->getDeliveryList($ccode, trim($pcode), $city, $cart, $order);
-//    $_SESSION['storage']['deliveries'] = $delivery;
-
 
     $profile = ProfileController::getProfile();
     if (Yii::app()->params['mcurrency'])

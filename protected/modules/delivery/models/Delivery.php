@@ -176,7 +176,7 @@ class Delivery extends CActiveRecord {
     return parent::model($className);
   }
 
-  public function region($country_code, $post_code, $city) {
+  public function region($country_code, $post_code, $city, $delivery_id) {
     Yii::import('application.modules.delivery.models.RegionDelivery');
     Yii::import('application.modules.delivery.models.Zone');
     $this->getDbCriteria()->mergeWith(array(
@@ -188,13 +188,13 @@ class Delivery extends CActiveRecord {
           ),
         ),
       ),
-      'condition' => '(:pcode REGEXP zones.post_code AND region.country_code=:ccode AND zones.country_code=:ccode OR t.zone_type_id IN (4,6) OR t.zone_type_id=3 AND :city=0 OR t.zone_type_id=5 AND :city=1) AND t.active=1',
-      'params' => array(':ccode' => $country_code, ':pcode' => $post_code, ':city' => empty($city))
+      'condition' => '(:pcode REGEXP zones.post_code AND region.country_code=:ccode AND zones.country_code=:ccode OR t.zone_type_id IN (4,6) OR t.zone_type_id=3 AND :city=0 OR t.zone_type_id=5 AND :city=1) AND (:delivery_id IS NULL OR t.id=:delivery_id) AND t.active=1',
+      'params' => array(':ccode' => $country_code, ':pcode' => $post_code, ':city' => empty($city), ':delivery_id' => $delivery_id)
     ));
     return $this;
   }
 
-  public static function getDeliveryList($country_code, $post_code, $city, $model, Order $order) {
+  public static function getDeliveryList($country_code, $post_code, $city, $model, Order $order, $delivery_id = null) {
 
     Yii::import('application.modules.delivery.models.DeliveryRate');
     Yii::import('application.modules.delivery.models.Region');
@@ -249,7 +249,7 @@ class Delivery extends CActiveRecord {
     if (!$location || $location == $location_from)
       $city = ''; //exclude Energy delivery
 
-    $models = self::model()->region($country_code, $post_code, $city)->findAll();
+    $models = self::model()->region($country_code, $post_code, $city, $delivery_id)->findAll();
 
     $list = array();
     $list_oversize = array();
