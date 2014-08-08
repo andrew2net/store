@@ -160,13 +160,13 @@ $(document).ready(function() {
       return $('select#CustomerProfile_city_l option:selected').val();
   }
 
-  function deliveryID() {
-    var delivery = $('input:radio[name="Order[delivery_id]"]:checked');
-    if (delivery.length > 0)
-      return delivery.attr('id').match(/\d+$/)[0];
-    else
-      return 0;
-  }
+//  function deliveryID() {
+//    var delivery = $('input:radio[name="Order[delivery_id]"]:checked');
+//    if (delivery.length > 0)
+//      return delivery.val();
+//    else
+//      return 0;
+//  }
 
   var getDeliveryTimeout;
   function getDeliveries() {
@@ -177,7 +177,14 @@ $(document).ready(function() {
       delivery_loading.show();
       var ccode = '';
       var pcode = '';
-      var d_id = deliveryID();
+      var delivery = $('input:radio[name="Order[delivery_id]"]:checked');
+      var d_id = 0;
+      if (delivery.length > 0)
+        d_id = delivery.val();
+      var id = delivery.attr('id');
+      var c_deliver = delivery.siblings('label[for="' + id + '"]').find('input[type="text"]').val();
+      if(c_deliver==undefined)
+        c_deliver = '';
       getDeliveryTimeout = setTimeout(function() {
         delivery_loading.hide();
       }, 60000);
@@ -185,7 +192,8 @@ $(document).ready(function() {
         'ccode': ccode,
         'pcode': pcode,
         'city': city,
-        'delivery_id': d_id
+        'delivery_id': d_id,
+        'c_deliver': c_deliver
       }, function(data) {
         clearTimeout(getDeliveryTimeout);
         delivery_loading.hide();

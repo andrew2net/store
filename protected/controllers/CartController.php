@@ -61,21 +61,28 @@ class CartController extends Controller {
     else
       $post_code = '';
 
-    if (isset($_POST['CustomerProfile']['city']))
-      $city = $_POST['CustomerProfile']['city'];
-    else
-      $city = $customer_profile->city;
+//    if (isset($_POST['CustomerProfile']['city']))
+//      $city = $_POST['CustomerProfile']['city'];
+//    else if (isset($_POST['CustomerProfile']['city_l']))
+//      $city = $_POST['CustomerProfile']['city_l'];
+//    else
+//      $city = $customer_profile->city;
 
     $order = new Order;
-    if (isset($_POST['Order']))
+    if (isset($_POST['Order'])) {
       $order->attributes = $_POST['Order'];
+      $_SESSION['storage']['order']['delivery_id'] = $order->delivery_id;
+      if (isset($_POST['Order']['customer_delivery']))
+        $_SESSION['storage']['order']['customer_delivery'] = $order->customer_delivery;
+    }
 
 //    $delivery = Delivery::model()->getDeliveryList($country_code, $post_code, '', $cart, $order);
+//    $delivery = Delivery::model()->getDeliveryList($ccode, trim($pcode), $city, $cart, $order);
     $delivery = array();
-    if (isset($_SESSION['storage']['deliveries'])) {
-      $delivery = $_SESSION['storage']['deliveries'];
-      unset($_SESSION['storage']['deliveries']);
-    }
+//    if (isset($_SESSION['storage']['deliveries'])) {
+//      $delivery = $_SESSION['storage']['deliveries'];
+//      unset($_SESSION['storage']['deliveries']);
+//    }
 
     $payment = Payment::model()->getPaymentList();
 
@@ -103,6 +110,7 @@ class CartController extends Controller {
         $valid = $profile->save() && $valid;
       }
 
+      $valid = $order->validate(array('customer_delivery')) && $valid;
       if ($valid && isset($_POST['Cart'])) {
         $count_products = $this->countProducts($coupon);
         $count_products['summ'] -= $count_products['couponDisc'];
@@ -357,7 +365,7 @@ class CartController extends Controller {
     Yii::app()->end();
   }
 
-  public function actionDelivery($ccode, $pcode, $city, $delivery_id) {
+  public function actionDelivery($ccode, $pcode, $city, $delivery_id, $c_deliver) {
     Yii::import('application.modules.delivery.models.Delivery');
     Yii::import('application.controllers.ProfileController');
     Yii::import('application.modules.catalog.models.Product');
@@ -365,12 +373,18 @@ class CartController extends Controller {
 
     $cart = Cart::model()->shoppingCart(ProfileController::getSession())->findAll();
     $order = new Order;
+    if (isset($_SESSION['storage']['order'])) {
+      $order->delivery_id = $_SESSION['storage']['order']['delivery_id'];
+      if (isset($_SESSION['storage']['order']['customer_delivery']))
+        $order->customer_delivery = $_SESSION['storage']['order']['customer_delivery'];
+      unset($_SESSION['storage']['order']);
+    }else {
+      $order->delivery_id = $delivery_id;
+      $order->customer_delivery = $c_deliver;
+    }
+    $order->validate(array('customer_delivery'));
     $delivery = Delivery::model()->getDeliveryList($ccode, trim($pcode), $city, $cart, $order);
-    $_SESSION['storage']['deliveries'] = $delivery;
-    if (is_array($delivery))
-      $order->delivery_id = key($delivery);
-    else
-      $order->delivery_id = 1;
+//    $_SESSION['storage']['deliveries'] = $delivery;
 
 
     $profile = ProfileController::getProfile();

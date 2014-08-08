@@ -76,6 +76,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
     <span class="right bold" style="font-size: 12pt; margin-right: 90px">Минимальная сумма заказа <span class="red"><?php echo number_format($minsumm, 0, '.', ' ') . $currency->class; ?></span></span>
     <span><span class="red">*</span> - скидка по купону предоставляется только на товары без скидки</span>
   </fieldset>
+  <div id="prof">
   <?php
   $this->renderPartial('//site/_contact_form', array(
     'profile' => $profile,
@@ -85,6 +86,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
     'form' => $form,
   ));
   ?>
+  </div>
   <fieldset>
     <legend><span class="page-title blue bold">Доставка и оплата</span></legend>
     <div class="inline-blocks">

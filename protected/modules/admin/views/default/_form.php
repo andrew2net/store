@@ -70,7 +70,7 @@
         ?>
 
         <?php
-        $options_param = Delivery::getDeliveryList($model->country_code, $model->post_code, $model);
+        $options_param = Delivery::getDeliveryList($model->country_code, $model->post_code, $model->city, $model, $model);
         echo $form->dropDownListControlGroup($model, 'delivery_id'
             , $options_param['options'], array(
           'options' => $options_param['params']));

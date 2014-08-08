@@ -111,6 +111,7 @@ class Order extends CActiveRecord {
       array('time, address, description', 'safe'),
       array('fio, email, phone, address, description, post_code, city, customer_delivery',
         'filter', 'filter' => array($obj = new CHtmlPurifier(), 'purify')),
+      array('customer_delivery', 'customerDelivery'),
       // The following rule is used by search().
       // @todo Please remove those attributes that should not be searched.
       array('id, email, profile_email, fio, profile_fio, phone, profile_phone, city, address, delivery_id, payment_id, status_id, coupon_id, time', 'safe', 'on' => 'search'),
@@ -120,6 +121,11 @@ class Order extends CActiveRecord {
     if (Yii::app()->params['country'])
       $rules = array_merge($rules, array(array('country_code', 'default', 'value' => Yii::app()->params['country'])));
     return $rules;
+  }
+  
+  public function customerDelivery($attribute, $params){
+    if ($this->delivery_id==4 && empty($this->$attribute))
+      $this->addError($attribute, 'Укажите наименование транспортной компании');
   }
 
   /**

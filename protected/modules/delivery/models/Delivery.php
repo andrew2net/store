@@ -367,9 +367,9 @@ class Delivery extends CActiveRecord {
             case 4: //it's customer delivery company
               $_SESSION['storage']['delivery'][$delivery->id]['summ'] = $price; //save price for order
               $html_options = array();
-              if ($list) //if it's not first item
+              if ($order->delivery_id != $delivery->id)
                 $html_options['disabled'] = true;
-              $output .= '<br>' . CHtml::activeTextField($order, 'customer_delivery', $html_options) . '<br>(' . $delivery->description . ')';
+              $output .= '<br>' . CHtml::activeTextField($order, 'customer_delivery', $html_options) . CHtml::error($order, 'customer_delivery', array('class'=>'red')) . '<div>(' . $delivery->description . ')</div>';
               break;
             case 5:
             case 6:
@@ -389,8 +389,11 @@ class Delivery extends CActiveRecord {
       }
     if (is_array($model)) {//if model is carts array
       $output = '';
-      if (count($list) > 0)
+      if (count($list) > 0){
+        if (!isset($list[$order->delivery_id]))
+          $order->delivery_id = 1;
         return $list;
+      }
       elseif ($list_oversize) {
         $output = 'В настоящий момент отправка следующих крупногабаритных товаров в ваш регион не осуществляется:';
         $output .= CHtml::openTag('ul', array('style' => 'margin-top:5px'));
