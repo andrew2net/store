@@ -41,14 +41,14 @@ class Order extends CActiveRecord {
 
   public $summ;
   private static $statuses = array(
-    'Необработан',
-    'В обработке',
-    'Нет в наличии',
-    'Ожидание оплаты',
-    'Оплачен',
-    'Отгружен',
-    'Отменен',
-    'Доставлен',
+    1 => 'Необработан',
+    2 => 'В обработке',
+    3 => 'Нет в наличии',
+    4 => 'Ожидание оплаты',
+    5 => 'Оплачен',
+    6 => 'Отгружен',
+    7 => 'Отменен',
+    8 => 'Доставлен',
   );
 
   public static function getStatuses() {
@@ -114,7 +114,7 @@ class Order extends CActiveRecord {
       array('customer_delivery', 'customerDelivery'),
       // The following rule is used by search().
       // @todo Please remove those attributes that should not be searched.
-      array('id, email, profile_email, fio, profile_fio, phone, profile_phone, city, address, delivery_id, payment_id, status_id, coupon_id, time', 'safe', 'on' => 'search'),
+      array('id, email, fio, phone, delivery_id, payment_id, status_id, time', 'safe', 'on' => 'search'),
     );
     if (Yii::app()->params['post_code'])
       $rules = array_merge($rules, array(array('post_code', 'required')));
@@ -122,9 +122,9 @@ class Order extends CActiveRecord {
       $rules = array_merge($rules, array(array('country_code', 'default', 'value' => Yii::app()->params['country'])));
     return $rules;
   }
-  
-  public function customerDelivery($attribute, $params){
-    if ($this->delivery_id==4 && empty($this->$attribute))
+
+  public function customerDelivery($attribute, $params) {
+    if ($this->delivery_id == 4 && empty($this->$attribute))
       $this->addError($attribute, 'Укажите наименование транспортной компании');
   }
 
@@ -200,13 +200,10 @@ class Order extends CActiveRecord {
 
     $criteria->compare('t.id', $this->id, true);
     $criteria->compare('delivery_id', $this->delivery_id, true);
-//    $criteria->compare('profile.fio', $this->profile_fio, true);
     $criteria->compare('t.fio', $this->fio, true);
-//    $criteria->compare('profile.email', $this->profile_email, true);
-    $criteria->compare('t.email', $this->email, true);
-//    $criteria->compare('profile.phone', $this->profile_phone, true);
+    $criteria->compare('email', $this->email, true);
     $criteria->compare('t.phone', $this->phone, true);
-    $criteria->compare('coupon_id', $this->coupon_id, true);
+    $criteria->compare('payment_id', $this->payment_id, true);
     $criteria->compare('status_id', $this->status_id, true);
     $criteria->compare("DATE_FORMAT(time,'%d.%m.%Y %T')", $this->time, true);
 

@@ -58,7 +58,7 @@ class CartController extends Controller {
     $has_err = '';
 
     if (!Yii::app()->params['country'])
-      if (isset($_POST['CustomerProfile']['post_code']))
+      if (isset($_POST['CustomerProfile']['post_code']) && !$_POST['login'])
         $country_code = $_POST['CustomerProfile']['country_code'];
       else
         $country_code = $customer_profile->country_code;
@@ -66,7 +66,7 @@ class CartController extends Controller {
       $country_code = Yii::app()->params['country'];
 
     if (Yii::app()->params['post_code'])
-      if (isset($_POST['CustomerProfile']['post_code']))
+      if (isset($_POST['CustomerProfile']['post_code']) && !$_POST['login'])
         $post_code = $_POST['CustomerProfile']['post_code'];
       else
         $post_code = $customer_profile->post_code;
@@ -87,10 +87,19 @@ class CartController extends Controller {
     $payment = Payment::model()->getPaymentList();
 
     if (isset($_POST['CustomerProfile'])) {
-      $customer_profile->attributes = $_POST['CustomerProfile'];
+      if (!$_POST['login'])
+        $customer_profile->attributes = $_POST['CustomerProfile'];
+      else {
+        if (isset($_POST['CustomerProfile']['city']))
+          $customer_profile->city = $_POST['CustomerProfile']['city'];
+        else
+          $customer_profile->city_l = $_POST['CustomerProfile']['city_l'];
+        $customer_profile->other_city = $_POST['CustomerProfile']['other_city'];
+      }
       $valid = $customer_profile->save();
       if (isset($_POST['Profile'])) {
-        $profile->attributes = $_POST['Profile'];
+        if (!$_POST['login'])
+          $profile->attributes = $_POST['Profile'];
         $valid = $profile->validate() && $valid;
       }
       if (isset($_POST['User'])) {

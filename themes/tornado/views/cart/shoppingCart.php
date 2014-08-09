@@ -26,6 +26,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
   /* @var $form CActiveForm */
 
   echo CHtml::hiddenField('url', Yii::app()->request->url);
+  echo CHtml::hiddenField('login', 0, array('id' => 'login-fl'));
   ?>
   <fieldset>
     <legend><span class="page-title bold blue">Ваша корзина</span></legend>

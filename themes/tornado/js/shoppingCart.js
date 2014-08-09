@@ -11,7 +11,7 @@ $(document).ready(function() {
   var delivery_hint = $('#delivery-hint');
   var delivery_loading = $('#delivery-loading');
   var cart_delivery = $('#cart-delivery');
-  var login_dialog = $("#cart-login-dialog");
+  var cart_login_dialog = $("#cart-login-dialog");
   var user_email = $('#User_email');
 
   function calcCartSumm() {
@@ -97,27 +97,28 @@ $(document).ready(function() {
       if (data == 'ok')
         $('form').submit();
       else {
-        $('#cart-login-dialog').html(data);
-        $('#cart-login-dialog').show();
+        cart_login_dialog.html(data);
+        cart_login_dialog.show();
       }
     });
   });
 
-  login_dialog.on('click', '#submit-password', function() {
+  cart_login_dialog.on('click', '#submit-password', function() {
     var email = user_email.val();
     var passw = $('#cart-password').val();
     $.post('/login', {
       email: email,
       passw: passw
     }, function(data) {
-      if (data == 'ok')
+      if (data == 'ok'){
+        $('#login-fl').val('1');
         $('form').submit();
-      else
+      }else
         $('#passw-err').html('Неверный пароль');
     });
   });
 
-  login_dialog.on('click', '#recover-password', function() {
+  cart_login_dialog.on('click', '#recover-password', function() {
     var email = user_email.val();
     $('#sent-mail-recovery').html('');
     $(this).hide();
@@ -358,8 +359,8 @@ $(document).ready(function() {
     $(elm).parent().parent().find('.summ').html(summ.formatMoney());
   }
 
-  login_dialog.on('click', '#close-cart-dialog', function() {
-    login_dialog.hide();
+  cart_login_dialog.on('click', '#close-cart-dialog', function() {
+    cart_login_dialog.hide();
   });
 
   function citySuggest(request, response) {

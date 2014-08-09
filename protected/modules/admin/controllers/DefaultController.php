@@ -86,10 +86,12 @@ class DefaultController extends Controller {
             }
             if ($old_status != $model->status_id) {
               $profile = CustomerProfile::model()->findByPk($model->profile_id);
+              /* @var $profile CustomerProfile */
+              $user = User::model()->findByPk($profile->user_id);
               $message = new YiiMailMessage;
               $message->view = 'processOrder';
               $message->setFrom(Yii::app()->params['infoEmail']);
-              $message->setTo(array($profile->email => $profile->fio));
+              $message->setTo(array($user->email => $user->profile->first_name . ' ' . $user->profile->last_name));
               $params = array(
                 'profile' => $profile,
                 'order' => $model,

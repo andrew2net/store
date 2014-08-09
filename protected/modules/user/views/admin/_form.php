@@ -64,7 +64,7 @@ Yii::import('application.modules.catalog.models.Price');
               echo $widgetEdit;
             }
             elseif ($field->range) {
-              echo $form->dropDownList($profile, $field->varname, Profile::range($field->range));
+              echo $form->dropDownList($profile, $field->varname, Profile::range($field->range), array('prompt' => 'Нет'));
             }
             elseif ($field->field_type == "TEXT") {
               echo CHtml::activeTextArea($profile, $field->varname, array('rows' => 6, 'cols' => 50));

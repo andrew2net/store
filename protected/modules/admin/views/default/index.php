@@ -24,11 +24,12 @@ $this->widget('bootstrap.widgets.TbGridView', array(
       'value' => '$data->status',
       'filter' => $model->statuses,
     ),
-    'fio',
-//    array(
-//      'name' => 'profile_fio',
-//      'value' => '$data->profile->fio',
-//    ),
+//    'fio',
+    array(
+      'header' => 'Покупатель',
+      'value' => '$data->fio',
+      'filter' => CHtml::activeTextField($model, 'fio'),
+    ),
     'email',
 //    array(
 //      'name' => 'profile_email',
@@ -46,7 +47,7 @@ $this->widget('bootstrap.widgets.TbGridView', array(
     ),
     array(
       'name' => 'delivery_id',
-      'value' => '$data->delivery->name',
+      'value' => '$data->delivery->zone_type_id == 4 ? $data->delivery->zone_type : ($data->delivery->zone_type_id == 3 ? $data->delivery->name . " (" . $data->delivery->transportType . ")" : $data->delivery->name)',
       'filter' => Delivery::getList(),
     ),
     array(

@@ -330,58 +330,75 @@ class Delivery extends CActiveRecord {
                 'class' => 'bold',
                 'price' => $price,
                   ), $delivery->name);
-
-          switch ($delivery->zone_type_id) {
-            case 3: //it's Energy delivery company
-              if (!isset($nrj_deliveries))
-                if ($location && $location != $location_from) {
-                  $nrj_ch = curl_init("http://api.nrg-tk.ru/api/rest/?method=nrg.calculate&from=$location_from->id&to=$location->id&weight=$nrj_weght&volume=0&place=$nrj_places");
-                  curl_setopt($nrj_ch, CURLOPT_RETURNTRANSFER, TRUE);
-                  curl_setopt($nrj_ch, CURLOPT_HEADER, FALSE);
-                  $nrj_get = curl_exec($nrj_ch);
-                  curl_close($nrj_ch);
-                  $nrj_deliveries = json_decode($nrj_get, TRUE);
+        }
+        switch ($delivery->zone_type_id) {
+          case 3: //it's Energy delivery company
+            if (!isset($nrj_deliveries))
+              if ($location && $location != $location_from) {
+                $nrj_ch = curl_init("http://api.nrg-tk.ru/api/rest/?method=nrg.calculate&from=$location_from->id&to=$location->id&weight=$nrj_weght&volume=0&place=$nrj_places");
+                curl_setopt($nrj_ch, CURLOPT_RETURNTRANSFER, TRUE);
+                curl_setopt($nrj_ch, CURLOPT_HEADER, FALSE);
+                $nrj_get = curl_exec($nrj_ch);
+                curl_close($nrj_ch);
+                $nrj_deliveries = json_decode($nrj_get, TRUE);
+              }
+              else
+                continue 2;
+            if (isset($nrj_deliveries['rsp']['stat']) && $nrj_deliveries['rsp']['stat'] == 'ok') {
+              reset($nrj_deliveries['rsp']['values']);
+              $value = FALSE;
+              while ($v = each($nrj_deliveries['rsp']['values']))
+                if ($v[1]['type'] == $delivery->nrjType) {
+                  $value = $v[1];
+                  break;
                 }
-                else
-                  continue 2;
-              if (isset($nrj_deliveries['rsp']['stat']) && $nrj_deliveries['rsp']['stat'] == 'ok') {
-                reset($nrj_deliveries['rsp']['values']);
-                $value = FALSE;
-                while ($v = each($nrj_deliveries['rsp']['values']))
-                  if ($v[1]['type'] == $delivery->nrjType) {
-                    $value = $v[1];
-                    break;
-                  }
-                if ($value) {
-                  $price = ceil($value['price']);
+              if ($value) {
+                $price = ceil($value['price']);
+                if (is_array($model)) {
                   $output = CHtml::tag('span', array(
                         'class' => 'bold',
                         'price' => $price,
                           ), $delivery->name);
                   $_SESSION['storage']['delivery'][$delivery->id]['summ'] = $price; //save price for order edit
                   $output .= ' (' . $delivery->transportType . " доставка {$value['term']}) " . CHtml::tag('span', array('class' => 'red delivery-price'), $price . $currency->class);
-                  break;
                 }
+                else {
+                  $list['params'][$delivery->id]['price'] = $price;
+                  $list['options'][$delivery->id] = $delivery->name . ' (' . $delivery->transportType . ')';
+                  continue 2;
+                }
+                break;
               }
-              continue 2;
-            case 4: //it's customer delivery company
+            }
+            continue 2;
+          case 4: //it's customer delivery company
+            if (is_array($model)) {
               $_SESSION['storage']['delivery'][$delivery->id]['summ'] = $price; //save price for order
               $html_options = array();
               if ($order->delivery_id != $delivery->id)
                 $html_options['disabled'] = true;
-              $output .= '<br>' . CHtml::activeTextField($order, 'customer_delivery', $html_options) . CHtml::error($order, 'customer_delivery', array('class'=>'red')) . '<div>(' . $delivery->description . ')</div>';
-              break;
-            case 5:
-            case 6:
+              $output .= '<br>' . CHtml::activeTextField($order, 'customer_delivery', $html_options) . CHtml::error($order, 'customer_delivery', array('class' => 'red')) . '<div>(' . $delivery->description . ')</div>';
+            }else {
+              $list['params'][$delivery->id]['price'] = $price;
+              $list['options'][$delivery->id] = $delivery->zone_type . ' (' . $order->customer_delivery . ')';
+              continue 2;
+            }
+            break;
+          case 5:
+          case 6:
+            if (is_array($model)) {
               $_SESSION['storage']['delivery'][$delivery->id]['summ'] = $price; //save price for order
               $output .= ' (' . $delivery->description . ') ';
               break;
-            default :
+            }
+          default :
+            if (is_array($model)) {
               $_SESSION['storage']['delivery'][$delivery->id]['summ'] = $price; //save price for order
               $output .= ' (' . $delivery->description . ') ' . CHtml::tag('span', array('class' => 'red delivery-price'), $price . $currency->class);
-          }
-          $list[$delivery->id] = $output;
+            }
         }
+        if (is_array($model))
+          $list[$delivery->id] = $output;
         else {
           $list['params'][$delivery->id]['price'] = $price;
           $list['options'][$delivery->id] = $delivery->name;
@@ -389,7 +406,7 @@ class Delivery extends CActiveRecord {
       }
     if (is_array($model)) {//if model is carts array
       $output = '';
-      if (count($list) > 0){
+      if (count($list) > 0) {
         if (!isset($list[$order->delivery_id]))
           $order->delivery_id = 1;
         return $list;
@@ -586,8 +603,22 @@ class Delivery extends CActiveRecord {
   }
 
   public static function getList() {
-    return CHtml::listData(self::model()->findAll(), 'id', 'name');
+    $items = self::model()->findAll();
+    /* @var $items Delivery[] */
+    $options = array();
+    foreach ($items as $item) {
+      switch ($item->zone_type_id) {
+        case 3:
+          $options[$item->id] = $item->name . ' (' . $item->transportType . ')';
+          break;
+        case 4:
+          $options[$item->id] = $item->zone_type;
+          break;
+        default :
+          $options[$item->id] = $item->name;
+      }
+    }
+    return $options;
   }
 
 }
-
