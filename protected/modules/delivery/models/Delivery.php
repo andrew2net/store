@@ -253,7 +253,8 @@ class Delivery extends CActiveRecord {
 
     $list = array();
     $list_oversize = array();
-    if ($product_sizes)
+    if ($product_sizes){
+      $storage_delivery = array();
       foreach ($models as $delivery) {
         /* @var $delivery Delivery */
 
@@ -325,7 +326,7 @@ class Delivery extends CActiveRecord {
         else
           $price = round($price);
 
-        if (is_array($model)) { //if model is carts array
+        if (is_array($model) && !$delivery_id) { //if model is carts array or call not from save order function
           $output = CHtml::tag('span', array(
                 'class' => 'bold',
                 'price' => $price,
@@ -354,12 +355,12 @@ class Delivery extends CActiveRecord {
                 }
               if ($value) {
                 $price = ceil($value['price']);
-                if (is_array($model)) {
+                if (is_array($model) && !$delivery_id) {
                   $output = CHtml::tag('span', array(
                         'class' => 'bold',
                         'price' => $price,
                           ), $delivery->name);
-                  $_SESSION['storage']['delivery'][$delivery->id]['summ'] = $price; //save price for order edit
+                  $storage_delivery[$delivery->id]['summ'] = $price; //save price for order edit
                   $output .= ' (' . $delivery->transportType . " доставка {$value['term']}) " . CHtml::tag('span', array('class' => 'red delivery-price'), $price . $currency->class);
                 }
                 else {
@@ -372,8 +373,8 @@ class Delivery extends CActiveRecord {
             }
             continue 2;
           case 4: //it's customer delivery company
-            if (is_array($model)) {
-              $_SESSION['storage']['delivery'][$delivery->id]['summ'] = $price; //save price for order
+            if (is_array($model) && !$delivery_id) {
+              $storage_delivery[$delivery->id]['summ'] = $price; //save price for order
               $html_options = array();
               if ($order->delivery_id != $delivery->id)
                 $html_options['disabled'] = true;
@@ -386,25 +387,28 @@ class Delivery extends CActiveRecord {
             break;
           case 5:
           case 6:
-            if (is_array($model)) {
-              $_SESSION['storage']['delivery'][$delivery->id]['summ'] = $price; //save price for order
+            if (is_array($model) && !$delivery_id) {
+              $storage_delivery[$delivery->id]['summ'] = $price; //save price for order
               $output .= ' (' . $delivery->description . ') ';
               break;
             }
           default :
-            if (is_array($model)) {
-              $_SESSION['storage']['delivery'][$delivery->id]['summ'] = $price; //save price for order
+            if (is_array($model) && !$delivery_id) {
+              $storage_delivery[$delivery->id]['summ'] = $price; //save price for order
               $output .= ' (' . $delivery->description . ') ' . CHtml::tag('span', array('class' => 'red delivery-price'), $price . $currency->class);
             }
         }
-        if (is_array($model))
+        if (is_array($model) && !$delivery_id)
           $list[$delivery->id] = $output;
         else {
           $list['params'][$delivery->id]['price'] = $price;
           $list['options'][$delivery->id] = $delivery->name;
         }
       }
-    if (is_array($model)) {//if model is carts array
+      if ($storage_delivery)
+        Yii::app()->user->setState('delivery', $storage_delivery);
+    }
+    if (is_array($model) && !$delivery_id) {//if model is carts array or call not from save order function
       $output = '';
       if (count($list) > 0) {
         if (!isset($list[$order->delivery_id]))

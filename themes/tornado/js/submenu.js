@@ -54,7 +54,7 @@ $(document).ready(function() {
     var button = $(this);
     button.removeClass('addToCart');
     var id = button.attr('product');
-    var quantity = button.find('input').val();
+    var quantity = parseInt(button.find('input').val());
     if (!quantity)
       quantity = 1;
     $.post('/site/addtocart', {
@@ -106,7 +106,7 @@ $(document).ready(function() {
               var result = $.parseJSON(data);
               if (result.top10 !== undefined)
                 for (var key in result.top10) {
-                  var p = $('.item[product="' + key + '"] .item-price'); 
+                  var p = $('.item[product="' + key + '"] .item-price');
                   p.html(result.top10[key].price);
                   p.attr('title', result.title);
                   $('.item[product="' + key + '"] .item-disc').html(result.top10[key].disc);

@@ -22,27 +22,27 @@ $this->breadcrumbs = array(
   );
   ?>
   <?php
-  echo TbHtml::beginFormTb(TbHtml::FORM_LAYOUT_INLINE
-      , '/admin/catalog/product/productUpload', 'post', array(
-    'class' => 'pull-right',
-    'enctype' => 'multipart/form-data',
-  ));
+//  echo TbHtml::beginFormTb(TbHtml::FORM_LAYOUT_INLINE
+//      , '/admin/catalog/product/productUpload', 'post', array(
+//    'class' => 'pull-right',
+//    'enctype' => 'multipart/form-data',
+//  ));
   ?>
   <?php
-  echo TbHtml::activeFileField($importData, 'productFile'
-      , array(
-    'id' => 'fileToUpload',
-      )
-  );
+//  echo TbHtml::activeFileField($importData, 'productFile'
+//      , array(
+//    'id' => 'fileToUpload',
+//      )
+//  );
   ?>
   <?php
-  echo TbHtml::checkBox('upload_image', FALSE, array('id' => 'uploadImage',
-    'style' => 'vertical-align:baseline;margin-right:5px'
-  ));
-  echo TbHtml::label('Загружать изображения', 'upload_image');
+//  echo TbHtml::checkBox('upload_image', FALSE, array('id' => 'uploadImage',
+//    'style' => 'vertical-align:baseline;margin-right:5px'
+//  ));
+//  echo TbHtml::label('Загружать изображения', 'upload_image');
   ?>
   <?php
-  echo TbHtml::endForm();
+//  echo TbHtml::endForm();
   ?>
 </div>
 

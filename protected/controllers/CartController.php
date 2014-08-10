@@ -77,9 +77,9 @@ class CartController extends Controller {
     $order = new Order;
     if (isset($_POST['Order'])) {
       $order->attributes = $_POST['Order'];
-      $_SESSION['storage']['order']['delivery_id'] = $order->delivery_id;
+      Yii::app()->user->setState('delivery_id', (int) $order->delivery_id);
       if (isset($_POST['Order']['customer_delivery']))
-        $_SESSION['storage']['order']['customer_delivery'] = $order->customer_delivery;
+        Yii::app()->user->setState('customer_delivery', $order->customer_delivery);
     }
 
     $delivery = array();
@@ -224,18 +224,19 @@ class CartController extends Controller {
     Yii::import('application.modules.payments.models.Currency');
 
     $order->attributes = $_POST['Order'];
-    if (isset($_SESSION['storage']['delivery'][$_POST['Order']['delivery_id']]['summ']))
-      $order->delivery_summ = $_SESSION['storage']['delivery'][$_POST['Order']['delivery_id']]['summ'];
-    else {
+    if (Yii::app()->user->hasState('delivery')){
+      $storage_delivery = Yii::app()->user->getState('delivery');
+      $order->delivery_summ = $storage_delivery[$_POST['Order']['delivery_id']]['summ'];
+      Yii::app()->user->setState('delivery', NULL);
+    }else {
       if ($customer_profile->other_city)
         $city = $customer_profile->city;
       else
         $city = $customer_profile->city_l;
       $cart = Cart::model()->shoppingCart(ProfileController::getSession())->findAll();
-      $delivery = Delivery::getDeliveryList($customer_profile->country_code, $customer_profile->post_code, $city, $cart, $order, $$_POST['Order']['delivery_id']);
-      $order->delivery_summ = $_SESSION['storage']['delivery'][$_POST['Order']['delivery_id']]['summ'];
+      $delivery = Delivery::getDeliveryList($customer_profile->country_code, $customer_profile->post_code, $city, $cart, $order, $_POST['Order']['delivery_id']);
+      $order->delivery_summ = $delivery['params'][$_POST['Order']['delivery_id']]['price'];
     }
-    unset($_SESSION['storage']['delivery']);
 
     $order->profile_id = $customer_profile->id;
     if ($customer_profile->entity_id == 1) {
@@ -394,16 +395,14 @@ class CartController extends Controller {
 
     $cart = Cart::model()->shoppingCart(ProfileController::getSession())->findAll();
     $order = new Order;
-    if (isset($_SESSION['storage']['order'])) {
-      $order->delivery_id = $_SESSION['storage']['order']['delivery_id'];
-      if (isset($_SESSION['storage']['order']['customer_delivery']))
-        $order->customer_delivery = $_SESSION['storage']['order']['customer_delivery'];
-      unset($_SESSION['storage']['order']);
-    }else {
-      $order->delivery_id = $delivery_id;
-      $order->customer_delivery = $c_deliver;
-    }
-    $order->validate(array('customer_delivery'));
+
+    $order->delivery_id = Yii::app()->user->getState('delivery_id', $delivery_id);
+    $order->customer_delivery = Yii::app()->user->getState('customer_delivery', $c_deliver);
+    if (Yii::app()->user->hasState('customer_delivery'))
+      $order->validate(array('customer_delivery'));
+    Yii::app()->user->setState('delivery_id', NULL);
+    Yii::app()->user->setState('customer_delivery', NULL);
+
     $delivery = Delivery::model()->getDeliveryList($ccode, trim($pcode), $city, $cart, $order);
 
     $profile = ProfileController::getProfile();
