@@ -14,7 +14,7 @@
   ));
   ?>
   <?php // echo $model->id; ?>
-  <div style="margin-top: 20px">
+  <div style="margin: 20px 0">
     <?php
     echo $model->content;
     ?>

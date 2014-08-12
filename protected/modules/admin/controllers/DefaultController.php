@@ -12,9 +12,25 @@ class DefaultController extends Controller {
     $model = new Order('search');
     $model->unsetAttributes();
 
-    if (isset($_GET['Order']))
+    if (isset($_GET['Order'])){
       $model->attributes = $_GET['Order'];
+      Yii::app()->user->setState('Order', $_GET['Order']);
+    }elseif (Yii::app()->user->hasState('Order')) {
+      $model->attributes = Yii::app()->user->getState('Order');
+    }
 
+    if (isset($_GET['Order_page']))
+      Yii::app()->user->setState('Order_page', $_GET['Order_page']);
+    elseif (isset($_GET['ajax']))
+      Yii::app()->user->setState('Order_page', NULL);
+    elseif (Yii::app()->user->hasState('Order_page'))
+      $_GET['Order_page'] = (int) Yii::app()->user->getState('Order_page');
+
+    if (isset($_GET['Order_sort']))
+      Yii::app()->user->setState('Order_sort', $_GET['Order_sort']);
+    elseif (Yii::app()->user->hasState('Order_sort'))
+      $_GET['Order_sort'] = Yii::app()->user->getState('Order_sort');
+      
     $this->render('index', array('model' => $model));
   }
 

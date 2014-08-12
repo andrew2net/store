@@ -87,7 +87,23 @@ class CouponController extends Controller {
     $model->unsetAttributes();  // clear any default values
     if (isset($_GET['Coupon'])) {
       $model->attributes = $_GET['Coupon'];
+      Yii::app()->user->setState('Coupon', $_GET['Coupon']);
     }
+    elseif (Yii::app()->user->hasState('Coupon')) {
+      $model->attributes = Yii::app()->user->getState('Coupon');
+    }
+
+    if (isset($_GET['Coupon_page']))
+      Yii::app()->user->setState('Coupon_page', $_GET['Coupon_page']);
+    elseif (isset($_GET['ajax']))
+      Yii::app()->user->setState('Coupon_page', NULL);
+    elseif (Yii::app()->user->hasState('Coupon_page'))
+      $_GET['Coupon_page'] = (int) Yii::app()->user->getState('Coupon_page');
+
+    if (isset($_GET['Coupon_sort']))
+      Yii::app()->user->setState('Coupon_sort', $_GET['Coupon_sort']);
+    elseif (Yii::app()->user->hasState('Coupon_sort'))
+      $_GET['Coupon_sort'] = Yii::app()->user->getState('Coupon_sort');
 
     $this->render('index', array(
       'model' => $model,

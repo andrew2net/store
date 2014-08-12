@@ -18,7 +18,7 @@ $this->beginContent('/catalog/menu');
 <?php
 $this->widget('ext.bootstrap.widgets.TbGridView', array(
   'dataProvider' => $model->search(),
-  'filter' => $model,
+//  'filter' => $model,
   'columns' => array(
     'name',
     array(
