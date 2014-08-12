@@ -258,7 +258,7 @@ class Delivery extends CActiveRecord {
       foreach ($models as $delivery) {
         /* @var $delivery Delivery */
 
-        $parcels = self::checkSizes($product_sizes, &$delivery);
+        $parcels = self::checkSizes($product_sizes, $delivery);
         if (!$parcels['result']) {
           if (isset($parcels['oversize_items']))
             if ($list_oversize)
@@ -457,7 +457,7 @@ class Delivery extends CActiveRecord {
    * @param array $volumes
    * @param type $delivery
    */
-  private static function checkSizes(array $items, Delivery $delivery) {
+  private static function checkSizes(array $items, Delivery &$delivery) {
 
     $volume = array($delivery->length, $delivery->width, $delivery->height, 0, 0, 0);
 
@@ -465,7 +465,7 @@ class Delivery extends CActiveRecord {
     $oversize_items = array();
     switch ($delivery->size_method_id) {
       case 1:
-        foreach ($items as $item)
+        foreach ($items as $item) {
           if ($item[0] > $volume[0] || $item[1] > $volume[1] || $item[2] > $volume[2] ||
               $item[0] > $volume[0] || $item[2] > $volume[1] || $item[1] > $volume[2] ||
               $item[1] > $volume[0] || $item[0] > $volume[1] || $item[2] > $volume[2] ||
@@ -478,14 +478,18 @@ class Delivery extends CActiveRecord {
             $dim = array_slice($item, 0, 3);
             rsort($dim);
             $size = $dim[0] + ($dim[1] + $dim[2]) * 2;
-            if ($size > $delivery->size_summ)
+            if ($size > $delivery->size_summ) {
               $oversize_items[] = $item[4];
+            }
           }
+        }
 //        break;
       case 2:
-        foreach ($items as $item)
-          if ($item[3] > $delivery->max_weight)
+        foreach ($items as $item) {
+          if ($item[3] > $delivery->max_weight) {
             $oversize_items[] = $item[4];
+          }
+        }
         break;
     }
     if ($oversize_items)
@@ -495,7 +499,7 @@ class Delivery extends CActiveRecord {
     switch ($delivery->size_method_id) {
       case 1:
         while (count($items) > 0) {
-          $parcels['parcels'][] = array('weight' => self::makeParcel(&$items, $volume, $delivery));
+          $parcels['parcels'][] = array('weight' => self::makeParcel($items, $volume, $delivery));
         }
         $parcels['result'] = true;
         break;
@@ -513,7 +517,7 @@ class Delivery extends CActiveRecord {
             }
           }
           $items = array_diff_assoc($items, $parcel_items);
-          self::makeParcel(&$parcel_items, $volume, $delivery);
+          self::makeParcel($parcel_items, $volume, $delivery);
           $parcels['parcels'][] = array(
             'weight' => $weight,
             'oversize' => count($parcel_items) > 0,
@@ -526,7 +530,7 @@ class Delivery extends CActiveRecord {
     return $parcels;
   }
 
-  private static function makeParcel($items, $volume, $delivery) {
+  private static function makeParcel(&$items, $volume, &$delivery) {
 
     $data = array(
       'items' => &$items,
@@ -535,11 +539,11 @@ class Delivery extends CActiveRecord {
       'height' => 0,
       'weight' => 0,
     );
-    self::placeItems(&$data, $volume, &$delivery);
+    self::placeItems($data, $volume, $delivery);
     return $data['weight'];
   }
 
-  private static function placeItems(array $data, array $volume, Delivery $delivery) {
+  private static function placeItems(array &$data, array $volume, Delivery &$delivery) {
     static $orientations =
     array(
       array(0, 1, 2),
@@ -595,7 +599,7 @@ class Delivery extends CActiveRecord {
           );
 
           foreach ($new_volumes as $v) {
-            self::placeItems(&$data, $v, &$delivery);
+            self::placeItems($data, $v, $delivery);
             if (count($data['items']) == 0)
               return;
           }

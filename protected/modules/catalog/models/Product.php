@@ -31,6 +31,8 @@
  * @property ProductPrice[] $prices
  */
 class Product extends CActiveRecord {
+  
+  public $name;
 
   public $w_end_date;
 
