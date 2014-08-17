@@ -7,6 +7,7 @@
  * @property string $id
  * @property string $name
  * @property string $summ
+ * @property string $code 1C code id
  *
  * The followings are the available model relations:
  * @property ProductPrice[] $prices
@@ -30,6 +31,7 @@ class Price extends CActiveRecord {
       array('name', 'required'),
       array('name', 'length', 'max' => 255),
       array('summ', 'length', 'max' => 12),
+      array('code', 'length', 'max' => 9),
       // The following rule is used by search().
       // @todo Please remove those attributes that should not be searched.
       array('id, name, summ', 'safe', 'on' => 'search'),

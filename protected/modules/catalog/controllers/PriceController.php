@@ -42,6 +42,14 @@ class PriceController extends Controller {
     
     $this->render('update', array('model' => $model));
   }
+  
+  public function actionDelete($id){
+    $this->loadModel($id)->delete();
+    
+    if (!isset($_POST['ajax'])){
+      $this->redirect('index');
+    }
+  }
 
   public function loadModel($id) {
     $model = Price::model()->findByPk($id);

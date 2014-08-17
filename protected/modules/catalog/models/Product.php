@@ -19,6 +19,7 @@
  * @property integer $length 
  * @property integer $width 
  * @property integet $height
+ * @property string $code 1C code
  *
  * The followings are the available model relations:
  * @property Brand $brand
@@ -32,8 +33,6 @@
  */
 class Product extends CActiveRecord {
   
-  public $name;
-
   public $w_end_date;
 
   /**
@@ -57,7 +56,7 @@ class Product extends CActiveRecord {
       array('price_tenge', 'required', 'on' => 'mcurrency'),
       array('name, img, small_img', 'length', 'max' => 255),
       array('article', 'length', 'max' => 25),
-      array('brand_id', 'length', 'max' => 11),
+      array('brand_id, code', 'length', 'max' => 11),
       array('price, price_tenge', 'length', 'max' => 12),
       array('description, show_me', 'safe'),
       array('img, small_img', 'unsafe'),

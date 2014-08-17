@@ -13,6 +13,7 @@
  * @property integer $level
  * @property integer $root
  * @property string $seo
+ * @property string $code 1C code id
  */
 class Category extends CActiveRecord {
 
@@ -33,6 +34,7 @@ class Category extends CActiveRecord {
       array('name', 'required'),
 //      array('left_key, right_key, level', 'numerical', 'integerOnly' => true),
       array('name', 'length', 'max' => 30),
+      array('code', 'length', 'max' => 11),
       array('url, img', 'length', 'max' => 255),
       // The following rule is used by search().
       // @todo Please remove those attributes that should not be searched.
