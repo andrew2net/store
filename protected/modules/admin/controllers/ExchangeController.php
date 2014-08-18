@@ -35,6 +35,7 @@ class ExchangeController extends CController {
       Yii::import('application.modules.catalog.models.Category');
       Yii::import('application.modules.catalog.models.Brand');
       Yii::import('application.modules.catalog.models.Price');
+      Yii::trace('import', 'exchange');
       foreach ($product as $item) {
         $model = Product::model()->findByAttributes(array('code' => $item[0]));
         if (!$model) {
@@ -48,6 +49,7 @@ class ExchangeController extends CController {
           $model = new Product;
           $model->show_me = TRUE;
         }
+        Yii::trace('model ' . $model->isNewRecord, 'exchange');
         $model->code = $item[0];
         $model->article = $item[2];
         $model->name = $item[3];
@@ -56,6 +58,7 @@ class ExchangeController extends CController {
         /* @var $brand Brand */
         if ($brand)
           $model->brand_id = $brand->id;
+        Yii::trace('brand', 'exchange');
 
         $model->remainder = $item[5];
         $model->price = $item[6];
@@ -66,6 +69,7 @@ class ExchangeController extends CController {
 
         if (!$model->save())
           return FALSE;
+        Yii::trace('save', 'exchange');
 
         $category = Category::model()->findByAttributes(array('code' => $item[1]));
         /* @var $category Category */
@@ -76,14 +80,18 @@ class ExchangeController extends CController {
           $productCategory->category_id = $category->id;
           $productCategory->save();
         }
+        Yii::trace('category', 'exchange');
 
-        $img_path = '/images/' . Yii::app()->params['img_storage'] . '/product/';
-        $img = base64_decode($item[11]);
-        $file = fopen(Yii::getPathOfAlias('webroot') . $img_path . $model->id . '.jpg', 'w+');
-        fwrite($file, $img);
-        fclose($file);
-        $model->img = $img_path . $model->id . '.jpg';
-        $model->update(array('img'));
+        if ($item[11]) {
+          $img_path = '/images/' . Yii::app()->params['img_storage'] . '/product/';
+          $img = base64_decode($item[11]);
+          $file = fopen(Yii::getPathOfAlias('webroot') . $img_path . $model->id . '.jpg', 'w+');
+          fwrite($file, $img);
+          fclose($file);
+          $model->img = $img_path . $model->id . '.jpg';
+          $model->update(array('img'));
+        }
+        Yii::trace('image', 'exchange');
 
         ProductPrice::model()->deleteAllByAttributes(array('product_id' => $model->id));
         foreach ($item[12] as $price) {
@@ -96,6 +104,7 @@ class ExchangeController extends CController {
             $product_price->save();
           }
         }
+        Yii::trace('price', 'exchange');
       }
     } catch (Exception $exc) {
       Yii::trace($exc->getMessage() . $exc->getTraceAsString(), 'exchange');
@@ -214,7 +223,7 @@ class ExchangeController extends CController {
 
   private function saveCategory($item, &$category) {
     $key = key($item);
-    Yii::trace($item[$key][2], 'exchange');
+//    Yii::trace($item[$key][2], 'exchange');
     $category = array_diff_key($category, $item);
     $model = Category::model()->findByAttributes(array('code' => $item[$key][0]));
     if (!$model) {
