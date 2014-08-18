@@ -26,9 +26,12 @@ class ExchangeController extends CController {
    */
   public function setProduct($p, $hash) {
     try {
+      Yii::trace('try', 'exchange');
       $product = json_decode($p);
+      Yii::trace('decode', 'exchange');
       if (strtoupper(md5($product[0][0] . self::PASS)) != $hash)
         return FALSE;
+      Yii::trace('password', 'exchange');
       Yii::import('application.modules.catalog.models.Product');
       Yii::import('application.modules.catalog.models.ProductPrice');
       Yii::import('application.modules.catalog.models.ProductCategory');
