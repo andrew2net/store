@@ -307,7 +307,7 @@ class ProductController extends Controller {
       }
       else {
         if ($model->small_img) {
-          $old_small_file = Yii::getPathOfAlias('webroot') . $old_small_img;
+          $old_small_file = Yii::getPathOfAlias('webroot') . $model->small_img;
           unlink($old_small_file);
           $model->small_img = '';
         }
