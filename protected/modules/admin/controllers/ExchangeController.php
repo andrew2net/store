@@ -26,7 +26,7 @@ class ExchangeController extends CController {
    */
   public function setProduct($p, $hash) {
     try {
-      Yii::trace('try', 'exchange');
+      Yii::trace('try ' . substr($p, 0, 255), 'exchange');
       $product = json_decode($p);
       Yii::trace('decode ' . count($product), 'exchange');
       if (strtoupper(md5($product[0][0] . self::PASS)) != $hash)
