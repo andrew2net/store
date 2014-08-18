@@ -28,7 +28,7 @@ class ExchangeController extends CController {
     try {
       Yii::trace('try ' . substr($p, 0, 255), 'exchange');
       $product = json_decode($p);
-      Yii::trace('decode ' . json_last_error_msg(), 'exchange');
+      Yii::trace('decode ' . json_last_error(), 'exchange');
       if (strtoupper(md5($product[0][0] . self::PASS)) != $hash)
         return FALSE;
       Yii::trace('password', 'exchange');
