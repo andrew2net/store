@@ -260,11 +260,11 @@ class ProductController extends Controller {
             }
           }
 
-          $tr->commit();
           $this->moveImg($model, 'img');
           if ($_POST['Product']['small_img'])
             $this->moveImg($model, 'small_img');
           $model->save();
+          $tr->commit();
           $this->redirect(array('index'));
         }
       } catch (Exception $e) {
@@ -275,8 +275,8 @@ class ProductController extends Controller {
   }
 
   private function moveImg(Product $model, $img) {
-    $old_file = Yii::getPathOfAlias('webroot') . $model->$img;
     $old_img = $model->$img;
+    $old_file = Yii::getPathOfAlias('webroot') . $old_img;
     $model->$img = $_POST['Product'][$img];
     $ext = substr($_POST['Product'][$img], strrpos($_POST['Product'][$img], '.'));
     $img_storage = '/images/' . Yii::app()->params['img_storage'] . '/product/';
@@ -293,29 +293,25 @@ class ProductController extends Controller {
           if (strlen($old_img) > 0 && file_exists($old_file))
             unlink($old_file);
           rename(Yii::getPathOfAlias('webroot') . $_POST['Product'][$img], $file_path . $img_name);
+          $model->$img = $img_storage . basename($file_path . $img_name);
         }
+      }else {
+        unlink($old_file);
+        $model->$img = '';
       }
     }
 
-    if (!$_POST['Product']['small_img'] && $_POST['Product']['img']) {
-      $small_img_name = $model->id . 's' . $ext;
-      $image = new Imagick($file_path . $img_name);
-      if ($image->getimagewidth() > $image->getimageheight())
-        $image->thumbnailimage(100, 0);
-      else
-        $image->thumbnailimage(0, 100);
-      $image->writeimage($file_path . $small_img_name);
-      $image->destroy();
-      $model->small_img = $img_storage . basename($file_path . $small_img_name);
-    }
-
-    if ($_POST['Product'][$img]) {
-      $model->$img = $img_storage . basename($file_path . $img_name);
-    }
-    else {
-      $model->$img = '';
-      if (!$_POST['Product']['small_img'] && !$_POST['Product']['img'])
-        $model->small_img = '';
+    if (!$_POST['Product']['small_img']) {
+      if ($_POST['Product']['img']) {
+        $model->createThumbnail();
+      }
+      else {
+        if ($model->small_img) {
+          $old_small_file = Yii::getPathOfAlias('webroot') . $old_small_img;
+          unlink($old_small_file);
+          $model->small_img = '';
+        }
+      }
     }
   }
 
@@ -349,7 +345,8 @@ class ProductController extends Controller {
     if (isset($_GET['Product'])) {
       $model->attributes = $_GET['Product'];
       Yii::app()->user->setState('Product', $_GET['Product']);
-    }elseif (Yii::app()->user->hasState('Product')) {
+    }
+    elseif (Yii::app()->user->hasState('Product')) {
       $model->attributes = Yii::app()->user->getState('Product');
     }
 
@@ -585,4 +582,3 @@ class ProductController extends Controller {
   }
 
 }
-

@@ -32,7 +32,7 @@
  * @property ProductPrice[] $prices
  */
 class Product extends CActiveRecord {
-  
+
   public $w_end_date;
 
   /**
@@ -515,6 +515,22 @@ class Product extends CActiveRecord {
       }
       return $trade_price;
     }
+  }
+
+  public function createThumbnail() {
+    $img_storage = '/images/' . Yii::app()->params['img_storage'] . '/product/';
+    $root_path = Yii::getPathOfAlias('webroot');
+    $file_path = $root_path . $img_storage;
+    $image = new Imagick($root_path . $this->img);
+    $ext = strtolower($image->getimageformat());
+    $small_img_name = $this->id . 's.' . $ext;
+    if ($image->getimagewidth() > $image->getimageheight())
+      $image->thumbnailimage(100, 0);
+    else
+      $image->thumbnailimage(0, 100);
+    $image->writeimage($file_path . $small_img_name);
+    $image->destroy();
+    $this->small_img = $img_storage . basename($file_path . $small_img_name);
   }
 
 }

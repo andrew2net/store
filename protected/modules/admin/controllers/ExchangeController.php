@@ -25,56 +25,68 @@ class ExchangeController extends CController {
    * @soap
    */
   public function setProduct($p, $hash) {
+
     try {
-      Yii::trace('try ' . substr($p, 0, 255), 'exchange');
-      $product = json_decode($p);
+//      Yii::trace('try ' . substr($p, 0, 255), 'exchange');
+//      $product = json_decode($p);
+      $xml = new SimpleXMLElement($p);
+      if (!$xml) {
+        foreach (libxml_get_errors() as $error) {
+          Yii::trace($error->message, 'exchange');
+        }
+      }
       Yii::trace('decode ' . json_last_error(), 'exchange');
-      if (strtoupper(md5($product[0][0] . self::PASS)) != $hash)
+      if (strtoupper(md5($xml->product[0]->code . self::PASS)) != $hash)
         return FALSE;
-      Yii::trace('password', 'exchange');
+//      Yii::trace('password', 'exchange');
+//      if (!xml_parse($xml_parser, $p, TRUE)) {
+//        Yii::trace(sprintf('Ошибка XML: %s на строке %d', xml_error_string(xml_get_error_code($xml_parser)), xml_get_current_line_number($xml_parser)), 'exchange');
+//      }
+//      xml_parser_free($xml_parser);
+
       Yii::import('application.modules.catalog.models.Product');
       Yii::import('application.modules.catalog.models.ProductPrice');
       Yii::import('application.modules.catalog.models.ProductCategory');
       Yii::import('application.modules.catalog.models.Category');
       Yii::import('application.modules.catalog.models.Brand');
       Yii::import('application.modules.catalog.models.Price');
-      Yii::trace('import', 'exchange');
-      foreach ($product as $item) {
-        $model = Product::model()->findByAttributes(array('code' => $item[0]));
+//      Yii::trace('import', 'exchange');
+      foreach ($xml->product as $item) {
+        $model = Product::model()->findByAttributes(array('code' => $item->code));
         if (!$model) {
-          $model = Product::model()->findByAttributes(array('article' => $item[2]));
+          $model = Product::model()->findByAttributes(array('article' => $item->article));
         }
         /* @var $model Product */
         if ($model) {
-          if (!$item[3])
+          if (!$item->name)
             return $model->delete();
         }else {
           $model = new Product;
           $model->show_me = TRUE;
         }
-        Yii::trace('model ' . $model->isNewRecord, 'exchange');
-        $model->code = $item[0];
-        $model->article = $item[2];
-        $model->name = $item[3];
+//        Yii::trace('model ' . $model->isNewRecord, 'exchange');
+        $model->code = $item->code;
+        $model->article = (string) $item->article;
+        $model->name = (string) $item->name;
 
-        $brand = Brand::model()->findByAttributes(array('code' => $item[4]));
+        $brand = Brand::model()->findByAttributes(array('code' => $item->brand));
         /* @var $brand Brand */
         if ($brand)
-          $model->brand_id = $brand->id;
-        Yii::trace('brand', 'exchange');
+          $model->brand_id = (int) $brand->id;
+//        Yii::trace('brand', 'exchange');
 
-        $model->remainder = $item[5];
-        $model->price = $item[6];
-        $model->weight = $item[7];
-        $model->length = $item[8];
-        $model->width = $item[9];
-        $model->height = $item[10];
+        $model->remainder = (int) $item->remainder;
+        $model->price = (float) $item->price;
+        $model->weight = (float) $item->weight;
+        $model->length = (float) $item->length;
+        $model->width = (float) $item->width;
+        $model->height = (float) $item->height;
 
         if (!$model->save())
           return FALSE;
-        Yii::trace('save', 'exchange');
+//        Yii::trace('save', 'exchange');
 
-        $category = Category::model()->findByAttributes(array('code' => $item[1]));
+        $category = Category::model()->findByAttributes(array('code' => $item->category));
         /* @var $category Category */
         if ($category) {
           ProductCategory::model()->deleteAllByAttributes(array('product_id' => $model->id));
@@ -83,38 +95,43 @@ class ExchangeController extends CController {
           $productCategory->category_id = $category->id;
           $productCategory->save();
         }
-        Yii::trace('category', 'exchange');
+//        Yii::trace('category', 'exchange');
 
-        if ($item[11]) {
+        if (isset($item->image)) {
           $img_path = '/images/' . Yii::app()->params['img_storage'] . '/product/';
-          $img = base64_decode($item[11]);
-          $file = fopen(Yii::getPathOfAlias('webroot') . $img_path . $model->id . '.jpg', 'w+');
+          $img = base64_decode($item->image);
+          $imagick = new Imagick;
+          $imagick->readimageblob($img);
+          $ext = '.' . strtolower($imagick->getimageformat());
+          $imagick->destroy();
+          $file = fopen(Yii::getPathOfAlias('webroot') . $img_path . $model->id . $ext, 'w+');
           fwrite($file, $img);
           fclose($file);
-          $model->img = $img_path . $model->id . '.jpg';
-          $model->update(array('img'));
+          $model->img = $img_path . $model->id . $ext;
+          $model->createThumbnail();
+          $model->update(array('img', 'small_img'));
         }
-        Yii::trace('image', 'exchange');
+//        Yii::trace('image', 'exchange');
 
         ProductPrice::model()->deleteAllByAttributes(array('product_id' => $model->id));
-        foreach ($item[12] as $price) {
-          $price_model = Price::model()->findByAttributes(array('code' => $price[0]));
+        foreach ($item->prices->price as $price) {
+          $price_model = Price::model()->findByAttributes(array('code' => $price->code));
           if ($price_model) {
             $product_price = new ProductPrice;
             $product_price->product_id = $model->id;
             $product_price->price_id = $price_model->id;
-            $product_price->price = $price[1];
+            $product_price->price = (float) $price->value;
             $product_price->save();
           }
         }
-        Yii::trace('price', 'exchange');
+//        Yii::trace('price', 'exchange');
+        return TRUE;
       }
     } catch (Exception $exc) {
       Yii::trace($exc->getMessage() . $exc->getTraceAsString(), 'exchange');
-      return false;
     }
 
-    return TRUE;
+    return FALSE;
   }
 
   /**
