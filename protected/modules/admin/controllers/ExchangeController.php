@@ -324,65 +324,60 @@ class ExchangeController extends CController {
       if (strtoupper(md5($sign . self::PASS)) != $hash)
         return $sign;
     }else {
-      return FALSE;
-    }
-    if ($order) {
-      $domDoc = new DOMDocument;
-      $domDoc->encoding = 'UTF-8';
-      $orderEl = $domDoc->createElement('order');
-      $orderNode = $domDoc->appendChild($orderEl);
-
-      $orderNode->appendChild($domDoc->createElement('id', $order->id));
-      $orderNode->appendChild($domDoc->createElement('date', Yii::app()->dateFormatter->format('yyyyMMddHHmmss', $order->time)));
-      $orderNode->appendChild($domDoc->createElement('payment', $order->payment->name));
-      $orderNode->appendChild($domDoc->createElement('description', $order->description));
-
-      $deliveryEl = $domDoc->createElement('delivery');
-      $deliveryNode = $orderNode->appendChild($deliveryEl);
-      $deliveryName = $order->delivery->name;
-      switch ($order->delivery->zone_type_id) {
-        case 3:
-          $deliveryName .= ' (' . $order->delivery->transportType . ')';
-          break;
-        case 4:
-          $deliveryName .= ' (' . $order->customer_delivery . ')';
-      }
-      $deliveryNode->appendChild($domDoc->createElement('name', $deliveryName));
-      $deliveryNode->appendChild($domDoc->createElement('price', $order->delivery_summ));
-
-      $customerEl = $domDoc->createElement('customer');
-      $customerNode = $orderNode->appendChild($customerEl);
-      $customerNode->appendChild($domDoc->createElement('name', $order->fio));
-      $customerNode->appendChild($domDoc->createElement('inn', $order->profile->user->profile->inn));
-      $customerNode->appendChild($domDoc->createElement('email', $order->email));
-      $customerNode->appendChild($domDoc->createElement('phone', $order->phone));
-      $customerNode->appendChild($domDoc->createElement('city', $order->city));
-      $customerNode->appendChild($domDoc->createElement('address', $order->address));
-
-      $productsEl = $domDoc->createElement('products');
-      $productsNode = $orderNode->appendChild($productsEl);
-      foreach ($order->orderProducts as $item) {
-        $productEl = $domDoc->createElement('product');
-        $productNode = $productsNode->appendChild($productEl);
-        $productNode->appendChild($domDoc->createElement('code', $item->product->code));
-        $productNode->appendChild($domDoc->createElement('quantity', $item->quantity));
-        $productNode->appendChild($domDoc->createElement('price', $item->price));
-      }
-
-      $xml = $domDoc->saveXML();
-
-      if ($order->status_id == Yii::app()->params['order']['new_status'] &&
-          $order->status_id != Yii::app()->params['order']['process_status']) {
-        $order->status_id = Yii::app()->params['order']['process_status'];
-      }
-      $order->exchange = 0;
-      $order->save();
-
-      return $xml;
-    }
-    else {
       return '';
     }
+    $domDoc = new DOMDocument;
+    $domDoc->encoding = 'UTF-8';
+    $orderEl = $domDoc->createElement('order');
+    $orderNode = $domDoc->appendChild($orderEl);
+
+    $orderNode->appendChild($domDoc->createElement('id', $order->id));
+    $orderNode->appendChild($domDoc->createElement('date', Yii::app()->dateFormatter->format('yyyyMMddHHmmss', $order->time)));
+    $orderNode->appendChild($domDoc->createElement('payment', $order->payment->name));
+    $orderNode->appendChild($domDoc->createElement('description', $order->description));
+
+    $deliveryEl = $domDoc->createElement('delivery');
+    $deliveryNode = $orderNode->appendChild($deliveryEl);
+    $deliveryName = $order->delivery->name;
+    switch ($order->delivery->zone_type_id) {
+      case 3:
+        $deliveryName .= ' (' . $order->delivery->transportType . ')';
+        break;
+      case 4:
+        $deliveryName .= ' (' . $order->customer_delivery . ')';
+    }
+    $deliveryNode->appendChild($domDoc->createElement('name', $deliveryName));
+    $deliveryNode->appendChild($domDoc->createElement('price', $order->delivery_summ));
+
+    $customerEl = $domDoc->createElement('customer');
+    $customerNode = $orderNode->appendChild($customerEl);
+    $customerNode->appendChild($domDoc->createElement('name', $order->fio));
+    $customerNode->appendChild($domDoc->createElement('inn', $order->profile->user->profile->inn));
+    $customerNode->appendChild($domDoc->createElement('email', $order->email));
+    $customerNode->appendChild($domDoc->createElement('phone', $order->phone));
+    $customerNode->appendChild($domDoc->createElement('city', $order->city));
+    $customerNode->appendChild($domDoc->createElement('address', $order->address));
+
+    $productsEl = $domDoc->createElement('products');
+    $productsNode = $orderNode->appendChild($productsEl);
+    foreach ($order->orderProducts as $item) {
+      $productEl = $domDoc->createElement('product');
+      $productNode = $productsNode->appendChild($productEl);
+      $productNode->appendChild($domDoc->createElement('code', $item->product->code));
+      $productNode->appendChild($domDoc->createElement('quantity', $item->quantity));
+      $productNode->appendChild($domDoc->createElement('price', $item->price));
+    }
+
+    $xml = $domDoc->saveXML();
+
+    if ($order->status_id == Yii::app()->params['order']['new_status'] &&
+        $order->status_id != Yii::app()->params['order']['process_status']) {
+      $order->status_id = Yii::app()->params['order']['process_status'];
+    }
+    $order->exchange = 0;
+    $order->save();
+
+    return $xml;
   }
 
 }

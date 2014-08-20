@@ -179,6 +179,7 @@ class Order extends CActiveRecord {
       'summ' => 'Сумма',
       'currency_code' => 'Валюта заказа',
       'customer_delivery' => 'Транспортная компания покупателя',
+      'exchange' => 'Передать в 1С'
     );
   }
 

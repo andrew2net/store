@@ -66,7 +66,7 @@
 
         <?php
         echo $form->textFieldControlGroup($model, 'time', array(
-          'style' => 'width:10em',
+          'style' => 'width:135px',
           'readonly' => TRUE));
         ?>
 
@@ -79,7 +79,7 @@
 
         <?php
         echo $form->dropDownListControlGroup($model, 'payment_id'
-            , $model->paymentOptions, array('span' => 2));
+            , $model->paymentOptions, array('style' => 'width:135px'));
         ?>
 
         <?php
@@ -104,14 +104,14 @@
           echo TbHtml::closeTag('div');
           ?>
         </div>
-
       </div>
     </div>
     <div style="vertical-align: top">
       <?php
       echo TbHtml::activeTextAreaControlGroup($model, 'description'
-          , array('span' => 3, 'rows' => 8));
+          , array('span' => 3, 'rows' => 6));
       ?>
+      <?php echo $form->checkBoxControlGroup($model, 'exchange'); ?>
     </div>
   </div>
   <?php
@@ -149,10 +149,10 @@
   $(function() {
     var coupon_code = $('#coupon_code');
     var order_delivery_summ = $('#order-delivery-summ');
-    var order_status_id =$('#Order_status_id');
+    var order_status_id = $('#Order_status_id');
     var add_product = $('#add-product');
     var order_delivery_id = $('#Order_delivery_id');
-    
+
     function calcSumm() {
       var sum = 0;
       var noDiscSum = 0;
