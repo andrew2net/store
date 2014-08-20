@@ -23,6 +23,7 @@
  * @property string $description
  * @property string $currency_code
  * @property string $customer_delivery 
+ * @property strins $exchange if true order should be passed to 1C
  *
  * The followings are the available model relations:
  * @property Coupon $coupon
@@ -98,6 +99,8 @@ class Order extends CActiveRecord {
       array('profile_id, delivery_id, payment_id, status_id, country_code, currency_code', 'required'),
       array('profile_id, delivery_id, payment_id, coupon_id', 'length', 'max' => 11),
       array('status_id', 'length', 'max' => 1),
+      array('exchange', 'boolean', 'allowEmpty' => TRUE),
+      array('exchange', 'default', 'value' => TRUE),
       array('profile_id, delivery_id, payment_id, status_id, coupon_id',
         'numerical', 'integerOnly' => true),
       array('phone', 'length', 'max' => 20),

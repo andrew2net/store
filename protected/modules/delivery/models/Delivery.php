@@ -516,7 +516,7 @@ class Delivery extends CActiveRecord {
               $parcel_items[$key] = $item;
             }
           }
-          $items = array_diff_assoc($items, $parcel_items);
+          $items = array_diff_key($items, $parcel_items);
           self::makeParcel($parcel_items, $volume, $delivery);
           $parcels['parcels'][] = array(
             'weight' => $weight,
@@ -585,7 +585,7 @@ class Delivery extends CActiveRecord {
           $data['height'] = $height;
           $data['weight'] += $item[3];
 
-          $data['items'] = array_diff_assoc($data['items'], array($key => $item));
+          $data['items'] = array_diff_key($data['items'], array($key => $item));
           if (count($data['items']) == 0)
             return;
 

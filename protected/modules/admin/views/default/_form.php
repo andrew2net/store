@@ -73,8 +73,8 @@
         <?php
         $options_param = Delivery::getDeliveryList($model->country_code, $model->post_code, $model->city, $model, $model);
         echo $form->dropDownListControlGroup($model, 'delivery_id'
-            , $options_param['options'], array(
-          'options' => $options_param['params'], 'style' => 'width:320px'));
+            , isset($options_param['options']) ? $options_param['options'] : array(), array(
+          'options' => isset($options_param['params']) ? $options_param['params'] : array(), 'style' => 'width:320px'));
         ?>
 
         <?php

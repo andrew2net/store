@@ -255,7 +255,7 @@ class CartController extends Controller {
     $order->address = $customer_profile->address;
     $price_country = Yii::app()->params['mcurrency'] ? $customer_profile->price_country : Yii::app()->params['country'];
     $order->currency_code = Currency::model()->findByCountry($price_country)->code;
-    $order->status_id = Yii::app()->params['order_new_status'];
+    $order->status_id = Yii::app()->params['order']['new_status'];
     $order->time = date('Y-m-d H:i:s');
 
     if ($coupon && $count_products['couponDisc'])
