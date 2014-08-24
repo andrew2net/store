@@ -380,4 +380,122 @@ class ExchangeController extends CController {
     return $xml;
   }
 
+  /**
+   * 
+   * @param str $o
+   * @param str $hash
+   * @return bool
+   * @soap
+   */
+  public function setOrder($o, $hash) {
+    $xml = new SimpleXMLElement($o);
+    if (!$xml) {
+      foreach (libxml_get_errors() as $error) {
+        Yii::trace($error->message, 'exchange');
+      }
+      return FALSE;
+    }
+    if (strtoupper(md5($xml->id . $xml->date . self::PASS)) != $hash)
+      return FALSE;
+    Yii::import('application.models.Order');
+    Yii::import('application.models.OrderProduct');
+    Yii::import('application.models.CustomerProfile');
+    Yii::import('application.modules.admin.models.Mail');
+    Yii::import('application.modules.admin.models.MailOrder');
+    Yii::import('application.modules.catalog.models.Price');
+
+    $order = Order::model()->findByPk((int) $xml->id);
+    /* @var $order Order */
+    if (!$order)
+      return FALSE;
+
+    $old_status = $order->status_id;
+
+    $tr = Yii::app()->db->beginTransaction();
+    try {
+      $order->time = (string) $xml->date;
+      $order->status_id = (string) $xml->status;
+      $order->description = (string) $xml->description;
+
+      $order->save();
+
+      $temp_table = 'temp_order_product_' . $order->id;
+      $query = "DROP TABLE IF EXISTS {$temp_table};";
+      $query .= "CREATE TEMPORARY TABLE {$temp_table} (product_id int(11) unsigned, quantity smallint(5) unsigned) TYPE=HEAP;";
+      $product_ids = array();
+      foreach ($xml->products->product as $p) {
+        $product = Product::model()->findByAttributes(array('code' => (string) $p->code));
+        if ($product) {
+          $query .= "INSERT INTO {$temp_table} VALUES ({$product->id}, {$p->quantity});";
+          $product_ids[] = $product->id;
+        }
+        else
+          throw new Exception('Product not found. Product code: ' . $p->code);
+      }
+      Yii::app()->db->createCommand($query)->execute();
+      $price_type = Price::getPrice($temp_table);
+      Yii::app()->db->createCommand("DROP TABLE IF EXISTS {$temp_table};")->execute();
+
+      $p_ids = implode(',', $product_ids);
+      OrderProduct::model()->deleteAllByAttributes(array('order_id' => $order->id), 'product_id NOT IN (:p_ids)', array(':p_ids' => $p_ids));
+
+      foreach ($xml->products->product as $p) {
+        $product = Product::model()->findByAttributes(array('code' => (string) $p->code));
+        /* @var $product Product */
+        if ($product) {
+          $orderProduct = OrderProduct::model()->findByPk(array('order_id' => $order->id, 'product_id' => $product->id));
+          /* @var $orderProduct OrderProduct */
+          if (!$orderProduct) {
+            $orderProduct = new OrderProduct;
+            $orderProduct->order_id = $order->id;
+            $orderProduct->product_id = $product->id;
+            $orderProduct->quantity = (string) $p->quantity;
+            $orderProduct->price = (string) $p->price;
+            $price = $product->getPrice($price_type, $order->currency_code);
+            $orderProduct->discount = $price - $orderProduct->price;
+            $orderProduct->save();
+          }
+          else {
+            $save = FALSE;
+            if ($orderProduct->quantity != $p->quantity) {
+              $orderProduct->quantity = (string) $p->quantity;
+              $save = TRUE;
+            }
+            if ($orderProduct->price != $p->price) {
+              $orderProduct->price = (string) $p->price;
+              $price = $product->getPrice($price_type, $order->currency_code);
+              $orderProduct->discount = $price - $orderProduct->price;
+              $save = TRUE;
+            }
+            if ($save)
+              $orderProduct->save();
+          }
+        }
+        else
+          throw new Exception('Product not found. Product code: ' . $p->code);
+      }
+
+      if ($old_status != $order->status_id) {
+        $mail = new Mail;
+        $mail->uid = $order->profile->user_id;
+        $mail->type_id = 4;
+        $mail->status_id = 1;
+        if ($mail->save()) {
+          $mailOrder = new MailOrder;
+          $mailOrder->mail_id = $mail->id;
+          $mailOrder->order_id = $xml->id;
+          $mailOrder->save();
+        }
+      }
+
+      $tr->commit();
+    } catch (Exception $e) {
+      $tr->rollback();
+      Yii::trace($e->getMessage() . $e->getTraceAsString(), 'exchange');
+      return FALSE;
+    }
+
+    return TRUE;
+  }
+
 }

@@ -42,6 +42,8 @@ class Swift_Transport_StreamBuffer
   /** Translations performed on data being streamed into the buffer */
   private $_translations = array();
   
+  private $_sequence;
+  
   /**
    * Create a new StreamBuffer using $replacementFactory for transformations.
    * @param Swift_ReplacementFilterFactory $replacementFactory

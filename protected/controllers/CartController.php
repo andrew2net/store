@@ -23,8 +23,10 @@ class CartController extends Controller {
       foreach ($_POST['Cart'] as $key => $item) {
         $c = Cart::model()->shoppingCart($session)->findByAttributes(array('product_id' => $key));
         /* @var $c Cart */
-        $c->attributes = $_POST['Cart'];
-        $cart[] = $c;
+        if ($c) {
+          $c->attributes = $item; //$_POST['Cart'];
+          $cart[] = $c;
+        }
       }
     }
     else {
@@ -224,11 +226,12 @@ class CartController extends Controller {
     Yii::import('application.modules.payments.models.Currency');
 
     $order->attributes = $_POST['Order'];
-    if (Yii::app()->user->hasState('delivery')){
+    if (Yii::app()->user->hasState('delivery')) {
       $storage_delivery = Yii::app()->user->getState('delivery');
       $order->delivery_summ = $storage_delivery[$_POST['Order']['delivery_id']]['summ'];
       Yii::app()->user->setState('delivery', NULL);
-    }else {
+    }
+    else {
       if ($customer_profile->other_city)
         $city = $customer_profile->city;
       else
@@ -271,24 +274,10 @@ class CartController extends Controller {
           $order_product->quantity = $value['quantity'];
           $product = Product::model()->findByPk($key);
           /* @var $product Product */
-
-          if ($price_type)
-            $price = $product->getTradePrice($price_type);
-          else
-          if (Yii::app()->params['mcurrency'])
-            switch ($order->currency_code) {
-              case 'KZT':
-                $price = $product->price_tenge;
-                break;
-              default :
-                $price = $product->price;
-            }
-          else
-            $price = $product->price;
-
+          $price = $product->getPrice($price_type, $order->currency_code);
           $discount = $product->getActualDiscount();
           $order_product->price = round($price * (1 - $discount / 100));
-          $order_product->discount = $product->price - $order_product->price;
+          $order_product->discount = $price - $order_product->price;
           $order_product->save();
         }
       }

@@ -179,10 +179,7 @@
       var couponSum = 0;
       switch (couponType) {
         case '0':
-          if (discount > couponDisc || sum < 1800)
-            couponSum = 0;
-          else
-            couponSum = noDiscSum > couponDisc ? couponDisc : noDiscSum;
+          couponSum = noDiscSum > couponDisc ? couponDisc : noDiscSum;
           break;
         case '1':
           couponSum = noDiscSum * couponDisc / 100;

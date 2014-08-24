@@ -498,6 +498,23 @@ class Product extends CActiveRecord {
     parent::afterConstruct();
   }
 
+  public function getPrice(Price $price_type, $currency_code) {
+    if ($price_type)
+      return $this->getTradePrice($price_type);
+    else {
+      if (Yii::app()->params['mcurrency'])
+        switch ($currency_code) {
+          case 'KZT':
+            return $this->price_tenge;
+            break;
+          default :
+            return $this->price;
+        }
+      else
+        return $this->price;
+    }
+  }
+
   public function getTradePrice(Price $price) {
     Yii::import('application.modules.catalog.models.ProductPrice');
     $trade_price = ProductPrice::model()->findByAttributes(array('price_id' => $price->id, 'product_id' => $this->id))->price;

@@ -100,8 +100,12 @@ class Price extends CActiveRecord {
    * 
    * @return Price
    */
-  public static function getPrice() {
+  public static function getPrice($products_table = NULL) {
     Yii::import('application.controllers.ProfileController');
+
+    if (!$products_table) {
+      $products_table = 'store_cart';
+    }
     $query = Yii::app()->db->createCommand()
         ->select('SUM(c.quantity*round(prices.price*(1-greatest(ifnull(disc.percent,0),ifnull(disc1.percent,0),ifnull(disc2.percent,0))/100))) as c_summ, prices.price_id')
         ->from('store_cart c')
@@ -121,7 +125,7 @@ class Price extends CActiveRecord {
         ->order('price.summ DESC')
         ->group('prices.price_id, price.summ')
         ->having('c_summ>price.summ');
-    $text = $query->getText();
+//    $text = $query->getText();
     $row = $query->queryRow();
     if ($row)
       $price = self::model()->findByPk($row['price_id']);
@@ -134,7 +138,8 @@ class Price extends CActiveRecord {
       return $price;
   }
 
-  public static function getMinimalSumm(){
+  public static function getMinimalSumm() {
     return self::model()->find(array('order' => 'summ'))->summ;
   }
+
 }
