@@ -17,7 +17,8 @@ class ProfileFieldController extends Controller
 	public function filters()
 	{
 		return CMap::mergeArray(parent::filters(),array(
-			'accessControl', // perform access control for CRUD operations
+      array('auth.filters.AuthFilter'),
+//			'accessControl', // perform access control for CRUD operations
 		));
 	}
 
