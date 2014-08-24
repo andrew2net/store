@@ -404,7 +404,8 @@ class ExchangeController extends CController {
     Yii::import('application.modules.admin.models.MailOrder');
     Yii::import('application.modules.catalog.models.Price');
 
-    $order = Order::model()->findByPk((string) $xml->id);
+    $order = Order::model()->findByPk((int) $xml->id);
+    Yii::trace('Order '. is_null($order), 'exchange');
     /* @var $order Order */
     if (!$order)
       return FALSE;
