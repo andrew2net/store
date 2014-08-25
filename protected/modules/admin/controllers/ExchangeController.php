@@ -395,7 +395,9 @@ class ExchangeController extends CController {
       }
       return FALSE;
     }
-    Yii::trace('hash: ' . $hash . ' check: ' . strtoupper(md5($xml->id . $xml->date . self::PASS)) . ' pass: ' . $xml->id . $xml->date . self::PASS, 'exchange');
+    Yii::trace('hash: ' . $hash, 'exchange');
+    Yii::trace('pass: ' . $xml->id . $xml->date . self::PASS, 'exchange');
+    Yii::trace('check: ' . strtoupper(md5($xml->id . $xml->date . self::PASS)), 'exchange');
     if (strtoupper(md5($xml->id . $xml->date . self::PASS)) != $hash)
       return FALSE;
     Yii::trace('password', 'exchange');
