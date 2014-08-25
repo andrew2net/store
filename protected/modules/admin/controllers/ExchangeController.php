@@ -398,6 +398,7 @@ class ExchangeController extends CController {
     Yii::trace('xml ready', 'exchange');
     if (strtoupper(md5($xml->id . $xml->date . self::PASS)) != $hash)
       return FALSE;
+    Yii::trace('password', 'exchange');
     Yii::import('application.models.Order');
     Yii::import('application.models.OrderProduct');
     Yii::import('application.models.CustomerProfile');
