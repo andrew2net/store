@@ -388,6 +388,7 @@ class ExchangeController extends CController {
    * @soap
    */
   public function setOrder($o, $hash) {
+    Yii::trace('start', 'exchange');
     $xml = new SimpleXMLElement($o);
     if (!$xml) {
       foreach (libxml_get_errors() as $error) {
