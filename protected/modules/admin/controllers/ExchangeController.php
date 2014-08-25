@@ -389,13 +389,13 @@ class ExchangeController extends CController {
    */
   public function setOrder($o, $hash) {
     $xml = new SimpleXMLElement($o);
-    Yii::trace('start', 'exchange');
     if (!$xml) {
       foreach (libxml_get_errors() as $error) {
         Yii::trace($error->message, 'exchange');
       }
       return FALSE;
     }
+    Yii::trace('xml ready', 'exchange');
     if (strtoupper(md5($xml->id . $xml->date . self::PASS)) != $hash)
       return FALSE;
     Yii::import('application.models.Order');
