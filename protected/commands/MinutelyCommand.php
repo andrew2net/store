@@ -67,7 +67,7 @@ class MinutelyCommand extends CConsoleCommand {
           $result = $mail->getErrors();
           foreach ($result as $item) {
             foreach ($item as $err) {
-              Yii::trace($err, 'cron');
+              Yii::log($err, CLogger::LEVEL_INFO, 'cron');
             }
           }
         }

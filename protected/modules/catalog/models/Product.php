@@ -49,9 +49,9 @@ class Product extends CActiveRecord {
     // NOTE: you should only define rules for those attributes that
     // will receive user inputs.
     return array(
-      array('remainder, length, width, height', 'numerical', 'integerOnly' => true),
+      array('remainder', 'numerical', 'integerOnly' => true, 'max' => 99999, 'min' => 0),
       array('weight', 'numerical', 'numberPattern' => '(^\d{1,2}$|^\d{1,2}\.\d{0,2}$)'),
-      array('length, width, height', 'length', 'max' => 4),
+      array('length, width, height', 'numerical', 'max' => 9999.9, 'min' => 0),
       array('name, article, brand_id, price', 'required'),
       array('price_tenge', 'required', 'on' => 'mcurrency'),
       array('name, img, small_img', 'length', 'max' => 255),
