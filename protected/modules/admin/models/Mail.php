@@ -8,13 +8,15 @@
  * @property integer $uid
  * @property string $type_id
  * @property string $status_id
+ * @property string $made_time 
+ * @property string $sent_time 
  *
  * The followings are the available model relations:
  * @property MailOrder[] $mailOrders
  * @property Order $order 
+ * @property User $user 
  */
 class Mail extends CActiveRecord {
-
 //  protected static $types = array(
 //    1 => 'Регистрация',
 //    2 => 'Восстановление пароля',
@@ -23,7 +25,6 @@ class Mail extends CActiveRecord {
 //    5 => 'Оповещение о новом заказе',
 //    6 => 'Отправка купона',
 //  );
-
 //  protected static $statuses = array(
 //    1 => 'Не отправлено',
 //    2 => 'Отправлено',
@@ -46,6 +47,8 @@ class Mail extends CActiveRecord {
       array('uid, type_id, status_id', 'required'),
       array('uid', 'numerical', 'integerOnly' => true),
       array('type_id, status_id', 'length', 'max' => 1),
+      array('made_time, sent_time', 'date', 'format' => 'dd-MM-yyyy HH:mm:ss'),
+      array('made_time', 'default', 'value' => Yii::app()->dateFormatter->format('dd-MM-yyyy HH:mm:ss', time())),
       // The following rule is used by search().
       // @todo Please remove those attributes that should not be searched.
       array('id, uid, type_id, status_id', 'safe', 'on' => 'search'),
@@ -60,7 +63,8 @@ class Mail extends CActiveRecord {
     // class name for the relations automatically generated below.
     return array(
       'mailOrders' => array(self::HAS_MANY, 'MailOrder', 'mail_id'),
-      'order' => array(self::HAS_ONE, 'Order', 'store_mail_order(mail_id, order_id)')
+      'order' => array(self::MANY_MANY, 'Order', 'store_mail_order(mail_id, order_id)'),
+      'user' => array(self::BELONGS_TO, 'User', 'uid'),
     );
   }
 
@@ -111,6 +115,23 @@ class Mail extends CActiveRecord {
    */
   public static function model($className = __CLASS__) {
     return parent::model($className);
+  }
+
+  public function afterFind() {
+    parent::afterFind();
+    $this->made_time = Yii::app()->dateFormatter->format('dd-MM-yyyy HH:mm:ss', $this->made_time);
+    if ($this->sent_time)
+      $this->sent_time = Yii::app()->dateFormatter->format('dd-MM-yyyy HH:mm:ss', $this->sent_time);
+  }
+
+  public function beforeSave() {
+    if (parent::beforeSave()) {
+      $this->made_time = Yii::app()->dateFormatter->format('yyyy-MM-dd HH:mm:ss', $this->made_time);
+      if ($this->sent_time)
+        $this->sent_time = Yii::app()->dateFormatter->format('yyyy-MM-dd HH:mm:ss', $this->sent_time);
+      return TRUE;
+    }
+    return FALSE;
   }
 
 }

@@ -7,11 +7,8 @@
 class DalyCommand extends CConsoleCommand {
 
   public function run($args) {
-    list($action, $options, $args) = $this->resolveRequest($args);
-    if (isset($options['connectionID']))
-      $db = Yii::app()->$options['connectionID'];
-    else
-      $db = Yii::app()->db;
+    Yii::trace('Start daly', 'cron');
+    $db = Yii::app()->db;
     $command = $db->createCommand();
     /* @var $command CDbCommand */
 

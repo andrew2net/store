@@ -91,7 +91,7 @@ $site_config = array(
 //        'password' => 'Probaper22',
 //        'port' => '25',
 //      ),
-      'viewPath' => 'application.views.mail',
+//      'viewPath' => 'application.views.mail',
     ),
     'bootstrap' => array(
       'class' => 'bootstrap.components.TbApi',

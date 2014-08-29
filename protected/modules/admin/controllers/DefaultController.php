@@ -12,10 +12,11 @@ class DefaultController extends Controller {
     $model = new Order('search');
     $model->unsetAttributes();
 
-    if (isset($_GET['Order'])){
+    if (isset($_GET['Order'])) {
       $model->attributes = $_GET['Order'];
       Yii::app()->user->setState('Order', $_GET['Order']);
-    }elseif (Yii::app()->user->hasState('Order')) {
+    }
+    elseif (Yii::app()->user->hasState('Order')) {
       $model->attributes = Yii::app()->user->getState('Order');
     }
 
@@ -30,7 +31,7 @@ class DefaultController extends Controller {
       Yii::app()->user->setState('Order_sort', $_GET['Order_sort']);
     elseif (Yii::app()->user->hasState('Order_sort'))
       $_GET['Order_sort'] = Yii::app()->user->getState('Order_sort');
-      
+
     $this->render('index', array('model' => $model));
   }
 
@@ -101,33 +102,43 @@ class DefaultController extends Controller {
               $model->coupon->update(array('used_id', 'time_used'));
             }
             if ($old_status != $model->status_id) {
-              $profile = CustomerProfile::model()->findByPk($model->profile_id);
-              /* @var $profile CustomerProfile */
-              $user = User::model()->findByPk($profile->user_id);
-              $message = new YiiMailMessage;
-              $message->view = 'processOrder';
-              $message->setFrom(Yii::app()->params['infoEmail']);
-              $message->setTo(array($user->email => $user->profile->first_name . ' ' . $user->profile->last_name));
-              $params = array(
-                'profile' => $profile,
-                'order' => $model,
-              );
-              switch ($model->status_id) {
-                case 3:
-                  $message->view = 'payOrder';
-                  $message->setSubject("Оплата заказа");
-                  $params['text'] = 'готов к оплате';
-                  $message->setBody($params, 'text/html');
-                  Yii::app()->mail->send($message);
-                  break;
-                case 5:
-                  $message->view = 'processOrder';
-                  $message->setSubject("Отмена заказа");
-                  $params['text'] = 'отменен';
-                  $message->setBody($params, 'text/html');
-                  Yii::app()->mail->send($message);
-                  break;
+              $mail = new Mail;
+              $mail->uid = $model->profile->user_id;
+              $mail->type_id = 4;
+              $mail->status_id = 1;
+              if ($mail->save()) {
+                $mailOrder = new MailOrder;
+                $mailOrder->mail_id = $mail->id;
+                $mailOrder->order_id = $model->id;
+                $mailOrder->save();
               }
+//              $profile = CustomerProfile::model()->findByPk($model->profile_id);
+//              /* @var $profile CustomerProfile */
+//              $user = User::model()->findByPk($profile->user_id);
+//              $message = new YiiMailMessage;
+//              $message->view = 'processOrder';
+//              $message->setFrom(Yii::app()->params['infoEmail']);
+//              $message->setTo(array($user->email => $user->profile->first_name . ' ' . $user->profile->last_name));
+//              $params = array(
+//                'profile' => $profile,
+//                'order' => $model,
+//              );
+//              switch ($model->status_id) {
+//                case 3:
+//                  $message->view = 'payOrder';
+//                  $message->setSubject("Оплата заказа");
+//                  $params['text'] = 'готов к оплате';
+//                  $message->setBody($params, 'text/html');
+//                  Yii::app()->mail->send($message);
+//                  break;
+//                case 5:
+//                  $message->view = 'processOrder';
+//                  $message->setSubject("Отмена заказа");
+//                  $params['text'] = 'отменен';
+//                  $message->setBody($params, 'text/html');
+//                  Yii::app()->mail->send($message);
+//                  break;
+//              }
             }
             $tr->commit();
             $this->redirect(array('index'));
