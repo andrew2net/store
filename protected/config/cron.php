@@ -61,9 +61,10 @@ if (count($sites_connect) > 1 && $argc > 2 && strpos($argv[2], '--connectionID='
 }
 else {
   $console_config['components']['db'] = current($sites_connect);
-  $console_config['components']['mail'] = array_merge($console_config['components']['mail'], current($sites_config)['mail']);
-  $console_config['components']['request'] = current($sites_config)['request'];
-  $console_config['params'] = current($sites_config)['params'];
+  $conf = current($sites_config);
+  $console_config['components']['mail'] = array_merge($console_config['components']['mail'], $conf['mail']);
+  $console_config['components']['request'] = $conf['request'];
+  $console_config['params'] = $conf['params'];
 }
 
 return $console_config;
