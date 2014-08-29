@@ -61,18 +61,17 @@ class MinutelyCommand extends CConsoleCommand {
           }
       }
       $message->setBody($params, 'text/html');
-      Yii::trace('Before mail', 'cron');
-      echo 'Before mail' . "\n";
       $n = Yii::app()->mail->send($message);
-      echo $n . "\n";
       if ($n) {
         $mail->status_id = 2;
         $mail->sent_time = Yii::app()->dateFormatter->format('dd-MM-yyyy HH:mm:ss', time());
         echo $mail->made_time . "\n";
         $mail->validate();
+        echo $mail->made_time . "\n";
         $result = $mail->getErrors();
         echo var_dump($result) . "\n";
         $mail->save();
+        echo $mail->made_time . "\n";
       }
     }
   }
