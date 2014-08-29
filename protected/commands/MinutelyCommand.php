@@ -8,7 +8,7 @@ class MinutelyCommand extends CConsoleCommand {
 
   public function run($args) {
     Yii::trace('Start minutely', 'cron');
-    echo 'Start minutely' . \n;
+    echo 'Start minutely' . "\n";
     Yii::import('application.modules.admin.models.Mail');
     Yii::import('application.modules.admin.models.MailOrder');
     Yii::import('application.models.Order');
@@ -62,15 +62,15 @@ class MinutelyCommand extends CConsoleCommand {
       }
       $message->setBody($params, 'text/html');
       Yii::trace('Before mail', 'cron');
-      echo 'Before mail' . \n;
+      echo 'Before mail' . "\n";
       $n = Yii::app()->mail->send($message);
-      echo $n . \n;
+      echo $n . "\n";
       if ($n) {
         $mail->status_id = 2;
         $mail->sent_time = Yii::app()->dateFormatter->format('dd-MM-yyyy HH:mm:ss', time());
         $mail->validate();
         $result = $mail->getErrors();
-        echo var_dump($result) . \n;
+        echo var_dump($result) . "\n";
         $mail->save();
       }
     }
