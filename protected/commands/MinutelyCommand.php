@@ -68,6 +68,7 @@ class MinutelyCommand extends CConsoleCommand {
       if ($n) {
         $mail->status_id = 2;
         $mail->sent_time = Yii::app()->dateFormatter->format('dd-MM-yyyy HH:mm:ss', time());
+        echo $mail->made_time . "\n";
         $mail->validate();
         $result = $mail->getErrors();
         echo var_dump($result) . "\n";
