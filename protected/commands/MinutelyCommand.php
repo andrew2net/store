@@ -60,6 +60,7 @@ class MinutelyCommand extends CConsoleCommand {
           }
       }
       $message->setBody($params, 'text/html');
+      Yii::trace('Before mail', 'cron');
       if (Yii::app()->mail->send($message)){
         $mail->status_id = 2;
         $mail->sent_time = Yii::app()->dateFormatter->format('dd-MM-yyyy HH:mm:ss', time());
