@@ -41,7 +41,7 @@
               <div style="text-align: center; height: 16px; margin: 8px auto 2px">
                 <span id="error-msg" class="red" style="display: none">неверное имя или пароль</span>
               </div>
-              <div class="login-submit"><div>Войти</div></div>
+              <div class="login-submit login-button"><div>Войти</div></div>
               <div style="text-align: center; margin: 10px auto 5px;"><a href="/user/recovery">зарегистрироваться</a></div>
             </div>
           </div>
@@ -163,7 +163,8 @@
         closeLoginDialog();
         open_login.hide();
         $('#profile-link').show();
-        $('#shoppingCart').html(result.cart);
+        window.location.href = window.location.href;
+//        $('#shoppingCart').html(result.cart);
 //        $('#bottom-bar').css('display', 'none');
 //        $('#footer').css('margin-bottom', '0');
       } else {

@@ -211,9 +211,9 @@ class Delivery extends CActiveRecord {
 
       /* @var $item Cart */
       /* @var $item OrderProduct */
-      $length = (int) $item->product->length;
-      $width = (int) $item->product->width;
-      $height = (int) $item->product->height;
+      $length = (float) $item->product->length;
+      $width = (float) $item->product->width;
+      $height = (float) $item->product->height;
       $weight = (float) $item->product->weight;
       $product_id = (int) $item->product_id;
       $quantity = (int) $item->quantity;
@@ -239,7 +239,7 @@ class Delivery extends CActiveRecord {
       $max_weight = 0;
     arsort($product_weights);
     array_multisort($product_lengths, SORT_DESC, $product_widths, SORT_DESC
-        , $product_heights, SORT_DESC, $product_widths, SORT_DESC, $product_sizes);
+        , $product_heights, SORT_DESC, $product_sizes); //$product_widths, SORT_DESC, 
 
     Yii::import('application.modules.delivery.models.NrjLocation');
     $pref = '^';

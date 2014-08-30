@@ -36,16 +36,15 @@ $this->pageTitle = Yii::app()->name . ' - Вход';
     ?><br>
     <?php echo CHtml::error($loginForm, 'password', array('class' => 'red')); ?>
   </div>
-  <div style="margin-top: 40px">
-    <a class="submit" href="#">
-      <div class="greenbutton inline-blocks">
-        <div class="left"></div>
-        <div class="center">ВХОД</div>
-        <div class="right"></div>
-      </div>
-    </a>
+  <div style="margin: 40px 0 20px" class="inline-blocks">
+    <div style="vertical-align: bottom" class="login-button">
+      <div class="submit">Вход</div>
+    </div>
+    <div style="margin: 0 20px">
+      <div><a href="/user/recovery">восстановить пароль</a></div>
+      <div><a href="/user/recovery">зарегистрироваться</a></div>
+    </div>
   </div>
-
   <?php $this->endWidget(); ?>
 </div>
 

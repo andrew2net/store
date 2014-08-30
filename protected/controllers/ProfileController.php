@@ -112,6 +112,8 @@ class ProfileController extends Controller {
   }
 
   public function actionLogin() {
+    if (!Yii::app()->user->isGuest)
+      $this->redirect('/profile');
     Yii::import('application.controllers.SiteController');
     $loginForm = new LoginForm;
 
@@ -163,7 +165,7 @@ class ProfileController extends Controller {
             echo 'ok';
           }
           elseif (isset($_POST['login'])) {
-            echo json_encode(array('result' => TRUE, 'cart' => SiteController::cartLabel()));
+            echo json_encode(array('result' => TRUE));//, 'cart' => SiteController::cartLabel()));
           }
           else
             $this->redirect('profile');

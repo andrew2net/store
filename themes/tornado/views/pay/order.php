@@ -98,6 +98,7 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
       </tr>
     <?php } ?>
   </table>
+  <a id="profile-link" href="/profile">Перейти в личный кабинет</a>
   <?php echo CHtml::beginForm($order->payment->action_url); ?>
   <?php
   foreach ($pay_values as $key => $value)
