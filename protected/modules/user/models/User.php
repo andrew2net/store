@@ -24,6 +24,8 @@ class User extends CActiveRecord {
    * @var integer $status
    * @var timestamp $create_at
    * @var timestamp $lastvisit_at
+   * 
+   * @var CustomerProfile customerProfile
    */
 
   /**
@@ -78,6 +80,7 @@ class User extends CActiveRecord {
     $relations = Yii::app()->getModule('user')->relations;
     if (!isset($relations['profile']))
       $relations['profile'] = array(self::HAS_ONE, 'Profile', 'user_id');
+    $relations['customerProfile'] = array(self::HAS_ONE, 'CustomerProfile', '', 'on' => 't.id=customerProfile.user_id');
     return $relations;
   }
 

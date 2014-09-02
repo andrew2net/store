@@ -409,7 +409,7 @@ class ExchangeController extends CController {
     Yii::import('application.modules.catalog.models.Price');
 
     $order = Order::model()->findByPk((int) $xml->id);
-    Yii::trace('Order '. is_null($order), 'exchange');
+    Yii::trace('Order ' . is_null($order), 'exchange');
     /* @var $order Order */
     if (!$order)
       return FALSE;
@@ -424,30 +424,14 @@ class ExchangeController extends CController {
 
       $order->save();
 
-      $temp_table = 'temp_order_product_' . $order->id;
-      $query = "DROP TABLE IF EXISTS {$temp_table};";
-      $query .= "CREATE TEMPORARY TABLE {$temp_table} (product_id int(11) unsigned, quantity smallint(5) unsigned) TYPE=HEAP;";
+      $price_type = Price::getPrice($xml->products->product, $order->profile->user_id);
+
       $product_ids = array();
-      foreach ($xml->products->product as $p) {
-        $product = Product::model()->findByAttributes(array('code' => (string) $p->code));
-        if ($product) {
-          $query .= "INSERT INTO {$temp_table} VALUES ({$product->id}, {$p->quantity});";
-          $product_ids[] = $product->id;
-        }
-        else
-          throw new Exception('Product not found. Product code: ' . $p->code);
-      }
-      Yii::app()->db->createCommand($query)->execute();
-      $price_type = Price::getPrice($temp_table);
-      Yii::app()->db->createCommand("DROP TABLE IF EXISTS {$temp_table};")->execute();
-
-      $p_ids = implode(',', $product_ids);
-      OrderProduct::model()->deleteAllByAttributes(array('order_id' => $order->id), 'product_id NOT IN (:p_ids)', array(':p_ids' => $p_ids));
-
       foreach ($xml->products->product as $p) {
         $product = Product::model()->findByAttributes(array('code' => (string) $p->code));
         /* @var $product Product */
         if ($product) {
+          $product_ids[] = $product->id;
           $orderProduct = OrderProduct::model()->findByPk(array('order_id' => $order->id, 'product_id' => $product->id));
           /* @var $orderProduct OrderProduct */
           if (!$orderProduct) {
@@ -457,7 +441,7 @@ class ExchangeController extends CController {
             $orderProduct->quantity = (string) $p->quantity;
             $orderProduct->price = (string) $p->price;
             $price = $product->getPrice($price_type, $order->currency_code);
-            $orderProduct->discount = $price - $orderProduct->price;
+            $orderProduct->discount = $price > $orderProduct->price ? $price - $orderProduct->price : 0;
             $orderProduct->save();
           }
           else {
@@ -479,6 +463,9 @@ class ExchangeController extends CController {
         else
           throw new Exception('Product not found. Product code: ' . $p->code);
       }
+
+      $p_ids = implode(',', $product_ids);
+      OrderProduct::model()->deleteAllByAttributes(array('order_id' => $order->id), 'product_id NOT IN (:p_ids)', array(':p_ids' => $p_ids));
 
       if ($old_status != $order->status_id) {
         $mail = new Mail;

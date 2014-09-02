@@ -1,8 +1,7 @@
 <?php
 /* @var $this DefaultController */
 /* @var $model Order */
-/* @var $order_product OrderProduct[] */
-/* @var $product Product[] */
+/* @var $product OrderProduct[] */
 /* @var $form CActiveForm */
 
 $this->breadcrumbs = array(
@@ -11,12 +10,11 @@ $this->breadcrumbs = array(
 );
 ?>
 
-<h3>Заказ № <?php echo $model->id; ?></h3>
+<h3>Заказ № <span id="order-num"><?php echo $model->id; ?></span></h3>
 
 <?php
 $this->renderPartial('_form', array(
   'model' => $model,
-  'order_product' => $order_product,
   'product' => $product,
 ));
 ?>

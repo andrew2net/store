@@ -44,13 +44,13 @@ class DefaultController extends Controller {
     Yii::import('application.modules.delivery.models.Delivery');
     Yii::import('application.modules.payment.models.Payment');
     Yii::import('application.modules.catalog.models.Product');
+    Yii::import('application.modules.catalog.models.Price');
     Yii::import('application.modules.discount.models.Coupon');
 
     $model = $this->loadModel($id);
-    $order_product = $model->orderProducts;
-    $product = array();
-    foreach ($order_product as $key => $value)
-      $product[$key] = $value->product;
+    $products = array();
+    foreach ($model->orderProducts as $value)
+      $products[$value->product_id] = $value;
 
 // Uncomment the following line if AJAX validation is needed
 // $this->performAjaxValidation($model);
@@ -59,38 +59,32 @@ class DefaultController extends Controller {
       $old_status = $model->status_id;
       $model->attributes = $_POST['Order'];
       $valid = $model->validate();
-      $order_product = array();
-      $product = array();
-      if (isset($_POST['OrderProduct']) && is_array($_POST['OrderProduct']))
+      $products = array();
+      if (isset($_POST['OrderProduct']) && is_array($_POST['OrderProduct'])) {
+
         foreach ($_POST['OrderProduct'] as $key => $value) {
-          $order_product[$key] = new OrderProduct;
-          $order_product[$key]->attributes = $value;
-          $order_product[$key]->order_id = $id;
-          $product[$key] = Product::model()->findByAttributes(array(
-            'article' => $_POST['Product'][$key]['article']));
-          if ($product[$key])
-            $order_product[$key]->product_id = $product[$key]->id;
-          else
-            $product[$key] = new Product;
-          $valid = $order_product[$key]->validate() && $valid;
-          $valid = $product[$key]->validate() && $valid;
+          $products[$key] = OrderProduct::model()->findByPk(array('order_id' => $id, 'product_id' => $key));
+          if (is_null($products[$key]))
+            $products[$key] = new OrderProduct;
+          $products[$key]->attributes = $value;
+          $products[$key]->order_id = $id;
+          $products[$key]->product_id = $key;
+          $valid = $products[$key]->validate() && $valid;
         }
+      }
       if ($valid) {
         $tr = Yii::app()->db->beginTransaction();
         try {
           if ($model->save()) {
-            OrderProduct::model()->deleteAllByAttributes(array('order_id' => $model->id));
-            $dicount_summ = 0;
-            foreach ($order_product as $value) {
-              $item = new OrderProduct;
-              $item->attributes = $value->attributes;
-              $item->discount = $item->product->price - $item->price;
-              $dicount_summ += $item->discount;
-              $item->save();
+            $product_ids = implode(',', array_keys($_POST['OrderProduct']));
+            OrderProduct::model()->deleteAllByAttributes(array('order_id' => $model->id)
+                , $product_ids ? "product_id NOT IN ($product_ids)" : '');
+            foreach ($products as $value) {
+              $value->save();
             }
             if ($model->coupon && $model->coupon->type_id == 0 &&
                 $model->coupon->used_id != 1) {
-              if ($dicount_summ > $model->coupon->value) {
+              if ($model->notDiscountSumm < $model->coupon->value) {
                 $model->coupon->used_id = 0;
                 $model->coupon->time_used = '0000-00-00 00:00:00';
               }
@@ -112,33 +106,6 @@ class DefaultController extends Controller {
                 $mailOrder->order_id = $model->id;
                 $mailOrder->save();
               }
-//              $profile = CustomerProfile::model()->findByPk($model->profile_id);
-//              /* @var $profile CustomerProfile */
-//              $user = User::model()->findByPk($profile->user_id);
-//              $message = new YiiMailMessage;
-//              $message->view = 'processOrder';
-//              $message->setFrom(Yii::app()->params['infoEmail']);
-//              $message->setTo(array($user->email => $user->profile->first_name . ' ' . $user->profile->last_name));
-//              $params = array(
-//                'profile' => $profile,
-//                'order' => $model,
-//              );
-//              switch ($model->status_id) {
-//                case 3:
-//                  $message->view = 'payOrder';
-//                  $message->setSubject("Оплата заказа");
-//                  $params['text'] = 'готов к оплате';
-//                  $message->setBody($params, 'text/html');
-//                  Yii::app()->mail->send($message);
-//                  break;
-//                case 5:
-//                  $message->view = 'processOrder';
-//                  $message->setSubject("Отмена заказа");
-//                  $params['text'] = 'отменен';
-//                  $message->setBody($params, 'text/html');
-//                  Yii::app()->mail->send($message);
-//                  break;
-//              }
             }
             $tr->commit();
             $this->redirect(array('index'));
@@ -155,8 +122,7 @@ class DefaultController extends Controller {
 
     $this->render('update', array(
       'model' => $model,
-      'order_product' => $order_product,
-      'product' => $product,
+      'product' => $products,
     ));
   }
 
@@ -175,32 +141,50 @@ class DefaultController extends Controller {
     return $model;
   }
 
-  public function actionOrderProduct($term) {
+  public function actionOrderProduct($oid, $term, $summ, array $ord_pr = array()) {
     Yii::import('application.modules.catalog.models.Product');
+    Yii::import('application.modules.catalog.models.Price');
+    Yii::import('application.models.Order');
+
+    $order = Order::model()->findByPk($oid);
+    /* @var $order Order */
+
     $product = strtr($term, array('%' => '\%', '_' => '\_'));
+    $product_ids = implode(',', $ord_pr);
     $criteria = new CDbCriteria(array(
-      'select' => 'id, name, article, price',
-      'condition' => 'name LIKE :data OR article LIKE :data',
+      'select' => 'id, name, article',
+      'condition' => '(name LIKE :data OR article LIKE :data)' . ($product_ids ? 'AND id NOT IN (' . $product_ids . ')' : ''),
       'params' => array(':data' => '%' . $product . '%'),
       'limit' => 20,
     ));
     $suggest = Product::model()->findAll($criteria);
 
+    $price_type = Price::model()->find(array('order' => 'summ DESC', 'condition' => 'summ<:summ', 'params' => array(':summ' => $summ)));
+    if (!$price_type)
+      $price_type = Price::model()->find(array('order' => 'summ'));
+    $price_types = Price::model()->findAll(array('order' => 'summ', 'condition' => 'summ>=:summ', 'params' => array(':summ' => $summ)));
+    /* @var $price_type Price */
+    /* @var $price_types Price[] */
     $products = array();
     foreach ($suggest as $value) {
-      $discount = $value->getActualDiscount();
-      if ($discount) {
-        $price = $discount['price'];
-        $disc = ($value->price - $price);
+      /* @var $value Product */
+      $price = $value->getPrice($price_type, $order->currency_code);
+      if ($summ + $price > $price_type->summ) {
+        foreach ($price_types as $pt) {
+          $price_next = $value->getPrice($pt, $order->currency_code);
+          if ($summ + $price_next <= $pt->summ)
+            break;
+          $price = $price_next;
+        }
       }
-      else {
-        $price = $value->price;
-        $disc = 0;
-      }
+      $discount = $value->getActualDiscount($order->time);
+      $product_price = round($price * (1 - $discount / 100));
+      $disc = ($price - $product_price);
       $products[] = array(
+        'id' => $value->id,
         'article' => $value->article,
         'value' => $value->name,
-        'price' => $price,
+        'price' => $product_price,
         'disc' => $disc,
       );
     }

@@ -36,6 +36,8 @@
  * @property Pay[] $pay
  * @property float $paySumm
  * @property float $productSumm
+ * @property float $discountSumm 
+ * @property float $notDiscountSumm 
  * @property Currency $currency
  */
 class Order extends CActiveRecord {
@@ -147,6 +149,10 @@ class Order extends CActiveRecord {
       'orderProducts' => array(self::HAS_MANY, 'OrderProduct', 'order_id'),
       'productSumm' => array(self::STAT, 'OrderProduct', 'order_id',
         'select' => 'SUM(quantity*price)'),
+      'discountSumm' => array(self::STAT, 'OrderProduct', 'order_id',
+        'select' => 'SUM(quantity*discount)'),
+      'notDiscountSumm' => array(self::STAT, 'OrderProduct', 'order_id',
+        'select' => 'SUM(quantity*price)', 'condition' => 'NOT discount > 0'),
       'currency' => array(self::BELONGS_TO, 'Currency', 'currency_code'),
     );
   }

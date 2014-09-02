@@ -165,7 +165,7 @@ class ProfileController extends Controller {
             echo 'ok';
           }
           elseif (isset($_POST['login'])) {
-            echo json_encode(array('result' => TRUE));//, 'cart' => SiteController::cartLabel()));
+            echo json_encode(array('result' => TRUE)); //, 'cart' => SiteController::cartLabel()));
           }
           else
             $this->redirect('profile');
@@ -195,10 +195,10 @@ class ProfileController extends Controller {
     else {
       $session_id = Yii::app()->session->sessionId;
     }
-    $cookie = new CHttpCookie('cart', $session_id);
-    $cookie->expire = time() + 60 * 60 * 24 * 30;
-    $cookie->httpOnly = TRUE;
-    Yii::app()->request->cookies['cart'] = $cookie;
+      $cookie = new CHttpCookie('cart', $session_id);
+      $cookie->expire = time() + 60 * 60 * 24 * 30;
+      $cookie->httpOnly = TRUE;
+      Yii::app()->request->cookies['cart'] = $cookie;
     return $session_id;
   }
 
@@ -233,7 +233,7 @@ class ProfileController extends Controller {
         $ip = Yii::app()->params['ip'];
       else
         $ip = $req->userHostAddress;
-      
+
       $int = sprintf("%u", ip2long($ip));
       if (empty($profile->city) && empty($profile->city_l)) {
         $ru_data = Yii::app()->db->createCommand("select * from (select * from net_ru where begin_ip<=$int order by begin_ip desc limit 1) as t where end_ip>=$int")->query();
@@ -354,4 +354,3 @@ class ProfileController extends Controller {
   }
 
 }
-

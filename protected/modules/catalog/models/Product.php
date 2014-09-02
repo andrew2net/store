@@ -240,7 +240,12 @@ class Product extends CActiveRecord {
     parent::afterDelete();
   }
 
-  public function getActualDiscount() {
+  public function getActualDiscount($date = NULL) {
+    if ($date)
+      $date = Yii::app()->dateFormatter->format('yyyy-MM-dd', $date);
+    else
+      $date = date('Y-m-d');
+
     $categories = Yii::app()->db->createCommand()
             ->select('category_id')->from('store_product_category')
             ->where("product_id={$this->id}")->text;
@@ -262,7 +267,7 @@ class Product extends CActiveRecord {
         ->select('MAX(percent) discount')->from('store_discount')
         ->where("(id in ({$discount_id}) OR product_id=0) AND (begin_date<=:date OR begin_date='0000-00-00')" .
             " AND (end_date>=:date OR end_date='0000-00-00') AND actual=1"
-            , array(':date' => date('Y-m-d')))
+            , array(':date' => $date))
         ->queryRow();
 
     if ($percenr['discount']) {

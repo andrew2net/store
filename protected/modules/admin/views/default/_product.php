@@ -1,10 +1,10 @@
 <?php
 /* @var $this DefaultController */
 /* @var $model Order */
-/* @var $order_product OrderProduct[] */
-/* @var $product Product[] */
+/* @var $product OrderProduct[] */
 ?>
-  <table>
+  <table id="order-product">
+    <thead>
     <tr>
       <th>
         <?php echo TbHtml::label('Артикул', 'product_articles'); ?>
@@ -20,25 +20,27 @@
       </th>
       <th></th>
     </tr>
+    </thead>
+    <tbody>
     <?php
     $total = 0;
     $n = 0;
-    foreach ($order_product as $key => $item) {
+    foreach ($product as $key => $item) {
       $n++;
       $total += $item->quantity * $item->price;
       ?>
       <tr id="product-<?php echo $n; ?>" class="row-product">
         <td>
           <?php
-          echo TbHtml::activeTextField($product[$key], "[$n]article", array(
+          echo TbHtml::activeTextField($product[$key]->product, "[$key]article", array(
             'readonly' => TRUE,
             'class' => 'row-article',
           ));
           ?>
         </td>
-        <td style="width: 100%">
+        <td>
           <?php
-          echo TbHtml::activeTextField($product[$key], "[$n]name", array(
+          echo TbHtml::activeTextField($product[$key]->product, "[$key]name", array(
             'class' => 'row-name',
             'block' => TRUE,
           ));
@@ -46,14 +48,15 @@
         </td>
         <td>
           <?php
-          echo TbHtml::activeNumberField($item, "[$n]quantity"
+          echo TbHtml::activeNumberField($item, "[$key]quantity"
               , array('class' => 'row-quantity'));
           ?>
         </td>
         <td>
           <?php
-          echo TbHtml::activeNumberField($item, "[$n]price"
-              , array('class' => 'row-price', 'disc' => $item->discount));
+          echo TbHtml::activeNumberField($item, "[$key]price"
+              , array('class' => 'row-price')); //, 'disc' => $item->discount));
+          echo TbHtml::activeHiddenField($item, "[$key]discount", array('class' => 'row-discount'));
           ?>
         </td>
         <td><?php
@@ -66,6 +69,8 @@
           ?></td>
       </tr>
     <?php } ?>
+    </tbody>
+    <tfoot>
     <tr>
       <td colspan="3"><div style="text-align: right">Стоимость доставки: </div></td>
       <td>
@@ -112,4 +117,5 @@
         ?>
       </td>
     </tr>
+    </tfoot>
   </table>

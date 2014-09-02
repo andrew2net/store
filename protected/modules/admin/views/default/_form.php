@@ -1,8 +1,7 @@
 <?php
 /* @var $this DefaultController */
 /* @var $model Order */
-/* @var $order_product OrderProduct[] */
-/* @var $product Product[] */
+/* @var $product OrderProduct[] */
 /* @var $form CActiveForm */
 ?>
 
@@ -121,7 +120,6 @@
       'active' => TRUE,
       'content' => $this->renderPartial('_product', array(
         'model' => $model,
-        'order_product' => $order_product,
         'product' => $product,
           ), TRUE),
     ),
@@ -147,11 +145,15 @@
 </div><!-- form -->
 <script type="text/javascript">
   $(function() {
+    var order_num = $('#order-num');
     var coupon_code = $('#coupon_code');
     var order_delivery_summ = $('#order-delivery-summ');
     var order_status_id = $('#Order_status_id');
     var add_product = $('#add-product');
     var order_delivery_id = $('#Order_delivery_id');
+    var table = $('#order-product');
+    var tbody = table.find('tbody');
+    var newrow = '<tr class="row-product"><td><input readonly="readonly" class="row-article" type="text" maxlength="25"/></td><td><input class="row-name input-block-level" type="text" maxlength="255" /></td><td><input class="row-quantity" type="number" value="1" /></td><td><input class="row-price" type="number" /><input class="row-discount" type="hidden" /></td><td><i class="row-del icon-trash" style="cursor:pointer" rel="tooltip" title="Удалить"></i></td></tr>';
 
     function calcSumm() {
       var sum = 0;
@@ -166,7 +168,7 @@
         var quantity = parseInt($('#' + quantityid).val());
         if (isNaN(quantity))
           quantity = 0;
-        var disc = parseFloat($(this).attr('disc'));
+        var disc = $(this).parent().find('.row-discount').val(); //parseFloat($(this).attr('disc'));
         var s = price * quantity;
         if (disc)
           discount += disc * quantity;
@@ -226,66 +228,92 @@
       }
     }
 
+    var current_id;
     var selectItem = function(event, ui) {
+      current_id = ui.item.id;
       var row = $(this).parent().parent();
-      row.find('.row-article').val(ui.item.article);
+      var art = row.find('.row-article');
+      art.val(ui.item.article);
+      art.attr('id', 'Product_' + ui.item.id + '_article');
+      art.attr('name', 'Product[' + ui.item.id + '][article]');
+      this.id = 'Product_' + ui.item.id + '_name';
+      this.name = 'Product[' + ui.item.id + '][name]';
+      var quant = row.find('.row-quantity');
+      quant.attr('id', 'OrderProduct_' + ui.item.id + '_quantity');
+      quant.attr('name', 'OrderProduct[' + ui.item.id + '][quantity]');
       var price = row.find('.row-price');
-      $(price).val(ui.item.price);
-      $(price).attr('disc', ui.item.disc);
+      price.val(ui.item.price);
+      price.attr('id', 'OrderProduct_' + ui.item.id + '_price');
+      price.attr('name', 'OrderProduct[' + ui.item.id + '][price]');
+      var disc = row.find('.row-discount');
+      disc.val(ui.item.disc);
+      disc.attr('id', 'OrderProduct_' + ui.item.id + '_discount');
+      disc.attr('name', 'OrderProduct[' + ui.item.id + '][discount]');
       calcSumm();
     }
 
-    var incAttr = function(match) {
-      return parseInt(match) + 1;
+    function productSuggest(request, response) {
+      var ord_pr = {};
+      var summ = 0;
+      $('.row-quantity').each(function(i, e) {
+        if (e.id.length > 0) {
+          var prod_id = /^.+_(\d+)_/.exec(e.id)[1];
+          if (prod_id != current_id) {
+            summ += parseFloat($(this).parent().parent().find('.row-price').val()) * parseInt(e.value);
+            ord_pr[i] = prod_id;
+          }
+        }
+      });
+      $.get('/admin/default/orderproduct', {
+        oid: order_num.html(),
+        term: request.term,
+        summ: summ,
+        ord_pr: ord_pr},
+      function(data) {
+        var result = $.parseJSON(data);
+        response(result);
+      });
     }
 
-    add_product.click(function(event) {
+      add_product.click(function(event) {
       event.preventDefault();
-      var row = $('.row-product').last();
-      var newrow = row.clone();
-      newrow[0].id = newrow[0].id.replace(/\d+/, incAttr);
-      var art = $(newrow).find('.row-article');
-      art[0].id = art[0].id.replace(/\d+/, incAttr);
-      art[0].name = art[0].name.replace(/\d+/, incAttr);
-      art[0].value = '';
-      var name = $(newrow).find('.row-name');
-      name[0].id = name[0].id.replace(/\d+/, incAttr);
-      name[0].name = name[0].name.replace(/\d+/, incAttr);
-      name[0].value = '';
-      $(name).autocomplete({
-        source: '/admin/default/orderproduct',
+      tbody.append(newrow);
+      tbody.find('.row-name').last().autocomplete({
+        source: function(request, response) {
+          productSuggest(request, response);
+        },
         response: response,
-        select: selectItem
+        select: selectItem,
       });
-      var quantity = $(newrow).find('.row-quantity');
-      quantity[0].id = quantity[0].id.replace(/\d+/, incAttr);
-      quantity[0].name = quantity[0].name.replace(/\d+/, incAttr);
-      quantity[0].value = '1';
-      var price = $(newrow).find('.row-price')
-      price[0].id = price[0].id.replace(/\d+/, incAttr);
-      price[0].name = price[0].name.replace(/\d+/, incAttr);
-      price[0].value = '0.00';
-      $(newrow).insertAfter(row);
       setStatus();
     });
 
-    $('table').on('click', '.row-del', function() {
+    tbody.on('click', '.row-del', function() {
       $(this).parent().parent().remove();
       if ($('.row-product').length < 2)
         $('.row-del').css('display', 'none');
       calcSumm();
     });
 
+    tbody.on('focus', '.row-name', function() {
+      var res = /^.+_(\d+)_/.exec(this.id);
+      if (res)
+        current_id = res[1];
+      else
+        current_id = undefined;
+    });
+
     $(function() {
-      ($('.row-name').autocomplete({
-        source: '/admin/default/orderproduct',
+      $('.row-name').autocomplete({
+        source: productSuggest,
         response: response,
         select: selectItem
-      }))
+      });
     });
 
     function getCityDeliveries(city) {
       $.post('/admin/default/citydeliveries', {city: city}, function(data) {
+        $('')
         var result = JSON && JSON.parse(data) || $.parseJSON(data);
         order_delivery_id.empty();
         $.each(result, function(key, value) {

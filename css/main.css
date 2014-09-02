@@ -347,3 +347,7 @@ fieldset legend{
 .tabs-left > .nav-tabs > li{
   margin-right: -1px;
 }
+
+#order-product td:nth-child(2){
+  width: 100%;
+}

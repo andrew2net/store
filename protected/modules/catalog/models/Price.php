@@ -98,17 +98,31 @@ class Price extends CActiveRecord {
 
   /**
    * 
-   * @return Price
+   * @return Price price type object
    */
-  public static function getPrice($products_table = NULL) {
+  public static function getPrice(&$products_table = NULL, $uid = NULL) {
     Yii::import('application.controllers.ProfileController');
 
-    if (!$products_table) {
-      $products_table = 'store_cart';
+    if (!$products_table) { //if it's cart products table
+      $table = 'store_cart';
+    }
+    else {
+      $table = 'temp_order_product_' . (Yii::app()->user->id ? Yii::app()->user->id : 'exchange');
+      $query = "DROP TABLE IF EXISTS {$table};";
+      $query .= "CREATE TEMPORARY TABLE {$table} (product_id int(11) unsigned, quantity smallint(5) unsigned);";
+      foreach ($products_table as $item) {
+        $product = Product::model()->findByAttributes(array('code' => (string) $item->code));
+        if ($product) {
+          $query .= "INSERT INTO {$table} VALUES ({$product->id}, {$item->quantity});";
+        }
+        else
+          throw new Exception('Product not found. Product code: ' . $p->code);
+      }
+      Yii::app()->db->createCommand($query)->execute();
     }
     $query = Yii::app()->db->createCommand()
         ->select('SUM(c.quantity*round(prices.price*(1-greatest(ifnull(disc.percent,0),ifnull(disc1.percent,0),ifnull(disc2.percent,0))/100))) as c_summ, prices.price_id')
-        ->from('store_cart c')
+        ->from($table . ' c')
         ->join('store_product product', 'c.product_id=product.id')
         ->join('store_product_price prices', 'product.id=prices.product_id')
         ->join('store_price price', 'price.id=prices.price_id')
@@ -118,21 +132,32 @@ class Price extends CActiveRecord {
         ->leftJoin('store_discount disc1', "disc1.product_id=1 and disc1.id=discat.discount_id and disc1.actual=1 and (disc1.begin_date='0000-00-00' or disc1.begin_date<=CURDATE()) and (disc1.end_date='0000-00-00' or disc1.end_date>=CURDATE())")
         ->leftJoin('store_discount_product dispro', 'dispro.product_id=product.id')
         ->leftJoin('store_discount disc2', "disc2.product_id=2 and disc2.id=dispro.discount_id and disc2.actual=1 and (disc2.begin_date='0000-00-00' or disc2.begin_date<=CURDATE()) and (disc2.end_date='0000-00-00' or disc2.end_date>=CURDATE())")
-        ->where("(session_id=:sid AND :sid<>'') OR (user_id=:uid AND :sid='')", array(
-          ':sid' => ProfileController::getSession(),
-          ':uid' => Yii::app()->user->isGuest ? '' : Yii::app()->user->id,
-        ))
         ->order('price.summ DESC')
         ->group('prices.price_id, price.summ')
         ->having('c_summ>price.summ');
+
+    if (!$products_table)
+      $query->where("(session_id=:sid AND :sid<>'') OR (user_id=:uid AND :sid='')", array(
+        ':sid' => ProfileController::getSession(),
+        ':uid' => Yii::app()->user->isGuest ? '' : Yii::app()->user->id,
+      ));
+
 //    $text = $query->getText();
     $row = $query->queryRow();
     if ($row)
       $price = self::model()->findByPk($row['price_id']);
     else
       $price = self::model()->find(array('order' => 'summ'));
-    $profile = ProfileController::getProfile();
-    if ($profile->price_id && $profile->price->summ > $price->summ)
+
+    if ($products_table)
+      Yii::app()->db->createCommand("DROP TABLE IF EXISTS {$table};")->execute();
+      
+    if ($uid)
+      $profile = CustomerProfile::model()->with('price')->findByAttributes(array('user_id' => $uid));
+    else
+      $profile = ProfileController::getProfile();
+
+    if ($profile && $profile->price_id && $profile->price->summ > $price->summ)
       return $profile->price;
     else
       return $price;

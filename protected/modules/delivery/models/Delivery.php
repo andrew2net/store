@@ -176,7 +176,7 @@ class Delivery extends CActiveRecord {
     return parent::model($className);
   }
 
-  public function region($country_code, $post_code, $city, $delivery_id) {
+  public function region($country_code, $post_code, $city, $delivery_id = NULL) {
     Yii::import('application.modules.delivery.models.RegionDelivery');
     Yii::import('application.modules.delivery.models.Zone');
     $this->getDbCriteria()->mergeWith(array(
@@ -253,7 +253,7 @@ class Delivery extends CActiveRecord {
 
     $list = array();
     $list_oversize = array();
-    if ($product_sizes){
+    if ($product_sizes) {
       $storage_delivery = array();
       foreach ($models as $delivery) {
         /* @var $delivery Delivery */
@@ -544,14 +544,13 @@ class Delivery extends CActiveRecord {
   }
 
   private static function placeItems(array &$data, array $volume, Delivery &$delivery) {
-    static $orientations =
-    array(
-      array(0, 1, 2),
-      array(0, 2, 1),
-      array(1, 0, 2),
-      array(1, 2, 0),
-      array(2, 0, 1),
-      array(2, 1, 0),
+    static $orientations = array(
+          array(0, 1, 2),
+          array(0, 2, 1),
+          array(1, 0, 2),
+          array(1, 2, 0),
+          array(2, 0, 1),
+          array(2, 1, 0),
     );
 
     foreach ($data['items'] as $key => $item) {
