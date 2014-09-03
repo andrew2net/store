@@ -10,7 +10,7 @@ $title = (isset($brand) ? ' - Бренд: ' . $brand->name : (isset($isSearch) ?
             ' - Товары со скидкой' . (isset($group) ? ': ' . $group->name : '')));
 $this->pageTitle = Yii::app()->name . $title;
 ?>
-<?php // $this->renderPartial('_topmenu');  ?>
+<?php // $this->renderPartial('_topmenu');   ?>
 
 <div class="container" id="page">
   <div style="margin: 20px 0">
@@ -26,9 +26,9 @@ $this->pageTitle = Yii::app()->name . $title;
       $notfind = 'По вашему запросу товар не найден';
       if (isset($isSearch)) {
         ?>
-        <span class="cufon green bold" style="font-size: 18pt">Вы искали: </span>
+        <span class="blue bold" style="font-size: 18pt">Вы искали: </span>
       <?php } ?>
-      <span class="cufon" style="font-size: 18pt"><?php echo $search->text; ?></span>
+      <span style="font-size: 18pt"><?php echo $search->text; ?></span>
     <?php } ?>
   </div>
   <div class="inline-blocks">
@@ -47,10 +47,13 @@ $this->pageTitle = Yii::app()->name . $title;
         if ($product->getItemCount() > 0) {
           echo CHtml::beginForm('', 'post', array('id' => 'item-submit'));
           echo CHtml::hiddenField('url', Yii::app()->request->url);
+          Yii::import('application.modules.catalog.models.Price');
+          $trade_price = Price::getPrice();
           $this->widget('zii.widgets.CListView', array(
             'dataProvider' => $product,
             'itemView' => '//site/_item',
             'template' => '{pager}{items}{pager}',
+            'viewData' => array('price_type' => $trade_price),
               )
           );
           echo CHtml::endForm();
