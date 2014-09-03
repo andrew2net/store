@@ -50,7 +50,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
         ?>
       </tbody>
       <tr style="font-size: 12pt; background: #414FA5; color: whitesmoke">
-        <th class="text-right" colspan="5">общая сумма заказа:</th>
+        <th class="text-right" colspan="5">сумма заказа:</th>
         <td class="text-right bold"><span id="cart-summ"></span></td>
         <th></th>
       </tr>
