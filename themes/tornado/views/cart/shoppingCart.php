@@ -49,7 +49,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
         ));
         ?>
       </tbody>
-      <tr style="font-size: 12pt; background: #414FA5; color: whitesmoke">
+      <tr class="yellow" style="font-size: 12pt; background: #414FA5">
         <th class="text-right" colspan="5">сумма заказа:</th>
         <td class="text-right bold"><span id="cart-summ"></span></td>
         <th></th>
@@ -69,7 +69,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
         <td><div id="discount-text" style="font-size: 9pt; text-align: center; width: 55px" class="red"></div></td>
       </tr>
       <tr>
-        <th class="text-right" colspan="5">общая сумма скидок:</th>
+        <th class="text-right" colspan="5">сумма скидок:</th>
         <td class="text-right bold"><span id="cart-discount"></span></td>
         <td></td>
       </tr>
@@ -122,7 +122,6 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
     </div>
     <div id="cart-submit" class="main-submit" style="display: none">
       <div>Оформить заказ</div>
-      <?php // echo CHtml::button('', array('id' => 'cart-submit'));   ?>
     </div>
   </div>
   <div id="cart-login-dialog">
