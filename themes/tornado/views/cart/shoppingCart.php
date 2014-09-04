@@ -74,7 +74,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
         <td></td>
       </tr>
     </table>
-    <span class="right bold" style="font-size: 12pt; margin-right: 90px">Минимальная сумма заказа <span class="red"><?php echo number_format($minsumm, 0, '.', ' ') . $currency->class; ?></span></span>
+    <span class="right bold" style="font-size: 12pt; margin-right: 90px">минимальная сумма заказа <span class="red"><?php echo number_format($minsumm, 0, '.', ' ') . $currency->class; ?></span></span>
     <span><span class="red">*</span> - скидка по купону предоставляется только на товары без скидки</span>
   </fieldset>
   <div id="prof">

@@ -70,7 +70,7 @@
         ?>
 
         <?php
-        $options_param = Delivery::getDeliveryList($model->country_code, $model->post_code, $model->city, $model, $model);
+        $options_param = Delivery::getDeliveryList($model->country_code, $model->post_code, $model->city, $model->orderProducts, $model);
         echo $form->dropDownListControlGroup($model, 'delivery_id'
             , isset($options_param['options']) ? $options_param['options'] : array(), array(
           'options' => isset($options_param['params']) ? $options_param['params'] : array(), 'style' => 'width:320px'));
@@ -146,6 +146,7 @@
 <script type="text/javascript">
   $(function() {
     var order_num = $('#order-num');
+    var order_city = $('#Order_city');
     var coupon_code = $('#coupon_code');
     var order_delivery_summ = $('#order-delivery-summ');
     var order_status_id = $('#Order_status_id');
@@ -214,8 +215,16 @@
     calcSumm();
     setStatus();
 
-    $('table').on('keyup change', '.row-price, .row-quantity, #order-delivery-summ', function() {
+    table.on('keyup change', '.row-price, #order-delivery-summ', function() {
       calcSumm();
+    });
+
+    var quantityTimeOut;
+    table.on('keyup change', '.row-quantity', function() {
+      clearTimeout(quantityTimeOut);
+      quantityTimeOut = setTimeout(function(){
+        getCityDeliveries(order_city.val());
+      }, 500)
     });
 
     order_status_id.change(function() {
@@ -249,7 +258,14 @@
       disc.val(ui.item.disc);
       disc.attr('id', 'OrderProduct_' + ui.item.id + '_discount');
       disc.attr('name', 'OrderProduct[' + ui.item.id + '][discount]');
-      calcSumm();
+      getCityDeliveries(order_city.val());
+    }
+
+    function getId(str) {
+      var res = /^.+_(\d+)_/.exec(str);
+      if (res)
+        return res[1];
+      return undefined;
     }
 
     function productSuggest(request, response) {
@@ -257,7 +273,7 @@
       var summ = 0;
       $('.row-quantity').each(function(i, e) {
         if (e.id.length > 0) {
-          var prod_id = /^.+_(\d+)_/.exec(e.id)[1];
+          var prod_id = getId(e.id);
           if (prod_id != current_id) {
             summ += parseFloat($(this).parent().parent().find('.row-price').val()) * parseInt(e.value);
             ord_pr[i] = prod_id;
@@ -275,7 +291,7 @@
       });
     }
 
-      add_product.click(function(event) {
+    add_product.click(function(event) {
       event.preventDefault();
       tbody.append(newrow);
       tbody.find('.row-name').last().autocomplete({
@@ -292,15 +308,11 @@
       $(this).parent().parent().remove();
       if ($('.row-product').length < 2)
         $('.row-del').css('display', 'none');
-      calcSumm();
+      getCityDeliveries(order_city.val());
     });
 
     tbody.on('focus', '.row-name', function() {
-      var res = /^.+_(\d+)_/.exec(this.id);
-      if (res)
-        current_id = res[1];
-      else
-        current_id = undefined;
+      current_id = getId(this.id);
     });
 
     $(function() {
@@ -312,28 +324,38 @@
     });
 
     function getCityDeliveries(city) {
-      $.post('/admin/default/citydeliveries', {city: city}, function(data) {
-        $('')
+      var delivery_id = order_delivery_id.val();
+      var products = {};
+      $('.row-quantity').each(function(i, el) {
+        var id = getId(el.id);
+        products[id] = el.value;
+      });
+      $.get('/admin/default/citydeliveries', {city: city, oid: order_num.html(), products: products}, function(data) {
         var result = JSON && JSON.parse(data) || $.parseJSON(data);
         order_delivery_id.empty();
         $.each(result, function(key, value) {
-          order_delivery_id.append('<option value="' + key
-                  + '" price="' + value.price + '" summ="' + value.summ + '">'
+          order_delivery_id.append('<option value="' + key + '" price="' + value.price + '">'
                   + value.text + '</option>');
         });
+        var opt = order_delivery_id.find('option[value="' + delivery_id + '"]');
+        var price;
+        if (opt.length > 0) {
+          opt.prop('selected', true);
+          price = opt.attr('price');
+        } else
+          price = order_delivery_id.find('option:selected').attr('price');
+        order_delivery_summ.val(price);
+        calcSumm();
       });
     }
 
-    $('#Order_city').change(function() {
+    order_city.on('change autocompleteselect', function(event, ui) {
+      event.stopImmediatePropagation();
       getCityDeliveries(this.value);
     });
 
-    $('#Order_city').on('autocompleteselect', function(event, ui) {
-      getCityDeliveries(ui.item.value);
-    });
-
     order_delivery_id.change(function() {
-      order_delivery_summ.val($('#Order_delivery_id option:selected').attr('price'));
+      order_delivery_summ.val(order_delivery_id.find('option:selected').attr('price'));
       calcSumm();
     });
   });

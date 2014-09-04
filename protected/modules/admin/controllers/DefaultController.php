@@ -192,15 +192,16 @@ class DefaultController extends Controller {
     Yii::app()->end();
   }
 
-  public function actionCitydeliveries() {
-    if (isset($_POST['city'])) {
-      echo json_encode($this->getCityDeliveries($_POST['city']));
-    }
+  public function actionCitydeliveries($city, $oid, array $products) {
+    Yii::import('application.modules.delivery.models.Delivery');
+    $order = Order::model()->findByPk($oid);
+    /* @var $order Order */
+    $delivery_list = Delivery::getDeliveryList($order->country_code, $order->post_code, $city, $products, $order);
+    echo json_encode($delivery_list);
     Yii::app()->end();
   }
 
   public function getCityDeliveries($city, $ajax = TRUE) {
-    Yii::import('application.modules.delivery.models.Delivery');
     $delivery = Delivery::model()->region($city)->findAll();
     if (count($delivery) == 0)
       $delivery = Delivery::model()->findAllByAttributes(array('name' => 'Другой город'));
