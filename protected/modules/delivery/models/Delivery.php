@@ -290,7 +290,7 @@ class Delivery extends CActiveRecord {
         /* @var $delivery Delivery */
 
         $parcels = self::checkSizes($product_sizes, $delivery);
-        Yii::trace('After check size ' . $delivery->name, 'delivery_list');
+        Yii::trace('is set result ' . isset($parcels['result']), 'delivery_list');
         if (!$parcels['result']) {
           if (isset($parcels['oversize_items']))
             if ($list_oversize)
