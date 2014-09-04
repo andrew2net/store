@@ -344,6 +344,8 @@
           price = opt.attr('price');
         } else
           price = order_delivery_id.find('option:selected').attr('price');
+        if (price == undefined)
+          price = 0;
         order_delivery_summ.val(price);
         calcSumm();
       });
