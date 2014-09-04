@@ -290,6 +290,7 @@ class Delivery extends CActiveRecord {
         /* @var $delivery Delivery */
 
         $parcels = self::checkSizes($product_sizes, $delivery);
+        Yii::trace('After check size ' . $delivery->name, 'delivery_list');
         if (!$parcels['result']) {
           if (isset($parcels['oversize_items']))
             if ($list_oversize)
@@ -302,7 +303,6 @@ class Delivery extends CActiveRecord {
         $price = 0;
         $nrj_weght = 0;
         $nrj_places = 0;
-        Yii::trace('After check size ' . $delivery->name, 'delivery_list');
         foreach ($parcels['parcels'] as $parcel) {
 
           $oversize = isset($parcel['oversize']) && $parcel['oversize'] ? 1 + $delivery->oversize / 100 : 1;
@@ -333,7 +333,6 @@ class Delivery extends CActiveRecord {
               }
           }
         }
-        Yii::trace('After make parcels ' . $delivery->name, 'delivery_list');
 
         Yii::import('application.modules.payments.models.Currency');
         Yii::import('application.modules.payments.models.CurrencyRate');
