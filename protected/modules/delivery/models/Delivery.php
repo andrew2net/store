@@ -269,10 +269,8 @@ class Delivery extends CActiveRecord {
     else
       $max_weight = 0;
     arsort($product_weights);
-    Yii::trace('Before sort', 'delivery_list');
     array_multisort($product_lengths, SORT_DESC, $product_widths, SORT_DESC
         , $product_heights, SORT_DESC, $product_sizes); //$product_widths, SORT_DESC, 
-    Yii::trace('After sort', 'delivery_list');
 
     Yii::import('application.modules.delivery.models.NrjLocation');
     $pref = '^';
@@ -291,6 +289,7 @@ class Delivery extends CActiveRecord {
       foreach ($models as $delivery) {
         /* @var $delivery Delivery */
 
+        Yii::trace('Before check size ' . $delivery->name, 'delivery_list');
         $parcels = self::checkSizes($product_sizes, $delivery);
         if (!$parcels['result']) {
           if (isset($parcels['oversize_items']))
