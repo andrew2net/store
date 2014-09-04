@@ -272,6 +272,7 @@ class Delivery extends CActiveRecord {
     Yii::trace('Before sort', 'delivery_list');
     array_multisort($product_lengths, SORT_DESC, $product_widths, SORT_DESC
         , $product_heights, SORT_DESC, $product_sizes); //$product_widths, SORT_DESC, 
+    Yii::trace('After sort', 'delivery_list');
 
     Yii::import('application.modules.delivery.models.NrjLocation');
     $pref = '^';
