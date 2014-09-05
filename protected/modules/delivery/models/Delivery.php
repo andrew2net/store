@@ -230,8 +230,6 @@ class Delivery extends CActiveRecord {
       }
     }
 
-//    $items = is_array($model) ? $model : $model->orderProducts;
-
     $total_weight = 0;
     $product_weights = array();
     $product_sizes = array();
@@ -290,7 +288,6 @@ class Delivery extends CActiveRecord {
         /* @var $delivery Delivery */
 
         $parcels = self::checkSizes($product_sizes, $delivery);
-        Yii::trace('Parcels result ' . $parcels['result'], 'delivery_list');
         if (!$parcels['result']) {
           if (isset($parcels['oversize_items']))
             if ($list_oversize)
