@@ -45,7 +45,6 @@ class ExchangeController extends CController {
       Yii::import('application.modules.catalog.models.Category');
       Yii::import('application.modules.catalog.models.Brand');
       Yii::import('application.modules.catalog.models.Price');
-//      Yii::trace('import', 'exchange');
       foreach ($xml->product as $item) {
         $model = Product::model()->findByAttributes(array('code' => $item->code));
         if (!$model) {
@@ -59,7 +58,6 @@ class ExchangeController extends CController {
           $model = new Product;
           $model->show_me = TRUE;
         }
-//        Yii::trace('model ' . $model->isNewRecord, 'exchange');
         $model->code = $item->code;
         $model->article = (string) $item->article;
         $model->name = (string) $item->name;
@@ -68,7 +66,6 @@ class ExchangeController extends CController {
         /* @var $brand Brand */
         if ($brand)
           $model->brand_id = (int) $brand->id;
-//        Yii::trace('brand', 'exchange');
 
         $model->remainder = (int) $item->remainder;
         $model->price = (float) $item->price;
@@ -79,7 +76,6 @@ class ExchangeController extends CController {
 
         if (!$model->save())
           return FALSE;
-//        Yii::trace('save', 'exchange');
 
         $category = Category::model()->findByAttributes(array('code' => $item->category));
         /* @var $category Category */
@@ -90,11 +86,10 @@ class ExchangeController extends CController {
           $productCategory->category_id = $category->id;
           $productCategory->save();
         }
-//        Yii::trace('category', 'exchange');
 
-        if (isset($item->image)) {
+        if (isset($item->images->image[0])) {
           $img_path = '/images/' . Yii::app()->params['img_storage'] . '/product/';
-          $img = base64_decode($item->image);
+          $img = base64_decode($item->images->image[0]);
           $imagick = new Imagick;
           $imagick->readimageblob($img);
           $ext = '.' . strtolower($imagick->getimageformat());
