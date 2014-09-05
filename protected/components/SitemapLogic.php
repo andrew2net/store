@@ -86,7 +86,7 @@ class SitemapLogic
     {
         $dom = new DOMDocument('1.0', 'utf-8');
         $urlset = $dom->createElement('urlset');
-        $urlset->setAttribute('xmlns','"http://www.sitemaps.org/schemas/sitemap/0.9"');
+        $urlset->setAttribute('xmlns','http://www.sitemaps.org/schemas/sitemap/0.9');
         foreach($this->items as $item)
         {
             $url = $dom->createElement('url');
