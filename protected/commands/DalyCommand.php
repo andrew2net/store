@@ -7,6 +7,15 @@
 class DalyCommand extends CConsoleCommand {
 
   public function run($args) {
+//    self::sitemapGenerate();
+    self::getNrjLocations();
+  }
+  
+  private static function sitemapGenerate(){
+//    $sitemap = new Sitemap();
+  }
+
+  private static function getNrjLocations(){
     Yii::trace('Start daly', 'cron');
     $db = Yii::app()->db;
     $command = $db->createCommand();
@@ -37,7 +46,6 @@ class DalyCommand extends CConsoleCommand {
       }
     }
   }
-
 }
 
 ?>

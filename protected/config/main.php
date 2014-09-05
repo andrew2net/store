@@ -134,9 +134,10 @@ $site_config = array(
         'admin/auth/<_c:\w+>' => 'auth/<_c>',
         'admin/auth/<_c:\w+>/<_a:\w+>' => 'auth/<_c>/<_a>',
         '<_c:(login|logout)>' => 'profile/<_c>',
-        'info/<_p:\w+>' => 'site/page/url/<_p>',
+        'info/<url:\w+>' => 'site/page',
         '<controller:\w+>/<id:\d+>' => '<controller>',
         'user/recovery/<activkey>/<email>' => 'user/recovery',
+        array('sitemap', 'pattern'=> 'sitemap.xml', 'urlSuffix' => ''),
 //        '<action:\w+>/<id:\d+>' => 'site/<action>',
 //        '<action:\w+>' => 'site/<action>',
 //        '<controller:\w+>/<id:\d+>' => '<controller>/view',
@@ -178,6 +179,9 @@ $site_config = array(
         ),
        */
       ),
+    ),
+    'cache' => array(
+      'class' => 'CFileCache',
     ),
   ),
   // application-level parameters that can be accessed

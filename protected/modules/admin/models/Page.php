@@ -9,6 +9,7 @@
  * @property string $title
  * @property string $content
  * @property integer $menu_show
+ * @property string $update_time 
  */
 class Page extends CActiveRecord {
 
@@ -93,6 +94,32 @@ class Page extends CActiveRecord {
    */
   public static function model($className = __CLASS__) {
     return parent::model($className);
+  }
+
+  public function beforeSave() {
+    $this->update_time = \date('Y-m-d H:i:s');
+    return parent::beforeSave();
+  }
+
+  public function getUrlsForSitemap() {
+    $models = $this->findAll();
+    $urls = array();
+    foreach ($models as $model) {
+      $urls[$model->getUrl()] = strtotime($model->update_time);
+    }
+    return $urls;
+  }
+
+  public function getUrl() {
+    if ($this->url == '/') {
+      $url = $this->url;
+      $params = array();
+    }
+    else {
+      $url = 'site/page';
+      $params = array('url' => $this->url);
+    }
+    return Yii::app()->createUrl($url, $params);
   }
 
 }
