@@ -50,12 +50,12 @@ class SitemapLogic
         $urls = $model->getUrlsForSitemap();
         foreach ($urls as $url=>$update_time)
         {
-            $item = [
+            $item = array(
                 'loc' => $host . $url,
                 'changefreq' => $changeFreq,
                 'priority' => empty($url) ? 1 : $priority,
                 'lastmod' => date(DATE_W3C, $update_time)
-            ];
+            );
             $this->items[] = $item;
         }
     }
