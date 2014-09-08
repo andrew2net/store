@@ -79,6 +79,14 @@ class ExchangeController extends CController {
         $model->width = (float) $item->width;
         $model->height = (float) $item->height;
 
+        if (!$model->validate()){
+          $errors = $model->getErrors();
+          foreach ($errors as $attr => $errs){
+            foreach ($errs as $msg){
+              Yii::trace('error: '. $attr. ' ' . $msg , '1c_exchange');
+            }
+          }
+        }
         if (!$model->save()){
           Yii::trace('fail save', '1c_exchange');
           return FALSE;
