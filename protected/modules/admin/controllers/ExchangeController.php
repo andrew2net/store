@@ -21,23 +21,29 @@ class ExchangeController extends CController {
   /**
    * @param str $p 
    * @param str $hash 
-   * @return bool
+   * @return str
    * @soap
    */
   public function setProduct($p, $hash) {
 
     try {
-//      Yii::trace('try ' . substr($p, 0, 255), 'exchange');
+      $resultDOM = new DOMDocument;
+      $resultDOM->encoding = 'UTF-8';
+      $resultRootEl = $resultDOM->createElement('errors');
+      $resultRootNode = $resultDOM->appendChild($resultRootEl);
+
       $xml = new SimpleXMLElement($p);
       if (!$xml) {
         foreach (libxml_get_errors() as $error) {
-          Yii::trace($error->message, 'exchange');
+          $resultRootNode->appendChild($resultDOM->createElement('error', $error->message));
+          Yii::trace($error->message, '1c_exchange');
         }
-        return FALSE;
+        return $resultDOM->saveXML();
       }
-//      Yii::trace('decode ' . json_last_error(), 'exchange');
-      if (strtoupper(md5($xml->product[0]->code . self::PASS)) != $hash)
-        return FALSE;
+      if (strtoupper(md5(((string) $xml->product[0]->code) . self::PASS)) != $hash) {
+        $resultRootNode->appendChild($resultDOM->createElement('error', 'Token is invalid'));
+        return $resultDOM->saveXML();
+      }
 
       Yii::import('application.modules.catalog.models.Product');
       Yii::import('application.modules.catalog.models.ProductPrice');
@@ -46,30 +52,33 @@ class ExchangeController extends CController {
       Yii::import('application.modules.catalog.models.Brand');
       Yii::import('application.modules.catalog.models.Price');
       foreach ($xml->product as $item) {
+        $code = (string) $item->code;
+        $article = (string) $item->article;
+        $name = (string) $item->name;
         Yii::trace('product ' . $item->name, '1c_exchange');
-        $model = Product::model()->findByAttributes(array('code' => $item->code));
+        $model = Product::model()->findByAttributes(array('code' => $code));
         if (!$model) {
-          $model = Product::model()->findByAttributes(array('article' => $item->article));
+          $model = Product::model()->findByAttributes(array('article' => $article));
         }
         /* @var $model Product */
         if ($model) {
-          Yii::trace('find product', '1c_exchange');
-          if (!$item->name)
-            return $model->delete();
-        }else {
+          if (!$name) {
+            $model->delete();
+            continue;
+          }
+        }
+        else {
           $model = new Product;
           $model->show_me = TRUE;
-          Yii::trace('new product', '1c_exchange');
         }
-        $model->code = $item->code;
-        $model->article = (string) $item->article;
-        $model->name = (string) $item->name;
+        $model->code = $code;
+        $model->article = $article;
+        $model->name = $name;
 
-        $brand = Brand::model()->findByAttributes(array('code' => $item->brand));
+        $brand = Brand::model()->findByAttributes(array('code' => (string) $item->brand));
         /* @var $brand Brand */
-        if ($brand){
+        if ($brand) {
           $model->brand_id = (int) $brand->id;
-          Yii::trace('find brand', '1c_exchange');
         }
 
         $model->remainder = (int) $item->remainder;
@@ -78,18 +87,10 @@ class ExchangeController extends CController {
         $model->length = (float) $item->length;
         $model->width = (float) $item->width;
         $model->height = (float) $item->height;
+        $this->validate($code . ': ' . $name, $model, $resultDOM, $resultRootNode);
 
-        if (!$model->validate()){
-          $errors = $model->getErrors();
-          foreach ($errors as $attr => $errs){
-            foreach ($errs as $msg){
-              Yii::trace('error: '. $attr. ' ' . $msg , '1c_exchange');
-            }
-          }
-        }
-        if (!$model->save()){
-          Yii::trace('fail save', '1c_exchange');
-          return FALSE;
+        if (!$model->save()) {
+          Yii::trace('Product fail save', '1c_exchange');
         }
 
         $category = Category::model()->findByAttributes(array('code' => $item->category));
@@ -100,7 +101,10 @@ class ExchangeController extends CController {
           $productCategory = new ProductCategory;
           $productCategory->product_id = $model->id;
           $productCategory->category_id = $category->id;
-          $productCategory->save();
+          $this->validate($code . ': ' . $name, $productCategory, $resultDOM, $resultRootNode);
+          if (!$productCategory->save()) {
+            Yii::trace('Category fail save', '1c_exchange');
+          }
         }
 
         if (isset($item->images->image[0])) {
@@ -115,10 +119,11 @@ class ExchangeController extends CController {
           fclose($file);
           $model->img = $img_path . $model->id . $ext;
           $model->createThumbnail();
-          $model->update(array('img', 'small_img'));
-          Yii::trace('save image', '1c_exchange');
+          $this->validate($code . ': ' . $name, $model, $resultDOM, $resultRootNode, array('img', 'small_img'));
+          if (!$model->update(array('img', 'small_img'))) {
+            Yii::trace('Image fail save', '1c_exchange');
+          }
         }
-//        Yii::trace('image', 'exchange');
 
         ProductPrice::model()->deleteAllByAttributes(array('product_id' => $model->id));
         foreach ($item->prices->price as $price) {
@@ -129,130 +134,196 @@ class ExchangeController extends CController {
             $product_price->product_id = $model->id;
             $product_price->price_id = $price_model->id;
             $product_price->price = (float) $price->value;
-            $product_price->save();
+            $this->validate($code . ': ' . $name, $product_price, $resultDOM, $resultRootNode);
+            if (!$product_price->save()) {
+              Yii::trace('Price fail save', '1c_exchange');
+            }
           }
         }
-//        Yii::trace('price', 'exchange');
-        return TRUE;
       }
     } catch (Exception $exc) {
-      Yii::trace($exc->getMessage() . $exc->getTraceAsString(), 'exchange');
+      Yii::trace($exc->getMessage() . $exc->getTraceAsString(), '1c_exchange');
     }
 
-    return FALSE;
+    return $resultDOM->saveXML();
+  }
+
+  private function validate($name, CActiveRecord $model, DOMDocument &$DOMdoc, DOMNode &$node, $attr = NULL) {
+    if (!$model->validate($attr)) {
+      $errors = $model->getErrors();
+      foreach ($errors as $errs) {
+        foreach ($errs as $msg) {
+          $node->appendChild($DOMdoc->createElement('error', $name . ': ' . $msg));
+          Yii::trace('error: ' . $name . ' ' . $msg, '1c_exchange');
+        }
+      }
+    }
   }
 
   /**
    * 
    * @param string $p
    * @param str $hash 
-   * @return boolean
+   * @return str
    * @soap
    */
   public function setPrice($p, $hash) {
-    Yii::import('application.modules.catalog.models.Price');
     try {
-      $price = json_decode($p);
-      if (strtoupper(md5($price[0][0] . self::PASS)) != $hash)
-        return FALSE;
-      $valid = TRUE;
-      foreach ($price as $item) {
-        $model = Price::model()->findByAttributes(array('code' => $item[0]));
+      $resultDOM = new DOMDocument;
+      $resultDOM->encoding = 'UTF-8';
+      $resultRootEl = $resultDOM->createElement('errors');
+      $resultRootNode = $resultDOM->appendChild($resultRootEl);
+
+      $xml = new SimpleXMLElement($p);
+      if (!$xml) {
+        foreach (libxml_get_errors() as $error) {
+          $resultRootNode->appendChild($resultDOM->createElement('error', $error->message));
+          Yii::trace($error->message, 'exchange');
+        }
+        return $resultDOM->saveXML();
+      }
+      if (strtoupper(md5(((string) $xml->price[0]->code) . self::PASS)) != $hash) {
+        $resultRootNode->appendChild($resultDOM->createElement('error', 'Token is invalid'));
+        return $resultDOM->saveXML();
+      }
+
+      Yii::import('application.modules.catalog.models.Price');
+
+      foreach ($xml->prices as $item) {
+        $code = (string) $item->code;
+        $name = (string) $item->name;
+        $model = Price::model()->findByAttributes(array('code' => $code));
         if (!$model) {
-          $model = Price::model()->findByAttributes(array('name' => $item[2]));
+          $model = Price::model()->findByAttributes(array('name' => (string) $name));
         }
         /* @var $model Price */
         if ($model) {
-          if (!$item[2]) {
-            return $model->delete();
+          if (!$name) {
+            $model->delete();
+            continue;
           }
         }
         else {
           $model = new Price;
         }
-        $model->name = $item[2];
-        $model->code = $item[0];
-        $model->summ = $item[1];
-        $valid = $valid && $model->save();
+        $model->name = $name;
+        $model->code = $code;
+        $model->summ = (float) $item->summ;
+        $this->validate($model->name, $model, $resultDOM, $node);
+        $model->save();
       }
-      return $valid;
     } catch (Exception $exc) {
-      Yii::trace($exc->getMessage() . $exc->getTraceAsString(), 'exchange');
-      return false;
+      Yii::trace($exc->getMessage() . $exc->getTraceAsString(), '1c_exchange');
     }
-    return FALSE;
+    return $resultDOM->saveXML();
   }
 
   /**
    * 
    * @param string $b
    * @param str $hash 
-   * @return boolean
+   * @return str
    * @soap
    */
   public function setBrand($b, $hash) {
     try {
-      $brand = json_decode($b);
-      if (strtoupper(md5($brand[0][0] . self::PASS)) != $hash)
-        return FALSE;
+//      $brand = json_decode($b);
+//      if (strtoupper(md5($brand[0][0] . self::PASS)) != $hash)
+//        return FALSE;
+      $resultDOM = new DOMDocument;
+      $resultDOM->encoding = 'UTF-8';
+      $resultRootEl = $resultDOM->createElement('errors');
+      $resultRootNode = $resultDOM->appendChild($resultRootEl);
+
+      $xml = new SimpleXMLElement($b);
+      if (!$xml) {
+        foreach (libxml_get_errors() as $error) {
+          $resultRootNode->appendChild($resultDOM->createElement('error', $error->message));
+          Yii::trace($error->message, '1c_exchange');
+        }
+        $reult = $resultDOM->saveXML();
+        return $reult;
+      }
+      if (strtoupper(md5(((string) $xml->brand[0]->code) . self::PASS)) != $hash) {
+        $resultRootNode->appendChild($resultDOM->createElement('error', 'Token is invalid'));
+        return $resultDOM->saveXML();
+      }
+
       Yii::import('application.modules.catalog.models.Brand');
-      $valid = TRUE;
-      foreach ($brand as $item) {
-        $model = Brand::model()->findByAttributes(array('code' => $item[0]));
+      foreach ($xml->brand as $item) {
+        $code = (string) $item->code;
+        $name = (string) $item->name;
+        $model = Brand::model()->findByAttributes(array('code' => $code));
         if (!$model) {
-          $model = Brand::model()->findByAttributes(array('name' => $item[1]));
+          $model = Brand::model()->findByAttributes(array('name' => $name));
         }
         /* @var $model Brand */
         if ($model) {
-          if (!$item[1]) {
-            return $model->delete();
+          if (!$name) {
+            $model->delete();
+            continue;
           }
         }
         else {
           $model = new Price;
         }
-        $model->name = $item[1];
-        $model->code = $item[0];
-        $valid = $valid && $model->save();
+        $model->name = $name;
+        $model->code = $code;
+        $this->validate($name, $model, $resultDOM, $resultRootNode);
+        if (!$model->save()){
+          Yii::trace('Brand save fail', '1c_exchange');
+        }
       }
-      return $valid;
     } catch (Exception $exc) {
       Yii::trace($exc->getMessage() . $exc->getTraceAsString(), 'exchange');
-      return false;
     }
-    return FALSE;
+    return $resultDOM->saveXML();
   }
 
   /**
    * 
    * @param str $c
    * @param str $hash 
-   * @return bool
+   * @return str
    * @soap
    */
   public function setCategory($c, $hash) {
     Yii::import('application.modules.catalog.models.Category');
     try {
-      $category = json_decode($c);
-      if (strtoupper(md5($category[0][0] . self::PASS)) != $hash)
-        return FALSE;
-      $valid = TRUE;
-      while ($item = each($category)) {
-//        Yii::trace($item['value'][2], 'exchange');
-        $result = $this->saveCategory(array($item['key'] => $item['value']), $category);
-        if (!$result) {
-          $valid = FALSE;
+      $resultDOM = new DOMDocument;
+      $resultDOM->encoding = 'UTF-8';
+      $resultRootEl = $resultDOM->createElement('errors');
+      $resultRootNode = $resultDOM->appendChild($resultRootEl);
+
+      $xml = new SimpleXMLElement($c);
+      if (!$xml) {
+        foreach (libxml_get_errors() as $error) {
+          $resultRootNode->appendChild($resultDOM->createElement('error', $error->message));
+          Yii::trace($error->message, '1c_exchange');
         }
+        $reult = $resultDOM->saveXML();
+        return $reult;
       }
-      return $valid;
+      if (strtoupper(md5(((string) $xml->category[0]->code) . self::PASS)) != $hash) {
+        $resultRootNode->appendChild($resultDOM->createElement('error', 'Token is invalid'));
+        return $resultDOM->saveXML();
+      }
+
+      $category = array();
+      foreach ($xml->category as $cat) {
+        $category[] = array((string) $cat->code, (string) $cat->parent, (string) $cat->name);
+      }
+
+      while ($item = each($category)) {
+        $this->saveCategory(array($item['key'] => $item['value']), $category, $resultDOM, $resultRootNode);
+      }
     } catch (Exception $e) {
-      Yii::trace($e->getMessage() . $e->getTraceAsString(), 'exchange');
-      return FALSE;
+      Yii::trace($e->getMessage() . $e->getTraceAsString(), '1c_exchange');
     }
-    return FALSE;
+    return $resultDOM->saveXML();
   }
 
-  private function saveCategory($item, &$category) {
+  private function saveCategory($item, &$category, DOMDocument &$DOMdoc, DOMNode &$node) {
     $key = key($item);
 //    Yii::trace($item[$key][2], 'exchange');
     $category = array_diff_key($category, $item);
@@ -270,7 +341,8 @@ class ExchangeController extends CController {
     }
     $model->name = $item[$key][2];
     $model->code = $item[$key][0];
-    if ($this->saveParent($model, $item[$key], $category)) {
+    if ($this->saveParent($model, $item[$key], $category, $DOMdoc, $node)) {
+      $this->validate($model->name, $model, $DOMdoc, $node);
       if ($model->saveNode()) {
         return $model;
       }
@@ -287,7 +359,7 @@ class ExchangeController extends CController {
     return FALSE;
   }
 
-  private function saveParent(Category $model, $item, &$category) {
+  private function saveParent(Category $model, $item, &$category, DOMDocument &$DOMdoc, DOMNode &$node) {
     if ($item[1]) {
       $parent_key = $this->category_parent_search($item[1], $category);
       if ($parent_key) {
@@ -298,6 +370,7 @@ class ExchangeController extends CController {
       }
       if ($result instanceof Category) {
         if ($model->isNewRecord) {
+          $this->validate($model->name, $model, $DOMdoc, $node);
           return $result->append($model);
 //          return $model;
         }
@@ -404,16 +477,16 @@ class ExchangeController extends CController {
     $xml = new SimpleXMLElement($o);
     if (!$xml) {
       foreach (libxml_get_errors() as $error) {
-        Yii::trace($error->message, 'exchange');
+        Yii::trace($error->message, '1c_exchange');
       }
       return FALSE;
     }
-    Yii::trace('hash: ' . $hash, 'exchange');
-    Yii::trace('pass: ' . $xml->id . $xml->date . self::PASS, 'exchange');
-    Yii::trace('check: ' . strtoupper(md5($xml->id . $xml->date . self::PASS)), 'exchange');
+//    Yii::trace('hash: ' . $hash, 'exchange');
+//    Yii::trace('pass: ' . $xml->id . $xml->date . self::PASS, '1c_exchange');
+//    Yii::trace('check: ' . strtoupper(md5($xml->id . $xml->date . self::PASS)), '1c_exchange');
     if (strtoupper(md5($xml->id . $xml->date . self::PASS)) != $hash)
       return FALSE;
-    Yii::trace('password', 'exchange');
+    Yii::trace('password', '1c_exchange');
     Yii::import('application.models.Order');
     Yii::import('application.models.OrderProduct');
     Yii::import('application.models.CustomerProfile');
