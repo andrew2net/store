@@ -118,4 +118,34 @@ class Category extends CActiveRecord {
     );
   }
 
+  public function getUrlsForSitemap() {
+    $sql = '
+      set @cRank=0;
+      set @cPage=0;
+      set @cGroup=0;
+      select page, max(update_time) from
+      (select 
+    	@cRank:=IF(@cRank>24 or @cGroup<>cat.id, 1, @cRank+1),
+      @cPage:=if(@cRank=1, @cPage+1, @cPage) page,
+      @cGroup:=cat.id, cat.id, cat.product_id, greatest(cat.update_time, p.update_time) update_time
+      from (select c.id id, c.update_time, pc.product_id product_id from store_category c
+      left join store_category dc on dc.lft>c.lft and dc.rgt<c.rgt and dc.level<3
+      left join store_product_category pc on c.id=pc.category_id or dc.id=pc.category_id 
+      where product_id is not null  and c.level<3
+      group by id, product_id
+      order by c.id) cat
+      left join store_product p on p.id=cat.product_id) p
+      group by page
+  ';
+    $categories = self::model()->findAll(array('selct' => 'id'));
+    foreach ($categories as $value) {
+      Product::model()->subCategory($value->id);
+    }
+  }
+
+  public function beforeSave() {
+    $this->update_time = \date('Y-m-d H:i:s');
+    return parent::beforeSave();
+  }
+
 }

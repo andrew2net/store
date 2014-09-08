@@ -555,4 +555,9 @@ class Product extends CActiveRecord {
     $this->small_img = $img_storage . basename($file_path . $small_img_name);
   }
 
+  public function beforeSave() {
+    $this->update_time = \date('Y-m-d H:i:s');
+    return parent::beforeSave();
+  }
+
 }
