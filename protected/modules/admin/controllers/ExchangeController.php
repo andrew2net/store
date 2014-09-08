@@ -35,7 +35,7 @@ class ExchangeController extends CController {
         }
         return FALSE;
       }
-      Yii::trace('decode ' . json_last_error(), 'exchange');
+//      Yii::trace('decode ' . json_last_error(), 'exchange');
       if (strtoupper(md5($xml->product[0]->code . self::PASS)) != $hash)
         return FALSE;
 
@@ -46,6 +46,7 @@ class ExchangeController extends CController {
       Yii::import('application.modules.catalog.models.Brand');
       Yii::import('application.modules.catalog.models.Price');
       foreach ($xml->product as $item) {
+        Yii::trace('product ' . $item->name, '1c_exchange');
         $model = Product::model()->findByAttributes(array('code' => $item->code));
         if (!$model) {
           $model = Product::model()->findByAttributes(array('article' => $item->article));
