@@ -53,11 +53,13 @@ class ExchangeController extends CController {
         }
         /* @var $model Product */
         if ($model) {
+          Yii::trace('find product', '1c_exchange');
           if (!$item->name)
             return $model->delete();
         }else {
           $model = new Product;
           $model->show_me = TRUE;
+          Yii::trace('new product', '1c_exchange');
         }
         $model->code = $item->code;
         $model->article = (string) $item->article;
@@ -65,8 +67,10 @@ class ExchangeController extends CController {
 
         $brand = Brand::model()->findByAttributes(array('code' => $item->brand));
         /* @var $brand Brand */
-        if ($brand)
+        if ($brand){
           $model->brand_id = (int) $brand->id;
+          Yii::trace('find brand', '1c_exchange');
+        }
 
         $model->remainder = (int) $item->remainder;
         $model->price = (float) $item->price;
@@ -75,12 +79,15 @@ class ExchangeController extends CController {
         $model->width = (float) $item->width;
         $model->height = (float) $item->height;
 
-        if (!$model->save())
+        if (!$model->save()){
+          Yii::trace('fail save', '1c_exchange');
           return FALSE;
+        }
 
         $category = Category::model()->findByAttributes(array('code' => $item->category));
         /* @var $category Category */
         if ($category) {
+          Yii::trace('find category', '1c_exchange');
           ProductCategory::model()->deleteAllByAttributes(array('product_id' => $model->id));
           $productCategory = new ProductCategory;
           $productCategory->product_id = $model->id;
@@ -101,6 +108,7 @@ class ExchangeController extends CController {
           $model->img = $img_path . $model->id . $ext;
           $model->createThumbnail();
           $model->update(array('img', 'small_img'));
+          Yii::trace('save image', '1c_exchange');
         }
 //        Yii::trace('image', 'exchange');
 
@@ -108,6 +116,7 @@ class ExchangeController extends CController {
         foreach ($item->prices->price as $price) {
           $price_model = Price::model()->findByAttributes(array('code' => $price->code));
           if ($price_model) {
+            Yii::trace('find price', '1c_exchange');
             $product_price = new ProductPrice;
             $product_price->product_id = $model->id;
             $product_price->price_id = $price_model->id;
