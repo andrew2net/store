@@ -14,6 +14,7 @@ class SitemapController extends Controller {
       $sitemap->addUrlsByModel(Page::model(), SitemapLogic::WEEKLY);
       $sitemap->addUrlsByModel(Category::model());
       $xml = $sitemap->render();
+      Yii::app()->cache->set('sitemap', $xml, 3600*24);
     }
     header('Content-type: text/xml');
     echo $xml;
