@@ -122,11 +122,12 @@ class Category extends CActiveRecord {
     $sql = '
       set @cRank=0;
       set @cPage=0;
-      set @cGroup=0;
-      select page, max(update_time) from
+      set @cGroup=0;';
+    Yii::app()->db->createCommand($sql)->execute();
+    $sql = 'select id, page, max(update_time) time from
       (select 
-    	@cRank:=IF(@cRank>24 or @cGroup<>cat.id, 1, @cRank+1),
-      @cPage:=if(@cRank=1, @cPage+1, @cPage) page,
+    	@cRank:=IF(@cRank>:psize or @cGroup<>cat.id, 1, @cRank+1),
+      @cPage:=if(@cRank=1, if(@cGroup<>cat.id, 1, @cPage+1), @cPage) page,
       @cGroup:=cat.id, cat.id, cat.product_id, greatest(cat.update_time, p.update_time) update_time
       from (select c.id id, c.update_time, pc.product_id product_id from store_category c
       left join store_category dc on dc.lft>c.lft and dc.rgt<c.rgt and dc.level<3
@@ -135,12 +136,20 @@ class Category extends CActiveRecord {
       group by id, product_id
       order by c.id) cat
       left join store_product p on p.id=cat.product_id) p
-      group by page
+      group by id, page;
   ';
-    $categories = self::model()->findAll(array('selct' => 'id'));
-    foreach ($categories as $value) {
-      Product::model()->subCategory($value->id);
+    $psizes = Yii::app()->params['page_sizes'];
+    $psize = current($psizes) - 1;
+    $pages = Yii::app()->db->createCommand($sql)->bindParam(':psize', $psize)->queryAll();
+    $urls = array();
+    foreach ($pages as $value) {
+      $urls[Yii::app()
+          ->createUrl('group', array(
+            'id' => $value['id'],
+            'Product_page' => $value['page'],
+            ))] = strtotime($value['time']);
     }
+    return $urls;
   }
 
   public function beforeSave() {
