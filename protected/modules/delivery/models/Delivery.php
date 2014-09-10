@@ -368,6 +368,7 @@ class Delivery extends CActiveRecord {
                 $nrj_ch = curl_init("http://api.nrg-tk.ru/api/rest/?method=nrg.calculate&from=$location_from->id&to=$location->id&weight=$nrj_weght&volume=0&place=$nrj_places");
                 curl_setopt($nrj_ch, CURLOPT_RETURNTRANSFER, TRUE);
                 curl_setopt($nrj_ch, CURLOPT_HEADER, FALSE);
+                curl_setopt($nrj_ch, CURLOPT_CONNECTTIMEOUT, 30);
                 $nrj_get = curl_exec($nrj_ch);
                 curl_close($nrj_ch);
                 $nrj_deliveries = json_decode($nrj_get, TRUE);
