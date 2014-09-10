@@ -203,10 +203,11 @@ class ActionController extends Controller {
         . Yii::app()->params['img_storage']
         . DIRECTORY_SEPARATOR . 'temp' . DIRECTORY_SEPARATOR;
     $uploaddir = Yii::getPathOfAlias('webroot') . $img_storage;
-    $uploadfile = $uploaddir . Yii::app()->user->id . basename($_FILES['file']['name']);
+    $ext = basename($_FILES['file']['name']);
+    $uploadfile = $uploaddir . Yii::app()->user->id . $ext;
 
     if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {
-      echo $img_storage . Yii::app()->user->id . $_FILES['file']['name'];
+      echo $img_storage . Yii::app()->user->id . $ext;
     }
     else {
       echo "Possible file upload attack!\n";
