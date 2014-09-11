@@ -530,9 +530,9 @@ class Product extends CActiveRecord {
       if ($prices) {
         foreach ($prices as $p) {
           /* @var $p Price */
-          $trade_price = ProductPrice::model()->findByAttributes(array('price_id' => $p->id, 'product_id' => $this->id))->price;
-          if ($trade_price > 0)
-            return $trade_price;
+          $trade_price = ProductPrice::model()->findByAttributes(array('price_id' => $p->id, 'product_id' => $this->id));
+          if ($trade_price && $trade_price->price > 0)
+            return $trade_price->price;
         }
       }
       return 0;
