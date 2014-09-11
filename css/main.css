@@ -321,7 +321,7 @@ div.search-form
 .f-nav{
   z-index: 200;
   position: fixed;
-  left: 65px;
+  left: 62px;
   top: 0;
   width: 100%;
 }
@@ -332,7 +332,7 @@ div.search-form
 }
 
 .f-tree-wrapper{
-  margin-top: 55px !important;
+  margin-top: 80px !important;
 }
 
 fieldset{
