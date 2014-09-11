@@ -41,14 +41,17 @@
     var nav = $('#tree-bar');
     var offset = nav.offset();
     var form = $('#category-form');
+    var wrapper = $('#Category-wrapper');
     $(window).scroll(function (){
       if ($(this).scrollTop() > offset.top){
         nav.addClass('f-nav');
         form.addClass('f-form');
+        wrapper.addClass('f-tree-wrapper');
       }
       else{
         nav.removeClass('f-nav');
         form.removeClass('f-form');
+        wrapper.removeClass('f-tree-wrapper');
       }
     });
   });

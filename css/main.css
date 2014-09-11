@@ -331,6 +331,10 @@ div.search-form
   top: 25px;
 }
 
+.f-tree-wrapper{
+  margin-top: 45px;
+}
+
 fieldset{
   border: solid 1px #CCC !important;
   border-radius: 4px;
