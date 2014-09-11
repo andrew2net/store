@@ -13,10 +13,12 @@
 
 .cs-prev{
   background-position: -33px -64px;
+  left: 8px !important;
 }
 
 .cs-next{
   background-position: -33px -103px;
+  right: 8px !important;
 }
 
 .cs-buttons{
