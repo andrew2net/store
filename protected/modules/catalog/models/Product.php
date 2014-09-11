@@ -522,9 +522,9 @@ class Product extends CActiveRecord {
 
   public function getTradePrice(Price $price) {
     Yii::import('application.modules.catalog.models.ProductPrice');
-    $trade_price = ProductPrice::model()->findByAttributes(array('price_id' => $price->id, 'product_id' => $this->id))->price;
-    if ($trade_price > 0)
-      return $trade_price;
+    $trade_price = ProductPrice::model()->findByAttributes(array('price_id' => $price->id, 'product_id' => $this->id));
+    if ($trade_price && $trade_price->price > 0)
+      return $trade_price->price;
     else {
       $prices = Price::model()->findAll('summ<:summ', array(':summ' => $price->summ));
       if ($prices) {
