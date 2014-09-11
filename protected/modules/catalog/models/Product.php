@@ -535,7 +535,7 @@ class Product extends CActiveRecord {
             return $trade_price;
         }
       }
-      return $trade_price;
+      return 0;
     }
   }
 
