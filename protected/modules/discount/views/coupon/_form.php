@@ -53,10 +53,12 @@
       echo $form->textFieldControlGroup($model, 'value', $options);
       ?>
     </div>
-    <div id="coupon-type">
-      <?php echo $form->textFieldControlGroup($model, 'value_tenge', $options);
-      ?>
-    </div>
+    <?php if (Yii::app()->params['mcurrency']) { ?>
+      <div id="coupon-type">
+        <?php echo $form->textFieldControlGroup($model, 'value_tenge', $options);
+        ?>
+      </div>
+    <?php } ?>
     <div>
       <?php
       unset($options['maxlength'], $options['readOnly']);
@@ -102,5 +104,7 @@
   }
   var couponType = $('#Coupon_type_id');
   $().ready(tengeShow(couponType));
-  couponType.change(function (){tengeShow(couponType); });
+  couponType.change(function() {
+    tengeShow(couponType);
+  });
 </script>

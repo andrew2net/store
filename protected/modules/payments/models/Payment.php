@@ -74,7 +74,7 @@ class Payment extends CActiveRecord {
       'id' => 'ID',
       'name' => 'Наименование',
       'description' => 'Описание',
-      'type' => 'Платежная система',
+      'type_id' => 'Платежная система',
       'active' => 'Активный',
       'action_url' => 'URL страницы оплаты',
       'sign_name' => 'Наименование поля подписи',

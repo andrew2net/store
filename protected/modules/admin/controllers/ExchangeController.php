@@ -53,16 +53,17 @@ class ExchangeController extends CController {
       Yii::import('application.modules.catalog.models.Price');
       foreach ($xml->product as $item) {
         $code = (string) $item->code;
-        $article = (string) $item->article;
-        $name = (string) $item->name;
+        $article = isset($item->article) ? (string) $item->article : '';
+        $name = isset($item->name) ? (string) $item->name : '';
+        $remainder = isset($item->remainder) ? (int) $item->remainder : FALSE;
         Yii::trace('product ' . $item->name, '1c_exchange');
         $model = Product::model()->findByAttributes(array('code' => $code));
-        if (!$model) {
+        if (!$model && $article) {
           $model = Product::model()->findByAttributes(array('article' => $article));
         }
         /* @var $model Product */
         if ($model) {
-          if (!$name) {
+          if (!$name && !$remainder) {
             $model->delete();
             continue;
           }
@@ -72,71 +73,86 @@ class ExchangeController extends CController {
           $model->show_me = TRUE;
         }
         $model->code = $code;
-        $model->article = $article;
-        $model->name = $name;
+        if ($article)
+          $model->article = $article;
+        if ($name)
+          $model->name = $name;
 
-        $brand = Brand::model()->findByAttributes(array('code' => (string) $item->brand));
-        /* @var $brand Brand */
-        if ($brand) {
-          $model->brand_id = (int) $brand->id;
+        if (isset($item->brand)) {
+          $brand = Brand::model()->findByAttributes(array('code' => (string) $item->brand));
+          /* @var $brand Brand */
+          if ($brand) {
+            $model->brand_id = (int) $brand->id;
+          }
         }
 
-        $model->remainder = (int) $item->remainder;
-        $model->price = (float) $item->price;
-        $model->weight = (float) $item->weight;
-        $model->length = (float) $item->length;
+        if ($remainder !== FALSE)
+          $model->remainder = (int) $item->remainder;
+        if (isset($item->price))
+          $model->price = (float) $item->price;
+        if (isset($item->weight))
+          $model->weight = (float) $item->weight;
+        if (isset($item->length))
+          $model->length = (float) $item->length;
         $model->width = (float) $item->width;
-        $model->height = (float) $item->height;
+        if (isset($item->height))
+          $model->height = (float) $item->height;
         $this->validate($code . ': ' . $name, $model, $resultDOM, $resultRootNode);
 
         if (!$model->save()) {
           Yii::trace('Product fail save', '1c_exchange');
         }
 
-        $category = Category::model()->findByAttributes(array('code' => $item->category));
-        /* @var $category Category */
-        if ($category) {
-          Yii::trace('find category', '1c_exchange');
-          ProductCategory::model()->deleteAllByAttributes(array('product_id' => $model->id));
-          $productCategory = new ProductCategory;
-          $productCategory->product_id = $model->id;
-          $productCategory->category_id = $category->id;
-          $this->validate($code . ': ' . $name, $productCategory, $resultDOM, $resultRootNode);
-          if (!$productCategory->save()) {
-            Yii::trace('Category fail save', '1c_exchange');
+        if (isset($item->category)) {
+          $category = Category::model()->findByAttributes(array('code' => (string) $item->category));
+          /* @var $category Category */
+          if ($category) {
+//            Yii::trace('find category', '1c_exchange');
+            ProductCategory::model()->deleteAllByAttributes(array('product_id' => $model->id));
+            $productCategory = new ProductCategory;
+            $productCategory->product_id = $model->id;
+            $productCategory->category_id = $category->id;
+            $this->validate($code . ': ' . $name, $productCategory, $resultDOM, $resultRootNode);
+            if (!$productCategory->save()) {
+              Yii::trace('Category fail save', '1c_exchange');
+            }
           }
         }
 
-        if (isset($item->images->image[0])) {
-          $img_path = '/images/' . Yii::app()->params['img_storage'] . '/product/';
-          $img = base64_decode($item->images->image[0]);
-          $imagick = new Imagick;
-          $imagick->readimageblob($img);
-          $ext = '.' . strtolower($imagick->getimageformat());
-          $imagick->destroy();
-          $file = fopen(Yii::getPathOfAlias('webroot') . $img_path . $model->id . $ext, 'w+');
-          fwrite($file, $img);
-          fclose($file);
-          $model->img = $img_path . $model->id . $ext;
-          $model->createThumbnail();
-          $this->validate($code . ': ' . $name, $model, $resultDOM, $resultRootNode, array('img', 'small_img'));
-          if (!$model->update(array('img', 'small_img'))) {
-            Yii::trace('Image fail save', '1c_exchange');
+        if (isset($item->images)) {
+          if (isset($item->images->image[0])) {
+            $img_path = '/images/' . Yii::app()->params['img_storage'] . '/product/';
+            $img = base64_decode($item->images->image[0]);
+            $imagick = new Imagick;
+            $imagick->readimageblob($img);
+            $ext = '.' . strtolower($imagick->getimageformat());
+            $imagick->destroy();
+            $file = fopen(Yii::getPathOfAlias('webroot') . $img_path . $model->id . $ext, 'w+');
+            fwrite($file, $img);
+            fclose($file);
+            $model->img = $img_path . $model->id . $ext;
+            $model->createThumbnail();
+            $this->validate($code . ': ' . $name, $model, $resultDOM, $resultRootNode, array('img', 'small_img'));
+            if (!$model->update(array('img', 'small_img'))) {
+              Yii::trace('Image fail save', '1c_exchange');
+            }
           }
         }
 
-        ProductPrice::model()->deleteAllByAttributes(array('product_id' => $model->id));
-        foreach ($item->prices->price as $price) {
-          $price_model = Price::model()->findByAttributes(array('code' => $price->code));
-          if ($price_model) {
-            Yii::trace('find price', '1c_exchange');
-            $product_price = new ProductPrice;
-            $product_price->product_id = $model->id;
-            $product_price->price_id = $price_model->id;
-            $product_price->price = (float) $price->value;
-            $this->validate($code . ': ' . $name, $product_price, $resultDOM, $resultRootNode);
-            if (!$product_price->save()) {
-              Yii::trace('Price fail save', '1c_exchange');
+        if (isset($item->prices)) {
+          ProductPrice::model()->deleteAllByAttributes(array('product_id' => $model->id));
+          foreach ($item->prices->price as $price) {
+            $price_model = Price::model()->findByAttributes(array('code' => $price->code));
+            if ($price_model) {
+              Yii::trace('find price', '1c_exchange');
+              $product_price = new ProductPrice;
+              $product_price->product_id = $model->id;
+              $product_price->price_id = $price_model->id;
+              $product_price->price = (float) $price->value;
+              $this->validate($code . ': ' . $name, $product_price, $resultDOM, $resultRootNode);
+              if (!$product_price->save()) {
+                Yii::trace('Price fail save', '1c_exchange');
+              }
             }
           }
         }
@@ -270,7 +286,7 @@ class ExchangeController extends CController {
         $model->name = $name;
         $model->code = $code;
         $this->validate($name, $model, $resultDOM, $resultRootNode);
-        if (!$model->save()){
+        if (!$model->save()) {
           Yii::trace('Brand save fail', '1c_exchange');
         }
       }
