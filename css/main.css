@@ -332,7 +332,7 @@ div.search-form
 }
 
 .f-tree-wrapper{
-  margin-top: 45px;
+  margin-top: 55px !important;
 }
 
 fieldset{
