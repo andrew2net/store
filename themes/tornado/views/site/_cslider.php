@@ -48,9 +48,9 @@ if (count($adds)) {
     else {
       ?>
       <?php echo $value->url ? '<a href="' . $value->url . '">' : ''; ?>
-      <a href="img<?php echo $key; ?>_url">
+      <!--<a href="img<?php echo $key; ?>_url">-->
         <img src="<?php echo $value->img; ?>">
-      </a>
+      <!--</a>-->
       <?php echo $value->url ? '</a>' : ''; ?>
     <?php } ?>
   <?php } ?>

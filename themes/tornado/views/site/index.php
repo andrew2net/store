@@ -10,6 +10,7 @@ $cs->registerScriptFile('/js/countdown.clock.js', CClientScript::POS_END);
 $cs->registerScriptFile('/js/moment.min.js', CClientScript::POS_HEAD);
 $cs->registerScriptFile('/js/slider.tooltip.js', CClientScript::POS_HEAD);
 $cs->registerScriptFile('/js_plugins/coin-slider/coin-slider.min.js', CClientScript::POS_HEAD);
+$cs->registerCssFile(Yii::app()->theme->baseUrl . '/css/coin-slider.css');
 $cs->registerCssFile('/js_plugins/coin-slider/coin-slider.style.css');
 $cs->registerScriptFile($cs->getCoreScriptUrl() . '/jui/js/jquery-ui-i18n.min.js', CClientScript::POS_HEAD);
 $this->pageTitle = Yii::app()->name . ' - аксессуары для мобильных устройств оптом';

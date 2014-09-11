@@ -1,0 +1,39 @@
+.cs-button-coin-slider, .cs-active, .cs-next, .cs-prev{
+  background: url(/themes/demark/img/elements.png) no-repeat;
+}
+
+.cs-next, .cs-prev, .cs-buttons{
+  font-size: 0px;
+}
+
+.cs-next, .cs-prev{
+  width: 35px;
+  height: 35px;
+}
+
+.cs-prev{
+  background-position: -33px -64px;
+}
+
+.cs-next{
+  background-position: -33px -103px;
+}
+
+.cs-buttons{
+  display: inline-block;
+  margin-top: 5px;
+}
+
+.cs-button-coin-slider, .cs-active{
+  width: 20px;
+  height: 20px;
+}
+
+.cs-button-coin-slider{
+  background-position: 0 -20px;
+  float: left;
+}
+
+.cs-active{
+  background-position: 0 2px;
+}

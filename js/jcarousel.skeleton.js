@@ -1,20 +1,20 @@
-//$(function() {
-//  $('.jcarousel')
-//          .jcarousel({
-//    wrap: 'circular'
-//  }).jcarouselAutoscroll({
-//    interval: 5000,
-//    create: $('.jcarousel').hover(function() {
-//      $(this).jcarouselAutoscroll('stop');
-//    },
-//            function() {
-//              $(this).jcarouselAutoscroll('start');
-//            })
-//  });
-//});
+$(function() {
+  $('.jcarousel')
+          .jcarousel({
+    wrap: 'circular'
+  }).jcarouselAutoscroll({
+    interval: 5000,
+    create: $('.jcarousel').hover(function() {
+      $(this).jcarouselAutoscroll('stop');
+    },
+            function() {
+              $(this).jcarouselAutoscroll('start');
+            })
+  });
+});
 
 $(function (){
-  $('#coin-slider').coinslider({width:1200, height: 270, links: false, navigation: false});
+  $('#coin-slider').coinslider({width:1200, height: 270, links: false, navigation: true});
 });
 
 $(function() {

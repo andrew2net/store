@@ -256,27 +256,6 @@ input[type=checkbox]:checked + label:before, .weekcarousel-prev,
   cursor: pointer;
 }
 
-/*.flag_ru:before, .flag_kz:before{
-  content: '';
-  background: url(/themes/demark/img/flags.png) no-repeat;
-  width: 24px;
-  height: 24px;
-  display: inline-block;
-  position: relative;
-  top: 7px;
-}
-.flag_ru, .flag_kz{
-  cursor: pointer;
-}
-
-.flag_kz:hover, .flag_ru:hover{
-  text-decoration: underline;
-}
-
-.flag_kz:before{
-  background-position: 0 -24px;
-}*/
-
 .valign-middle{
   vertical-align: middle;
 }
