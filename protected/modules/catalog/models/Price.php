@@ -164,7 +164,8 @@ class Price extends CActiveRecord {
   }
 
   public static function getMinimalSumm() {
-    return self::model()->find(array('order' => 'summ'))->summ;
+    $price = self::model()->find(array('order' => 'summ'));
+    return is_null($price) ? 0 : $price->summ;
   }
 
 }

@@ -139,7 +139,7 @@ post_code.typing({
   delay: 0
 });
 
-post_code.focusout(function () {
+post_code.focusout(function() {
   getDeliveries();
 });
 
@@ -147,16 +147,28 @@ function getDeliveries() {
   var ccode = $('#CustomerProfile_country_code').val();
   var pcode = post_code.val();
   $('#cart-delivery').html('');
-  if (pcode.length === 6)
+  if (pcode.length === 6) {
+    var city = $('#cart-city').val();
+    var delivery = $('input:radio[name="Order[delivery_id]"]:checked');
+    var d_id = 0;
+    if (delivery.length > 0)
+      d_id = delivery.val();
+    var id = delivery.attr('id');
+    var c_deliver = delivery.siblings('label[for="' + id + '"]').find('input[type="text"]').val();
+    if (c_deliver == undefined)
+      c_deliver = '';
     $.get('/cart/delivery', {
       'ccode': ccode,
-      'pcode': pcode
+      'pcode': pcode,
+      'city': city,
+      'delivery_id': d_id,
+      'c_deliver': c_deliver
     }, function(data) {
       $('#delivery-hint').hide();
       $('#cart-delivery').html(data);
       calcTotal();
     });
-  else{
+  } else {
     $('#delivery-hint').show();
     calcTotal();
   }
@@ -219,7 +231,7 @@ $(document).on('change', '.cart-quantity', function() {
   }
   calcRow(this);
   calcCartSumm();
-  $.post('/site/changeCart', {
+  $.post('/cart/changeCart', {
     'id': id,
     'quantity': quantity
   }, function() {
@@ -231,7 +243,8 @@ $(document).on('click', '.cart-item-del', function() {
   $.post('/cart/delitem', {
     'id': id
   }, function(data) {
-    $('#cart-items').html(data);
+    var result = $.parseJSON(data);
+    $('#cart-items').html(result.html);
     calcCartSumm();
     getDeliveries();
   }

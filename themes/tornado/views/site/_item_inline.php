@@ -42,6 +42,11 @@ else {
   $remainder_class = 'gray';
 }
 
+if (file_exists(Yii::getPathOfAlias('webroot.images') . '/' . Yii::app()->params['img_storage'] . '/product/' . $data->small_img))
+  $img_alt = $data->name;
+else 
+  $img_alt = 'Нет фото';
+
 if (isset($index) && $index == 0)
   echo CHtml::hiddenField('currentPage', $widget->dataProvider->getPagination()->getCurrentPage());
 echo CHtml::hiddenField('url', Yii::app()->request->url);
@@ -51,7 +56,7 @@ echo CHtml::hiddenField('url', Yii::app()->request->url);
     <div class="discount-label" txt="<?php echo $percent; ?>"></div>
   <?php } ?>
   <div class="item-inline-img img-anim">
-    <img title="<?php echo$data->name; ?>" src="<?php echo $data->small_img; ?>" alt="Нет фото">
+    <img title="<?php echo $data->name; ?>" src="<?php echo $data->small_img; ?>" alt="Нет фото">
   </div>
   <div class="item-inline-art"><?php echo $data->article; ?></div>
   <div class="item-inline-name"><?php echo $data->name; ?></div>

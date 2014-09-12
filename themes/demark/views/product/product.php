@@ -74,8 +74,8 @@
       <div>Наличие: <?php echo $product->remainder ? 'товар в наличии на складе' : 'товар временно отсутствует'; ?></div>
       <div class="item-disc red" style="font-size: 18pt !important; display: inherit"><?php echo $old_price; ?></div>
       <div class="inline-blocks" style="position: relative">
-        <div class="item-price blue" style="font-size: 32pt"><?php echo $price . $currecy; ?></div>
-        <div style="position: relative; bottom: 10px"><?php
+        <div class="item-price blue" style="position: relative; bottom: 3px; font-size: 32pt"><?php echo $price . $currecy; ?></div>
+        <div style="position: relative; bottom: 28px; vertical-align: bottom"><?php
           echo CHtml::activeNumberField($productForm, 'quantity'
               , array(
             'style' => 'width: 2em; font-size: 12pt; margin: 0 5px 0 1em',
@@ -89,11 +89,11 @@
         </div>
         <div class="item-bt addToCart" style="cursor: pointer; left: 190px; bottom: 27px" product="<?php echo $product->id; ?>"><div>В корзину</div></div>
       </div>
-      <div>
-        <div style="text-align: center; width: 168px; float: right; font-size: 11pt; margin-top: 5px">
+      <!--<div>-->
+        <!--<div style="text-align: center; width: 168px; float: right; font-size: 11pt; margin-top: 5px">-->
           <!--<a id="buy-one-click" product="<?php // echo $product->id;       ?>" href="#">Купить в 1 клик</a>-->
-        </div>
-      </div>
+        <!--</div>-->
+      <!--</div>-->
     </div>
   </div>
   <div>

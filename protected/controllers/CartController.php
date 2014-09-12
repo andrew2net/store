@@ -63,7 +63,7 @@ class CartController extends Controller {
       if (isset($_POST['CustomerProfile']['post_code']) && !$_POST['login'])
         $country_code = $_POST['CustomerProfile']['country_code'];
       else
-        $country_code = $customer_profile->country_code;
+        $country_code = $customer_profile->price_country;
     else
       $country_code = Yii::app()->params['country'];
 

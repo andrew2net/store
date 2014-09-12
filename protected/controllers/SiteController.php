@@ -50,7 +50,7 @@ class SiteController extends Controller {
 
     $price_type = Price::getPrice();
     $top10 = Product::model()->availableOnly()->top()->findAll();
-    
+
     $result = array('title' => 'Ваша цена "' . $price_type->name . '"');
     foreach ($top10 as $item) {
       /* @var $item Product */
@@ -145,7 +145,8 @@ class SiteController extends Controller {
     $new_price_type = Price::getPrice();
     $result = array('refresh' => $old_price_type != $new_price_type);
     $result['cart'] = $this->cartLabel();
-    $result['price'] = 'Установлена цена "' . $new_price_type->name . '"';
+    if ($new_price_type)
+      $result['price'] = 'Установлена цена "' . $new_price_type->name . '"';
     echo json_encode($result);
     Yii::app()->end();
   }
@@ -248,7 +249,8 @@ class SiteController extends Controller {
     if (isset($_GET['country'])) {
       $condition .= ' AND net_country.code=:country';
       $params[':country'] = $_GET['country'];
-    }elseif (Yii::app()->params['country']) {
+    }
+    elseif (Yii::app()->params['country']) {
       $condition .= ' AND net_country.code=:country';
       $params[':country'] = Yii::app()->params['country'];
     }

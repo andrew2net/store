@@ -34,8 +34,11 @@ $(document).ready(function() {
     button.removeClass('addToCart');
     var id = button.attr('product');
     var quantity = button.find('input').val();
-    if (!quantity)
-      quantity = 1;
+    if (!quantity) {
+      quantity = $('#ProductForm_quantity').val();
+      if (!quantity)
+        quantity = 1;
+    }
     $.post('/site/addtocart', {
       'id': id,
       'quantity': quantity
@@ -65,18 +68,18 @@ $(document).ready(function() {
         'z-index': 4000
       })
               .animate({
-        maxWidth: '83px', //img.attr('width') * 0.66,
-        maxHeight: '75px', //img.attr('height') * 0.66,
-        opacity: 0.2,
-        top: cartOffset.top + 10,
-        right: cartOffset.right + 30,
-        left: cartOffset.left - 30
-      }, 1000)
+                maxWidth: '83px', //img.attr('width') * 0.66,
+                maxHeight: '75px', //img.attr('height') * 0.66,
+                opacity: 0.2,
+                top: cartOffset.top + 10,
+                right: cartOffset.right + 30,
+                left: cartOffset.left - 30
+              }, 1000)
               .fadeOut(100, function() {
-        cart.html(result.cart);
-        button.addClass('addToCart');
-        $(this).remove();
-      });
+                cart.html(result.cart);
+                button.addClass('addToCart');
+                $(this).remove();
+              });
       if (result.refresh)
         $.fn.yiiListView.update('#inline-product-list');
     });

@@ -188,7 +188,9 @@ class Delivery extends CActiveRecord {
           ),
         ),
       ),
-      'condition' => '(:pcode REGEXP zones.post_code AND region.country_code=:ccode AND zones.country_code=:ccode OR t.zone_type_id IN (4,6) OR t.zone_type_id=3 AND :city=0 OR t.zone_type_id=5 AND :city=1) AND (:delivery_id IS NULL OR t.id=:delivery_id) AND t.active=1',
+      'condition' => '(:pcode REGEXP zones.post_code AND region.country_code=:ccode AND zones.country_code=:ccode OR '
+      . 't.zone_type_id IN (4,6) OR t.zone_type_id=3 AND :city=0 OR t.zone_type_id=5 AND :city=1) AND '
+      . '(:delivery_id IS NULL OR t.id=:delivery_id) AND t.active=1',
       'params' => array(':ccode' => $country_code, ':pcode' => $post_code, ':city' => empty($city), ':delivery_id' => $delivery_id)
     ));
     return $this;
@@ -273,9 +275,10 @@ class Delivery extends CActiveRecord {
     Yii::import('application.modules.delivery.models.NrjLocation');
     $pref = '^';
     $suff = '($|\\(|\\*|\\,|\\ )';
+    $city_from = trim(Yii::app()->params['enterprise']['city']);
     $location = NrjLocation::model()->find('LOWER(name) REGEXP :name', array(':name' => $pref . mb_strtolower(quotemeta(trim($city)), 'UTF-8') . $suff));
-    $location_from = NrjLocation::model()->find('LOWER(name) REGEXP :name', array(':name' => $pref . mb_strtolower(quotemeta(trim(Yii::app()->params['enterprise']['city'])), 'UTF-8') . $suff));
-    if (!$location || $location == $location_from)
+    $location_from = NrjLocation::model()->find('LOWER(name) REGEXP :name', array(':name' => $pref . mb_strtolower(quotemeta($city_from), 'UTF-8') . $suff));
+    if ($city == $city_from)
       $city = ''; //exclude Energy delivery
 
     $models = self::model()->region($country_code, $post_code, $city, $delivery_id)->findAll();

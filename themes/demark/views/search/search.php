@@ -30,7 +30,7 @@ $this->pageTitle = Yii::app()->name . $title;
       $notfind = 'По вашему запросу товар не найден';
       if (isset($isSearch)) {
         ?>
-        <span class="cufon green bold" style="font-size: 18pt">Вы искали: </span>
+        <span class="blue bold" style="font-size: 18pt">Вы искали: </span>
       <?php } ?>
       <span class="cufon" style="font-size: 18pt"><?php echo $search->text; ?></span>
     <?php } ?>
@@ -45,7 +45,7 @@ $this->pageTitle = Yii::app()->name . $title;
 //      $this->renderPartial('_vAdvantage');
       ?>
     </div>
-    <div style="width: 760px">
+    <div>
       <div style="margin-top: 20px">
         <?php
         if ($product->getItemCount() > 0) {
