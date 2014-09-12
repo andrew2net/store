@@ -8,6 +8,12 @@ class AdminModule extends CWebModule {
 	 */
 	public $user_page_size = 10;
 	
+  /**
+   * @var int
+   * @desc Remember Me Time (seconds), defalt = 2592000 (30 days)
+   */
+  public $rememberMeTime = 2592000; // 30 days
+
   public function init() {
     // this method is called when the module is being created
     // you may place code here to customize the module or the application
