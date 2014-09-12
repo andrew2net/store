@@ -15,7 +15,7 @@ if (!isset($limit))
     $pagination['currentPage'] = $page;
 
   $pagination['pageSize'] = Yii::app()->request->getQuery('size', 25);
-  $sizes = Yii::app()->params['page_sizes'];// array(25, 50, 100);
+  $sizes = Yii::app()->params['page_sizes'];
 
   $trade_price = Price::getPrice();
   $currency = Currency::model()->findByAttributes(array('country_code' => 'RU'));
