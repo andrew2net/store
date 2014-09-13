@@ -24,7 +24,7 @@ $summ = $price * $product->quantity;
 ?>
 <tr>
   <td>
-    <img style="max-width: 50px; max-height: 50px" src="<?php echo $product->product->small_img; ?>">
+    <img style="max-width: 50px; max-height: 50px" src="<?php echo $product->product->small_img; ?>" alt="<?php echo $product->getSmallImageAlt(); ?>">
   </td>
   <td>
     <?php echo $product->product->name; ?>
