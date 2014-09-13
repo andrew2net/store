@@ -561,7 +561,7 @@ class Product extends CActiveRecord {
   }
 
   public function getSmallImageAlt() {
-    if (file_exists(Yii::getPathOfAlias('webroot.images') . '/' . Yii::app()->params['img_storage'] . '/product/' . $this->small_img))
+    if (file_exists(Yii::getPathOfAlias('webroot') .  $this->small_img))
       $img_alt = $this->name;
     else
       $img_alt = 'Нет фото';
