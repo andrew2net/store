@@ -48,7 +48,7 @@ $groups = Category::model()->roots()->findAll();
                 ?>
                 <div><?php
                   echo CHtml::link($group->name
-                      , $this->createUrl('group', array('id' => $group->id)));
+                      , Yii::app()->createUrl('group', array('id' => $group->id)));
                   ?></div>
               <?php } ?>
             </div>
