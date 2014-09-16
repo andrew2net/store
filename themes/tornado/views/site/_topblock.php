@@ -225,7 +225,7 @@
     }
   });
 
-  $('.icon-search').click(function(event) {
+  $('.iconsearch').click(function(event) {
     event.preventDefault();
     if ($('#Search_text').val())
       $('#search-form').submit();

@@ -26,13 +26,11 @@ Yii::import('application.modules.payments.models.Currency');
     'id' => 'product-list',
     'dataProvider' => $data,
     'emptyText' => 'Товар отсутствует',
-//    'headerView' => '//site/_items_inline_header',
     'itemView' => '//site/_item',
     'cssFile' => Yii::app()->theme->baseUrl . '/css/listview.css',
     'template' => "{sizer}{sorter}{items}{pager}",
     'sorterHeader' => 'Сортировать:',
     'sortableAttributes' => array('price'),
-//    'afterAjaxUpdate' => 'showTooltip',
     'viewData' => array('sizes' => $sizes, 'trade_price' => '', 'currency' => $currency),
       )
   );

@@ -54,8 +54,26 @@ $groups = Category::model()->roots()->findAll();
             </div>
             <div class="table-cell">
               <div class="bold" style="height: 2.5em">Звоните</div>
-              <div class="gray bold x-lage" style="height: 1.3em">(383) 375-03-22</div>
-              <div class="gray bold lager" style="height: 1.5em">г. Новосибирск</div>
+              <div>
+                <?php
+                foreach (Yii::app()->params['enterprise']['phone'] as $phone) {
+                  if (is_array($phone)) {
+                    ?>
+                    <div>
+                      <span class="bold" style="vertical-align: middle; font-size: 12pt"><?php echo $phone['cod']; ?></span>
+                      <span class="gray bold" style="font-size: 18pt; vertical-align: middle"><?php echo $phone['num']; ?></span>
+                    </div>
+                    <?php
+                  }
+                  else {
+                    ?>
+                    <div><span class="gray" style="font-size: 16pt; vertical-align: middle"><?php echo $phone; ?></span></div>
+                    <?php
+                  }
+                }
+                ?>
+              </div>
+              <div class="gray bold lager" style="height: 1.5em"><?php echo Yii::app()->params['city']; ?></div>
             </div>
           </div>
         </div>

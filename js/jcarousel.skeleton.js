@@ -13,10 +13,6 @@ $(function() {
   });
 });
 
-$(function (){
-  $('#coin-slider').coinslider({width:1200, height: 270, links: false, navigation: true, effect: 'rain'});
-});
-
 $(function() {
   $('.weekcarousel')
           .jcarousel({

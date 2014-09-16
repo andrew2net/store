@@ -115,7 +115,7 @@
 //        else {
 //          ?>
           <!--<div class="blue bold" style="font-size: 26pt; text-align: center">Товар отсутствует</div>-->
-          //<?php
+          <?php
 //        }
 //      }
 //      else {

@@ -49,10 +49,15 @@ if (count($adds)) {
       ?>
       <?php echo $value->url ? '<a href="' . $value->url . '">' : ''; ?>
       <!--<a href="img<?php echo $key; ?>_url">-->
-        <img src="<?php echo $value->img; ?>">
+      <img src="<?php echo $value->img; ?>">
       <!--</a>-->
       <?php echo $value->url ? '</a>' : ''; ?>
     <?php } ?>
   <?php } ?>
   </div>
 <?php } ?>
+<script type="text/javascript">
+  $(function() {
+    $('#coin-slider').coinslider({width: 1200, height: 270, links: false, navigation: true, effect: 'rain'});
+  });
+</script>
