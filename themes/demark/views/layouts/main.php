@@ -34,7 +34,7 @@
   </head>
 
   <body>
-    <div style="font-size: 24pt; text-align: center" class="red">Сайт находится в разработке</div>
+    <div style="font-size: 24pt; text-align: center" class="red">Сайт находится в разработке </div>
     <?php echo $content; ?>
   </body>
   <script type="text/javascript">
