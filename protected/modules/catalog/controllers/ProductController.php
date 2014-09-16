@@ -116,11 +116,17 @@ class ProductController extends Controller {
   private static function getFeatureIds() {
     $features = array();
     if (isset($_POST['ProductFeature']))
-      $features = array_keys($_POST['ProductFeature']);
+      foreach ($_POST['ProductFeature'] as $key => $value)
+        if (!empty($value['value']))
+          $features[] = $key;
     if (isset($_POST['ProductFeatureRange']))
-      $features = array_merge($features, array_keys($_POST['ProductFeatureRange']));
+      foreach ($_POST['ProductFeatureRange'] as $key => $value)
+        if (!(empty($value['from']) && empty($value['to'])))
+          $features[] = $key;
     if (isset($_POST['ProductFeatureValue']))
-      $features = array_merge($features, array_keys($_POST['ProductFeatureValue']));
+      foreach ($_POST['ProductFeatureValue'] as $key => $value)
+        if (!empty($value['value_id']))
+          $features[] = $key;
     return $features;
   }
 
@@ -148,7 +154,7 @@ class ProductController extends Controller {
     $valid = $model->validate();
 
     if (isset($_POST['ProductFeature'])) {
-      $feature_ids = $this->getFeatureIds();
+      $feature_ids = self::getFeatureIds();
       foreach ($feature_ids as $key) {
         if ($feature_values[$key]['value'] instanceof ProductFeature && !empty($_POST['ProductFeature'][$key]['value'])) {
           $feature_values[$key]['value']->feature_id = $feature_values[$key]['feature']->id;
@@ -168,9 +174,9 @@ class ProductController extends Controller {
         }
       }
     }
+    $price_to_del = array();
     if (isset($_POST['ProductPrice'])) {
       /* @var $prices ProductPrice[] */
-      $price_to_del = array();
       foreach ($prices as $key => $value) {
         if (isset($_POST['ProductPrice'][$key]['price']) && $_POST['ProductPrice'][$key]['price']) {
           $prices[$key]['price']->price = $_POST['ProductPrice'][$key]['price'];
@@ -221,12 +227,6 @@ class ProductController extends Controller {
 
               $condition .= " AND feature_id NOT IN ($f_ids)";
             }
-            $command->reset();
-            $command->delete('store_product_feature', $condition, $params);
-            $command->reset();
-            $command->delete('store_product_feature_range', $condition, $params);
-            $command->reset();
-            $command->delete('store_product_feature_value', $condition_val, $params);
             //add and update features
             foreach ($feature_ids as $key) {
               if ($feature_values[$key]['value'] instanceof ProductFeature && !empty($_POST['ProductFeature'][$key]['value'])) {
@@ -244,6 +244,12 @@ class ProductController extends Controller {
               }
             }
           }
+          $command->reset();
+          $command->delete('store_product_feature', $condition, $params);
+          $command->reset();
+          $command->delete('store_product_feature_range', $condition, $params);
+          $command->reset();
+          $command->delete('store_product_feature_value', $condition_val, $params);
 
           //delete prices
           ProductPrice::model()->deleteAll('product_id=:id AND price_id IN (:del)'

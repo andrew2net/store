@@ -4,6 +4,7 @@
 /* @var $product Product */
 /* @var $group Category */
 /* @var $categories[] Category */
+/* @var $view string */
 ?>
 <?php $this->pageTitle = Yii::app()->name . ' - ' . $group->name; ?>
 
@@ -44,9 +45,9 @@
       Yii::import('application.modules.discount.models.Discount');
 
       echo CHtml::beginForm('', 'post', array('id' => 'item-submit'));
-      echo CHtml::hiddenField('url', Yii::app()->request->url); //, array('id' => 'currentGroup'));
+      echo CHtml::hiddenField('url', Yii::app()->request->url); 
 
-      $this->renderPartial('//site/_items_inline', array(
+      $this->renderPartial($view, array(
         'group' => $group,
         'product' => $product,));
 

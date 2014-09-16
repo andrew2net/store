@@ -3,7 +3,12 @@ var coupon = $('#coupon');
 var discountText = $('#discount-text');
 var cartDiscount = $('#cart-discount');
 var cartSubmit = $('#cart-submit');
+var cart_delivery = $('#cart-delivery');
 var post_code = $('#CustomerProfile_post_code');
+var country_code = $('#CustomerProfile_country_code');
+var cart_city = $('#cart-city');
+var delivery_loading = $('#delivery-loading');
+var delivery_hint = $('#delivery-hint');
 
 function calcCartSumm() {
   var summ = 0;
@@ -77,7 +82,7 @@ function calcTotal() {
 }
 
 calcCartSumm();
-calcTotal();
+getDeliveries();
 
 cartSubmit.click(function() {
   var email = $('#CustomerProfile_email').val();
@@ -126,7 +131,7 @@ $('#recover-password').click(function() {
 //  getDeliveries(elem.item.value);
 //});
 
-$('#CustomerProfile_country_code').change(function() {
+country_code.change(function() {
   getDeliveries();
 });
 
@@ -144,11 +149,13 @@ post_code.focusout(function() {
 });
 
 function getDeliveries() {
-  var ccode = $('#CustomerProfile_country_code').val();
   var pcode = post_code.val();
-  $('#cart-delivery').html('');
   if (pcode.length === 6) {
-    var city = $('#cart-city').val();
+    var ccode = country_code.val();
+    cart_delivery.hide();
+    delivery_hint.hide();
+    delivery_loading.show();
+    var city = cart_city.val();
     var delivery = $('input:radio[name="Order[delivery_id]"]:checked');
     var d_id = 0;
     if (delivery.length > 0)
@@ -164,12 +171,15 @@ function getDeliveries() {
       'delivery_id': d_id,
       'c_deliver': c_deliver
     }, function(data) {
-      $('#delivery-hint').hide();
-      $('#cart-delivery').html(data);
+      delivery_loading.hide();
+      cart_delivery.html(data);
+      cart_delivery.show();
       calcTotal();
     });
   } else {
-    $('#delivery-hint').show();
+    cart_delivery.hide();
+    cart_delivery.html('');
+    delivery_hint.show();
     calcTotal();
   }
 }
@@ -214,7 +224,7 @@ function getCoupon(elem) {
   calcCartSumm();
 }
 
-$('#cart-delivery').on('change', 'input[name="Order[delivery_id]"]', function() {
+cart_delivery.on('change', 'input[name="Order[delivery_id]"]', function() {
   calcTotal();
 });
 
@@ -300,7 +310,7 @@ $('#close-cart-dialog').click(function() {
 
 function citySuggest(request, response) {
   $.get("/site/suggestcity",
-          {country: $("#CustomerProfile_country_code").val(), term: request.term},
+          {country: country_code.val(), term: request.term},
   function(data) {
     var result = $.parseJSON(data);
     response(result);

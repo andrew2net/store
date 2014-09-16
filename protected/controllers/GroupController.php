@@ -18,8 +18,13 @@ class GroupController extends CController {
     $giftSelection = new GiftSelection;
     $product = Product::model();
 
+    if (Yii::app()->params['category_default_view'] == 'table')
+      $view = '//site/_items_inline';
+    else
+      $view = '//site/_items';
+
     if (Yii::app()->request->isAjaxRequest) {
-      $this->render('//site/_items_inline', array(
+      $this->render($view, array(
         'group' => $group,
         'product' => $product,));
     }
@@ -30,6 +35,7 @@ class GroupController extends CController {
         'giftSelection' => $giftSelection,
         'groups' => $groups,
         'group' => $group,
+        'view' => $view,
       );
 
       if (isset($_POST['currentPage']))

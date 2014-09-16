@@ -99,8 +99,8 @@ $(document).ready(function() {
         $(this).remove();
 
         if (result.refresh) {
-          if ($('#inline-product-list').length > 0)
-            $.fn.yiiListView.update('inline-product-list');
+          if ($('#product-list').length > 0)
+            $.fn.yiiListView.update('product-list');
           else if ($('#top10').length) {
             $.get('/site/price', function(data) {
               var result = $.parseJSON(data);

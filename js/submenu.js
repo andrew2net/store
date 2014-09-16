@@ -81,7 +81,7 @@ $(document).ready(function() {
                 $(this).remove();
               });
       if (result.refresh)
-        $.fn.yiiListView.update('#inline-product-list');
+        $.fn.yiiListView.update('#product-list');
     });
   });
 

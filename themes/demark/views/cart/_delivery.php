@@ -12,13 +12,13 @@ if (is_array($delivery)) {
       'style' => 'display: block',
 //      'class' => 'delivery-radio',
   )));
-  if ($delivery) {
+//  if ($delivery) {
     ?>
-    <div class="bold" style="margin-top: 20px; font-size: 16pt">
-      стоимость доставки: <span class="red"><span id="delivery-summ"></span><?php echo $currency->class; ?></span>
-    </div>
+<!--    <div class="bold" style="margin-top: 20px; font-size: 16pt">
+      стоимость доставки: <span class="red"><span id="delivery-summ"></span><?php // echo $currency->class; ?></span>
+    </div>-->
     <?php
-  }
+//  }
 }
 else {
   echo $delivery;

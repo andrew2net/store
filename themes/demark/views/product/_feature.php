@@ -21,6 +21,7 @@
   }
   foreach ($product->feature_range as $value) {
     ?>
-    <tr><td><?php echo $value->feature->name . ' ' . $value->feature->unit; ?></td><td><?php echo $value->from . ' - ' . $value->to; ?></td></tr>
+    <tr><td><?php echo $value->feature->name . ' ' . $value->feature->unit; ?></td><td><?php echo $value->from . 
+        (empty($value->to) ? '' : ' - ' . $value->to); ?></td></tr>
 <?php } ?>
 </table>

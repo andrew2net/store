@@ -156,6 +156,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
           ));
           ?>
         </div>
+        <div id="delivery-loading" class="loading" style="position: relative; display: none; top: 15px"></div>
         <div id="delivery-hint" class="red" <?php echo ($delivery ? 'style="display: none"' : ''); ?>>Укажите страну и индекс</div>
       </div>
       <div style="vertical-align: top">
@@ -169,7 +170,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
     </div>
   </fieldset>
   <div class="inline-blocks" style="margin: 10px 0 20px">
-    <div class="bold" style="font-size: 18pt; width: 600px; vertical-align: bottom">
+    <div class="bold" style="font-size: 18pt; width: 600px; line-height: 50px">
       <span>общая сумма заказа: </span><span class="red"><span id="cart-total"></span><?php echo $currency->class; ?></span>
     </div>
     <div id="cart-submit" class="main-submit">

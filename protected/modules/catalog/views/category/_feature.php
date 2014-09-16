@@ -11,11 +11,13 @@ $feature = Feature::model()->with(array(
         'params' => array(':id' => $model->id)
   )))->findAll();
 ?>
-<table class="table-striped">
-  <?php foreach ($feature as $value) { ?>
-    <tr>
-      <td><?php echo TbHtml::checkBox("feature[$value->id]", isset($value->categoryFeatures[0])); ?></td>
-      <td><?php echo $value->name; ?></td>
-    </tr>
-  <?php } ?>
-</table>
+<div style="height: 479px; overflow-y: scroll">
+  <table class="table-striped">
+    <?php foreach ($feature as $value) { ?>
+      <tr>
+        <td><?php echo TbHtml::checkBox("feature[$value->id]", isset($value->categoryFeatures[0])); ?></td>
+        <td><?php echo $value->name; ?></td>
+      </tr>
+    <?php } ?>
+  </table>
+</div>
