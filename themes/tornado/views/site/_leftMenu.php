@@ -10,6 +10,9 @@
   $items[] = array('label' => 'Категории:');
   foreach ($groups as $value) {
     /* @var $value Category */
+    /* @var $value NestedSetBehavior */
+//    $groups1 = $value->children()->findAll();
+    
     $items[] = array(
       'label' => $value->name,
       'url' => Yii::app()->createUrl('/group', array('id' => $value->id)),

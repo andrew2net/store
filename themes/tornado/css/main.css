@@ -913,6 +913,7 @@ td.text-right{
 
 #left-menu-cont{
   border: 2px solid #FFD324; width: 200px; font-size: 12pt; margin: 0px 14px 0 0; min-height: 650px;
+  position: relative;
 }
 .left-menu-item > a, .left-menu-item > span{
   text-decoration: none;
