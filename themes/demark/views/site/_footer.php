@@ -5,7 +5,7 @@ $groups = Category::model()->roots()->findAll();
   <div class="container">
     <div class="table">
       <div class="table-cell" style="width: 250px">
-        <a href="/"><img width="200" height="51" alt="DeMARK" src="/themes/<?php echo Yii::app()->theme->name; ?>/img/logo.png"></a>
+        <a href="/"><img width="200" alt="DeMARK" src="/themes/<?php echo Yii::app()->theme->name; ?>/img/logo.png"></a>
         <div class="gray" style="margin-top: 20px">
           2014. Все права защищены.<br>DeMARK - инструменты и<br>оборудование.<br>Все торговые марки являются<br>собственностью их<br>правообладателей.
         </div>
