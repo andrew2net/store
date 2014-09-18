@@ -1,6 +1,7 @@
 <?php
 /* @var $this CController */
 /* @var $group Category */
+/* @var $group NestedSetBehavior */
 ?>
 
 <div id="left-menu-cont">
@@ -11,12 +12,23 @@
   foreach ($groups as $value) {
     /* @var $value Category */
     /* @var $value NestedSetBehavior */
-//    $groups1 = $value->children()->findAll();
-    
+    $groups1 = $value->children()->findAll();
+    $items1 = array();
+    foreach ($groups1 as $value1) {
+      /* @var $value1 Category */
+      /* @var $value1 NestedSetBehavior */
+      $items1[] = array(
+        'label' => $value1->name,
+        'url' => Yii::app()->createUrl('group', array('id' => $value1->id)),
+        'active' => isset($group) && $value1->id == $group->id,
+      );
+    }
     $items[] = array(
       'label' => $value->name,
       'url' => Yii::app()->createUrl('/group', array('id' => $value->id)),
-      'active' => isset($group) && $value->id == $group->id,
+      'active' => isset($group) && ($value->id == $group->id || $group->isDescendantOf($value)),
+      'items' => $items1,
+      'submenuOptions' => array('class' => 'left-submenu1'),
     );
     $children = $value->children()->findAll();
   }

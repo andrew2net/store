@@ -85,8 +85,8 @@ calcCartSumm();
 getDeliveries();
 
 cartSubmit.click(function() {
-  var email = $('#CustomerProfile_email').val();
-  $.post('/profile/checkemail', {
+  var email = $('#User_email').val();
+  $.post('/cart/checkemail', {
     email: email
   }, function(data) {
     if (data == 'ok')

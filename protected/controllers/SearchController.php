@@ -16,6 +16,11 @@ class SearchController extends CController {
     $groups = Category::model()->roots()->findAll();
     $product = Product::model();
 
+    if (Yii::app()->params['category_default_view'] == 'table')
+      $view = '//site/_items_inline';
+    else
+      $view = '//site/_items';
+
     if (isset($_GET['Search'])) {
       $search->text = $_GET['Search']['text'];
       $product->searchByName($_GET['Search']['text']);
@@ -31,8 +36,9 @@ class SearchController extends CController {
       'search' => $search,
       'giftSelection' => $giftSelection,
       'groups' => $groups,
-      'product' => $product_data,
+      'data' => $product_data,
       'isSearch' => true,
+      'view' => $view,
     ));
   }
 

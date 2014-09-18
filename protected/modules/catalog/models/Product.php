@@ -503,7 +503,7 @@ class Product extends CActiveRecord {
     parent::afterConstruct();
   }
 
-  public function getPrice(Price $price_type, $currency_code) {
+  public function getPrice($price_type, $currency_code) {
     if ($price_type)
       return $this->getTradePrice($price_type);
     else {

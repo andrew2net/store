@@ -1,5 +1,6 @@
 <?php
 /* @var $group Category */
+/* @var $data CActiveDataProvider */
 /* @var $limit int */
 
 Yii::import('application.modules.catalog.models.Price');
@@ -20,7 +21,8 @@ Yii::import('application.modules.payments.models.Currency');
   $trade_price = Price::getPrice();
   $currency = Currency::model()->findByAttributes(array('country_code' => 'RU'));
 
-  $data = Product::model()->searchCategory($group->id);
+  if (!isset($data))
+    $data = Product::model()->searchCategory($group->id);
   $data->setPagination($pagination);
   $widget = $this->widget('ListView', array(
     'id' => 'product-list',

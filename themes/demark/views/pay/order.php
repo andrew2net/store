@@ -77,8 +77,9 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
   </table>
   <?php echo CHtml::beginForm($order->payment->action_url); ?>
   <?php
-  foreach ($pay_values as $key => $value)
+  foreach ($pay_values as $key => $value) {
     echo CHtml::hiddenField($key, $value);
+  }
   ?>
   <?php if ($to_pay > 0) { ?>
     <div style="margin-top: 40px">

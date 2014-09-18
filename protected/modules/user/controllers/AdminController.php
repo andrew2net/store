@@ -120,8 +120,9 @@ class AdminController extends Controller {
       $customer_profile->price_id = $_POST['CustomerProfile']['price_id'];
 
       if ($model->validate() && $profile->validate()) {
-//        $old_password = User::model()->notsafe()->findByPk($model->id);
-        if ($model->password != $_POST['User']['password']) {
+        $old_password = User::model()->notsafe()->findByPk($model->id);
+        /* @var $old_password User */
+        if ($old_password->password != $_POST['User']['password']) {
           $model->password = Yii::app()->controller->module->encrypting($_POST['User']['password']);
           $model->activkey = Yii::app()->controller->module->encrypting(microtime() . $_POST['User']['password']);
         }
