@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
   var cartSumm = $('#cart-summ');
   var coupon = $('#coupon');
   var discountText = $('#discount-text');
@@ -18,7 +18,7 @@ $(document).ready(function() {
     var summ = 0;
     var summNoDisc = 0;
     var discountSumm = 0;
-    $('.cart-quantity').each(function() {
+    $('.cart-quantity').each(function () {
       var price = $(this).attr('price');
       var quantity = parseInt(this.value);
       if (isNaN(quantity))
@@ -89,11 +89,11 @@ $(document).ready(function() {
   calcCartSumm();
   getDeliveries();
 
-  cartSubmit.click(function() {
+  cartSubmit.click(function () {
     var email = $('#User_email').val();
     $.post('/cart/checkemail', {
       email: email
-    }, function(data) {
+    }, function (data) {
       if (data == 'ok')
         $('form').submit();
       else {
@@ -103,29 +103,29 @@ $(document).ready(function() {
     });
   });
 
-  cart_login_dialog.on('click', '#submit-password', function() {
+  cart_login_dialog.on('click', '#submit-password', function () {
     var email = user_email.val();
     var passw = $('#cart-password').val();
     $.post('/login', {
       email: email,
       passw: passw
-    }, function(data) {
-      if (data == 'ok'){
+    }, function (data) {
+      if (data == 'ok') {
         $('#login-fl').val('1');
         $('form').submit();
-      }else
+      } else
         $('#passw-err').html('Неверный пароль');
     });
   });
 
-  cart_login_dialog.on('click', '#recover-password', function() {
+  cart_login_dialog.on('click', '#recover-password', function () {
     var email = user_email.val();
     $('#sent-mail-recovery').html('');
     $(this).hide();
     $('#loading-dialog').show();
     $.post('/user/recovery/passwrecover', {
       email: email
-    }, function(data) {
+    }, function (data) {
       if (data == 'ok')
         $('#sent-mail-recovery').html('Инструкции для восстановления пароля высланы на Email ' + email);
       $('#loading-dialog').hide();
@@ -133,22 +133,22 @@ $(document).ready(function() {
     });
   });
 
-  $('#CustomerProfile_city_l, #CustomerProfile_other_city').change(function() {
+  $('#CustomerProfile_city_l, #CustomerProfile_other_city').change(function () {
     getDeliveries();
   });
 
   var city_typing;
-  cart_city.keyup(function(event) {
+  cart_city.keyup(function (event) {
     if (event.keyCode == 13) // || event.keyCode == 8 || event.keyCode > 36 && event.keyCode < 41)
       return false;
     cartSubmit.hide();
     clearTimeout(city_typing);
-    city_typing = setTimeout(function() {
+    city_typing = setTimeout(function () {
       getDeliveries();
     }, 3000);
   });
 
-  cart_city.on('autocompleteselect', function(event, elem) {
+  cart_city.on('autocompleteselect', function (event, elem) {
     cartSubmit.hide();
     clearTimeout(city_typing);
     getDeliveries();
@@ -184,9 +184,9 @@ $(document).ready(function() {
         d_id = delivery.val();
       var id = delivery.attr('id');
       var c_deliver = delivery.siblings('label[for="' + id + '"]').find('input[type="text"]').val();
-      if(c_deliver==undefined)
+      if (c_deliver == undefined)
         c_deliver = '';
-      getDeliveryTimeout = setTimeout(function() {
+      getDeliveryTimeout = setTimeout(function () {
         delivery_loading.hide();
       }, 60000);
       $.get('/cart/delivery', {
@@ -195,7 +195,7 @@ $(document).ready(function() {
         'city': city,
         'delivery_id': d_id,
         'c_deliver': c_deliver
-      }, function(data) {
+      }, function (data) {
         clearTimeout(getDeliveryTimeout);
         delivery_loading.hide();
         cart_delivery.html(data);
@@ -203,6 +203,7 @@ $(document).ready(function() {
         calcTotal();
       });
     } else {
+      delivery_loading.hide();
       cart_delivery.hide();
       cart_delivery.html('');
       delivery_hint.show();
@@ -211,15 +212,15 @@ $(document).ready(function() {
   }
 
   coupon.typing({
-    start: function(event, elem) {
+    start: function (event, elem) {
     },
-    stop: function(event, elem) {
+    stop: function (event, elem) {
       getCoupon(elem);
     },
     delay: 2000
   });
 
-  coupon.focusout(function() {
+  coupon.focusout(function () {
     getCoupon($(this));
   });
 
@@ -231,7 +232,7 @@ $(document).ready(function() {
     if (code.length === 6) {
       $.get('/cart/coupon', {
         coupon: code
-      }, function(data) {
+      }, function (data) {
         var discount = JSON && JSON.parse(data) || $.parseJSON(data);
         if (discount.type === 3) {
           $('#discount-text').html(err);
@@ -250,7 +251,7 @@ $(document).ready(function() {
     calcCartSumm();
   }
 
-  cart_delivery.on('change', 'input[name="Order[delivery_id]"]', function() {
+  cart_delivery.on('change', 'input[name="Order[delivery_id]"]', function () {
     var parent = $(this).parent();
     parent.find('input[type="text"]').prop('disabled', true);
     var input = parent.find('label[for="' + this.id + '"] > input[type="text"]');
@@ -259,7 +260,7 @@ $(document).ready(function() {
   });
 
   var quantityTimeOut;
-  cart_items.on('change', '.cart-quantity', function() {
+  cart_items.on('change', '.cart-quantity', function () {
     cartSubmit.hide();
     clearTimeout(quantityTimeOut);
     var id = $(this).attr('product');
@@ -278,7 +279,7 @@ $(document).ready(function() {
   });
 
   var cartQuantity;
-  cart_items.on('keyup', '.cart-quantity', function(event) {
+  cart_items.on('keyup', '.cart-quantity', function (event) {
     clearTimeout(quantityTimeOut);
     cartSubmit.hide();
     var id = $(this).attr('product');
@@ -294,12 +295,12 @@ $(document).ready(function() {
     value = this.value;
     calcRow(this);
     calcCartSumm();
-    quantityTimeOut = setTimeout(function() {
+    quantityTimeOut = setTimeout(function () {
       changeCart(id, value);
     }, 1000);
   });
 
-  cart_items.on('keydown', '.cart-quantity', function(event) {
+  cart_items.on('keydown', '.cart-quantity', function (event) {
     clearTimeout(quantityTimeOut);
     cartQuantity = this.value;
   });
@@ -309,7 +310,7 @@ $(document).ready(function() {
     $.post('/cart/changeCart', {
       'id': id,
       'quantity': quantity
-    }, function(data) {
+    }, function (data) {
       if (data) {
         refreshCart(data);
       }
@@ -319,18 +320,18 @@ $(document).ready(function() {
       if (city.length > 0) {
         delivery_loading.show();
         clearTimeout(cartTimeout);
-        cartTimeout = setTimeout(function() {
+        cartTimeout = setTimeout(function () {
           getDeliveries();
         }, 3000);
       }
     });
   }
 
-  cart_items.on('click', '.cart-item-del', function() {
+  cart_items.on('click', '.cart-item-del', function () {
     var id = $(this).attr('product');
     $.post('/cart/delitem', {
       'id': id
-    }, function(data) {
+    }, function (data) {
       refreshCart(data);
       getDeliveries();
     }
@@ -347,7 +348,7 @@ $(document).ready(function() {
       price_name.html('(' + result.price_name + ')');
       price_mess.html('Установлена цена "' + result.price_name + '"');
       price_mess.show('bounce');
-      newPriceTimeout = setTimeout(function() {
+      newPriceTimeout = setTimeout(function () {
         price_mess.hide('blind');
       }, 3000);
     }
@@ -359,14 +360,14 @@ $(document).ready(function() {
     $(elm).parent().parent().find('.summ').html(summ.formatMoney());
   }
 
-  cart_login_dialog.on('click', '#close-cart-dialog', function() {
+  cart_login_dialog.on('click', '#close-cart-dialog', function () {
     cart_login_dialog.hide();
   });
 
   function citySuggest(request, response) {
     $.get("/site/suggestcity",
             {country: $("#CustomerProfile_country_code").val(), term: request.term},
-    function(data) {
+    function (data) {
       var result = $.parseJSON(data);
       response(result);
     });

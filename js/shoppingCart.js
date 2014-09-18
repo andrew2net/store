@@ -14,7 +14,7 @@ function calcCartSumm() {
   var summ = 0;
   var summNoDisc = 0;
   var discountSumm = 0;
-  $('.cart-quantity').each(function() {
+  $('.cart-quantity').each(function () {
     var price = $(this).attr('price');
     var quantity = parseInt(this.value);
     if (isNaN(quantity))
@@ -84,11 +84,11 @@ function calcTotal() {
 calcCartSumm();
 getDeliveries();
 
-cartSubmit.click(function() {
+cartSubmit.click(function () {
   var email = $('#User_email').val();
   $.post('/cart/checkemail', {
     email: email
-  }, function(data) {
+  }, function (data) {
     if (data == 'ok')
       $('form').submit();
     else {
@@ -98,13 +98,13 @@ cartSubmit.click(function() {
   });
 });
 
-$('#submit-password').click(function() {
+$('#submit-password').click(function () {
   var email = $('#CustomerProfile_email').val();
   var passw = $('#password').val();
   $.post('/login', {
     email: email,
     passw: passw
-  }, function(data) {
+  }, function (data) {
     if (data == 'ok')
       $('form').submit();
     else
@@ -112,14 +112,14 @@ $('#submit-password').click(function() {
   });
 });
 
-$('#recover-password').click(function() {
+$('#recover-password').click(function () {
   var email = $('#CustomerProfile_email').val();
   $('#sent-mail-recovery').html('');
   $(this).css('display', 'none');
   $('#loading-dialog').css('display', 'inline');
   $.post('/user/recovery/passwrecover', {
     email: email
-  }, function(data) {
+  }, function (data) {
     if (data == 'ok')
       $('#sent-mail-recovery').html('Инструкции для восстановления пароля высланы на Email ' + email);
     $('#loading-dialog').css('display', 'none');
@@ -131,20 +131,20 @@ $('#recover-password').click(function() {
 //  getDeliveries(elem.item.value);
 //});
 
-country_code.change(function() {
+country_code.change(function () {
   getDeliveries();
 });
 
 post_code.typing({
-  start: function(event, elem) {
+  start: function (event, elem) {
   },
-  stop: function(event, elem) {
+  stop: function (event, elem) {
     getDeliveries();
   },
   delay: 0
 });
 
-post_code.focusout(function() {
+post_code.focusout(function () {
   getDeliveries();
 });
 
@@ -170,13 +170,14 @@ function getDeliveries() {
       'city': city,
       'delivery_id': d_id,
       'c_deliver': c_deliver
-    }, function(data) {
+    }, function (data) {
       delivery_loading.hide();
       cart_delivery.html(data);
       cart_delivery.show();
       calcTotal();
     });
   } else {
+    delivery_loading.hide();
     cart_delivery.hide();
     cart_delivery.html('');
     delivery_hint.show();
@@ -185,15 +186,15 @@ function getDeliveries() {
 }
 
 coupon.typing({
-  start: function(event, elem) {
+  start: function (event, elem) {
   },
-  stop: function(event, elem) {
+  stop: function (event, elem) {
     getCoupon(elem);
   },
   delay: 2000
 });
 
-coupon.focusout(function() {
+coupon.focusout(function () {
   getCoupon($(this));
 });
 
@@ -205,7 +206,7 @@ function getCoupon(elem) {
   if (code.length === 6) {
     $.get('/cart/coupon', {
       coupon: code
-    }, function(data) {
+    }, function (data) {
       var discount = JSON && JSON.parse(data) || $.parseJSON(data);
       if (discount.type === 3) {
         $('#discount-text').html(err);
@@ -224,11 +225,14 @@ function getCoupon(elem) {
   calcCartSumm();
 }
 
-cart_delivery.on('change', 'input[name="Order[delivery_id]"]', function() {
+cart_delivery.on('change', 'input[name="Order[delivery_id]"]', function () {
   calcTotal();
 });
 
-$(document).on('change', '.cart-quantity', function() {
+var quantityTimeOut;
+$(document).on('change', '.cart-quantity', function () {
+  cartSubmit.hide();
+  clearTimeout(quantityTimeOut);
   var id = $(this).attr('product');
   var quantity = parseInt(this.value);
   if (isNaN(quantity))
@@ -241,28 +245,14 @@ $(document).on('change', '.cart-quantity', function() {
   }
   calcRow(this);
   calcCartSumm();
-  $.post('/cart/changeCart', {
-    'id': id,
-    'quantity': quantity
-  }, function() {
-    getDeliveries();
-  });
-});
-$(document).on('click', '.cart-item-del', function() {
-  var id = $(this).attr('product');
-  $.post('/cart/delitem', {
-    'id': id
-  }, function(data) {
-    var result = $.parseJSON(data);
-    $('#cart-items').html(result.html);
-    calcCartSumm();
-    getDeliveries();
-  }
-  );
+  changeCart(id, quantity);
 });
 
 var cartQuantity;
-$(document).on('keyup', '.cart-quantity', function(event) {
+$(document).on('keyup', '.cart-quantity', function (event) {
+  clearTimeout(quantityTimeOut);
+  cartSubmit.hide();
+  var id = $(this).attr('product');
   if (this.value.length > 0) {
     var value = parseInt(this.value);
     if (value > 99)
@@ -274,10 +264,50 @@ $(document).on('keyup', '.cart-quantity', function(event) {
     this.value = 0;
   calcRow(this);
   calcCartSumm();
+  quantityTimeOut = setTimeout(function () {
+    changeCart(id, value);
+  }, 1000);
 });
 
-$(document).on('keydown', '.cart-quantity', function(event) {
+$(document).on('keydown', '.cart-quantity', function (event) {
+  clearTimeout(quantityTimeOut);
   cartQuantity = this.value;
+});
+
+var cartTimeout;
+function changeCart(id, quantity) {
+  $.post('/cart/changeCart', {
+    'id': id,
+    'quantity': quantity
+  }, function (data) {
+//    if (data) {
+//      refreshCart(data);
+//    }
+    cart_delivery.hide();
+    delivery_hint.hide();
+//    cart_delivery.val('');
+    var city = cart_city.val();
+    if (city.length > 0) {
+      delivery_loading.show();
+      clearTimeout(cartTimeout);
+      cartTimeout = setTimeout(function () {
+        getDeliveries();
+      }, 3000);
+    }
+  });
+}
+
+$(document).on('click', '.cart-item-del', function () {
+  var id = $(this).attr('product');
+  $.post('/cart/delitem', {
+    'id': id
+  }, function (data) {
+    var result = $.parseJSON(data);
+    $('#cart-items').html(result.html);
+    calcCartSumm();
+    getDeliveries();
+  }
+  );
 });
 
 function calcRow(elm) {
@@ -285,7 +315,7 @@ function calcRow(elm) {
   $(elm).parent().parent().find('.summ').html(summ.formatMoney());
 }
 
-$(function() {
+$(function () {
   $("#cart-login-dialog").dialog({
     autoOpen: false,
     modal: true,
@@ -304,14 +334,14 @@ $(function() {
   });
 });
 
-$('#close-cart-dialog').click(function() {
+$('#close-cart-dialog').click(function () {
   $("#cart-login-dialog").dialog('close');
 });
 
 function citySuggest(request, response) {
   $.get("/site/suggestcity",
           {country: country_code.val(), term: request.term},
-  function(data) {
+  function (data) {
     var result = $.parseJSON(data);
     response(result);
   });
