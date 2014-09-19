@@ -4,6 +4,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="language" content="ru" />
+    <meta name="google-site-verification" content="TwOnuuavPP6L6gJOA_vnBIgMqmlcKewKfaIn0HuS-E8" />
     <link rel="icon" href="<?php echo Yii::app()->theme->baseUrl; ?>/img/favicon.png" type="image/png" />
     <!--<link rel="shortcut icon" href="<?php // echo Yii::app()->createAbsoluteUrl('');       ?>/favicon.ico" type="image/x-icon" />-->
     <!-- blueprint CSS framework -->
