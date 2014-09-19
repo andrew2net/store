@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="language" content="ru" />
     <link rel="icon" href="<?php echo Yii::app()->theme->baseUrl; ?>/img/favicon.png" type="image/png" />
-    <!--<link rel="shortcut icon" href="<?php // echo Yii::app()->createAbsoluteUrl('');       ?>/favicon.ico" type="image/x-icon" />-->
+    <!--<link rel="shortcut icon" href="<?php // echo Yii::app()->createAbsoluteUrl('');        ?>/favicon.ico" type="image/x-icon" />-->
     <!-- blueprint CSS framework -->
     <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/themes/<?php echo Yii::app()->theme->name; ?>/css/screen.css" media="screen, projection" />
     <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/print.css" media="print" />
@@ -31,6 +31,23 @@
     <?php Yii::app()->clientScript->registerScriptFile(Yii::app()->theme->baseUrl . '/js/RotondaC_400-RotondaC_700.font.js'); ?>
     <!--<script type="text/javascript" src="http://vk.com/js/api/share.js?90" charset="windows-1251"></script>-->
     <title><?php echo CHtml::encode($this->pageTitle); ?></title>
+    <script type="text/javascript">
+      (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function () {
+          (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+      })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+      ga('create', 'UA-54982329-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
   </head>
 
   <body>
@@ -46,20 +63,5 @@
     $(document).ready(function () {
       $(".fancybox").fancybox();
     });
-
-    (function (i, s, o, g, r, a, m) {
-      i['GoogleAnalyticsObject'] = r;
-      i[r] = i[r] || function () {
-        (i[r].q = i[r].q || []).push(arguments)
-      }, i[r].l = 1 * new Date();
-      a = s.createElement(o),
-              m = s.getElementsByTagName(o)[0];
-      a.async = 1;
-      a.src = g;
-      m.parentNode.insertBefore(a, m)
-    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
-
-    ga('create', 'UA-54982329-1', 'auto');
-    ga('send', 'pageview');
-
-  </script></html>
+  </script>
+</html>
