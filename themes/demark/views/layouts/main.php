@@ -32,7 +32,7 @@
     <?php Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl . '/themes/' . Yii::app()->theme->name . '/js/RotondaC_400-RotondaC_700.font.js'); ?>
     <!--<script type="text/javascript" src="http://vk.com/js/api/share.js?90" charset="windows-1251"></script>-->
     <title><?php echo CHtml::encode($this->pageTitle); ?></title>
-    <script>
+    <script  type="text/javascript">
       (function (i, s, o, g, r, a, m) {
         i['GoogleAnalyticsObject'] = r;
         i[r] = i[r] || function () {
