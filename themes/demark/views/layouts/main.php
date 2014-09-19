@@ -6,7 +6,7 @@
     <meta name="language" content="ru" />
     <meta name="w1-verification" content="161529165430" />
     <link rel="icon" href="<?php echo Yii::app()->theme->baseUrl; ?>/img/favicon.ico" type="image/x-icon" />
-    <!--<link rel="shortcut icon" href="<?php // echo Yii::app()->createAbsoluteUrl('');  ?>/favicon.ico" type="image/x-icon" />-->
+    <!--<link rel="shortcut icon" href="<?php // echo Yii::app()->createAbsoluteUrl('');   ?>/favicon.ico" type="image/x-icon" />-->
     <!-- blueprint CSS framework -->
     <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/themes/<?php echo Yii::app()->theme->name; ?>/css/screen.css" media="screen, projection" />
     <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/print.css" media="print" />
@@ -40,8 +40,23 @@
   </body>
   <script type="text/javascript">
     $(document).ready(Cufon.replace(".cufon"));
-    $(document).ready(function() {
+    $(document).ready(function () {
       $(".fancybox").fancybox();
     });
-  </script>
-</html>
+
+    (function (i, s, o, g, r, a, m) {
+      i['GoogleAnalyticsObject'] = r;
+      i[r] = i[r] || function () {
+        (i[r].q = i[r].q || []).push(arguments)
+      }, i[r].l = 1 * new Date();
+      a = s.createElement(o),
+              m = s.getElementsByTagName(o)[0];
+      a.async = 1;
+      a.src = g;
+      m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-54965120-1', 'auto');
+    ga('send', 'pageview');
+
+  </script></html>
