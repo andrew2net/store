@@ -951,7 +951,7 @@ td.text-right{
   font-size: 10pt;
 }
 .left-menu-item:hover .left-submenu1{
-  display: initial;
+  display: inline;
 }
 .left-submenu1 > .left-menu-item{
   border-radius: 3px;
