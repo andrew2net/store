@@ -78,7 +78,7 @@ $(document).ready(function() {
       cartOffset.right = win.innerWidth() - cartOffset.left - cart.width();
       img2.appendTo('body');
       img2.css({
-        display: 'initial',
+        display: 'block',
         position: 'absolute',
         top: imgOffset.top,
         left: imgOffset.left + 50,
