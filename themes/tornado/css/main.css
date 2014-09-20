@@ -534,7 +534,7 @@ input[type=checkbox] + label:before, input[type=checkbox]:checked + label:before
 input[type=radio]:checked + label:before, input[type=radio] + label:before
 {
   content: '';
-  display: inline-block;
+  display: table-cell;
   position: absolute;
   left: 0;
   top: 0;
@@ -542,6 +542,7 @@ input[type=radio]:checked + label:before, input[type=radio] + label:before
   margin: auto 0;
   width: 20px;
   height: 20px;
+  vertical-align: middle;
 }
 input[type=checkbox] + label:before{
   background-position: 0 -64px;
@@ -549,6 +550,9 @@ input[type=checkbox] + label:before{
 input[type=checkbox]:checked + label:before
 {
   background-position: 0 -42px;
+}
+span#Order_payment_id, span#Order_delivery_id{
+  display: table;
 }
 #categoryOnly + label:before{
   top: -10px;

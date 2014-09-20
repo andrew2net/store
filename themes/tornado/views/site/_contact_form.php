@@ -25,10 +25,10 @@
         <?php
         $field = ProfileField::model()->findByAttributes(array('varname' => 'legal_form'));
         echo $form->labelEx($profile, $field->varname, array(
-          'style' => 'display:block; width:50px',
+          'style' => 'display:block; width:65px',
           'title' => 'Организационно-правовая форма',
         ));
-        echo $form->dropDownList($profile, $field->varname, Profile::range($field->range))
+        echo $form->dropDownList($profile, $field->varname, Profile::range($field->range), array('style'=>'width:65px', 'title' => 'Организационно-правовая форма'))
         ?>
       </div>
       <div style="width: 175px">
