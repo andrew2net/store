@@ -98,7 +98,7 @@ class PayController extends Controller {
       if ($order) {
         foreach ($_POST as $name => $value) {
           if ($name != 'WMI_SIGNATURE')
-            $patams[$name] = $value;
+            $params[$name] = $value;
         }
         uksort($params, "strcasecmp");
         $values = "";
