@@ -8,16 +8,16 @@
       <?php echo TbHtml::label('Дата платежа', 'pay_time'); ?>
     </th>
     <th>
-      <?php echo TbHtml::label('Номер операции', 'pay_mnt_operation_id'); ?>
+      <?php echo TbHtml::label('Номер операции', 'pay_operation_id'); ?>
     </th>
     <th>
       <?php echo TbHtml::label('Платежная система', 'pay_pay_system_id'); ?>
     </th>
     <th>
-      <?php echo TbHtml::label('Корр.счет', 'pay_mnt_corr_acc'); ?>
+      <?php echo TbHtml::label('Корр.счет', 'pay_corr_acc'); ?>
     </th>
     <th>
-      <?php echo TbHtml::label('Сумма', 'pay_mnt_amount'); ?>
+      <?php echo TbHtml::label('Сумма', 'pay_amount'); ?>
     </th>
   </tr>
   <?php
@@ -33,8 +33,8 @@
       </td>
       <td>
         <?php
-        echo TbHtml::tag('div', array('name' => 'pay_mnt_operation_id', 'class' => 'display-field'));
-        echo $item->mnt_operation_id;
+        echo TbHtml::tag('div', array('name' => 'pay_operation_id', 'class' => 'display-field'));
+        echo $item->operation_id;
         echo TbHtml::closeTag('div');
         ?>
       </td>
@@ -47,15 +47,15 @@
       </td>
       <td>
         <?php
-        echo TbHtml::tag('div', array('name' => 'pay_mnt_corr_acc', 'class' => 'display-field'));
-        echo $item->mnt_corr_acc;
+        echo TbHtml::tag('div', array('name' => 'pay_corr_acc', 'class' => 'display-field'));
+        echo $item->corr_acc;
         echo TbHtml::closeTag('div');
         ?>
       </td>
       <td>
         <?php
-        echo TbHtml::tag('div', array('name' => 'pay_mnt_amount', 'class' => 'display-field'));
-        echo $item->mnt_amount;
+        echo TbHtml::tag('div', array('name' => 'pay_amount', 'class' => 'display-field'));
+        echo $item->amount;
         echo TbHtml::closeTag('div');
         ?>
       </td>

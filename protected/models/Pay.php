@@ -6,14 +6,17 @@
  * The followings are the available columns in table 'store_pay':
  * @property string $id
  * @property string $order_id
- * @property string $mnt_operation_id
- * @property string $mnt_amount
+ * @property string $operation_id
+ * @property string $amount
  * @property string $pay_system_id
- * @property string $mnt_corr_acc
+ * @property string $corr_acc
  * @property string $time
+ * @property string $currency_iso 
+ * @property string $currency_amount 
  *
  * The followings are the available model relations:
  * @property Order $order
+ * @property Currency $currency 
  */
 class Pay extends CActiveRecord {
 
@@ -33,13 +36,14 @@ class Pay extends CActiveRecord {
     return array(
       array('order_id', 'required'),
       array('order_id', 'length', 'max' => 11),
-      array('mnt_operation_id, mnt_corr_acc', 'length', 'max' => 30),
-      array('mnt_amount', 'length', 'max' => 12),
-      array('pay_system_id', 'length', 'max' => 10),
+      array('operation_id, corr_acc', 'length', 'max' => 30),
+      array('amount, currency_amount', 'length', 'max' => 12),
+      array('pay_system_id', 'length', 'max' => 30),
+      array('currency_iso', 'length', 'max' => 3),
       array('time', 'default', 'value' => date('Y-m-d H:i:s')),
       // The following rule is used by search().
       // @todo Please remove those attributes that should not be searched.
-      array('id, order_id, mnt_operation_id, mnt_amount, pay_system_id, mnt_corr_acc', 'safe', 'on' => 'search'),
+      array('id, order_id, operation_id, amount, currency_amount, pay_system_id, corr_acc', 'safe', 'on' => 'search'),
     );
   }
 
@@ -51,6 +55,7 @@ class Pay extends CActiveRecord {
     // class name for the relations automatically generated below.
     return array(
       'order' => array(self::BELONGS_TO, 'Order', 'order_id'),
+      'currency' => array(self::BELONGS_TO, 'Currency', 'currency_iso'),
     );
   }
 
@@ -61,11 +66,13 @@ class Pay extends CActiveRecord {
     return array(
       'id' => 'ID',
       'order_id' => 'Заказ',
-      'mnt_operation_id' => 'Номер операции',
-      'mnt_amount' => 'Сумма',
+      'operation_id' => 'Номер операции',
+      'amount' => 'Сумма',
       'pay_system_id' => 'Платежная система',
-      'mnt_corr_acc' => 'Корр.счет',
-      'time' => 'Дата платежа'
+      'corr_acc' => 'Корр.счет',
+      'time' => 'Дата платежа',
+      'currency_iso' => 'Код валюты ISO',
+      'currency_amount' => 'Сумма в валюте платежа',
     );
   }
 
@@ -88,10 +95,10 @@ class Pay extends CActiveRecord {
 
     $criteria->compare('id', $this->id, true);
     $criteria->compare('order_id', $this->order_id, true);
-    $criteria->compare('mnt_operation_id', $this->mnt_operation_id, true);
-    $criteria->compare('mnt_amount', $this->mnt_amount, true);
+    $criteria->compare('operation_id', $this->operation_id, true);
+    $criteria->compare('amount', $this->amount, true);
     $criteria->compare('pay_system_id', $this->pay_system_id, true);
-    $criteria->compare('mnt_corr_acc', $this->mnt_corr_acc, true);
+    $criteria->compare('corr_acc', $this->corr_acc, true);
 
     return new CActiveDataProvider($this, array(
       'criteria' => $criteria,

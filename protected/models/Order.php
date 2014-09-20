@@ -144,7 +144,7 @@ class Order extends CActiveRecord {
       'delivery' => array(self::BELONGS_TO, 'Delivery', 'delivery_id'),
       'payment' => array(self::BELONGS_TO, 'Payment', 'payment_id'),
       'pay' => array(self::HAS_MANY, 'Pay', 'order_id'),
-      'paySumm' => array(self::STAT, 'Pay', 'order_id', 'select' => 'SUM(mnt_amount)'),
+      'paySumm' => array(self::STAT, 'Pay', 'order_id', 'select' => 'SUM(amount)'),
       'profile' => array(self::BELONGS_TO, 'CustomerProfile', 'profile_id'),
       'orderProducts' => array(self::HAS_MANY, 'OrderProduct', 'order_id'),
       'productSumm' => array(self::STAT, 'OrderProduct', 'order_id',
