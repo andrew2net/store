@@ -57,15 +57,16 @@ class PayController extends Controller {
 
   public function actionNotify() {
     Yii::trace('Pay notify', 'application');
+    Yii::import('application.modules.payments.models.Payment');
     if (isset($_POST['MNT_OPERATION_ID'])) {
       $order = Order::model()->findByPk($_POST['MNT_TRANSACTION_ID']);
+      /* @var $order Order */
       if ($order) {
-        Yii::import('application.modules.payments.models.Payment');
         $signature = md5($_POST['MNT_ID'] . $_POST['MNT_TRANSACTION_ID']
             . $_POST['MNT_OPERATION_ID'] . $_POST['MNT_AMOUNT']
             . $_POST['MNT_CURRENCY_CODE']
             . (isset($_POST['MNT_SUBSCRIBER_ID']) ? $_POST['MNT_SUBSCRIBER_ID'] : '')
-            . $_POST['MNT_TEST_MODE'] . $order->payment->mnt_signature);
+            . $_POST['MNT_TEST_MODE'] . $order->payment->sign_key);
 
         if ($_POST['MNT_SIGNATURE'] == $signature) {
           $pay = Pay::model()->findByAttributes(array(
@@ -76,20 +77,82 @@ class PayController extends Controller {
             $pay = new Pay;
           $pay->order_id = $order->id;
           Yii::trace('Pay notify. Pay: ' . $_POST['MNT_CORRACCOUNT']);
-          $pay->mnt_operation_id = $_POST['MNT_OPERATION_ID'];
-          $pay->mnt_amount = $_POST['MNT_AMOUNT'];
+          $pay->operation_id = $_POST['MNT_OPERATION_ID'];
+          $pay->amount = $_POST['MNT_AMOUNT'];
           $pay->pay_system_id = isset($_POST['paymentSystem.unitId']) ?
               $_POST['paymentSystem.unitId'] : '';
-          $pay->mnt_corr_acc = isset($_POST['MNT_CORRACCOUNT']) ?
+          $pay->corr_acc = isset($_POST['MNT_CORRACCOUNT']) ?
               $_POST['MNT_CORRACCOUNT'] : '';
+          $pay->currency_iso = $_POST['MNT_CURRENCY_CODE'];
           if ($pay->save()) {
             echo 'SUCCESS';
             Yii::app()->end();
           }
         }
       }
+      echo 'FAIL';
     }
-    echo 'FAIL';
+    elseif (isset($_POST['WMI_MERCHANT_ID'])) {
+      $order = Order::model()->findByPk($_POST['WMI_PAYMENT_NO']);
+      /* @var $order Order */
+      if ($order) {
+        foreach ($_POST as $name => $value) {
+          if ($name != 'WMI_SIGNATURE')
+            $patams[$name] = $value;
+        }
+        uksort($params, "strcasecmp");
+        $values = "";
+        foreach ($params as $name => $value) {
+          //Конвертация из текущей кодировки (UTF-8)
+          //необходима только если кодировка магазина отлична от Windows-1251
+//        $value = iconv("utf-8", "windows-1251", $value);
+          $values .= $value;
+        }
+        $signature = base64_encode(pack("H*", md5($values . $order->payment->sign_key)));
+
+        if ($_POST['WMI_SIGNATURE'] == $signature) {
+          if (strtoupper($_POST["WMI_ORDER_STATE"]) == "ACCEPTED") {
+            $pay = Pay::model()->findByAttributes(array(
+              'operation_id' => $_POST['WMI_ORDER_ID'],
+              'order_id' => $order->id,
+            ));
+            if ($pay) {
+              echo 'WMI_RESULT=OK&WMI_DESCRIPTION=Уведомление о платеже уже принято';
+              Yii::app()->end();
+            }
+            $pay = new Pay;
+            $pay->order_id = $order->id;
+//            Yii::trace('Pay notify. Pay: ' . $_POST['MNT_CORRACCOUNT']);
+            $pay->operation_id = $_POST['WMI_ORDER_ID'];
+            $pay->currency_amount = $_POST['WMI_PAYMENT_AMOUNT'];
+
+            if ($order->currency->iso == $_POST['WMI_CURRENCY_ID'])
+              $pay->amount = $_POST['WMI_PAYMENT_AMOUNT'];
+            else {
+              //converr currency
+              Yii::trace('Pay notify. Оплата в другой валюте. Заказ: ' . $order->id 
+                  . ' WMI_MERCHANT_ID:' . $_POST['WMI_MERCHANT_ID'] . ' Валюта: ' . $_POST['WMI_CURRENCY_ID']);
+            }
+
+            $pay->pay_system_id = isset($_POST['WMI_PAYMENT_TYPE']) ?
+                $_POST['WMI_PAYMENT_TYPE'] : '';
+            $pay->corr_acc = isset($_POST['WMI_EXTERNAL_ACCOUNT_ID']) ?
+                $_POST['WMI_EXTERNAL_ACCOUNT_ID'] : '';
+            if ($pay->save()) {
+              echo 'WMI_RESULT=OK';
+            }
+            else {
+              Yii::trace('Pay notify. Ошибка записи платежа. Заказ: ' . $order->id . ' WMI_MERCHANT_ID:' . $_POST['WMI_MERCHANT_ID']);
+              echo 'WMI_RESULT=RETRY&WMI_DESCRIPTION=Ошибка записи платежа';
+            }
+          }else{
+            echo 'WMI_RESULT=RETRY&WMI_DESCRIPTION=Неверное состояние ' . $_POST['WMI_ORDER_STATE'];
+          }
+        }else {
+          echo 'WMI_RESULT=RETRY&WMI_DESCRIPTION=Неверная подпись ' . $_POST['WMI_SIGNATURE'];
+        }
+      }
+    }
     Yii::app()->end();
   }
 
