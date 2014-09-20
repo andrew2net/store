@@ -58,6 +58,7 @@ class PayController extends Controller {
   public function actionNotify() {
     Yii::trace('Pay notify', 'application');
     Yii::import('application.modules.payments.models.Payment');
+    Yii::import('application.modules.payments.models.Currency');
     if (isset($_POST['MNT_OPERATION_ID'])) {
       $order = Order::model()->findByPk($_POST['MNT_TRANSACTION_ID']);
       /* @var $order Order */
