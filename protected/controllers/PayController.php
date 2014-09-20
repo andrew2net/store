@@ -118,7 +118,7 @@ class PayController extends Controller {
               'order_id' => $order->id,
             ));
             if ($pay) {
-              echo 'WMI_RESULT=OK&WMI_DESCRIPTION=Уведомление о платеже уже принято';
+              echo 'WMI_RESULT=OK&WMI_DESCRIPTION='. urlencode( 'Уведомление о платеже уже принято');
               Yii::app()->end();
             }
             $pay = new Pay;
@@ -150,7 +150,7 @@ class PayController extends Controller {
             echo 'WMI_RESULT=RETRY&WMI_DESCRIPTION=Неверное состояние ' . $_POST['WMI_ORDER_STATE'];
           }
         }else {
-          echo 'WMI_RESULT=RETRY&WMI_DESCRIPTION=Неверная подпись ' . $_POST['WMI_SIGNATURE'];
+          echo 'WMI_RESULT=RETRY&WMI_DESCRIPTION='. 'Неверная подпись ' . $_POST['WMI_SIGNATURE'];
         }
       }
     }
