@@ -534,7 +534,7 @@ input[type=checkbox] + label:before, input[type=checkbox]:checked + label:before
 input[type=radio]:checked + label:before, input[type=radio] + label:before
 {
   content: '';
-  display: table-cell;
+  display: inline-block;
   position: absolute;
   left: 0;
   top: 0;
