@@ -1,8 +1,8 @@
 <?php
 
 global $argv, $argc;
-$type = explode('=', $argv[1]);
-Yii::trace('Start ' . $type[1], 'cron');
+//$type = explode('=', $argv[1]);
+Yii::trace('Start cron', 'cron');
 // This is the configuration for yiic console application.
 // Any writable CConsoleApplication properties can be configured here.
 $console_config = array(
