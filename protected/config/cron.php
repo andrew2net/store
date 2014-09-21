@@ -1,6 +1,8 @@
 <?php
 
 global $argv, $argc;
+$type = explode('=', $argv[1]);
+Yii::trace('Start ' . $type[1], 'cron');
 // This is the configuration for yiic console application.
 // Any writable CConsoleApplication properties can be configured here.
 $console_config = array(
@@ -28,7 +30,7 @@ $console_config = array(
       'transportType' => 'smtp',
       'viewPath' => 'application.views.mail',
     ),
-     'urlManager' => array(
+    'urlManager' => array(
       'urlFormat' => 'path',
       'showScriptName' => FALSE,
       'rules' => array(
