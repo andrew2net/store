@@ -11,14 +11,14 @@ class DalyCommand extends CConsoleCommand {
     $conn = explode('=', $argv[2]);
     Yii::trace('Start daly ' . $conn[1], 'cron');
 //    self::sitemapGenerate();
-    self::getNrjLocations();
+    $this->getNrjLocations();
   }
 
 //  private static function sitemapGenerate(){
 //    $sitemap = new Sitemap();
 //  }
 
-  private static function getNrjLocations() {
+  private function getNrjLocations() {
     $command = Yii::app()->db->createCommand();
     /* @var $command CDbCommand */
 
