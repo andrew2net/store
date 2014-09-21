@@ -7,6 +7,7 @@
 class MinutelyCommand extends CConsoleCommand {
 
   public function run($args) {
+    global $argv;
     Yii::import('application.modules.admin.models.Mail');
     Yii::import('application.modules.admin.models.MailOrder');
     Yii::import('application.models.Order');
