@@ -195,10 +195,10 @@ class ProfileController extends Controller {
     else {
       $session_id = Yii::app()->session->sessionId;
     }
-      $cookie = new CHttpCookie('cart', $session_id);
-      $cookie->expire = time() + 60 * 60 * 24 * 30;
-      $cookie->httpOnly = TRUE;
-      Yii::app()->request->cookies['cart'] = $cookie;
+    $cookie = new CHttpCookie('cart', $session_id);
+    $cookie->expire = time() + 60 * 60 * 24 * 30;
+    $cookie->httpOnly = TRUE;
+    Yii::app()->request->cookies['cart'] = $cookie;
     return $session_id;
   }
 
@@ -256,7 +256,7 @@ class ProfileController extends Controller {
           $country_code = Yii::app()->db->createCommand()->select('code')->from('net_country')
                   ->where('id=:id', array(':id' => $city['country_id']))->query();
           if ($c_code = $country_code->read())
-            $profile->price_country = $c_code['code'];
+              $profile->price_country = $c_code['code'];
         }
       }
       if (empty($profile->price_country)) {
@@ -271,6 +271,10 @@ class ProfileController extends Controller {
       }
       if (empty($profile->country_code))
         $profile->country_code = $profile->price_country;
+
+      if ($profile->price_country != 'KZ')
+        $profile->price_country = 'RU';
+
       $profile->save(FALSE);
     }
 
