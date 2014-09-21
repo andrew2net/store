@@ -7,9 +7,10 @@
 class DalyCommand extends CConsoleCommand {
 
   public function run($args) {
-    global $argv;
-    $conn = explode('=', $argv[2]);
-    Yii::trace('Start daly ' . $conn[1], 'cron');
+      echo 'Cron daly ';
+//    global $argv;
+//    $conn = explode('=', $argv[2]);
+//    Yii::trace('Start daly ' . $conn[1], 'cron');
 //    self::sitemapGenerate();
     $this->getNrjLocations();
   }
