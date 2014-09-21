@@ -7,7 +7,7 @@
 class MinutelyCommand extends CConsoleCommand {
 
   public function run($args) {
-    global $argv;
+//    global $argv;
     Yii::import('application.modules.admin.models.Mail');
     Yii::import('application.modules.admin.models.MailOrder');
     Yii::import('application.models.Order');
@@ -16,8 +16,8 @@ class MinutelyCommand extends CConsoleCommand {
     Yii::import('application.modules.user.models.Profile');
     Yii::import('ext.yii-mail.YiiMailMessage');
 
-    $conn = explode('=', $argv[2]);
-    Yii::trace('Start minutely ' . $conn[1], 'cron');
+//    $conn = explode('=', $argv[2]);
+//    Yii::trace('Start minutely ' . $conn[1], 'cron');
 
     $mails = Mail::model()->findAll(array(
       'with' => array('user', 'order'),
