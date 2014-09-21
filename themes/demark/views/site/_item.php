@@ -5,7 +5,6 @@
 Yii::import('application.modules.payments.models.Currency');
 $profile = ProfileController::getProfile();
 $currecy = Currency::model()->findByAttributes(array('country_code'=>$profile->price_country));
-Yii::trace('Country? ' . $profile->price_country, 'crawl');
 /* @var $currecy Currency */
 switch ($profile->price_country) {
   case 'KZ':
