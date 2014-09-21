@@ -3,6 +3,7 @@
 global $argv, $argc;
 //$type = explode('=', $argv[1]);
 Yii::trace('Start', 'cron');
+echo 'Cron ';
 // This is the configuration for yiic console application.
 // Any writable CConsoleApplication properties can be configured here.
 $console_config = array(
