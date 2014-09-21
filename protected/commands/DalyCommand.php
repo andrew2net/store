@@ -19,13 +19,13 @@ class DalyCommand extends CConsoleCommand {
 //  }
 
   private static function getNrjLocations() {
-    $command = Yii::app()->createCommand();
+    $command = Yii::app()->db->createCommand();
     /* @var $command CDbCommand */
 
     //get Energy locations
     $nrj = $command->select('id')->from('store_delivery')->where('zone_type_id=3')->queryRow();
     if ($nrj) {
-      $tr = Yii::app()->beginTransaction();
+      $tr = Yii::app()->db->beginTransaction();
       try {
         $nrj_ch = curl_init('http://api.nrg-tk.ru/api/rest/?method=nrg.get.locations');
         curl_setopt($nrj_ch, CURLOPT_RETURNTRANSFER, TRUE);
