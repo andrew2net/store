@@ -2,8 +2,7 @@
 
 global $argv, $argc;
 //$type = explode('=', $argv[1]);
-Yii::trace('Start', 'cron');
-echo 'Cron ';
+//Yii::trace('Start', 'cron');
 // This is the configuration for yiic console application.
 // Any writable CConsoleApplication properties can be configured here.
 $console_config = array(
@@ -57,6 +56,7 @@ include_once (dirname(__FILE__) . '/sites_connect.php');
 include_once (dirname(__FILE__) . '/sites_config.php');
 if (count($sites_connect) > 1 && $argc > 2 && strpos($argv[2], '--connectionID=') === 0) {
   $conn = explode('=', $argv[2]);
+echo 'Cron '.$conn[1] .' ';
   $console_config['components']['db'] = $sites_connect[$conn[1]];
   $console_config['components']['mail'] = array_merge($console_config['components']['mail'], $sites_config[$conn[1]]['mail']);
   $console_config['components']['request'] = $sites_config[$conn[1]]['request'];
