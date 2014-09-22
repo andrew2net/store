@@ -32,6 +32,7 @@
 <script type="text/javascript">
   $().ready(function($) {
     var menu = $('#mainmenuarea');
+    var page = $('#page');
     if (menu.attr('cart'))
       return false;
     var cont = $('#mainmenucont');
@@ -41,12 +42,14 @@
       if ($(this).scrollTop() > offset.top && !fix) {
         login_dialog.hide();
         menu.addClass('f-menu');
+        page.css('margin-top', '45px');
         cont.css('box-shadow', '0 5px 5px');
         cont.animate({width: "100%"}, 300);
         fix = true;
       }
       else if ($(this).scrollTop() < offset.top && fix) {
         menu.removeClass('f-menu');
+        page.css('margin-top', '10px');
         cont.css({width: '950px', 'box-shadow': 'none'});
         fix = false;
       }
