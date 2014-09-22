@@ -71,7 +71,7 @@ $this->pageTitle = Yii::app()->name . ' - Личный кабинет';
         ),
         array(
           'name' => 'summ',
-          'value' => 'number_format($data->summ - $data->couponDiscount + $data->delivery_summ, 2, ".", " ")." ".$data->currency->class',
+          'value' => 'number_format($data->summ - $data->couponSumm + $data->delivery_summ, 2, ".", " ")." ".$data->currency->class',
           'type' => 'html',
         ),
         array(
