@@ -1,5 +1,5 @@
 <p><a href="<?php echo Yii::app()->createAbsoluteUrl('profile'); ?>">Перейти в личный кабинет</a></p>
-<p>Спасибо, что выбрали нас!</p><br>
+<p>Спасибо, что выбрали нас!</p>
 <?php
 $phones = array();
 foreach (Yii::app()->params['enterprise']['phone'] as $phone) {

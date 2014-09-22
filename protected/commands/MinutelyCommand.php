@@ -62,7 +62,7 @@ class MinutelyCommand extends CConsoleCommand {
               break;
             default :
               $message->setSubject("Изменение статуса заказа");
-              $params['text'] = strtolower($mail->order[0]->status);
+              $params['text'] = mb_strtolower($mail->order[0]->status, 'utf8');
               break;
           }
           break;
