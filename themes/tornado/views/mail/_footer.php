@@ -10,7 +10,7 @@ foreach (Yii::app()->params['enterprise']['phone'] as $phone) {
     $phones[] = $phone;
   }
 }
-echo CHtml::tag('div', array(), 'Это письмо сформированно автоматически. Пожалуйста не отвечайте на него.');
-echo CHtml::tag('div', array('style' => 'margin-top:1em'), 'Тел. ' . implode(', ', $phones));
+echo CHtml::tag('p', array(), 'Это письмо сформированно автоматически. Пожалуйста не отвечайте на него.');
+echo CHtml::tag('p', array('style' => 'margin-top:1em'), 'Тел. ' . implode(', ', $phones));
 echo CHtml::tag('a', array('href' => Yii::app()->createAbsoluteUrl('')), Yii::app()->createAbsoluteUrl(''));
 ?>

@@ -61,7 +61,6 @@ class MinutelyCommand extends CConsoleCommand {
               $params['text'] = 'отменен';
               break;
             default :
-              $message->view = 'payOrder';
               $message->setSubject("Изменение статуса заказа");
               $params['text'] = strtolower($mail->order[0]->status);
               break;
