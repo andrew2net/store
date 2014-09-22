@@ -24,7 +24,7 @@ class PayController extends Controller {
 
       $description = "Интернет-магазин DeMARK, оплата заказа № $id";
 
-      $coupon_discount = $order->getCouponDiscount();
+      $coupon_discount = $order->getCouponSumm();
       $total = $order->productSumm + $order->delivery_summ - $coupon_discount;
       $paied = $order->paySumm;
       $to_pay = $total - $paied;

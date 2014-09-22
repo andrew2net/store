@@ -5,9 +5,9 @@
  *
  * The followings are the available columns in table 'store_mail':
  * @property string $id
- * @property integer $uid
- * @property string $type_id
- * @property string $status_id
+ * @property integer $uid if 0 send notify to email from app options
+ * @property string $type_id 1 - registration; 2 - recovery password; 3 - confirm order; 4 - change order status; 5 - new order notify; 8 - send coupon
+ * @property string $status_id 1 - not sent; 2 - sent
  * @property string $made_time 
  * @property string $sent_time 
  *
@@ -17,18 +17,10 @@
  * @property User $user 
  */
 class Mail extends CActiveRecord {
-//  protected static $types = array(
-//    1 => 'Регистрация',
-//    2 => 'Восстановление пароля',
-//    3 => 'Подтверждение заказа',
-//    4 => 'Изменение статуса заказа',
-//    5 => 'Оповещение о новом заказе',
-//    6 => 'Отправка купона',
-//  );
-//  protected static $statuses = array(
-//    1 => 'Не отправлено',
-//    2 => 'Отправлено',
-//  );
+
+  const TYPE_REGISTRATION = 1, TYPE_RECOVERY_PASSWORD = 2, TYPE_CONFIRM_ORDER = 3,
+      TYPE_CHANGE_ORDER_STATUS = 4, TYPE_NEW_ORDER_NOTIFY = 5, TYPE_SEND_COUPON = 6,
+      STATUS_NOT_SENT = 1, STATUS_SENT = 2;
 
   /**
    * @return string the associated database table name
@@ -44,6 +36,7 @@ class Mail extends CActiveRecord {
     // NOTE: you should only define rules for those attributes that
     // will receive user inputs.
     return array(
+      array('status_id', 'default', 'value' => 1),
       array('uid, type_id, status_id', 'required'),
       array('uid', 'numerical', 'integerOnly' => true),
       array('type_id, status_id', 'length', 'max' => 1),

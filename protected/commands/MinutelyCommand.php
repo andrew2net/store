@@ -11,9 +11,13 @@ class MinutelyCommand extends CConsoleCommand {
     Yii::import('application.modules.admin.models.Mail');
     Yii::import('application.modules.admin.models.MailOrder');
     Yii::import('application.models.Order');
+    Yii::import('application.models.OrderProduct');
     Yii::import('application.models.CustomerProfile');
+    Yii::import('application.modules.catalog.models.Product');
     Yii::import('application.modules.user.models.User');
     Yii::import('application.modules.user.models.Profile');
+    Yii::import('application.modules.delivery.models.Delivery');
+    Yii::import('application.modules.payments.models.Payment');
     Yii::import('ext.yii-mail.YiiMailMessage');
 
 //    $conn = explode('=', $argv[2]);
@@ -28,39 +32,45 @@ class MinutelyCommand extends CConsoleCommand {
       $message->setFrom(Yii::app()->params['infoEmail']);
       $message->setTo(array($mail->user->email => $mail->user->profile->first_name . ' ' . $mail->user->profile->last_name));
       switch ($mail->type_id) {
-        case 3: //confirm order
+        case Mail::TYPE_CONFIRM_ORDER:
           $message->view = 'confirmOrder';
-          $message->setSubject("Оплата заказа");
-          $params['text'] = 'готов к оплате';
+          $params['order'] = $mail->order[0];
+          $params['profile'] = $mail->user->profile;
+          $message->setSubject("Ваш заказ");
           break;
-        case 4: //change order status
+        case Mail::TYPE_CHANGE_ORDER_STATUS:
           $message->view = 'processOrder';
           $params['order'] = $mail->order[0];
           $params['profile'] = $mail->user->profile;
           switch ($mail->order[0]->status_id) {
-            case 4:
+            case Order::STATUS_WAITING_FOR_PAY:
               $message->view = 'payOrder';
               $message->setSubject("Оплата заказа");
               $params['text'] = 'готов к оплате';
               break;
-            case 5:
+            case Order::STATUS_PAID:
               $message->setSubject("Поступила оплата");
               $params['text'] = 'оплачен и готов к отгрузке';
               break;
-            case 6:
+            case Order::STATUS_SENT:
               $message->setSubject("Заказ отгружен");
               $params['text'] = 'отгружен со склада';
               break;
-            case 7:
+            case Order::STATUS_CANCELED:
               $message->setSubject("Отмена заказа");
               $params['text'] = 'отменен';
               break;
             default :
               $message->view = 'payOrder';
               $message->setSubject("Изменение статуса заказа");
-              $params['text'] = $mail->order[0]->status;
+              $params['text'] = strtolower($mail->order[0]->status);
               break;
           }
+          break;
+        case Mail::TYPE_NEW_ORDER_NOTIFY:
+          $message->view = 'notifyOrder';
+          $params['order'] = $mail->order[0];
+          $message->setSubject('Оповещение о заказе');
       }
       $message->setBody($params, 'text/html');
       $n = Yii::app()->mail->send($message);

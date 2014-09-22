@@ -1,7 +1,7 @@
 <?php
-/* @var $customer_profile CustomerProfile */
 /* @var $profile Profile */
 /* @var $order Order */
+/* @var $this CController */
 ?>
 <!DOCTYPE html>
 <html>
@@ -15,12 +15,9 @@
     echo CHtml::tag('div', array(), 'Ваш заказ принят. В ближайшее время Вам придет уведомление о резервировании товара.');
     $params = array(
       'order' => $order,
-      'profile' => $customer_profile,
     );
-    if (isset($coupon_discount))
-      $params['coupon_discount'] = $coupon_discount;
-    $this->renderPartial('//mail/_order', $params);
-    $this->renderPartial('//mail/_footer');
+    $this->renderInternal(dirname(__FILE__) . '/_order.php', $params);
+    $this->renderInternal(dirname(__FILE__) . '/_footer.php');
     ?>
   </body>
 </html>

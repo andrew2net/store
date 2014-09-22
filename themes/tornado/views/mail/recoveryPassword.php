@@ -1,6 +1,7 @@
 <?php
 /* @var $profile Profile */
 /* @var $message array */
+/* @var $this CController */
 ?>
 <!DOCTYPE html>
 <html>
@@ -15,7 +16,7 @@
     echo CHtml::tag('div', array(), 'Для получения нового пароля перейдите по ссылке ', FALSE);
     echo CHtml::tag('a', array('href'=>$message['activation_url']), $message['activation_url']);
     echo CHtml::closeTag('div');
-    $this->renderPartial('//mail/_footer');
+    $this->renderInternal(dirname(__FILE__) . '/_footer.php');
     ?>
   </body>
 </html>

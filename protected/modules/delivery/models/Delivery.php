@@ -35,6 +35,10 @@
  */
 class Delivery extends CActiveRecord {
 
+  const SIZE_LENGTH_CIRCLE_SUMM = 1, SIZE_LENGTH_WIDTH_HEIGHT = 2;
+  const ZONE_KAZPOST = 1, ZONE_KAZEMS = 2, ZONE_NRJ = 3, ZONE_CUSTOM = 4, ZONE_COURIER = 5, ZONE_SELF = 6;
+  const NRJ_AUTO = 1, NRJ_AVIA = 2, NRJ_RW = 3;
+
   private static $size_methods = array(1 => 'Сумма длины и окружности', 2 => 'Ограничение дл. шир. выс.');
   private static $zone_type = array(1 => 'КазПочта', 2 => 'EMS-Казахстан', 3 => 'т/к Энергия', 4 => 'т/к покупателя', 5 => 'Курьер', 6 => 'Самовывоз');
   private static $nrj_types = array(1 => 'avto', 2 => 'avia', 3 => 'rw');
@@ -308,13 +312,13 @@ class Delivery extends CActiveRecord {
           $oversize = isset($parcel['oversize']) && $parcel['oversize'] ? 1 + $delivery->oversize / 100 : 1;
 
           switch ($delivery->zone_type_id) {
-            case 3:
+            case Delivery::ZONE_NRJ:
               $nrj_places++;
               $nrj_weght += $parcel['weight'];
               break;
-            case 4:
-            case 5:
-            case 6:
+            case Delivery::ZONE_CUSTOM:
+            case Delivery::ZONE_COURIER:
+            case Delivery::ZONE_SELF:
               break;
             default :
               $deliveryRate = self::getDeliveryRate($delivery, $parcel['weight']);
@@ -365,7 +369,7 @@ class Delivery extends CActiveRecord {
                   ), $delivery->name);
         }
         switch ($delivery->zone_type_id) {
-          case 3: //it's Energy delivery company
+          case Delivery::ZONE_NRJ: //it's Energy delivery company
             if (!isset($nrj_deliveries))
               if ($location && $location != $location_from) {
                 $nrj_ch = curl_init("http://api.nrg-tk.ru/api/rest/?method=nrg.calculate&from=$location_from->id&to=$location->id&weight=$nrj_weght&volume=0&place=$nrj_places");
@@ -409,7 +413,7 @@ class Delivery extends CActiveRecord {
               }
             }
             continue 2;
-          case 4: //it's customer delivery company
+          case Delivery::ZONE_CUSTOM: //it's customer delivery company
             if ($type == 0) {
               $storage_delivery[$delivery->id]['summ'] = $price; //save price for order
               $html_options = array();
@@ -426,8 +430,8 @@ class Delivery extends CActiveRecord {
               continue 2;
             }
             break;
-          case 5:
-          case 6:
+          case Delivery::ZONE_COURIER:
+          case Delivery::ZONE_SELF:
             if ($type == 0) {
               $storage_delivery[$delivery->id]['summ'] = $price; //save price for order
               $output .= ' (' . $delivery->description . ') ';
@@ -508,7 +512,7 @@ class Delivery extends CActiveRecord {
     //check if there are items that oversize for size method 0 or overweight for size method 1
     $oversize_items = array();
     switch ($delivery->size_method_id) {
-      case 1:
+      case Delivery::SIZE_LENGTH_CIRCLE_SUMM:
         foreach ($items as $item) {
           if ($item[0] > $volume[0] || $item[1] > $volume[1] || $item[2] > $volume[2] ||
               $item[0] > $volume[0] || $item[2] > $volume[1] || $item[1] > $volume[2] ||
@@ -528,7 +532,7 @@ class Delivery extends CActiveRecord {
           }
         }
 //        break;
-      case 2:
+      case Delivery::SIZE_LENGTH_WIDTH_HEIGHT:
         foreach ($items as $item) {
           if ($item[3] > $delivery->max_weight) {
             $oversize_items[] = $item[4];
@@ -541,13 +545,13 @@ class Delivery extends CActiveRecord {
 
     $parcels = array();
     switch ($delivery->size_method_id) {
-      case 1:
+      case Delivery::SIZE_LENGTH_CIRCLE_SUMM:
         while (count($items) > 0) {
           $parcels['parcels'][] = array('weight' => self::makeParcel($items, $volume, $delivery));
         }
         $parcels['result'] = true;
         break;
-      case 2:
+      case Delivery::SIZE_LENGTH_WIDTH_HEIGHT:
         while (count($items) > 0) {
           $parcel_items = array();
           $weight = 0;
@@ -613,12 +617,12 @@ class Delivery extends CActiveRecord {
           $height = max(array($data['height'], $volume[5] + $item[$orientation[2]]));
 
           switch ($delivery->size_method_id) {
-            case 1:
+            case Delivery::SIZE_LENGTH_CIRCLE_SUMM:
               $size_summ = $length + ($width + $height) * 2;
               if ($size_summ > $delivery->size_summ)
                 continue 2;
               break;
-            case 2:
+            case Delivery::SIZE_LENGTH_WIDTH_HEIGHT:
 //              $data['oversize'] = ($length > $delivery->length) || $data['oversize'];
               break;
           }
@@ -659,10 +663,10 @@ class Delivery extends CActiveRecord {
     $options = array();
     foreach ($items as $item) {
       switch ($item->zone_type_id) {
-        case 3:
+        case Delivery::ZONE_NRJ:
           $options[$item->id] = $item->name . ' (' . $item->transportType . ')';
           break;
-        case 4:
+        case Delivery::ZONE_CUSTOM:
           $options[$item->id] = $item->zone_type;
           break;
         default :

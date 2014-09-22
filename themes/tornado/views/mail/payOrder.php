@@ -2,6 +2,7 @@
 /* @var $profile Profile */
 /* @var $order Order */
 /* @var $text string */
+/* @var $this CController */
 ?>
 <!DOCTYPE html>
 <html>

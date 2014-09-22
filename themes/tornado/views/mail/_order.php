@@ -1,6 +1,5 @@
 <?php
 
-/* @var $coupon_discount float */
 /* @var $order Order */
 
 echo CHtml::tag('table');
@@ -63,10 +62,10 @@ echo CHtml::tag('td', array('colspan' => 4, 'style' => 'text-align:right'), 'С�
 echo CHtml::tag('td', array('style' => 'text-align:right;border-left:1px solid'), money_format('%n', $order->delivery_summ));
 echo CHtml::closeTag('tr');
 echo CHtml::tag('tr', array('style' => 'border:2px solid'));
-if (isset($coupon_discount)) {
-  $total -= $coupon_discount;
+if ($couponSumm = $order->getCouponSumm() > 0) {
+  $total -= $couponSumm;
   echo CHtml::tag('td', array('colspan' => 4, 'style' => 'text-align:right'), 'Скидка по купону:');
-  echo CHtml::tag('td', array('style' => 'text-align:right;border-left:1px solid'), money_format('%n', $coupon_discount));
+  echo CHtml::tag('td', array('style' => 'text-align:right;border-left:1px solid'), money_format('%n', $couponSumm));
   echo CHtml::closeTag('tr');
 }
 echo CHtml::tag('tr', array('style' => 'border:2px solid'));

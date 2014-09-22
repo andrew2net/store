@@ -82,14 +82,14 @@ class DefaultController extends Controller {
             foreach ($products as $value) {
               $value->save();
             }
-            if ($model->coupon && $model->coupon->type_id == 0 &&
-                $model->coupon->used_id != 1) {
+            if ($model->coupon && $model->coupon->type_id == Coupon::TYPE_SUMM &&
+                $model->coupon->used_id != Coupon::STATUS_PERMANENT) {
               if ($model->notDiscountSumm < $model->coupon->value) {
-                $model->coupon->used_id = 0;
+                $model->coupon->used_id = Coupon::STATUS_NOT_USED;
                 $model->coupon->time_used = '0000-00-00 00:00:00';
               }
               else {
-                $model->coupon->used_id = 2;
+                $model->coupon->used_id = Coupon::STATUS_USED;
                 $model->coupon->time_used = Yii::app()->
                     dateFormatter->format('yyyy-MM-dd HH:mm:ss', $model->time);
               }
@@ -98,8 +98,8 @@ class DefaultController extends Controller {
             if ($old_status != $model->status_id) {
               $mail = new Mail;
               $mail->uid = $model->profile->user_id;
-              $mail->type_id = 4;
-              $mail->status_id = 1;
+              $mail->type_id = Mail::TYPE_CHANGE_ORDER_STATUS;
+//              $mail->status_id = 1;
               if ($mail->save()) {
                 $mailOrder = new MailOrder;
                 $mailOrder->mail_id = $mail->id;

@@ -144,7 +144,7 @@ class CartController extends Controller {
             throw $e;
           }
           if ($fl) {
-            $this->sendConfirmOrderMessage($order, $customer_profile, $profile, $count_products['couponDisc']);
+            $this->sendConfirmOrderMessage($order);
             $this->redirect(Yii::app()->createUrl('/pay/order', array('id' => $order->id)));
           }
         }
@@ -215,9 +215,7 @@ class CartController extends Controller {
       $result['summ'] += $quantity * $price;
     }
     if ($coupon && !$coupon->type_id)
-      if ($result['summ'] < 1800 || $result['discount'] > $coupon->value)
-        $result['couponDisc'] = 0;
-      else if ($coupon->value < $result['couponDisc'])
+      if ($coupon->value < $result['couponDisc'])
         $result['couponDisc'] = $coupon->value;
     return $result;
   }
@@ -410,26 +408,41 @@ class CartController extends Controller {
     Yii::app()->end();
   }
 
-  private function sendConfirmOrderMessage(Order $order, $customer_profile, $profile, $coupon_discount = NULL) {
-    $message = new YiiMailMessage('Ваш заказ');
-    $message->view = 'confirmOrder';
-    $params = array(
-      'customer_profile' => $customer_profile,
-      'profile' => $profile,
-      'order' => $order,
-    );
-    if ($coupon_discount > 0)
-      $params['coupon_discount'] = $coupon_discount;
-    $message->setBody($params, 'text/html');
-    $message->setFrom(Yii::app()->params['infoEmail']);
-    $message->setTo(array($order->email => $profile->first_name . ' ' . $profile->last_name));
-    Yii::app()->mail->send($message);
+  private function sendConfirmOrderMessage(Order $order) {
+    Yii::import('application.modules.admin.models.Mail');
+    Yii::import('application.modules.admin.models.MailOrder');
 
-    $message->setSubject('Оповещение о заказе');
-    $message->view = 'notifyOrder';
-    $message->setBody($params, 'text/html');
-    $message->setTo(array(Yii::app()->params['adminEmail']));
-    Yii::app()->mail->send($message);
+    $tr = Yii::app()->db->beginTransaction();
+    try {
+      $mail = new Mail;
+      $mail->uid = $order->profile->user_id;
+      $mail->type_id = Mail::TYPE_CONFIRM_ORDER;
+      if ($mail->save()) {
+        $mailOrder = new MailOrder;
+        $mailOrder->mail_id = $mail->id;
+        $mailOrder->order_id = $order->id;
+        $mailOrder->save();
+      }
+
+      foreach (Yii::app()->params['notifyTo'] as $username) {
+        $user = User::model()->findByAttributes(array('username' => $username));
+        if ($user) {
+          $notifyMail = new Mail;
+          $notifyMail->type_id = Mail::TYPE_NEW_ORDER_NOTIFY;
+          $notifyMail->uid = $user->id;
+          if ($notifyMail->save()) {
+            $mailOrder = new MailOrder;
+            $mailOrder->mail_id = $notifyMail->id;
+            $mailOrder->order_id = $order->id;
+            $mailOrder->save();
+          }
+        }
+      }
+      $tr->commit();
+    } catch (Exception $ex) {
+      $tr->rollback();
+      throw $ex;
+    }
   }
 
   public function actionCheckEmail() {

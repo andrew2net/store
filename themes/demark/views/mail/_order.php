@@ -1,6 +1,5 @@
 <?php
 
-/* @var $coupon_discount float */
 /* @var $order Order */
 
 echo CHtml::tag('table');
@@ -27,14 +26,14 @@ echo CHtml::tag('div', array(), 'Вид доставки: ' . CHtml::encode($del
 echo CHtml::tag('div', array('style' => 'margin-bottom:1em'), 'Вид оплаты: ' . $order->payment->name);
 echo CHtml::closeTag('td');
 echo CHtml::tag('td', array('style' => 'vertical-align: top; padding-left: 20px'));
-echo CHtml::tag('div', array('style' => 'font-weight:bold;margin-top:1em'), 'Реквизиты для оплаты:');
-echo CHtml::tag('div', array(), 'Получатель: ' . Yii::app()->params['enterprise']['name']);
-echo CHtml::tag('div', array(), 'ИНН: ' . Yii::app()->params['enterprise']['inn'] . ' КПП:' . Yii::app()->params['enterprise']['kpp']);
-echo CHtml::tag('div', array(), 'Юр. адрес: ' . Yii::app()->params['enterprise']['legal_address']);
-echo CHtml::tag('div', array(), 'Банк получателя: ' . Yii::app()->params['enterprise']['bank']['name']);
-echo CHtml::tag('div', array(), 'БИК: ' . Yii::app()->params['enterprise']['bank']['bik']);
-echo CHtml::tag('div', array(), 'Корр. счет: ' . Yii::app()->params['enterprise']['bank']['ks']);
-echo CHtml::tag('div', array(), 'Расч. счет: ' . Yii::app()->params['enterprise']['bank']['rs']);
+//echo CHtml::tag('div', array('style' => 'font-weight:bold;margin-top:1em'), 'Реквизиты для оплаты:');
+//echo CHtml::tag('div', array(), 'Получатель: ' . Yii::app()->params['enterprise']['name']);
+//echo CHtml::tag('div', array(), 'ИНН: ' . Yii::app()->params['enterprise']['inn'] . ' КПП:' . Yii::app()->params['enterprise']['kpp']);
+//echo CHtml::tag('div', array(), 'Юр. адрес: ' . Yii::app()->params['enterprise']['legal_address']);
+//echo CHtml::tag('div', array(), 'Банк получателя: ' . Yii::app()->params['enterprise']['bank']['name']);
+//echo CHtml::tag('div', array(), 'БИК: ' . Yii::app()->params['enterprise']['bank']['bik']);
+//echo CHtml::tag('div', array(), 'Корр. счет: ' . Yii::app()->params['enterprise']['bank']['ks']);
+//echo CHtml::tag('div', array(), 'Расч. счет: ' . Yii::app()->params['enterprise']['bank']['rs']);
 echo CHtml::closeTag('td');
 echo CHtml::closeTag('table');
 
@@ -63,10 +62,10 @@ echo CHtml::tag('td', array('colspan' => 4, 'style' => 'text-align:right'), 'С�
 echo CHtml::tag('td', array('style' => 'text-align:right;border-left:1px solid'), money_format('%n', $order->delivery_summ));
 echo CHtml::closeTag('tr');
 echo CHtml::tag('tr', array('style' => 'border:2px solid'));
-if (isset($coupon_discount)) {
-  $total -= $coupon_discount;
+if ($couponSumm = $order->getCouponSumm() > 0) {
+  $total -= $couponSumm;
   echo CHtml::tag('td', array('colspan' => 4, 'style' => 'text-align:right'), 'Скидка по купону:');
-  echo CHtml::tag('td', array('style' => 'text-align:right;border-left:1px solid'), money_format('%n', $coupon_discount));
+  echo CHtml::tag('td', array('style' => 'text-align:right;border-left:1px solid'), money_format('%n', $couponSumm));
   echo CHtml::closeTag('tr');
 }
 echo CHtml::tag('tr', array('style' => 'border:2px solid'));

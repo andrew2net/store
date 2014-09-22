@@ -37,10 +37,14 @@
  * @property float $paySumm
  * @property float $productSumm
  * @property float $discountSumm 
- * @property float $notDiscountSumm 
+ * @property float $notDiscountSumm summ of goods without discount 
  * @property Currency $currency
  */
 class Order extends CActiveRecord {
+
+  const STATUS_UNPROCESS = 1, STATUS_IN_PROCESS = 2, STATUS_GOODS_NOT_AVAILABLE = 3,
+      STATUS_WAITING_FOR_PAY = 4, STATUS_PAID = 5, STATUS_SENT = 6, STATUS_CANCELED = 7,
+      STATUS_SHIPED = 8;
 
   public $summ;
   private static $statuses = array(
@@ -62,14 +66,14 @@ class Order extends CActiveRecord {
     return self::$statuses[$this->status_id];
   }
 
-  private static $call_times = array(
-    '0' => 'Любое время',
-    '1' => 'с 9 до 12',
-    '2' => 'с 12 до 14',
-    '3' => 'с 14 до 18',
-    '4' => 'с 18 до 20',
-  );
-
+//  private static $call_times = array(
+//    '0' => 'Любое время',
+//    '1' => 'с 9 до 12',
+//    '2' => 'с 12 до 14',
+//    '3' => 'с 14 до 18',
+//    '4' => 'с 18 до 20',
+//  );
+//
   public static function getCallTimes() {
     return self::$call_times;
   }
@@ -129,7 +133,7 @@ class Order extends CActiveRecord {
   }
 
   public function customerDelivery($attribute, $params) {
-    if ($this->delivery_id == 4 && empty($this->$attribute))
+    if ($this->delivery->zone_type_id == Delivery::ZONE_CUSTOM && empty($this->$attribute))
       $this->addError($attribute, 'Укажите наименование транспортной компании');
   }
 
@@ -250,26 +254,42 @@ class Order extends CActiveRecord {
     return parent::beforeSave();
   }
 
-  public function getCouponDiscount() {
+//  public function getCouponDiscount() {
+//    Yii::import('application.modules.discount.models.Coupon');
+//    $summa = 0;
+//    $total = 0;
+//    if ($this->coupon) {
+//      foreach ($this->orderProducts as $product) {
+//        $total += $product->price * $product->quantity;
+//        if ($product->discount == 0)
+//          if ($this->coupon->type_id)
+//            $summa += $product->price * $product->quantity * $this->coupon->value / 100;
+//          else
+//            $summa += $product->price * $product->quantity;
+//      }
+//      if (!$this->coupon->type_id)
+//        if ($this->coupon->value < $summa)
+//          $summa = $this->coupon->value;
+//    }
+//    return $summa;
+//  }
+
+  public function getCouponSumm() {
     Yii::import('application.modules.discount.models.Coupon');
-    $summa = 0;
-    $total = 0;
-    if ($this->coupon) {
-      foreach ($this->orderProducts as $product) {
-        $total += $product->price * $product->quantity;
-        if ($product->discount == 0)
-          if ($this->coupon->type_id)
-            $summa += $product->price * $product->quantity * $this->coupon->value / 100;
-          else
-            $summa += $product->price * $product->quantity;
-      }
-      if (!$this->coupon->type_id)
-        if ($total < 1800)
-          $summa = 0;
-        else if ($this->coupon->value < $summa)
-          $summa = $this->coupon->value;
+
+    $couponSumm = 0;
+
+    if (is_null($this->coupon))
+      return $couponSumm;
+
+    switch ($this->coupon->type_id) {
+      case 0:
+        $couponSumm = $this->coupon->value < $this->notDiscountSumm ? $this->coupon->value : $this->notDiscountSumm;
+        break;
+      case 1:
+        $couponSumm = $this->notDiscountSumm * $this->coupon->value / 100;
     }
-    return $summa;
+    return $couponSumm;
   }
 
 }

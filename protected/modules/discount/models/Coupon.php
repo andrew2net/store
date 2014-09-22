@@ -23,6 +23,8 @@
  */
 class Coupon extends CActiveRecord {
 
+  const TYPE_SUMM = 0, TYPE_PERCENT = 1, STATUS_NOT_USED = 0, STATUS_PERMANENT = 1, STATUS_USED = 2;
+
   private $types = array(0 => 'Сумма', 1 => 'Процент');
   private $used = array(0 => 'Неиспользован', 1 => 'Многоразовый'
     , 2 => 'Использован');
@@ -80,9 +82,9 @@ class Coupon extends CActiveRecord {
       array('id, code, type_id, value, used_id, time_issue, time_used', 'safe', 'on' => 'search'),
     );
   }
-  
-  public function valueTengeValidate($attribute){
-    if ($this->type_id==0 && empty($this->$attribute))
+
+  public function valueTengeValidate($attribute) {
+    if ($this->type_id == 0 && empty($this->$attribute))
       $this->addError($attribute, 'Значение не может быть пустым');
   }
 
@@ -188,8 +190,8 @@ class Coupon extends CActiveRecord {
   private function getExcludeCodes() {
 
     $formatArray = function ($element) {
-          return $element['code'];
-        };
+      return $element['code'];
+    };
 
     $date = date('Y-m-d', strtotime('-' . self::DAYS_BEFORE_REUSE_CODE . ' day'));
     $sql = array(
@@ -279,4 +281,3 @@ class Coupon extends CActiveRecord {
   }
 
 }
-

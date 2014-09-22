@@ -1,6 +1,7 @@
 <?php
 /* @var $profile CustomerProfile */
 /* @var $coupon Coupon */
+/* @var $this CController */
 ?>
 <!DOCTYPE html>
 <html>
@@ -15,6 +16,6 @@
     <p>Введите купон при оформлении заказа и получите скидку.</p><br>
     <p style="font-size:14pt;">Купон:<span style="font-weight: bold"><?php echo $coupon->code; ?></span></p>
     <p><span style="font-weight:bold">Внимание!</span> Купон нужно использовать в течении <span style="font-weight:bold">3х дней</span>, затем он будет аннулирован.</p><br>
-    <?php $this->renderPartial('//mail/_footer'); ?>
+    <?php $this->renderInternal(dirname(__FILE__) . '/_footer.php'); ?>
   </body>
 </html>

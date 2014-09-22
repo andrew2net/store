@@ -1,6 +1,6 @@
 <?php
-/* @var $profile CustomerProfile */
 /* @var $order Order */
+/* @var $this CController */
 ?>
 <!DOCTYPE html>
 <html>
@@ -12,12 +12,9 @@
     <?php
     $params = array(
       'order' => $order,
-      'profile' => $profile,
     );
-    if (isset($coupon_discount))
-      $params['coupon_discount'] = $coupon_discount;
-    $this->renderPartial('//mail/_order', $params);
-    $this->renderPartial('//mail/_footer');
+    $this->renderInternal(dirname(__FILE__) . '/_order.php', $params);
+//    $this->renderInternal(dirname(__FILE__) . '/_footer.php');
     ?>
   </body>
 </html>
