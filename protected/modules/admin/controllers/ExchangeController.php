@@ -135,18 +135,22 @@ class ExchangeController extends CController {
             fclose($file);
             $model->img = $imgPath . $fileName;
 
-            $imgSmall = base64_decode($item->images->image[0]->small);
-            $imagickSmall = new Imagick;
-            $imagickSmall->readimageblob($imgSmall);
-            $extSmall = '.' . strtolower($imagickSmall->getimageformat());
-            $imagickSmall->destroy();
-            $fileNameSmall = $model->id . 's' . $extSmall;
-            $fileSmall = fopen($rootPath . $imgPath . $fileNameSmall, 'w+');
-            fwrite($fileSmall, $imgSmall);
-            unset($imgSmall);
-            fclose($fileSmall);
-            $model->small_img = $imgPath . $fileNameSmall;
-//            $model->createThumbnail();
+            if (isset($item->images->image[0]->small)) {
+              $imgSmall = base64_decode($item->images->image[0]->small);
+              $imagickSmall = new Imagick;
+              $imagickSmall->readimageblob($imgSmall);
+              $extSmall = '.' . strtolower($imagickSmall->getimageformat());
+              $imagickSmall->destroy();
+              $fileNameSmall = $model->id . 's' . $extSmall;
+              $fileSmall = fopen($rootPath . $imgPath . $fileNameSmall, 'w+');
+              fwrite($fileSmall, $imgSmall);
+              unset($imgSmall);
+              fclose($fileSmall);
+              $model->small_img = $imgPath . $fileNameSmall;
+            }
+            else
+              $model->createThumbnail();
+
             $this->validate($code . ': ' . $name, $model, $resultDOM, $resultRootNode, array('img', 'small_img'));
             if (!$model->update(array('img', 'small_img'))) {
               Yii::trace('Image fail save', '1c_exchange');
