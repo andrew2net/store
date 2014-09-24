@@ -27,7 +27,6 @@ class AdminModule extends CWebModule {
     Yii::app()->setComponents(array(
       'user' => array(
         'loginUrl' => Yii::app()->createUrl('/admin/login'),
-//        'returnUrl' => Yii::app()->createAbsoluteUrl('/admin'),
         'class' => 'auth.components.AuthWebUser',
       )
         )

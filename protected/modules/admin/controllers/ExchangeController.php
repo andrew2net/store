@@ -121,17 +121,32 @@ class ExchangeController extends CController {
 
         if (isset($item->images)) {
           if (isset($item->images->image[0])) {
-            $img_path = '/images/' . Yii::app()->params['img_storage'] . '/product/';
-            $img = base64_decode($item->images->image[0]);
+            $imgPath = '/images/' . Yii::app()->params['img_storage'] . '/product/';
+            $rootPath = Yii::getPathOfAlias('webroot');
+            $img = base64_decode($item->images->image[0]->original);
             $imagick = new Imagick;
             $imagick->readimageblob($img);
             $ext = '.' . strtolower($imagick->getimageformat());
             $imagick->destroy();
-            $file = fopen(Yii::getPathOfAlias('webroot') . $img_path . $model->id . $ext, 'w+');
+            $fileName = $model->id . $ext;
+            $file = fopen($rootPath . $imgPath . $fileName, 'w+');
             fwrite($file, $img);
+            unset($img);
             fclose($file);
-            $model->img = $img_path . $model->id . $ext;
-            $model->createThumbnail();
+            $model->img = $imgPath . $fileName;
+
+            $imgSmall = base64_decode($item->images->image[0]->small);
+            $imagickSmall = new Imagick;
+            $imagickSmall->readimageblob($imgSmall);
+            $extSmall = '.' . strtolower($imagickSmall->getimageformat());
+            $imagickSmall->destroy();
+            $fileNameSmall = $model->id . 's' . $extSmall;
+            $fileSmall = fopen($rootPath . $imgPath . $fileNameSmall, 'w+');
+            fwrite($fileSmall, $imgSmall);
+            unset($imgSmall);
+            fclose($fileSmall);
+            $model->small_img = $imgPath . $fileNameSmall;
+//            $model->createThumbnail();
             $this->validate($code . ': ' . $name, $model, $resultDOM, $resultRootNode, array('img', 'small_img'));
             if (!$model->update(array('img', 'small_img'))) {
               Yii::trace('Image fail save', '1c_exchange');
