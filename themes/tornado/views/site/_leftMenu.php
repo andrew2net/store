@@ -17,10 +17,23 @@
     foreach ($groups1 as $value1) {
       /* @var $value1 Category */
       /* @var $value1 NestedSetBehavior */
+      $groups2 = $value1->children()->findAll();
+      $items2 = array();
+      foreach ($groups2 as $value2) {
+        /* @var $value2 Category */
+        /* @var $value2 NestedSetBehavior */
+        $items2[] = array(
+          'label' => $value2->name,
+          'url' => Yii::app()->createUrl('group', array('id' => $value2->id)),
+          'active' => isset($group) && $value2->id == $group->id,
+        );
+      }
       $items1[] = array(
         'label' => $value1->name,
         'url' => Yii::app()->createUrl('group', array('id' => $value1->id)),
         'active' => isset($group) && $value1->id == $group->id,
+        'items' => $items2,
+        'submenuOptions' => array('class' => 'left-submenu2'),
       );
     }
     $items[] = array(
@@ -41,7 +54,7 @@
   ));
   ?>
   <!--  <div>
-  <?php // echo CHtml::link($value->name, '/group', array('id' => $value->id)); ?>
+  <?php // echo CHtml::link($value->name, '/group', array('id' => $value->id));  ?>
     </div>-->
-  <?php // } ?>
+  <?php // }  ?>
 </div>
