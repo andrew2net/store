@@ -962,7 +962,7 @@ td.text-right{
 .left-menu-item:hover .left-submenu1{
   display: inline;
 }
-.left-submenu1 > .left-menu-item{
+.left-submenu1 > .left-menu-item, .left-submenu2 > .left-menu-item{
   border-radius: 3px;
 }
 
