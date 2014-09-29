@@ -355,3 +355,21 @@ fieldset legend{
 #order-product td:nth-child(2){
   width: 100%;
 }
+
+.ruble, .tenge{
+  margin-left: -0.3em;
+  font-weight: normal;
+}
+
+.ruble:before{
+  content: '\2013';
+  position: relative;
+  left: 3.8em;
+  top: 0.07em;
+}
+.ruble:after{
+  content: 'P';
+}
+.tenge:after{
+  content: '₸';
+}
