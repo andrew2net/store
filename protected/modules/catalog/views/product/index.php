@@ -58,15 +58,33 @@ $columns = array(
 //      'value' => '$data->brand->name',
 //      'filter' => $model->getBrandOptions(),
 //    ),
-  'remainder',
-  'price',);
+  array(
+    'name' => 'remainder',
+    'value' => '$data->remainder',
+    'headerHtmlOptions' => array('style' => 'text-align: right; padding-right:27px'),
+    'filterHtmlOptions' => array('style' => 'text-align: right'),
+    'htmlOptions' => array('style' => 'text-align: right; padding-right:27px'),
+  ),
+  array(
+    'header' => ' Цена  ',
+    'value' => '$data->price',
+    'headerHtmlOptions' => array('class' => 'ruble', 'style' => 'text-align: right'),
+    'htmlOptions' => array('style' => 'text-align: right'),
+  ),);
 if (Yii::app()->params['mcurrency'])
-  $columns = array_merge($columns, array('price_tenge'));
+  $columns = array_merge($columns, array(
+    array(
+      'header' => 'Цена ',
+      'value' => '$data->price_tenge',
+      'headerHtmlOptions' => array('class' => 'tenge', 'style' => 'text-align: right'),
+      'htmlOptions' => array('style' => 'text-align: right'),
+  )));
 $columns = array_merge($columns, array(
   array(
     'name' => 'show_me',
     'value' => '$data->show_me ? "Да" : "Нет"',
     'filter' => array(0 => 'Нет', 1 => 'Да'),
+    'htmlOptions' => array('style' => 'text-align: center'),
   ),
   array(
     'class' => 'bootstrap.widgets.TbButtonColumn',
@@ -97,7 +115,7 @@ $this->widget('bootstrap.widgets.TbModal', array(
 <?php Yii::app()->clientScript->registerScriptFile('/js/jquery.iframe-transport.js'); ?>
 <?php Yii::app()->clientScript->registerScriptFile('/js/jquery.fileupload.js'); ?>
 <script type="text/javascript">
-  $(function() {
+  $(function () {
     var i;
     var lines;
     function uploadData() {
@@ -113,7 +131,7 @@ $this->widget('bootstrap.widgets.TbModal', array(
               {
                 data: postData,
                 uploadImage: uploadImage
-              }, function(data) {
+              }, function (data) {
         if (data === 'ok') {
           uploadCallBack();
         } else {
@@ -122,7 +140,7 @@ $this->widget('bootstrap.widgets.TbModal', array(
       });
     }
 
-    var uploadCallBack = function() {
+    var uploadCallBack = function () {
       var percent = Math.round(i / lines.length * 100);
       var width = percent + '%';
       $('#uploadProgress .bar').css('width', width);
@@ -132,11 +150,11 @@ $this->widget('bootstrap.widgets.TbModal', array(
         closeModal();
     }
 
-    $('#fileToUpload').change(function(event) {
+    $('#fileToUpload').change(function (event) {
       var input = event.target;
 
       var reader = new FileReader();
-      reader.onload = function(event) {
+      reader.onload = function (event) {
         var reader = event.target;
         var dataURL = reader.result;
         lines = dataURL.split(/\r\n/g);
@@ -148,7 +166,7 @@ $this->widget('bootstrap.widgets.TbModal', array(
     });
 
     function uploadProgress() {
-      $.get('/admin/catalog/product/uploadProgress', function(data) {
+      $.get('/admin/catalog/product/uploadProgress', function (data) {
         $('#uploadProgress .bar').css('width', data);
       });
     }
@@ -165,7 +183,7 @@ $this->widget('bootstrap.widgets.TbModal', array(
       });
     }
 
-    $('#cancelUpload, #productUploadModel .close').click(function() {
+    $('#cancelUpload, #productUploadModel .close').click(function () {
       closeModal();
     });
   });
