@@ -352,8 +352,7 @@ input[type=checkbox]:checked + label:before, .weekcarousel-prev,
   display: table-cell;
   vertical-align: middle;
   padding: 0 5px;
-  background: whitesmoke;
-  border: 1px solid white;
+  border-bottom: 1px solid #D4D4D4;
 }
 .item-inline-img{
   width: 100px;
@@ -954,7 +953,7 @@ td.text-right{
 }
 .left-submenu2, .left-submenu1{
   list-style-type: none;
-  background: #F8EFC4;
+  background: rgba(248,239,196, 0.9);
 }
 .left-submenu2{
   font-size: 9pt;
