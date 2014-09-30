@@ -21,6 +21,7 @@ $this->widget('ext.bootstrap.widgets.TbGridView', array(
 //  'filter' => $model,
   'columns' => array(
     'name',
+    'unit',
     array(
       'name' => 'type_id',
       'value' => '$data->type',

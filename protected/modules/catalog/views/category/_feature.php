@@ -16,7 +16,7 @@ $feature = Feature::model()->with(array(
     <?php foreach ($feature as $value) { ?>
       <tr>
         <td><?php echo TbHtml::checkBox("feature[$value->id]", isset($value->categoryFeatures[0])); ?></td>
-        <td><?php echo $value->name; ?></td>
+        <td><?php echo $value->name . ' ' . $value->unit; ?></td>
       </tr>
     <?php } ?>
   </table>
