@@ -31,7 +31,7 @@
       </tr>
       <?php foreach ($values as $key => $value) { ?>
         <tr>
-          <td><?php echo TbHtml::activeTextField($value, "[$key]value", array('style' => 'width:90px')); ?></td>
+          <td><?php echo TbHtml::activeTextField($value, "[$key]value", array('style' => 'width:230px')); ?></td>
           <td><?php echo TbHtml::icon(TbHtml::ICON_TRASH, array('title' => 'Удалить')); ?></td>
         </tr>
       <?php } ?>
@@ -71,7 +71,7 @@
     var row = lastRow.clone();
     var input = $(row).find('input');
     if (input.length === 0)
-      $(row).find('td').first().append('<input maxlength="10" style="width:90px" type="text" value="" name="FeatureValue[0][value]" id="FeatureValue_0_value" />');
+      $(row).find('td').first().append('<input maxlength="30" style="width:230px" type="text" value="" name="FeatureValue[0][value]" id="FeatureValue_0_value" />');
     else {
       input[0].id = input[0].id.replace(d, replace);
       input[0].name = input[0].name.replace(d, replace);

@@ -30,7 +30,7 @@ class FeatureValue extends CActiveRecord
 		return array(
 			array('feature_id, value', 'required'),
 			array('feature_id', 'length', 'max'=>11),
-			array('value', 'length', 'max'=>10),
+			array('value', 'length', 'max'=>30),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('feature_id, value', 'safe', 'on'=>'search'),
