@@ -87,7 +87,7 @@
           ?>
           <span style="position: relative; bottom: -5px">шт.</span>
         </div>
-        <div class="item-bt addToCart" style="cursor: pointer; left: 190px; bottom: 27px" product="<?php echo $product->id; ?>"><div>В корзину</div></div>
+        <div class="item-bt addToCart" style="cursor: pointer; position: relative; top: 20px" product="<?php echo $product->id; ?>"><div>В корзину</div></div>
       </div>
       <!--<div>-->
         <!--<div style="text-align: center; width: 168px; float: right; font-size: 11pt; margin-top: 5px">-->
