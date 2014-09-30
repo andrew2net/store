@@ -18,7 +18,7 @@
         if ($value['value'] instanceof ProductFeature)
           echo TbHtml::activeTextField($value['value'], "[$key]value");
         elseif ($value['value'] instanceof ProductFeatureValue)
-          echo TbHtml::activeDropDownList($value['value'], "[$key]value_id", $value['feature']->values, array('empty' => 'Выберете значение'));
+          echo TbHtml::activeDropDownList($value['value'], "[$key]value_id", $value['feature']->values, array('empty' => 'Выберите значение'));
         elseif ($value['value'] instanceof ProductFeatureRange) {
           echo TbHtml::activeTextField($value['value'], "[$key]from", array('style' => 'width:89px'));
           echo ' - ' . TbHtml::activeTextField($value['value'], "[$key]to", array('style' => 'width:89px'));
