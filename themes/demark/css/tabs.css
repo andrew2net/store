@@ -1,7 +1,6 @@
 .yiiTab ul.tabs
 {
-    text-align: right;
-    padding: 2px 100px 2px 0;
+    padding: 2px 0 2px 450px;
     margin: 0;
     border-bottom: 1px solid #4F81BD;
     font: bold 12px Verdana, sans-serif;
