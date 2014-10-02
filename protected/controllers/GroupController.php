@@ -14,6 +14,9 @@ class GroupController extends CController {
 
     $groups = Category::model()->roots()->findAll();
     $group = Category::model()->findByPk($id);
+    if (!$group)
+      throw new CHttpException(404, "Страница не найдена");
+   
     $searc = new Search;
     $giftSelection = new GiftSelection;
     $product = Product::model();
