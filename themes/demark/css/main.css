@@ -413,7 +413,7 @@ a:hover > .box-item{
 }
 .item-name{
   padding: 0 5px;
-  height: 2.5em;
+  height: 47px;
   text-align: center;
   /*text-decoration: underline;*/
   /*font-style: italic;*/
@@ -422,11 +422,11 @@ a:hover > .box-item{
 .item-rest{
   text-align: center;
   font-style: italic;
-  height: 1.5em;
+  /*height: 1.5em;*/
 }
 .item-disc{
   text-align: center;
-  height: 20px;
+  height: 15px;
   font-size: 12pt;
 }
 .item-disc > span{

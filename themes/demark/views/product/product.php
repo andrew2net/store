@@ -61,7 +61,7 @@
       </div>
     </div>
     <div class="helper"></div>
-    <div style="margin: 20px 0 0 20px; height: 450px; vertical-align: top; line-height: 1.8; width: 470px">
+    <div style="margin: 20px 0 0 20px; vertical-align: top; line-height: 1.8; width: 470px">
       <div style="text-align: right">
         <?php
         if (isset($url))
@@ -96,7 +96,7 @@
       <!--</div>-->
     </div>
   </div>
-  <div>
+  <div style="margin-bottom: 10px">
     <?php
     $this->widget('CTabView', array(
       'tabs' => array(
