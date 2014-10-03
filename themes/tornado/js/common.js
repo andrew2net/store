@@ -160,7 +160,7 @@ $(document).ready(function() {
     content: function (){
       var elm = $(this);
       if (elm.is('[big-img]')){
-        return '<img class="img-tooltip" src="' + elm.attr('big-img') + '" alt="Загрузка..." />' ;
+        return '<img class="img-tooltip" src="' + elm.attr('big-img') + '" alt="Загрузка изображения..." />' ;
       }
     }
   });
