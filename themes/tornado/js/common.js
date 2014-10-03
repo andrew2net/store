@@ -1,4 +1,4 @@
-Number.prototype.formatMoney = function(c, d, t) {
+Number.prototype.formatMoney = function (c, d, t) {
   var n = this,
           c = isNaN(c = Math.abs(c)) ? 0 : c,
           d = d == undefined ? "." : d,
@@ -13,39 +13,39 @@ var price_mess;
 function showTooltip(id, data) {
 }
 
-$(document).ready(function() {
+$(document).ready(function () {
   price_mess = $('#price-mess');
 
 //  $().ready(function($) {
-    var menu = $('#mainmenuarea');
-    if (menu.attr('cart'))
-      return false;
-    var page = $('#page');
-    var offset = menu.offset();
-    var fix = false;
-    $(window).scroll(function() {
-      if (fix) {
-        menu.css({left: -$(document).scrollLeft()});
-      }
-      if ($(this).scrollTop() > offset.top && !fix) {
-        login_dialog.hide();
-        menu.addClass('f-menu');
-        page.css('margin-top', '50px')
-        menu.css({left: -$(document).scrollLeft(), width: $(document).width()});
-        fix = true;
-      }
-      else if ($(this).scrollTop() < offset.top && fix) {
-        menu.removeClass('f-menu');
-        page.css('margin-top', '10px')
-        fix = false;
-      }
-    });
-    $(window).resize(function() {
+  var menu = $('#mainmenuarea');
+  if (menu.attr('cart'))
+    return false;
+  var page = $('#page');
+  var offset = menu.offset();
+  var fix = false;
+  $(window).scroll(function () {
+    if (fix) {
+      menu.css({left: -$(document).scrollLeft()});
+    }
+    if ($(this).scrollTop() > offset.top && !fix) {
+      login_dialog.hide();
+      menu.addClass('f-menu');
+      page.css('margin-top', '50px')
       menu.css({left: -$(document).scrollLeft(), width: $(document).width()});
-    });
+      fix = true;
+    }
+    else if ($(this).scrollTop() < offset.top && fix) {
+      menu.removeClass('f-menu');
+      page.css('margin-top', '10px')
+      fix = false;
+    }
+  });
+  $(window).resize(function () {
+    menu.css({left: -$(document).scrollLeft(), width: $(document).width()});
+  });
 //  });
 
-  $(document).on('click', '.addToCart > input, .addToCart', function(event) {
+  $(document).on('click', '.addToCart > input, .addToCart', function (event) {
     event.preventDefault();
     event.stopPropagation();
     if (this == $('.addToCart > input')[0])
@@ -61,7 +61,7 @@ $(document).ready(function() {
       'id': id,
       'quantity': quantity
     },
-    function(data) {
+    function (data) {
       var result = $.parseJSON(data);
       var img = button.parent().parent().find('.img-anim');
       if (!img.length)
@@ -86,57 +86,57 @@ $(document).ready(function() {
         'z-index': 4000
       })
               .animate({
-        maxWidth: '83px', //img.attr('width') * 0.66,
-        maxHeight: '75px', //img.attr('height') * 0.66,
-        opacity: 0.2,
-        top: cartOffset.top + 10,
-        right: cartOffset.right + 30,
-        left: cartOffset.left - 30
-      }, 1000)
-              .fadeOut(100, function() {
-        cart.html(result.cart);
-        button.addClass('addToCart');
-        $(this).remove();
+                maxWidth: '83px', //img.attr('width') * 0.66,
+                maxHeight: '75px', //img.attr('height') * 0.66,
+                opacity: 0.2,
+                top: cartOffset.top + 10,
+                right: cartOffset.right + 30,
+                left: cartOffset.left - 30
+              }, 1000)
+              .fadeOut(100, function () {
+                cart.html(result.cart);
+                button.addClass('addToCart');
+                $(this).remove();
 
-        if (result.refresh) {
-          if ($('#product-list').length > 0)
-            $.fn.yiiListView.update('product-list');
-          else if ($('#top10').length) {
-            $.get('/site/price', function(data) {
-              var result = $.parseJSON(data);
-              if (result.top10 !== undefined)
-                for (var key in result.top10) {
-                  var p = $('.item[product="' + key + '"] .item-price');
-                  p.html(result.top10[key].price);
-                  p.attr('title', result.title);
-                  $('.item[product="' + key + '"] .item-disc').html(result.top10[key].disc);
+                if (result.refresh) {
+                  if ($('#product-list').length > 0)
+                    $.fn.yiiListView.update('product-list');
+                  else if ($('#top10').length) {
+                    $.get('/site/price', function (data) {
+                      var result = $.parseJSON(data);
+                      if (result.top10 !== undefined)
+                        for (var key in result.top10) {
+                          var p = $('.item[product="' + key + '"] .item-price');
+                          p.html(result.top10[key].price);
+                          p.attr('title', result.title);
+                          $('.item[product="' + key + '"] .item-disc').html(result.top10[key].disc);
+                        }
+                    });
+                  }
+                  price_mess.html(result.price);
+                  price_mess.show('bounce');
+                  setTimeout(function () {
+                    price_mess.hide('blind')
+                  }, 3000);
                 }
-            });
-          }
-          price_mess.html(result.price);
-          price_mess.show('bounce');
-          setTimeout(function() {
-            price_mess.hide('blind')
-          }, 3000);
-        }
-      });
+              });
     });
   });
 
-  $('.submit').click(function() {
+  $('.submit').click(function () {
     $('form').submit();
   });
 
-  $(document).on('click', '.item-link', function(event) {
+  $(document).on('click', '.item-link', function (event) {
     event.preventDefault();
     $('#item-submit').attr('action', $(this).attr('href'));
     $('#item-submit').submit();
   });
-  $(document).on('click', '.fancybox', function(event) {
+  $(document).on('click', '.fancybox', function (event) {
     event.stopPropagation();
   });
 
-  $(document).on('keydown', ".input-number", function(event) {
+  $(document).on('keydown', ".input-number", function (event) {
     // Allow: backspace, delete, tab, escape, enter and .
     if ($.inArray(event.keyCode, [46, 8, 9, 27, 13, 190]) !== -1 ||
             // Allow: Ctrl+A
@@ -157,10 +157,12 @@ $(document).ready(function() {
   $('div.item-img > img, div.item-inline-img > img').tooltip({
     items: '[big-img]',
     track: true,
-    content: function (){
+    content: function () {
       var elm = $(this);
-      if (elm.is('[big-img]')){
-        return '<img class="img-tooltip" src="' + elm.attr('big-img') + '" alt="Загрузка изображения..." />' ;
+      if (elm.is('[big-img]')) {
+        var src = elm.attr('big-img');
+        if (src.length > 0)
+          return '<img class="img-tooltip" src="' + src + '" alt="Загрузка изображения..." />';
       }
     }
   });
