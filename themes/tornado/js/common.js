@@ -154,8 +154,8 @@ $(document).ready(function () {
             }
           });
 
-  $('div.item-img > img, div.item-inline-img > img').tooltip({
-    items: '[big-img]',
+  $(document).tooltip({
+    items: 'div.img-anim > img[big-img]',
     track: true,
     content: function () {
       var elm = $(this);
