@@ -141,7 +141,6 @@ $(document).ready(function () {
   cart_city.keyup(function (event) {
     if (event.keyCode == 13) // || event.keyCode == 8 || event.keyCode > 36 && event.keyCode < 41)
       return false;
-    cartSubmit.hide();
     clearTimeout(city_typing);
     city_typing = setTimeout(function () {
       getDeliveries();
@@ -149,7 +148,6 @@ $(document).ready(function () {
   });
 
   cart_city.on('autocompleteselect', function (event, elem) {
-    cartSubmit.hide();
     clearTimeout(city_typing);
     getDeliveries();
   });
@@ -171,6 +169,7 @@ $(document).ready(function () {
 
   var getDeliveryTimeout;
   function getDeliveries() {
+    cartSubmit.hide();
     var city = getCity();
     if (city.length > 0) {
       cart_delivery.hide();
@@ -364,12 +363,12 @@ $(document).ready(function () {
     cart_login_dialog.hide();
   });
 
-  function citySuggest(request, response) {
-    $.get("/site/suggestcity",
-            {country: $("#CustomerProfile_country_code").val(), term: request.term},
-    function (data) {
-      var result = $.parseJSON(data);
-      response(result);
-    });
-  }
+//  function citySuggest(request, response) {
+//    $.get("/site/suggestcity",
+//            {country: $("#CustomerProfile_country_code").val(), term: request.term},
+//    function (data) {
+//      var result = $.parseJSON(data);
+//      response(result);
+//    });
+//  }
 });

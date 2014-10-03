@@ -53,18 +53,19 @@ $this->pageTitle = Yii::app()->name . ' - Личный кабинет';
       <div style="width: 115px">
         <div><?php echo $form->labelEx($customer_profile, 'country_code'); ?></div>
         <div>
-          <?php echo $form->dropDownList($customer_profile, 'country_code', ProfileController::getCountries()
+          <?php
+          echo $form->dropDownList($customer_profile, 'country_code', ProfileController::getCountries()
               , array('style' => 'width:100px'));
           ?>
         </div>
-<?php echo $form->error($customer_profile, 'country_code', array('class' => 'red')); ?>
+        <?php echo $form->error($customer_profile, 'country_code', array('class' => 'red')); ?>
       </div>
       <div style="width: 130px">
         <div><?php echo $form->labelEx($customer_profile, 'post_code'); ?></div>
         <div>
-        <?php echo $form->textField($customer_profile, 'post_code', array('style' => 'width:110px')); ?>
+          <?php echo $form->textField($customer_profile, 'post_code', array('style' => 'width:110px')); ?>
         </div>
-<?php echo $form->error($customer_profile, 'post_code', array('class' => 'red')); ?>
+        <?php echo $form->error($customer_profile, 'post_code', array('class' => 'red')); ?>
       </div>
       <div style="width: 250px">
         <div><?php echo $form->labelEx($customer_profile, 'city'); ?></div>
@@ -73,43 +74,44 @@ $this->pageTitle = Yii::app()->name . ' - Личный кабинет';
             'id' => 'cart-city',
             'model' => $customer_profile,
             'attribute' => 'city',
-            'sourceUrl' => '/site/suggestcity',
+//            'sourceUrl' => '/site/suggestcity',
+            'source' => new CJavaScriptExpression('function (request, response){citySuggest(request, response);}'),
             'htmlOptions' => array('class' => 'input-text')
           ));
           ?>
         </div>
-<?php echo $form->error($customer_profile, 'city', array('class' => 'red')); ?>
+        <?php echo $form->error($customer_profile, 'city', array('class' => 'red')); ?>
       </div>
       <div style="width: 350px">
         <div><?php echo $form->labelEx($customer_profile, 'address'); ?></div>
         <div><?php echo $form->textField($customer_profile, 'address', array('style' => 'width:330px')); ?></div>
-<?php echo $form->error($customer_profile, 'address', array('class' => 'red')); ?>
+        <?php echo $form->error($customer_profile, 'address', array('class' => 'red')); ?>
       </div>
       <div style="margin: 20px 0 30px"><?php echo CHtml::submitButton('Сохранить'); ?></div>
     </div>
   </fieldset>
-<?php $this->endWidget(); ?>
+  <?php $this->endWidget(); ?>
   <fieldset>
     <legend><span class="page-title blue bold">Изменение пароля</span></legend>
     <div class="inline-blocks">
       <div>
         <div>
-<?php echo $form->labelEx($new_passw, 'passw1'); ?>
+          <?php echo $form->labelEx($new_passw, 'passw1'); ?>
         </div>
         <div>
-<?php echo $form->passwordField($new_passw, 'passw1'); ?>
+          <?php echo $form->passwordField($new_passw, 'passw1'); ?>
         </div>
       </div>
       <div style="margin: 0 20px">
         <div>
-<?php echo $form->labelEx($new_passw, 'passw2'); ?>
+          <?php echo $form->labelEx($new_passw, 'passw2'); ?>
         </div>
         <div>
-<?php echo $form->passwordField($new_passw, 'passw2'); ?>
+          <?php echo $form->passwordField($new_passw, 'passw2'); ?>
         </div>
       </div>
       <div style="vertical-align: bottom">
-<?php echo CHtml::button('Изменить', array('style' => 'width:100px', 'id' => 'change-passw', 'disabled' => true)); ?>
+        <?php echo CHtml::button('Изменить', array('style' => 'width:100px', 'id' => 'change-passw', 'disabled' => true)); ?>
       </div>
     </div>
     <div id="passw-err" style="font-size:10pt; height: 16pt" class="red"></div>
@@ -155,7 +157,7 @@ $this->pageTitle = Yii::app()->name . ' - Личный кабинет';
   var passw_err_msg = $('#passw-err');
 
   $('input[type="password"]').typing({
-    stop: function() {
+    stop: function () {
       var p1 = passw1.val();
       var p2 = passw2.val();
       if (p1.length > 5)
@@ -174,12 +176,12 @@ $this->pageTitle = Yii::app()->name . ' - Личный кабинет';
     }
   });
 
-  change_passw_bt.click(function() {
+  change_passw_bt.click(function () {
     change_passw_bt.prop('disabled', true);
     $.post('/profile/changepassw', {
       passw1: passw1.val(),
       passw2: passw2.val()
-    }, function(data) {
+    }, function (data) {
       var result = $.parseJSON(data);
       passw_err_msg.html(result.msg);
       if (result.result) {
@@ -189,4 +191,15 @@ $this->pageTitle = Yii::app()->name . ' - Личный кабинет';
         change_passw_bt.prop('disabled', false);
     });
   });
+
+  var country_code = $('#CustomerProfile_country_code');
+  function citySuggest(request, response) {
+    $.get("/site/suggestcity",
+            {country: country_code.val(), term: request.term},
+    function (data) {
+      var result = $.parseJSON(data);
+      response(result);
+    });
+  }
+
 </script>
