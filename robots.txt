@@ -1,6 +1,7 @@
 User-agent: *
 Disallow: /cart
 Disallow: /login
+Disallow: /user/
 Disallow: /group/index/
 Disallow: /popupWindow
 Disallow: /cgi-bin/
