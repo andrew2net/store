@@ -322,6 +322,13 @@ input[type=checkbox]:checked + label:before, .weekcarousel-prev,
   position: relative;
   height: 110px;
 }
+.img-tooltip{
+  max-height: 400px;
+  max-width: 600px;
+}
+.ui-tooltip{
+  max-width: 600px !important;
+}
 .item-name{
   padding: 0 5px;
   height: 55px;

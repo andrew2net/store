@@ -26,7 +26,7 @@
     <?php Yii::app()->clientScript->registerCoreScript('cookie'); ?>
     <?php Yii::app()->clientScript->registerCoreScript('jquery.ui'); ?>
     <?php Yii::app()->clientScript->registerScriptFile(Yii::app()->request->baseUrl . '/js/jquery.typing-0.3.0.js'); ?>
-    <?php Yii::app()->clientScript->registerScriptFile(Yii::app()->theme->baseUrl . '/js/submenu.js'); ?>
+    <?php Yii::app()->clientScript->registerScriptFile(Yii::app()->theme->baseUrl . '/js/common.js'); ?>
     <?php Yii::app()->clientScript->registerScriptFile(Yii::app()->theme->baseUrl . '/js/cufon-yui.js'); ?>
     <?php Yii::app()->clientScript->registerScriptFile(Yii::app()->theme->baseUrl . '/js/RotondaC_400-RotondaC_700.font.js'); ?>
     <!--<script type="text/javascript" src="http://vk.com/js/api/share.js?90" charset="windows-1251"></script>-->

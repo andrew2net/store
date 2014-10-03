@@ -16,7 +16,7 @@ function showTooltip(id, data) {
 $(document).ready(function() {
   price_mess = $('#price-mess');
 
-  $().ready(function($) {
+//  $().ready(function($) {
     var menu = $('#mainmenuarea');
     if (menu.attr('cart'))
       return false;
@@ -43,7 +43,7 @@ $(document).ready(function() {
     $(window).resize(function() {
       menu.css({left: -$(document).scrollLeft(), width: $(document).width()});
     });
-  });
+//  });
 
   $(document).on('click', '.addToCart > input, .addToCart', function(event) {
     event.preventDefault();
@@ -153,4 +153,15 @@ $(document).ready(function() {
               }
             }
           });
+
+  $('div.item-img > img, div.item-inline-img > img').tooltip({
+    items: '[big-img]',
+    track: true,
+    content: function (){
+      var elm = $(this);
+      if (elm.is('[big-img]')){
+        return '<img class="img-tooltip" src="' + elm.attr('big-img') + '" />' ;
+      }
+    }
+  });
 });

@@ -40,7 +40,7 @@ echo CHtml::hiddenField('url', Yii::app()->request->url);
     <?php } ?>
     <div class="item-img img-anim">
       <!--<a class="fancybox" href="<?php echo $data->img; ?>">-->
-      <img src="<?php echo $data->small_img; ?>" alt="Изображение">
+      <img src="<?php echo $data->small_img; ?>" alt="Изображение" big-img="<?php echo $data->img; ?>">
       <!--</a>-->
     </div>
     <div class="item-name"><?php echo $data->name; ?></div>
