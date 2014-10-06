@@ -12,8 +12,8 @@
  * @property double $rate
  *
  * The followings are the available model relations:
- * @property Currency $to0
- * @property Currency $from0
+ * @property Currency $currencyTo
+ * @property Currency $currencyFrom
  */
 class CurrencyRate extends CActiveRecord {
 
@@ -48,8 +48,8 @@ class CurrencyRate extends CActiveRecord {
     // NOTE: you may need to adjust the relation name and the related
     // class name for the relations automatically generated below.
     return array(
-      'to0' => array(self::BELONGS_TO, 'Currency', 'to'),
-      'from0' => array(self::BELONGS_TO, 'Currency', 'from'),
+      'currencyTo' => array(self::BELONGS_TO, 'Currency', 'to'),
+      'currencyFrom' => array(self::BELONGS_TO, 'Currency', 'from'),
     );
   }
 
@@ -96,6 +96,15 @@ class CurrencyRate extends CActiveRecord {
     ));
   }
 
+  public function getRate($currFrom, $currTo) {
+    $this->getDbCriteria()->mergeWith(array(
+      'condition' => 't.from=:from AND t.to=:to',
+      'params' => array('from' => $currFrom, 'to' => $currTo),
+      'order' => 'date DESC',
+    ));
+    return $this;
+  }
+
   /**
    * Returns the static model of the specified AR class.
    * Please note that you should have this exact method in all your CActiveRecord descendants!
@@ -118,7 +127,7 @@ class CurrencyRate extends CActiveRecord {
 
   public function getPrimaryKey() {
     $pk = parent::getPrimaryKey();
-    if (is_array($pk) && isset($pk['date'])){
+    if (is_array($pk) && isset($pk['date'])) {
       $pk['date'] = Yii::app()->dateFormatter->format('yyyy.MM.dd', $pk['date']);
     }
     return $pk;

@@ -276,14 +276,9 @@ class Delivery extends CActiveRecord {
     array_multisort($product_lengths, SORT_DESC, $product_widths, SORT_DESC
         , $product_heights, SORT_DESC, $product_sizes); //$product_widths, SORT_DESC, 
 
-    Yii::import('application.modules.delivery.models.NrjLocation');
-    $pref = '^';
-    $suff = '($|\\(|\\*|\\,|\\ )';
     $city_from = trim(Yii::app()->params['enterprise']['city']);
-    $location = NrjLocation::model()->find('LOWER(name) REGEXP :name', array(':name' => $pref . mb_strtolower(quotemeta(trim($city)), 'UTF-8') . $suff));
-    $location_from = NrjLocation::model()->find('LOWER(name) REGEXP :name', array(':name' => $pref . mb_strtolower(quotemeta($city_from), 'UTF-8') . $suff));
-    if ($city == $city_from)
-      $city = ''; //exclude Energy delivery
+    if (mb_strtolower(trim($city), 'UTF-8') == mb_strtolower(trim($city_from), 'UTF-8'))
+      $city = ''; //if city and city from are same exclude Energy delivery
 
     $models = self::model()->region($country_code, $post_code, $city, $delivery_id)->findAll();
 
@@ -312,13 +307,13 @@ class Delivery extends CActiveRecord {
           $oversize = isset($parcel['oversize']) && $parcel['oversize'] ? 1 + $delivery->oversize / 100 : 1;
 
           switch ($delivery->zone_type_id) {
-            case Delivery::ZONE_NRJ:
+            case self::ZONE_NRJ:
               $nrj_places++;
               $nrj_weght += $parcel['weight'];
               break;
-            case Delivery::ZONE_CUSTOM:
-            case Delivery::ZONE_COURIER:
-            case Delivery::ZONE_SELF:
+            case self::ZONE_CUSTOM:
+            case self::ZONE_COURIER:
+            case self::ZONE_SELF:
               break;
             default :
               $deliveryRate = self::getDeliveryRate($delivery, $parcel['weight']);
@@ -338,6 +333,30 @@ class Delivery extends CActiveRecord {
           }
         }
 
+        if ($delivery->zone_type_id == self::ZONE_NRJ) {
+          if (!isset($nrj_deliveries)) {
+            $nrj_deliveries = self::getNrjDeliveries($city, $city_from, $nrj_weght, $nrj_places);
+          }
+          if (is_null($nrj_deliveries))
+            continue;
+
+          if (!(isset($nrj_deliveries['rsp']['stat']) && $nrj_deliveries['rsp']['stat'] == 'ok')) {
+            continue;
+          }
+          reset($nrj_deliveries['rsp']['values']);
+          $nrjValue = FALSE;
+          while ($v = each($nrj_deliveries['rsp']['values']))
+            if ($v[1]['type'] == $delivery->nrjType) {
+              $nrjValue = $v[1];
+              break;
+            }
+          if ($nrjValue) {
+            $price = ceil($nrjValue['price']);
+          }
+          else
+            continue;
+        }
+
         Yii::import('application.modules.payments.models.Currency');
         Yii::import('application.modules.payments.models.CurrencyRate');
         if (Yii::app()->params['mcurrency'])
@@ -349,15 +368,17 @@ class Delivery extends CActiveRecord {
           $currency = Currency::model()->findByCountry(Yii::app()->params['country']);
         /* @var $currency Currency */
         if ($delivery->currency_code != $currency->code) {
-          $curency_rate = CurrencyRate::model()->findByAttributes(array(
-            'from' => $delivery->currency_code,
-            'to' => $currency->code
-              ), array('order' => 'date DESC'));
+          $curency_rate = CurrencyRate::model()->getRate($delivery->currency_code, $currency->code)->find();
           /* @var $curency_rate CurrencyRate */
           if ($curency_rate)
             $price = round($price * $curency_rate->rate * $curency_rate->to_quantity / $curency_rate->from_quantity);
-          else
-            $price = 'Стоимость не определена (курс валют не установлен)';
+          else {
+            $curency_rate = CurrencyRate::model()->getRate($currency->code, $delivery->currency_code)->find();
+            if ($curency_rate)
+              $price = round($price * $curency_rate->from_quantity / $curency_rate->rate / $curency_rate->to_quantity);
+            else
+              continue;
+          }
         }
         else
           $price = round($price);
@@ -367,55 +388,26 @@ class Delivery extends CActiveRecord {
                 'class' => 'bold',
                 'price' => $price,
                   ), $delivery->name);
+          $storage_delivery[$delivery->id]['summ'] = $price; //save price for order edit
         }
         switch ($delivery->zone_type_id) {
-          case Delivery::ZONE_NRJ: //it's Energy delivery company
-            if (!isset($nrj_deliveries))
-              if ($location && $location != $location_from) {
-                $nrj_ch = curl_init("http://api.nrg-tk.ru/api/rest/?method=nrg.calculate&from=$location_from->id&to=$location->id&weight=$nrj_weght&volume=0&place=$nrj_places");
-                curl_setopt($nrj_ch, CURLOPT_RETURNTRANSFER, TRUE);
-                curl_setopt($nrj_ch, CURLOPT_HEADER, FALSE);
-                curl_setopt($nrj_ch, CURLOPT_CONNECTTIMEOUT, 30);
-                $nrj_get = curl_exec($nrj_ch);
-                curl_close($nrj_ch);
-                $nrj_deliveries = json_decode($nrj_get, TRUE);
-              }
-              else
-                continue 2;
-            if (isset($nrj_deliveries['rsp']['stat']) && $nrj_deliveries['rsp']['stat'] == 'ok') {
-              reset($nrj_deliveries['rsp']['values']);
-              $value = FALSE;
-              while ($v = each($nrj_deliveries['rsp']['values']))
-                if ($v[1]['type'] == $delivery->nrjType) {
-                  $value = $v[1];
-                  break;
-                }
-              if ($value) {
-                $price = ceil($value['price']);
-                if ($type == 0) {
-                  $output = CHtml::tag('span', array(
-                        'class' => 'bold',
-                        'price' => $price,
-                          ), $delivery->name);
-                  $storage_delivery[$delivery->id]['summ'] = $price; //save price for order edit
-                  $output .= ' (' . $delivery->transportType . " доставка {$value['term']}) " . CHtml::tag('span', array('class' => 'red delivery-price'), $price . $currency->class);
-                }
-                elseif ($type == 1) {
-                  $list['params'][$delivery->id]['price'] = $price;
-                  $list['options'][$delivery->id] = $delivery->name . ' (' . $delivery->transportType . ')';
-                  continue 2;
-                }
-                else {
-                  $list[$delivery->id] = array('price' => $price, 'text' => $delivery->name . ' (' . $delivery->transportType . ')');
-                  continue 2;
-                }
-                break;
-              }
-            }
-            continue 2;
-          case Delivery::ZONE_CUSTOM: //it's customer delivery company
+          case self::ZONE_NRJ: //it's Energy delivery company
             if ($type == 0) {
-              $storage_delivery[$delivery->id]['summ'] = $price; //save price for order
+              $output .= ' (' . $delivery->transportType . " доставка {$nrjValue['term']}) "
+                  . CHtml::tag('span', array('class' => 'red delivery-price'), $price . $currency->class);
+            }
+            elseif ($type == 1) {
+              $list['params'][$delivery->id]['price'] = $price;
+              $list['options'][$delivery->id] = $delivery->name . ' (' . $delivery->transportType . ')';
+              continue 2;
+            }
+            else {
+              $list[$delivery->id] = array('price' => $price, 'text' => $delivery->name . ' (' . $delivery->transportType . ')');
+              continue 2;
+            }
+            break;
+          case self::ZONE_CUSTOM: //it's customer delivery company
+            if ($type == 0) {
               $html_options = array();
               if ($order->delivery_id != $delivery->id)
                 $html_options['disabled'] = true;
@@ -430,16 +422,14 @@ class Delivery extends CActiveRecord {
               continue 2;
             }
             break;
-          case Delivery::ZONE_COURIER:
-          case Delivery::ZONE_SELF:
+          case self::ZONE_COURIER:
+          case self::ZONE_SELF:
             if ($type == 0) {
-              $storage_delivery[$delivery->id]['summ'] = $price; //save price for order
               $output .= ' (' . $delivery->description . ') ';
               break;
             }
           default :
             if ($type == 0) {
-              $storage_delivery[$delivery->id]['summ'] = $price; //save price for order
               $output .= ' (' . $delivery->description . ') ' . CHtml::tag('span', array('class' => 'red delivery-price'), $price . $currency->class);
             }
         }
@@ -497,6 +487,27 @@ class Delivery extends CActiveRecord {
           'order' => 'weight',
           'params' => array(':total_weight' => $weight)
     ));
+  }
+
+  private static function getNrjDeliveries($city, $city_from, $nrj_weght, $nrj_places) {
+    Yii::import('application.modules.delivery.models.NrjLocation');
+    $pref = '^';
+    $suff = '($|\\(|\\*|\\,|\\ )';
+    $location = NrjLocation::model()->find('LOWER(name) REGEXP :name', array(
+      ':name' => $pref . mb_strtolower(quotemeta(trim($city)), 'UTF-8') . $suff));
+    $location_from = NrjLocation::model()->find('LOWER(name) REGEXP :name', array(
+      ':name' => $pref . mb_strtolower(quotemeta(trim($city_from)), 'UTF-8') . $suff));
+    if ($location && $location != $location_from) {
+      $nrj_ch = curl_init("http://api.nrg-tk.ru/api/rest/?method=nrg.calculate&from=$location_from->id&to=$location->id&weight=$nrj_weght&volume=0&place=$nrj_places");
+      curl_setopt($nrj_ch, CURLOPT_RETURNTRANSFER, TRUE);
+      curl_setopt($nrj_ch, CURLOPT_HEADER, FALSE);
+      curl_setopt($nrj_ch, CURLOPT_CONNECTTIMEOUT, 30);
+      $nrj_get = curl_exec($nrj_ch);
+      curl_close($nrj_ch);
+      $nrj_deliveries = json_decode($nrj_get, TRUE);
+      return $nrj_deliveries;
+    }
+    return NULL;
   }
 
   /**

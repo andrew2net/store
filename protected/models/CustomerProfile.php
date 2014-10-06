@@ -170,17 +170,21 @@ class CustomerProfile extends CActiveRecord {
     Yii::import('application.modules.delivery.models.NrjLocation');
     parent::afterFind();
 
-    if ($this->city && !Yii::app()->params['post_code']) {
-      $pref = '^';
-      $suff = '($|\\(|\\*|\\,|\\ )';
-      $nrj = NrjLocation::model()->find('LOWER(name) REGEXP :name', array(':name' => $pref . mb_strtolower(quotemeta(trim($this->city)), 'UTF-8') . $suff));
-      if ($nrj) {
-        $this->city_l = $nrj->name;
-        $this->city = '';
-        $this->other_city = FALSE;
+    if (!Yii::app()->params['post_code']) {
+      if ($this->city) {
+        $pref = '^';
+        $suff = '($|\\(|\\*|\\,|\\ )';
+        $nrj = NrjLocation::model()->find('LOWER(name) REGEXP :name', array(':name' => $pref . mb_strtolower(quotemeta(trim($this->city)), 'UTF-8') . $suff));
+        if ($nrj) {
+          $this->city_l = $nrj->name;
+          $this->city = '';
+          $this->other_city = FALSE;
+        }
+        else
+          $this->other_city = true;
       }
       else
-        $this->other_city = true;
+        $this->other_city = FALSE;
     }
     else
       $this->other_city = TRUE;
