@@ -4,7 +4,7 @@
  * Description of CurrencyrateCommand
  *
  */
-class CurrencyrateCommand {
+class CurrencyrateCommand extends CConsoleCommand {
 
   public function run($args) {
     $wsdl = 'http://www.cbr.ru/dailyinfowebserv/dailyinfo.asmx?WSDL';
