@@ -7,8 +7,6 @@
 class DalyCommand extends CConsoleCommand {
 
   public function run($args) {
-//      echo 'Cron daly ';
-    $this->getCurrencyRate();
     $this->getNrjLocations();
   }
 
