@@ -10,6 +10,10 @@
                 ->from('{{page}}')
                 ->where('menu_show>0 AND url<>"/"')
                 ->order('menu_show')->queryAll();
+        $items[] = array(
+          'label' => 'СКАЧАТЬ ПРАЙС',
+          'url' => '/uploads/tornado/price.xls',
+        );
         if (!$this instanceof CartController)
           $items[] = array(
             'label' => SiteController::cartLabel(),
