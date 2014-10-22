@@ -398,7 +398,7 @@ class ExchangeController extends CController {
     if ($item[1]) {
       $parent_key = $this->category_parent_search($item[1], $category);
       if ($parent_key) {
-        $result = $this->saveCategory($parent_key, $category);
+        $result = $this->saveCategory($parent_key, $category, $DOMdoc, $node);
       }
       else {
         $result = Category::model()->findByAttributes(array('code' => $item[1]));
