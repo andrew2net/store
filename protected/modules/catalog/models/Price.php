@@ -57,6 +57,7 @@ class Price extends CActiveRecord {
       'id' => 'ID',
       'name' => 'Наименование',
       'summ' => 'Сумма заказа',
+      'code' => 'Код в 1С',
     );
   }
 
