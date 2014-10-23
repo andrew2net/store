@@ -10,6 +10,7 @@
 
   echo $form->textFieldControlGroup($model, 'name');
   echo $form->numberFieldControlGroup($model, 'summ');
+  echo $form->numberFieldControlGroup($model, 'code');
   
   echo TbHtml::formActions(array(
     TbHtml::linkButton('Закрыть', array('url' => 'index')),
