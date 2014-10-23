@@ -4,7 +4,7 @@ class m141023_055828_product_weight extends CDbMigration
 {
 	public function up()
 	{
-    $this->alterColumn('store_product', 'weight', 'DECIMAL(5,3)');
+    $this->alterColumn('store_product', 'weight', 'DECIMAL(6,3)');
 	}
 
 	public function down()

@@ -44,7 +44,7 @@
 <fieldset class="inline-blocks" style="width: 350px">
   <legend>Размер и вес товара в упаковке</legend>
   <div>
-    <?php echo $form->numberFieldControlGroup($model, 'weight', array('span' => 1, 'step' => '0.01', 'min' => 0, 'max' => 99999)); ?>
+    <?php echo $form->numberFieldControlGroup($model, 'weight', array('span' => 1, 'step' => '0.001', 'min' => 0, 'max' => 999.999)); ?>
   </div>
   <div style="margin: 0 10px">
     <?php echo $form->numberFieldControlGroup($model, 'length', array('span' => 1, 'step' => '0.1', 'min' => 0, 'max' => 9999.9)); ?>

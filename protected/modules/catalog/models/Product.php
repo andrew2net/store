@@ -50,7 +50,7 @@ class Product extends CActiveRecord {
     // will receive user inputs.
     return array(
       array('remainder', 'numerical', 'integerOnly' => true, 'max' => 99999, 'min' => 0),
-      array('weight', 'numerical', 'numberPattern' => '(^\d{1,2}$|^\d{1,2}\.\d{0,2}$)'),
+      array('weight', 'numerical', 'numberPattern' => '(^\d{1,3}$|^\d{1,3}\.\d{0,3}$)'),
       array('length, width, height', 'numerical', 'max' => 9999.9, 'min' => 0),
       array('name, article, brand_id, price', 'required'),
       array('price_tenge', 'required', 'on' => 'mcurrency'),
