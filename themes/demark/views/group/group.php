@@ -11,9 +11,7 @@
 
 <div class="container" id="page">
   <?php $this->renderPartial('//site/_topblock', array('search' => $search)); ?>
-  <?php
-  $this->renderPartial('//site/_mainmenu');
-  ?>
+  <?php $this->renderPartial('//site/_mainmenu'); ?>
   <?php
   $breadcrumbs = array();
   switch ($group->level) {

@@ -8,16 +8,18 @@
       <?php echo TbHtml::label('Дата платежа', 'pay_time'); ?>
     </th>
     <th>
-      <?php echo TbHtml::label('Номер операции', 'pay_operation_id'); ?>
+      <?php echo TbHtml::label('Операция №', 'pay_operation_id'); ?>
     </th>
     <th>
-      <?php echo TbHtml::label('Платежная система', 'pay_pay_system_id'); ?>
+      <?php echo TbHtml::label('Статус', 'pay_status'); ?>
     </th>
     <th>
-      <?php echo TbHtml::label('Корр.счет', 'pay_corr_acc'); ?>
+      <?php echo TbHtml::label('Код валюты', 'pay_currency_iso'); ?>
     </th>
     <th>
-      <?php echo TbHtml::label('Сумма', 'pay_amount'); ?>
+      <?php echo TbHtml::label('Сумма', 'pay_amount', array('style' => 'display:inline-block'))
+      . $model->currency->class;
+      ?>
     </th>
   </tr>
   <?php
@@ -40,27 +42,27 @@
       </td>
       <td>
         <?php
-        echo TbHtml::tag('div', array('name' => 'pay_pay_system_id', 'class' => 'display-field'));
-        echo $item->pay_system_id;
+        echo TbHtml::tag('div', array('name' => 'pay_status', 'class' => 'display-field'));
+        echo $item->status;
         echo TbHtml::closeTag('div');
         ?>
       </td>
       <td>
         <?php
-        echo TbHtml::tag('div', array('name' => 'pay_corr_acc', 'class' => 'display-field'));
-        echo $item->corr_acc;
+        echo TbHtml::tag('div', array('name' => 'pay_currency_iso', 'class' => 'display-field'));
+        echo $item->currency_iso;
         echo TbHtml::closeTag('div');
         ?>
       </td>
       <td>
         <?php
         echo TbHtml::tag('div', array('name' => 'pay_amount', 'class' => 'display-field'));
-        echo $item->amount;
+        echo $item->currency_amount;
         echo TbHtml::closeTag('div');
         ?>
       </td>
     </tr>
-  <?php } ?>
+<?php } ?>
   <tr>
     <td colspan="3"></td>
     <td style="text-align: right">Итого:</td>

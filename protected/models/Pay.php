@@ -13,12 +13,36 @@
  * @property string $time
  * @property string $currency_iso 
  * @property string $currency_amount 
+ * @property string $status_id 
  *
  * The followings are the available model relations:
  * @property Order $order
  * @property Currency $currency 
+ * @property string $status 
  */
 class Pay extends CActiveRecord {
+
+  const NO_SUCH_TRANSACTION = 1, PENDING_CUSTOMER_INPUT = 2, PENDING_AUTH_RESULT = 3,
+      AUTHORISED = 4, DECLINED = 5, REVERSED = 6, PAID = 7, REFUNDED = 8, INVALID_MID = 9,
+      MID_DISABLED = 10;
+
+  private static $statuses = array(
+    0 => 'инициирован',
+    1 => 'не существует',
+    2 => 'ожидание данных',
+    3 => 'ожидание авторизации',
+    4 => 'авторизован',
+    5 => 'отклонен',
+    6 => 'отменен',
+    7 => 'оплачен',
+    8 => 'возвращен',
+    9 => 'неверный ID ТСП',
+    10 => 'ID ТСП заблокирован',
+  );
+
+  public function getStatus() {
+    return self::$statuses[$this->status_id];
+  }
 
   /**
    * @return string the associated database table name
@@ -36,6 +60,8 @@ class Pay extends CActiveRecord {
     return array(
       array('order_id', 'required'),
       array('order_id', 'length', 'max' => 11),
+      array('status_id', 'numerical', 'integerOnly' => TRUE),
+      array('status_id', 'default', 'value' => 0),
       array('operation_id, corr_acc', 'length', 'max' => 30),
       array('amount, currency_amount', 'length', 'max' => 12),
       array('pay_system_id', 'length', 'max' => 30),
@@ -73,6 +99,7 @@ class Pay extends CActiveRecord {
       'time' => 'Дата платежа',
       'currency_iso' => 'Код валюты ISO',
       'currency_amount' => 'Сумма в валюте платежа',
+      'status_id' => 'Статус платежа',
     );
   }
 

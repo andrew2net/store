@@ -783,7 +783,7 @@ input[type=checkbox]:checked + label:before
 .payment-cart{
   height: 33px;
   background-position: 0 -45px;
-  margin-bottom: 15px;
+  /*margin-bottom: 6px;*/
 }
 
 .error{

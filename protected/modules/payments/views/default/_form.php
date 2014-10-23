@@ -26,9 +26,10 @@
   ?>
   <div id="pay_params"<?php echo $display; ?>>
     <?php
-    echo TbHtml::activeTextFieldControlGroup($payment, 'action_url', array('class' => 'span5'));
-    echo TbHtml::activeTextFieldControlGroup($payment, 'sign_name', array('class' => 'span5'));
+    echo TbHtml::activeTextFieldControlGroup($payment, 'merchant_id', array('class' => 'span5'));
     echo TbHtml::activeTextFieldControlGroup($payment, 'sign_key', array('class' => 'span5'));
+    echo TbHtml::activeDropDownListControlGroup($payment, 'currency_code'
+        , CHtml::listData(Currency::model()->findAll(), 'code', 'name'), array('prompt' => ''));
     ?>
   </div>
   <div class="form-actions">
@@ -48,7 +49,7 @@
 </div>
 <script type="text/javascript">
   var pay_params = $('#pay_params');
-  $('#Payment_type_id').change(function() {
+  $('#Payment_type_id').change(function () {
     var type = $(this).find('option:selected').val();
     if (type == 1 || type == 2)
       pay_params.show();

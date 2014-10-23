@@ -9,9 +9,9 @@
  * @property string $description
  * @property string $type_id
  * @property string $active
- * @property string $action_url 
- * @property string $sign_name 
+ * @property string $merchant_id 
  * @property string $sign_key
+ * @property string $currency_code 
  *
  * The followings are the available model relations:
  * @property Order[] $orders
@@ -20,7 +20,50 @@
  */
 class Payment extends CActiveRecord {
 
-  private static $types = array('Наличными', 'Монета', 'Wallet One', 'На расчетный счет');
+  private static $types = array('Наличными', 'LiqPay', 'Processing.kz', 'На расчетный счет'),
+      $actionUrl = array(
+        0 => '',
+        1 => 'https://www.liqpay.com/api/pay',
+        2 => '',
+        3 => '',
+          ),
+      $signName = array(
+        0 => '',
+        1 => 'signature',
+        2 => '',
+        3 => '',
+          ),
+      $statuses = array(
+        0 => array(),
+        1 => array(
+          'success' => 'PAID',
+          'failure' => 'DECLINED',
+          'wait_secure' => 'PENDING_AUTH_RESULT',
+          'sandbox' => 'PAID',
+        ),
+        2 => array(),
+        3 => array(),
+      ),
+      $params = array(
+        0 => array(),
+        1 => array(
+          'public_key' => '$this->merchant_id',
+          'amount' => '$order->getToPaySumm()',
+          'currency' => '"RUB"',
+          'description' => '"Оплата заказа"',
+          'order_id' => '$order->id',
+          'type' => '"buy"',
+          'server_url' => 'Yii::app()->createAbsoluteUrl("/pay/liqPayNotify")',
+          'result_url' => 'Yii::app()->createAbsoluteUrl("/pay/result")',
+          'pay_way' => '"card, delayed"',
+          'language' => '"ru"',
+          'sandbox' => '"1"',
+        ),
+        2 => array(
+          'processingkz' => '"1"',
+        ),
+        3 => array(),
+  );
 
   public static function getTypes() {
     return self::$types;
@@ -30,6 +73,43 @@ class Payment extends CActiveRecord {
     return self::$types[$this->type_id];
   }
 
+  public function getParams($order) {
+    $params = array();
+    ob_start();
+    foreach (self::$params[$this->type_id] as $key => $param) {
+      eval('echo ' . $param . ';');
+      $value = ob_get_contents();
+      ob_clean();
+      if ($value)
+        $params[$key] = $value;
+    }
+    ob_end_clean();
+    return $params;
+  }
+
+  public function getSing($params) {
+    $sign = '';
+    switch ($this->type_id) {
+      case 1:
+        Yii::import('ext.LiqPay');
+        $liqPay = new LiqPay($this->merchant_id, $this->sign_key);
+        $sign = $liqPay->cnb_signature($params);
+        break;
+    }
+    return $sign;
+  }
+
+  public function getSignName() {
+    return self::$signName[$this->type_id];
+  }
+
+  public function getActionUrl() {
+    return self::$actionUrl[$this->type_id];
+  }
+
+  public function getStatuses(){
+    return self::$statuses[$this->type_id];
+  }
   /**
    * @return string the associated database table name
    */
@@ -44,9 +124,10 @@ class Payment extends CActiveRecord {
     // NOTE: you should only define rules for those attributes that
     // will receive user inputs.
     return array(
-      array('name, description, type_id','required'),
+      array('name, description, type_id', 'required'),
       array('type_id', 'numerical', 'integerOnly' => true),
-      array('name, action_url, sign_name, sign_key', 'length', 'max' => 255),
+      array('name, merchant_id, sign_key', 'length', 'max' => 255),
+      array('currency_code', 'length', 'max' => 3),
       array('active', 'boolean'),
       // The following rule is used by search().
       // @todo Please remove those attributes that should not be searched.
@@ -62,7 +143,6 @@ class Payment extends CActiveRecord {
     // class name for the relations automatically generated below.
     return array(
       'orders' => array(self::HAS_MANY, 'Order', 'payment_id'),
-      'params' => array(self::HAS_MANY, 'PaymentParams', 'payment_id')
     );
   }
 
@@ -76,9 +156,9 @@ class Payment extends CActiveRecord {
       'description' => 'Описание',
       'type_id' => 'Платежная система',
       'active' => 'Активный',
-      'action_url' => 'URL страницы оплаты',
-      'sign_name' => 'Наименование поля подписи',
+      'merchant_id' => 'ID магазина',
       'sign_key' => 'Ключ подписи',
+      'currency_code' => 'Валюта',
     );
   }
 
@@ -118,14 +198,15 @@ class Payment extends CActiveRecord {
     return parent::model($className);
   }
 
-  public static function getPaymentList() {
-    $models = self::model()->findAll('active=1');
+  public static function getPaymentList($currency_code = '') {
+    $models = self::model()->findAll("active=1 AND (currency_code='' OR currency_code=:curr_cod OR :curr_cod='')"
+        , array(':curr_cod' => $currency_code));
     $list = array();
     foreach ($models as $payment) {
       /* @var $payment Payment */
       $output = CHtml::tag('div', array('class' => 'payment-' . ($payment->type_id > 0 ? 'cart' : 'cash')));
       $output .= CHtml::closeTag('div');
-      $output .= CHtml::tag('div', array('style' => 'display:inline-block;width:320px;position:relative;bottom:8px'));
+      $output .= CHtml::tag('div', array('style' => 'display:inline-block;width:320px;position:relative;bottom:3px'));
       $output .= CHtml::tag('div', array(
             'class' => 'bold',
             'style' => 'margin-bottom:5px',

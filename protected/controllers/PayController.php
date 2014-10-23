@@ -13,6 +13,7 @@ class PayController extends Controller {
     Yii::import('application.modules.payments.models.Payment');
     Yii::import('application.modules.payments.models.PaymentParams');
     Yii::import('application.modules.payments.models.Currency');
+    Yii::import('application.modules.catalog.models.Product');
     if (Yii::app()->user->isGuest)
       $this->redirect('/profile');
     $order = Order::model()->with(array('profile', 'payment'))->findByPk($id
@@ -22,34 +23,75 @@ class PayController extends Controller {
 
     if ($order) {
 
-      $description = "Интернет-магазин DeMARK, оплата заказа № $id";
+//      $description = "Интернет-магазин DeMARK, оплата заказа № $id";
 
       $coupon_discount = $order->getCouponSumm();
       $total = $order->productSumm + $order->delivery_summ - $coupon_discount;
-      $paied = $order->paySumm;
+      $paied = $order->paySumm + $order->authSumm;
       $to_pay = $total - $paied;
 
-      $pay_values = array();
-      foreach ($order->payment->params as $param) {
-        ob_start();
-        eval($param->value);
-        if (!$value = ob_get_contents())
-          $value = $param->value;
-        ob_end_clean();
-        $pay_values[$param->name] = $value;
-      }
-      uksort($pay_values, 'strcasecmp');
+      $errors = '';
 
-      $fieldValues = '';
-      foreach ($pay_values as $value) {
-        $value = iconv('utf-8', 'windows-1251', $value);
-        $fieldValues .= $value;
-      }
-      $sign = base64_encode(pack('H*', md5($fieldValues . $order->payment->sign_key)));
-      $pay_values[$order->payment->sign_name] = $sign;
+      if ($order->payment->type_id == 2) {
+        if (isset($_POST['processingkz'])) {
+          require_once Yii::app()->basePath . '/extensions/CNPMerchantWebServiceClient.php';
 
-      $this->render('order', array('order' => $order, 'coupon_discount' => $coupon_discount,
-        'total' => $total, 'paied' => $paied, 'to_pay' => $to_pay, 'pay_values' => $pay_values));
+          $basket = array();
+          foreach ($order->orderProducts as $item) {
+            $goodsItem = new GoodsItem();
+            $goodsItem->amount = $item->price * $item->quantity * 100;
+            $goodsItem->currencyCode = $order->currency->iso;
+            $goodsItem->merchantsGoodsID = $item->product->article;
+            $goodsItem->nameOfGoods = $item->product->name;
+            $basket[] = $goodsItem;
+          }
+
+          $client = new CNPMerchantWebServiceClient();
+          $transactionDetail = new TransactionDetails();
+          $transactionDetail->merchantId = $order->payment->merchant_id;
+          $transactionDetail->totalAmount = $to_pay * 100;
+          $transactionDetail->currencyCode = $order->currency->iso;
+          $transactionDetail->description = 'DeMARK - оплата заказа №' . $order->id;
+          $transactionDetail->returnURL = Yii::app()->createAbsoluteUrl('/pay/result') . '?customerReference=';
+          $transactionDetail->goodsList = $basket;
+          $transactionDetail->languageCode = 'ru';
+          $transactionDetail->merchantLocalDateTime = date('d.m.Y H:i:s');
+          $transactionDetail->orderId = $order->id;
+          $transactionDetail->purchaserName = $order->fio;
+          $transactionDetail->purchaserEmail = $order->email;
+
+          $st = new startTransaction();
+          $st->transaction = $transactionDetail;
+          $startTransactionResult = $client->startTransaction($st);
+
+          if ($startTransactionResult->return->success == true) {
+            $pay = new Pay;
+            $pay->order_id = $order->id;
+            $pay->operation_id = $startTransactionResult->return->customerReference;
+            $pay->currency_iso = $order->currency->iso;
+            $pay->amount = $to_pay;
+            $pay->currency_amount = $to_pay;
+            $pay->time = date('Y-m-d H:i:s');
+            if ($pay->save()) {
+              $_SESSION ["customerReference"] = $startTransactionResult->return->customerReference;
+              header("Location: " . $startTransactionResult->return->redirectURL);
+            }
+          }
+          else {
+            Yii::log($startTransactionResult->return->errorDescription, CLogger::LEVEL_ERROR, 'payment');
+            $errors = 'Error: ' . $startTransactionResult->return->errorDescription;
+          }
+        }
+      }
+
+      $this->render('order', array(
+        'order' => $order,
+        'coupon_discount' => $coupon_discount,
+        'total' => $total,
+        'paied' => $paied,
+        'to_pay' => $to_pay,
+        'errors' => $errors,
+      ));
     }
     else
       throw new CHttpException(404, "Заказ № $id для оплаты не найден");
@@ -118,7 +160,7 @@ class PayController extends Controller {
               'order_id' => $order->id,
             ));
             if ($pay) {
-              echo 'WMI_RESULT=OK&WMI_DESCRIPTION='. urlencode( 'Уведомление о платеже уже принято');
+              echo 'WMI_RESULT=OK&WMI_DESCRIPTION=' . urlencode('Уведомление о платеже уже принято');
               Yii::app()->end();
             }
             $pay = new Pay;
@@ -131,7 +173,7 @@ class PayController extends Controller {
               $pay->amount = $_POST['WMI_PAYMENT_AMOUNT'];
             else {
               //converr currency
-              Yii::trace('Pay notify. Оплата в другой валюте. Заказ: ' . $order->id 
+              Yii::trace('Pay notify. Оплата в другой валюте. Заказ: ' . $order->id
                   . ' WMI_MERCHANT_ID:' . $_POST['WMI_MERCHANT_ID'] . ' Валюта: ' . $_POST['WMI_CURRENCY_ID']);
             }
 
@@ -146,19 +188,74 @@ class PayController extends Controller {
               Yii::trace('Pay notify. Ошибка записи платежа. Заказ: ' . $order->id . ' WMI_MERCHANT_ID:' . $_POST['WMI_MERCHANT_ID']);
               echo 'WMI_RESULT=RETRY&WMI_DESCRIPTION=Ошибка записи платежа';
             }
-          }else{
+          }
+          else {
             echo 'WMI_RESULT=RETRY&WMI_DESCRIPTION=Неверное состояние ' . $_POST['WMI_ORDER_STATE'];
           }
-        }else {
-          echo 'WMI_RESULT=RETRY&WMI_DESCRIPTION='. 'Неверная подпись ' . $_POST['WMI_SIGNATURE'];
+        }
+        else {
+          echo 'WMI_RESULT=RETRY&WMI_DESCRIPTION=' . 'Неверная подпись ' . $_POST['WMI_SIGNATURE'];
         }
       }
     }
     Yii::app()->end();
   }
 
-  public function actionSuccess() {
-    $this->render('success');
+  public function actionResult() {
+    $message = array(
+      'title' => 'Платеж обрабатывается',
+      'txt' => 'Просмотреть статус заказа Вы можете личном кабинете.',
+    );
+
+    if (isset($_REQUEST['customerReference']) || isset($_SESSION['customerReference'])) {
+      Yii::import('application.modules.payments.models.Payment');
+      require_once Yii::app()->basePath . '/extensions/CNPMerchantWebServiceClient.php';
+
+      $rrn = isset($_REQUEST['customerReference']) ?
+          $_REQUEST['customerReference'] : $_SESSION['customerReference'];
+
+      $pay = Pay::model()->findByAttributes(array('operation_id' => $rrn));
+      /* @var $pay Pay */
+      if ($pay) {
+        $client = new CNPMerchantWebServiceClient();
+
+        $params = new getTransactionStatus();
+        $params->merchantId = $pay->order->payment->merchant_id;
+        $params->referenceNr = $rrn;
+        $transactionResult = $client->getTransactionStatus($params);
+        $status_id = constant("Pay::{$transactionResult->return->transactionStatus}");
+        $pay->amount = ($status_id == Pay::PAID ? $transactionResult->return->amountSettled :
+                $transactionResult->return->amountAuthorised) / 100;
+        $pay->currency_amount = $pay->amount;
+        $pay->status_id = $status_id;
+        $pay->save();
+        switch ($status_id) {
+          case Pay::NO_SUCH_TRANSACTION:
+          case Pay::DECLINED:
+          case Pay::REVERSED:
+          case Pay::REFUNDED:
+          case Pay::INVALID_MID:
+          case Pay::MID_DISABLED:
+            $message['title'] = 'Ошибка';
+            break;
+          case Pay::PENDING_CUSTOMER_INPUT:
+          case Pay::PENDING_AUTH_RESULT:
+            $message['title'] = 'Платеж обрабатывается';
+            break;
+          case Pay::AUTHORISED:
+          case Pay::PAID:
+            $message['title'] = 'Оплата прошла успешно';
+            $pay->order->status_id = Order::STATUS_PAID;
+            $pay->order->save();
+        }
+        $message['txt'] = 'Статус платежа: "' . $pay->status . '"';
+      }
+      else {
+        $message['title'] = 'Ошибка';
+        $message['txt'] = 'Незвестный платеж ' . $rrn;
+      }
+    }
+    $this->render('result', array('message' => $message));
   }
 
   public function actionFail() {
@@ -167,6 +264,109 @@ class PayController extends Controller {
 
   public function actionInProgress() {
     $this->render('inProgress');
+  }
+
+  public function actionLiqPayNotify() {
+    if (isset($_POST['order_id']))
+      $order = Order::model()->findByPk($_POST['order_id']);
+    else
+      throw new CHttpException('400');
+    /* @var $order Order */
+    if (!$order)
+      throw new CHttpException('404');
+
+    Yii::import('application.modules.payments.models.Payment');
+    $string = $order->payment->sign_key;
+
+    if (isset($_POST['amount']))
+      $string .= $_POST['amount'];
+    else
+      throw new CHttpException('400');
+
+    if (isset($_POST['currency']))
+      $string .= $_POST['currency'];
+    else
+      throw new CHttpException('400');
+
+    if (isset($_POST['public_key']))
+      $string .= $_POST['public_key'];
+    else
+      throw new CHttpException('400');
+
+    $string .= $_POST['order_id'];
+    if (isset($_POST['type']))
+      $string .= $_POST['type'];
+    else
+      throw new CHttpException('400');
+
+    if (isset($_POST['description']))
+      $string .= $_POST['description'];
+    else
+      throw new CHttpException('400');
+
+    if (isset($_POST['status']))
+      $string .= $_POST['status'];
+    else
+      throw new CHttpException('400');
+
+    if (isset($_POST['transaction_id']))
+      $string .= $_POST['transaction_id'];
+    else
+      throw new CHttpException('400');
+
+    if (isset($_POST['sender_phone']))
+      $string .= $_POST['sender_phone'];
+    else
+      throw new CHttpException('400');
+
+    if (!isset($_POST['signature']))
+      throw new CHttpException('400');
+
+    $sign = base64_encode(sha1($string, 1));
+
+//    Yii::trace($_POST['signature'] . ' = ' . $sign . ' ' . $payment->sign_key, 'pay_notify');
+    if ($_POST['signature'] != $sign)
+      throw new CHttpException('401');
+
+    $profile = CustomerProfile::model()->findByAttributes(array('user_id' => $order->profile->user_id));
+    /* @var $profile CustomerProfile */
+    if (empty($profile->phone)) {
+      $profile->phone = $_POST['sender_phone'];
+      $profile->save();
+    }
+
+    $pay = Pay::model()->findByAttributes(array('operation_id' => $_POST['transaction_id']));
+    /* @var $pay Pay */
+    if (is_null($pay)) {
+      $pay = new Pay;
+      $pay->operation_id = $_POST['transaction_id'];
+      $pay->time = date('Y-m-d H:i:s');
+    }
+    $pay->attributes = $_POST;
+    $statuses = $order->payment->getStatuses();
+    $pay->status_id = constant("Pay::{$statuses[$_POST['status']]}");
+    if ($_POST['currency'] == $order->currency_code) {
+      Yii::import('application.modules.payments.models.Currency');
+      $pay->currency_amount = $pay->amount;
+      $pay->currency_iso = $order->currency->iso;
+    }
+    if (!$pay->save())
+      throw new CHttpException('501');
+
+//    Yii::trace($order->getToPaySumm(), 'pay_notify');
+    $saveOrder = false;
+    if ($order->getToPaySumm() <= 0) {
+      $order->status_id = Order::STATUS_PAID;
+      $saveOrder = true;
+    }
+    if (empty($order->phone)) {
+      $order->phone = $_POST['sender_phone'];
+      $saveOrder = true;
+    }
+    if ($saveOrder)
+      $order->save();
+
+    Yii::app()->end();
   }
 
 }

@@ -1,7 +1,6 @@
 <?php
 /* @var $this PayController */
 /* @var $order Order */
-/* @var $pay_values array */
 /* @var $coupon_discount float */
 /* @var $total float */
 /* @var $paied float */
@@ -99,10 +98,11 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
     <?php } ?>
   </table>
   <a class="right" id="profile-link" href="/profile">Перейти в личный кабинет</a>
-  <?php echo CHtml::beginForm($order->payment->action_url); ?>
+  <?php // echo CHtml::beginForm($order->payment->getActionUrl()); ?>
   <?php
-  foreach ($pay_values as $key => $value)
-    echo CHtml::hiddenField($key, $value);
+//  $params = $order->payment->getParams();
+//  foreach ($params as $key => $value)
+//    echo CHtml::hiddenField($key, $value);
   ?>
-  <?php echo CHtml::endForm(); ?>
+  <?php // echo CHtml::endForm(); ?>
 </div>

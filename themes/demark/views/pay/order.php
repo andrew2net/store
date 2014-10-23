@@ -1,11 +1,11 @@
 <?php
 /* @var $this PayController */
 /* @var $order Order */
-/* @var $pay_values array */
 /* @var $coupon_discount float */
 /* @var $total float */
 /* @var $paied float */
 /* @var $to_pay float */
+/* @var $errors string */
 
 $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
 ?>
@@ -17,6 +17,7 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
   Yii::import('application.modules.catalog.models.Product');
   Yii::import('application.modules.payments.models.Payment');
   ?>
+  <?php if ($errors) echo CHtml::tag('p', array('class' => 'red', $errors)); ?>
   <h1 class="bold blue" style="margin: 20px 0">Информация о заказе:</h1>
   <div>Заказ №: <?php echo $order->id; ?></div>
   <div>Покупатель: <?php echo $order->fio; ?></div>
@@ -75,18 +76,20 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
       </tr>
     <?php } ?>
   </table>
-  <?php echo CHtml::beginForm($order->payment->action_url); ?>
   <?php
-  foreach ($pay_values as $key => $value) {
-    echo CHtml::hiddenField($key, $value);
-  }
-  ?>
-  <?php if ($to_pay > 0) { ?>
+  if ($to_pay > 0) {
+    echo CHtml::beginForm($order->payment->getActionUrl());
+    $params = $order->payment->getParams($order);
+    foreach ($params as $key => $value) {
+      echo CHtml::hiddenField($key, $value);
+    }
+    echo CHtml::hiddenField($order->payment->getSignName(), $order->payment->getSing($params));
+    ?>
     <div style="margin-top: 40px">
       <div class="main-submit submit">
         <div>ОПЛАТИТЬ</div>
       </div>
     </div>
+    <?php echo CHtml::endForm(); ?>
   <?php } ?>
-  <?php echo CHtml::endForm(); ?>
 </div>

@@ -3,8 +3,8 @@
 /* @var $model Order */
 /* @var $product OrderProduct[] */
 ?>
-  <table id="order-product">
-    <thead>
+<table id="order-product">
+  <thead>
     <tr>
       <th>
         <?php echo TbHtml::label('Артикул', 'product_articles'); ?>
@@ -16,12 +16,14 @@
         <?php echo TbHtml::label('Количество', 'product_quantity'); ?>
       </th>
       <th style="width: 4em">
-        <?php echo TbHtml::label('Цена', 'product_price'); ?>
+        <?php
+        echo TbHtml::label('Цена', 'product_price', array('class' => $model->currency->getCss()));
+        ?>
       </th>
       <th></th>
     </tr>
-    </thead>
-    <tbody>
+  </thead>
+  <tbody>
     <?php
     $total = 0;
     $n = 0;
@@ -68,9 +70,9 @@
           ));
           ?></td>
       </tr>
-    <?php } ?>
-    </tbody>
-    <tfoot>
+<?php } ?>
+  </tbody>
+  <tfoot>
     <tr>
       <td colspan="3"><div style="text-align: right">Стоимость доставки: </div></td>
       <td>
@@ -117,5 +119,5 @@
         ?>
       </td>
     </tr>
-    </tfoot>
-  </table>
+  </tfoot>
+</table>

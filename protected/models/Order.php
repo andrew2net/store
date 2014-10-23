@@ -35,6 +35,7 @@
  * @property OrderProduct[] $orderProducts
  * @property Pay[] $pay
  * @property float $paySumm
+ * @property float $authSumm
  * @property float $productSumm
  * @property float $discountSumm 
  * @property float $notDiscountSumm summ of goods without discount 
@@ -66,25 +67,9 @@ class Order extends CActiveRecord {
     return self::$statuses[$this->status_id];
   }
 
-//  private static $call_times = array(
-//    '0' => 'Любое время',
-//    '1' => 'с 9 до 12',
-//    '2' => 'с 12 до 14',
-//    '3' => 'с 14 до 18',
-//    '4' => 'с 18 до 20',
-//  );
-//
-  public static function getCallTimes() {
-    return self::$call_times;
-  }
-
-  public function getCallTime() {
-    return self::$call_times[$this->call_time_id];
-  }
-
   public function getPaymentOptions() {
     Yii::import('application.modules.payments.models.Payment');
-    $payment = Payment::model()->findAll();
+    $payment = Payment::model()->findAll('active=1');
     return CHtml::listData($payment, 'id', 'name');
   }
 
@@ -133,6 +118,7 @@ class Order extends CActiveRecord {
   }
 
   public function customerDelivery($attribute, $params) {
+    Yii::import('application.modules.delivery.models.Delivery');
     if ($this->delivery->zone_type_id == Delivery::ZONE_CUSTOM && empty($this->$attribute))
       $this->addError($attribute, 'Укажите наименование транспортной компании');
   }
@@ -148,7 +134,10 @@ class Order extends CActiveRecord {
       'delivery' => array(self::BELONGS_TO, 'Delivery', 'delivery_id'),
       'payment' => array(self::BELONGS_TO, 'Payment', 'payment_id'),
       'pay' => array(self::HAS_MANY, 'Pay', 'order_id'),
-      'paySumm' => array(self::STAT, 'Pay', 'order_id', 'select' => 'SUM(amount)'),
+      'paySumm' => array(self::STAT, 'Pay', 'order_id', 'select' => 'SUM(currency_amount)',
+        'condition' => 'status_id=' . Pay::PAID),
+      'authSumm' => array(self::STAT, 'Pay', 'order_id', 'select' => 'SUM(currency_amount)',
+        'condition' => 'status_id=' . Pay::AUTHORISED),
       'profile' => array(self::BELONGS_TO, 'CustomerProfile', 'profile_id'),
       'orderProducts' => array(self::HAS_MANY, 'OrderProduct', 'order_id'),
       'productSumm' => array(self::STAT, 'OrderProduct', 'order_id',
@@ -159,6 +148,14 @@ class Order extends CActiveRecord {
         'select' => 'SUM(quantity*price)', 'condition' => 'NOT discount > 0'),
       'currency' => array(self::BELONGS_TO, 'Currency', 'currency_code'),
     );
+  }
+  
+  public function getToPaySumm(){
+      $coupon_discount = $this->getCouponSumm();
+      $total = $this->productSumm + $this->delivery_summ - $coupon_discount;
+      $paied = $this->paySumm + $this->authSumm;
+      $to_pay = $total - $paied;
+      return $to_pay;
   }
 
   /**

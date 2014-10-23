@@ -149,6 +149,7 @@
     var order_city = $('#Order_city');
     var coupon_code = $('#coupon_code');
     var order_delivery_summ = $('#order-delivery-summ');
+    var order_payment = $('#Order_payment_id');
     var order_status_id = $('#Order_status_id');
     var add_product = $('#add-product');
     var order_delivery_id = $('#Order_delivery_id');
@@ -210,6 +211,7 @@
       $('.row-name, .row-quantity, .row-price').prop('readonly', read);
       order_delivery_summ.prop('readonly', read);
       order_delivery_id.prop('disabled', read);
+      order_payment.prop('disabled', read);
     }
 
     calcSumm();

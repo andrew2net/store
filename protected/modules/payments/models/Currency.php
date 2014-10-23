@@ -113,4 +113,15 @@ class Currency extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+  public function getCss(){
+    switch ($this->code){
+      case 'RUB':
+        return 'ruble';
+        break;
+      case 'KZT':
+        return 'tenge';
+        break;
+    }
+    return '';
+  }
 }

@@ -86,7 +86,12 @@ class CartController extends Controller {
 
     $delivery = array();
 
-    $payment = Payment::model()->getPaymentList();
+    Yii::import('application.modules.payments.models.Currency');
+    $currency = Currency::model()->findByAttributes(array(
+      'country_code' => $country_code));
+    /* @var $currency Currency */
+    
+    $payment = Payment::model()->getPaymentList($currency->code);
 
     if (isset($_POST['CustomerProfile'])) {
       if (!isset($_POST['login']))
@@ -163,11 +168,7 @@ class CartController extends Controller {
         $order->payment_id = 0;
     }
 
-    Yii::import('application.modules.payments.models.Currency');
     Yii::import('application.modules.catalog.models.Price');
-    $currency = Currency::model()->findByAttributes(array(
-      'country_code' => $country_code));
-
     $price_type = Price::getPrice();
 
     $this->render('shoppingCart', array(
