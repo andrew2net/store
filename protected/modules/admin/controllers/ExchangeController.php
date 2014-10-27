@@ -473,6 +473,8 @@ class ExchangeController extends CController {
     $customerEl = $domDoc->createElement('customer');
     $customerNode = $orderNode->appendChild($customerEl);
     $customerNode->appendChild($domDoc->createElement('name', $order->fio));
+    $customerNode->appendChild($domDoc->createElement('first_name', $order->profile->user->profile->first_name));
+    $customerNode->appendChild($domDoc->createElement('last_name', $order->profile->user->profile->last_name));
     $customerNode->appendChild($domDoc->createElement('inn', $order->profile->user->profile->inn));
     $customerNode->appendChild($domDoc->createElement('email', $order->email));
     $customerNode->appendChild($domDoc->createElement('phone', $order->phone));
@@ -542,6 +544,8 @@ class ExchangeController extends CController {
       $order->time = (string) $xml->date;
       $order->status_id = (string) $xml->status;
       $order->description = (string) $xml->description;
+      if (isset($xml->delivery_summ))
+        $order->delivery_summ = (float) $xml->delivery_summ;
 
       $order->save();
 
