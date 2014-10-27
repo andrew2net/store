@@ -84,7 +84,7 @@
 	<div class="row">
 		<?php echo $form->labelEx($model,'verifyCode'); ?>
 		
-		<?php $this->widget('CCaptcha'); ?>
+		<?php $this->widget('CCaptcha'); ?><br>
 		<?php echo $form->textField($model,'verifyCode'); ?>
 		<?php echo $form->error($model,'verifyCode'); ?>
 		
