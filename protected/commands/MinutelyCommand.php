@@ -11,6 +11,7 @@ class MinutelyCommand extends CConsoleCommand {
     Yii::import('application.modules.admin.models.Mail');
     Yii::import('application.modules.admin.models.MailOrder');
     Yii::import('application.models.Order');
+    Yii::import('application.models.Pay');
     Yii::import('application.models.OrderProduct');
     Yii::import('application.models.CustomerProfile');
     Yii::import('application.modules.catalog.models.Product');

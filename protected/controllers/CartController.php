@@ -393,6 +393,9 @@ class CartController extends Controller {
 
     $delivery = Delivery::model()->getDeliveryList($ccode, trim($pcode), $city, $cart, $order);
 
+    if(!isset($delivery[$order->delivery_id]))
+      $order->delivery_id = key($delivery);
+    
     $profile = ProfileController::getProfile();
     if (Yii::app()->params['mcurrency'])
       $currency = Currency::model()->findByAttributes(array(

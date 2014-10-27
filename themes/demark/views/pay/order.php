@@ -20,6 +20,7 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
   <?php if ($errors) echo CHtml::tag('p', array('class' => 'red', $errors)); ?>
   <h1 class="bold blue" style="margin: 20px 0">Информация о заказе:</h1>
   <div>Заказ №: <?php echo $order->id; ?></div>
+  <div>Статус заказа: <?php echo $order->status; ?></div>
   <div>Покупатель: <?php echo $order->fio; ?></div>
   <div>Телефон: <?php echo $order->phone; ?></div>
   <div>Страна: <?php echo ProfileController::getCountryName($order->country_code); ?></div>
@@ -70,14 +71,16 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
         <td class="bold" colspan="4" style="text-align: right">Оплачено:</td>
         <td class="bold" style="text-align: right"><?php echo number_format($paied, 0, '.', ' ') ?></td>
       </tr>
-      <tr>
-        <td class="bold" colspan="4" style="text-align: right">К оплате:</td>
-        <td class="bold" style="text-align: right"><?php echo number_format($to_pay, 0, '.', ' ') ?></td>
-      </tr>
+      <?php if ($to_pay > 0) { ?>
+        <tr>
+          <td class="bold" colspan="4" style="text-align: right">К оплате:</td>
+          <td class="bold" style="text-align: right"><?php echo number_format($to_pay, 0, '.', ' ') ?></td>
+        </tr>
+      <?php } ?>
     <?php } ?>
   </table>
   <?php
-  if ($to_pay > 0) {
+  if ($to_pay > 0 && $order->status_id == Order::STATUS_WAITING_FOR_PAY) {
     echo CHtml::beginForm($order->payment->getActionUrl());
     $params = $order->payment->getParams($order);
     foreach ($params as $key => $value) {
@@ -85,11 +88,13 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
     }
     echo CHtml::hiddenField($order->payment->getSignName(), $order->payment->getSing($params));
     ?>
-    <div style="margin-top: 40px">
+    <div style="margin: 40px 0 20px">
       <div class="main-submit submit">
         <div>ОПЛАТИТЬ</div>
       </div>
     </div>
     <?php echo CHtml::endForm(); ?>
   <?php } ?>
+  <div style="text-align: center; margin-bottom: 15px"><?php echo CHtml::link('Перейти в личный кабинет', '/profile'); ?></div>
 </div>
+<?php $this->renderPartial('//site/_footer'); ?>

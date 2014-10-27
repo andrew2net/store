@@ -66,9 +66,9 @@ $columns = array(
     'htmlOptions' => array('style' => 'text-align: right; padding-right:27px'),
   ),
   array(
-    'header' => ' Цена  ',
+    'header' => ' Цена  <span class="ruble" style="position:relative;display:inline-block"></span>',
     'value' => '$data->price',
-    'headerHtmlOptions' => array('class' => 'ruble', 'style' => 'text-align: right'),
+    'headerHtmlOptions' => array('style' => 'text-align: right;'),
     'htmlOptions' => array('style' => 'text-align: right'),
   ),);
 if (Yii::app()->params['mcurrency'])

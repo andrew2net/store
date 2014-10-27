@@ -14,6 +14,7 @@ class PayController extends Controller {
     Yii::import('application.modules.payments.models.PaymentParams');
     Yii::import('application.modules.payments.models.Currency');
     Yii::import('application.modules.catalog.models.Product');
+    Yii::import('application.modules.delivery.models.Delivery');
     if (Yii::app()->user->isGuest)
       $this->redirect('/profile');
     $order = Order::model()->with(array('profile', 'payment'))->findByPk($id
@@ -36,15 +37,7 @@ class PayController extends Controller {
         if (isset($_POST['processingkz'])) {
           require_once Yii::app()->basePath . '/extensions/CNPMerchantWebServiceClient.php';
 
-          $basket = array();
-          foreach ($order->orderProducts as $item) {
-            $goodsItem = new GoodsItem();
-            $goodsItem->amount = $item->price * $item->quantity * 100;
-            $goodsItem->currencyCode = $order->currency->iso;
-            $goodsItem->merchantsGoodsID = $item->product->article;
-            $goodsItem->nameOfGoods = $item->product->name;
-            $basket[] = $goodsItem;
-          }
+          $basket = self::getBasket($order);
 
           $client = new CNPMerchantWebServiceClient();
           $transactionDetail = new TransactionDetails();
@@ -55,7 +48,8 @@ class PayController extends Controller {
           $transactionDetail->returnURL = Yii::app()->createAbsoluteUrl('/pay/result') . '?customerReference=';
           $transactionDetail->goodsList = $basket;
           $transactionDetail->languageCode = 'ru';
-          $transactionDetail->merchantLocalDateTime = date('d.m.Y H:i:s');
+          $dateTime = new DateTime;
+          $transactionDetail->merchantLocalDateTime = $dateTime->format('d.m.Y H:i:s');
           $transactionDetail->orderId = $order->id;
           $transactionDetail->purchaserName = $order->fio;
           $transactionDetail->purchaserEmail = $order->email;
@@ -71,7 +65,7 @@ class PayController extends Controller {
             $pay->currency_iso = $order->currency->iso;
             $pay->amount = $to_pay;
             $pay->currency_amount = $to_pay;
-            $pay->time = date('Y-m-d H:i:s');
+            $pay->time = $dateTime->format('Y-m-d H:i:s');
             if ($pay->save()) {
               $_SESSION ["customerReference"] = $startTransactionResult->return->customerReference;
               header("Location: " . $startTransactionResult->return->redirectURL);
@@ -95,6 +89,25 @@ class PayController extends Controller {
     }
     else
       throw new CHttpException(404, "Заказ № $id для оплаты не найден");
+  }
+
+  public static function getBasket($order) {
+    $basket = array();
+    foreach ($order->orderProducts as $item) {
+      $goodsItem = new GoodsItem();
+      $goodsItem->amount = $item->price * $item->quantity * 100;
+      $goodsItem->currencyCode = $order->currency->iso;
+      $goodsItem->merchantsGoodsID = $item->product->article;
+      $goodsItem->nameOfGoods = $item->product->name;
+      $basket[] = $goodsItem;
+    }
+    $goodsItem = new GoodsItem();
+    $goodsItem->amount = $order->delivery_summ * 100;
+    $goodsItem->currencyCode = $order->currency->iso;
+    $goodsItem->merchantsGoodsID = $order->delivery->name;
+    $goodsItem->nameOfGoods = 'Доставка товара';
+    $basket[] = $goodsItem;
+    return $basket;
   }
 
   public function actionNotify() {
@@ -214,21 +227,51 @@ class PayController extends Controller {
       $rrn = isset($_REQUEST['customerReference']) ?
           $_REQUEST['customerReference'] : $_SESSION['customerReference'];
 
-      $pay = Pay::model()->findByAttributes(array('operation_id' => $rrn));
+      $payment = Payment::model()->findByAttributes(array('type_id' => Payment::TYPE_PROCESSINGKZ));
+      /* @var $payment Payment */
+      if (is_null($payment)) {
+        Yii::log('Payment type Processing.kz not set', CLogger::LEVEL_ERROR, 'pay_notify');
+        $this->render('result', array('message' => array(
+            'title' => 'Ошибка',
+            'txt' => 'Метод оплаты Processing.kz не настроен.',
+        )));
+        Yii::app()->end();
+      }
+
+      $client = new CNPMerchantWebServiceClient();
+
+      $params = new getTransactionStatus();
+      $params->merchantId = $payment->merchant_id;
+      $params->referenceNr = $rrn;
+      $transactionResult = $client->getTransactionStatus($params);
+
+      $pay = Pay::model()->findByAttributes(array(
+        'operation_id' => $rrn,
+        'order_id' => $transactionResult->return->orderId,
+      ));
       /* @var $pay Pay */
       if ($pay) {
-        $client = new CNPMerchantWebServiceClient();
-
-        $params = new getTransactionStatus();
-        $params->merchantId = $pay->order->payment->merchant_id;
-        $params->referenceNr = $rrn;
-        $transactionResult = $client->getTransactionStatus($params);
         $status_id = constant("Pay::{$transactionResult->return->transactionStatus}");
-        $pay->amount = ($status_id == Pay::PAID ? $transactionResult->return->amountSettled :
-                $transactionResult->return->amountAuthorised) / 100;
+        $pay->amount = //($status_id == Pay::PAID ? $transactionResult->return->amountSettled :
+            $transactionResult->return->amountAuthorised / 100;
         $pay->currency_amount = $pay->amount;
         $pay->status_id = $status_id;
         $pay->save();
+
+        $paramse = new getExtendedTransactionStatus();
+        $paramse->merchantId = $payment->merchant_id;
+        $paramse->referenceNr = $rrn;
+        $extendedTranResult = $client->getExtendedTransactionStatus($paramse);
+
+        $pay->setData('Код авторизации', $transactionResult->return->authCode);
+        $pay->setData('Имя владельца карты', $transactionResult->return->purchaserName);
+        $pay->setData('Email покупателя', $transactionResult->return->purchaserEmail);
+        $pay->setData('Телефон покупателя', $transactionResult->return->purchaserPhone);
+        $pay->setData('Страна банка-эмитента', $extendedTranResult->return->cardIssuerCountry);
+        $pay->setData('Часть номера карты', $extendedTranResult->return->maskedCardNumber);
+        $pay->setData('Проверка 3D пароля', $extendedTranResult->return->verified3D);
+        $pay->setData('IP адрес покупателя', $extendedTranResult->return->purchaserIpAddress);
+
         switch ($status_id) {
           case Pay::NO_SUCH_TRANSACTION:
           case Pay::DECLINED:
@@ -245,8 +288,10 @@ class PayController extends Controller {
           case Pay::AUTHORISED:
           case Pay::PAID:
             $message['title'] = 'Оплата прошла успешно';
+            $oldStatus = $pay->order->status_id;
             $pay->order->status_id = Order::STATUS_PAID;
             $pay->order->save();
+            $pay->order->changeStatusMessage($oldStatus);
         }
         $message['txt'] = 'Статус платежа: "' . $pay->status . '"';
       }
@@ -293,7 +338,11 @@ class PayController extends Controller {
     else
       throw new CHttpException('400');
 
-    $string .= $_POST['order_id'];
+    if (isset($_POST['order_id']))
+      $string .= $_POST['order_id'];
+    else
+      throw new CHttpException('400');
+
     if (isset($_POST['type']))
       $string .= $_POST['type'];
     else
@@ -353,8 +402,11 @@ class PayController extends Controller {
     if (!$pay->save())
       throw new CHttpException('501');
 
+    $pay->setData('Телефон покупателя', $_POST['sender_phone']);
+
 //    Yii::trace($order->getToPaySumm(), 'pay_notify');
     $saveOrder = false;
+    $oldStatus = $order->status_id;
     if ($order->getToPaySumm() <= 0) {
       $order->status_id = Order::STATUS_PAID;
       $saveOrder = true;
@@ -363,8 +415,10 @@ class PayController extends Controller {
       $order->phone = $_POST['sender_phone'];
       $saveOrder = true;
     }
-    if ($saveOrder)
+    if ($saveOrder) {
       $order->save();
+      $order->changeStatusMessage($oldStatus);
+    }
 
     Yii::app()->end();
   }

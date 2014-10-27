@@ -8,8 +8,6 @@
  * @property string $order_id
  * @property string $operation_id
  * @property string $amount
- * @property string $pay_system_id
- * @property string $corr_acc
  * @property string $time
  * @property string $currency_iso 
  * @property string $currency_amount 
@@ -18,6 +16,7 @@
  * The followings are the available model relations:
  * @property Order $order
  * @property Currency $currency 
+ * @property PayData[] $data
  * @property string $status 
  */
 class Pay extends CActiveRecord {
@@ -62,14 +61,13 @@ class Pay extends CActiveRecord {
       array('order_id', 'length', 'max' => 11),
       array('status_id', 'numerical', 'integerOnly' => TRUE),
       array('status_id', 'default', 'value' => 0),
-      array('operation_id, corr_acc', 'length', 'max' => 30),
+      array('operation_id', 'length', 'max' => 30),
       array('amount, currency_amount', 'length', 'max' => 12),
-      array('pay_system_id', 'length', 'max' => 30),
       array('currency_iso', 'length', 'max' => 3),
       array('time', 'default', 'value' => date('Y-m-d H:i:s')),
       // The following rule is used by search().
       // @todo Please remove those attributes that should not be searched.
-      array('id, order_id, operation_id, amount, currency_amount, pay_system_id, corr_acc', 'safe', 'on' => 'search'),
+      array('id, order_id, operation_id, amount, currency_amount', 'safe', 'on' => 'search'),
     );
   }
 
@@ -82,6 +80,7 @@ class Pay extends CActiveRecord {
     return array(
       'order' => array(self::BELONGS_TO, 'Order', 'order_id'),
       'currency' => array(self::BELONGS_TO, 'Currency', 'currency_iso'),
+      'data' => array(self::HAS_MANY, 'PayData', 'pay_id'),
     );
   }
 
@@ -94,8 +93,6 @@ class Pay extends CActiveRecord {
       'order_id' => 'Заказ',
       'operation_id' => 'Номер операции',
       'amount' => 'Сумма',
-      'pay_system_id' => 'Платежная система',
-      'corr_acc' => 'Корр.счет',
       'time' => 'Дата платежа',
       'currency_iso' => 'Код валюты ISO',
       'currency_amount' => 'Сумма в валюте платежа',
@@ -124,8 +121,6 @@ class Pay extends CActiveRecord {
     $criteria->compare('order_id', $this->order_id, true);
     $criteria->compare('operation_id', $this->operation_id, true);
     $criteria->compare('amount', $this->amount, true);
-    $criteria->compare('pay_system_id', $this->pay_system_id, true);
-    $criteria->compare('corr_acc', $this->corr_acc, true);
 
     return new CActiveDataProvider($this, array(
       'criteria' => $criteria,
@@ -140,6 +135,17 @@ class Pay extends CActiveRecord {
    */
   public static function model($className = __CLASS__) {
     return parent::model($className);
+  }
+
+  public function setData($name, $value) {
+    $data = PayData::model()->findByAttributes(array('pay_id' => $this->id, 'name' => $name));
+    if (is_null($data)){
+      $data = new PayData();
+      $data->pay_id = $this->id;
+      $data->name = $name;
+    }
+    $data->value = $value;
+    $data->save();
   }
 
 }

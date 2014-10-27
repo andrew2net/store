@@ -69,83 +69,87 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
   <fieldset>
     <legend><span class="page-title blue bold">Контактная информация</span></legend>
     <div class="inline-blocks">
-      <div style="vertical-align: top; width: 280px">
-        <div style="margin-bottom: 1em"><span id="<?php echo $has_err; ?>"></span>
-          <?php echo $form->labelEx($profile, 'first_name'); ?>
-          <div><?php echo $form->textField($profile, 'first_name'); ?></div>
-          <?php echo $form->error($profile, 'first_name', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
-        </div>
-        <div style="margin-bottom: 1em">
-          <?php echo $form->labelEx($user, 'email'); ?>
-          <div><?php echo CHtml::activeEmailField($user, 'email'); ?></div>
-          <?php echo $form->error($user, 'email', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
-        </div>
-        <div style="margin-bottom: 1em">
-          <?php echo $form->labelEx($customer_profile, 'phone'); ?>
-          <div><?php echo $form->telField($customer_profile, 'phone'); ?></div>
-          <?php echo $form->error($customer_profile, 'phone', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
-        </div>
-      </div>
-      <div style="vertical-align: top; width: 280px; margin: 0 35px">
-        <div class="inline-blocks" style="margin-bottom: 1em">
-          <div>
-            <?php echo $form->labelEx($customer_profile, 'country_code'); ?>
-            <div><?php echo $form->dropDownList($customer_profile, 'country_code', ProfileController::getCountries()); ?></div>
+      <div class="inline-blocks">
+        <div style="vertical-align: top; width: 280px">
+          <div style="margin-bottom: 1em"><span id="<?php echo $has_err; ?>"></span>
+            <?php echo $form->labelEx($profile, 'first_name'); ?>
+            <div><?php echo $form->textField($profile, 'first_name'); ?></div>
+            <?php echo $form->error($profile, 'first_name', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
           </div>
-          <div>
-            <?php echo $form->labelEx($customer_profile, 'post_code'); ?>
-            <div><?php echo $form->textField($customer_profile, 'post_code', array('style' => 'width:120px')); ?></div>
-            <?php echo $form->error($customer_profile, 'post_code'); ?>
+          <div style="margin-bottom: 1em">
+            <?php echo $form->labelEx($user, 'email'); ?>
+            <div><?php echo CHtml::activeEmailField($user, 'email'); ?></div>
+            <?php echo $form->error($user, 'email', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
+          </div>
+          <div style="margin-bottom: 1em">
+            <?php echo $form->labelEx($customer_profile, 'phone'); ?>
+            <div><?php echo $form->telField($customer_profile, 'phone'); ?></div>
+            <?php echo $form->error($customer_profile, 'phone', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
           </div>
         </div>
-        <div style="margin-bottom: 1em">
-          <?php echo $form->labelEx($customer_profile, 'city'); ?>
+        <div style="vertical-align: top; width: 280px; margin: 0 35px">
+          <div class="inline-blocks" style="margin-bottom: 1em">
+            <div>
+              <?php echo $form->labelEx($customer_profile, 'country_code'); ?>
+              <div><?php echo $form->dropDownList($customer_profile, 'country_code', ProfileController::getCountries()); ?></div>
+            </div>
+            <div>
+              <?php echo $form->labelEx($customer_profile, 'post_code'); ?>
+              <div><?php echo $form->textField($customer_profile, 'post_code', array('style' => 'width:120px')); ?></div>
+              <?php echo $form->error($customer_profile, 'post_code'); ?>
+            </div>
+          </div>
+          <div style="margin-bottom: 1em">
+            <?php echo $form->labelEx($customer_profile, 'city'); ?>
+            <div>
+              <?php
+              $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
+                'id' => 'cart-city',
+                'model' => $customer_profile,
+                'attribute' => 'city',
+                'source' => new CJavaScriptExpression('function (request, response){citySuggest(request, response);}'),
+              ));
+              ?>
+            </div>
+            <?php echo $form->error($customer_profile, 'city', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
+          </div>
+          <div style="margin-bottom: 1em">
+            <?php echo $form->labelEx($customer_profile, 'address'); ?>
+            <div><?php echo $form->textField($customer_profile, 'address'); ?></div>
+            <?php echo $form->error($customer_profile, 'address'); ?>
+          </div>
+        </div>
+        <div style="margin-bottom: 1em; display: block">
+          <?php echo $form->labelEx($order, 'description'); ?>
           <div>
             <?php
-            $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
-              'id' => 'cart-city',
-              'model' => $customer_profile,
-              'attribute' => 'city',
-              'source' => new CJavaScriptExpression('function (request, response){citySuggest(request, response);}'),
+            echo $form->textArea($order, 'description', array(
+              'rows' => 4,
+              'style' => 'width:558px'
             ));
             ?>
           </div>
-          <?php echo $form->error($customer_profile, 'city', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
         </div>
-        <div style="margin-bottom: 1em">
-          <?php echo $form->labelEx($customer_profile, 'address'); ?>
-          <div><?php echo $form->textField($customer_profile, 'address'); ?></div>
-          <?php echo $form->error($customer_profile, 'address'); ?>
-        </div>
+        <p class="gray" style="font-size: 10pt"><span class="red">*</span> - поля обязательные для заполнения</p>
       </div>
       <div style="vertical-align: top; width: 290px">
-        <div class="bold gray">Информация о доставке</div>
+        <div class="bold gray">Оформление заказа</div>
         <div style="font-size: 10pt; margin-top: 10px; border: 1px dashed #DDD">
-          <div style="padding: 10px">Чтобы узнать доступные способы и стоимость доставки, выберите страну и укажите Ваш почтовый индекс.</div>
-          <div style="padding: 0 10px 10px">Товар будет отправлена по указанному адресу.</div>
-          <div style="padding: 0 10px 10px">Подробности о доставке, можно узнать в разделе <a href="/info/delivery">ДОСТАВКА</a></div>
+          <ol style="margin: 10px">
+            <li>Выберите товар</li>
+            <li>Обязательно укажите Ваше имя, электронную почту и почтовый адрес</li>
+            <li>Выберите способ доставки товара (подробности о доставке, можно узнать в разделе <a href="/info/delivery">ДОСТАВКА</a>)</li>
+            <li>После оформления заказа введите реквизиты банковской карточки на безопасной платежной странице <?php echo $customer_profile->price_country == 'KZ' ? 'Processing.kz' : 'LiqPay.com'; ?></li>
+            <li>Подтвердите заказ и сохраните чек</li>
+          </ol>
         </div>
       </div>
     </div>
-    <div style="margin-bottom: 1em">
-      <?php echo $form->labelEx($order, 'description'); ?>
-      <div>
-        <?php
-        echo $form->textArea($order, 'description', array(
-//          'class' => 'input-text',
-//        'cols' => 81,
-          'rows' => 4,
-          'style' => 'width:558px'
-        ));
-        ?>
-      </div>
-    </div>
-    <p class="gray" style="font-size: 10pt"><span class="red">*</span> - поля обязательные для заполнения</p>
   </fieldset>
   <fieldset>
     <legend><span class="page-title blue bold">Доставка и оплата</span></legend>
     <div class="inline-blocks">
-      <div style="width: 440px; vertical-align: top; margin-right: 40px; min-height: 250px">
+      <div style="width: 440px; vertical-align: top; margin-right: 40px; min-height: 250px; position: relative">
         <div class="bold gray" style="font-size: 12pt; margin-bottom: 20px">Способ доставки</div>
         <div id="cart-delivery">
           <?php
@@ -157,27 +161,29 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
           ?>
         </div>
         <div id="delivery-loading" class="loading" style="position: relative; display: none; top: 15px"></div>
-        <div id="delivery-hint" class="red" <?php echo ($delivery ? 'style="display: none"' : ''); ?>>Укажите страну и индекс</div>
+        <div id="delivery-hint" class="red hintr" style="display: none">Укажите адрес доставки</div>
       </div>
       <div style="vertical-align: top">
         <?php
         $this->renderPartial('_payment', array(
           'order' => $order,
-          'payment' => $payment
+          'payment' => $payment,
+          'customer_profile' => $customer_profile,
         ));
         ?>
       </div>
     </div>
   </fieldset>
-  <div class="inline-blocks" style="margin: 10px 0 20px">
+  <div class="inline-blocks" style="margin: 10px 0 20px; position: relative">
     <div class="bold" style="font-size: 18pt; width: 600px; line-height: 50px">
       <span>общая сумма заказа: </span><span class="red"><span id="cart-total"></span><?php echo $currency->class; ?></span>
     </div>
     <div id="cart-submit" class="main-submit">
       <div>Оформить заказ</div>
-      <?php // echo CHtml::button('', array('id' => 'cart-submit')); ?>
     </div>
+    <div id="order-hint" class="red hintl" style="display: none">Выберите способ доставки</div>
   </div>
+  <?php $this->renderPartial('//site/_footer'); ?>
   <div id="cart-login-dialog">
     <div>Пользователь с адресом электройнной почты <span id="email-dialog" style="color: rgb(51, 153, 204)"></span> уже зарегистрирован на этом сайте.</div>
     <div style="margin: 1em 0 2em">Чтобы войти в личный кабинет, небходимо ввести пароль.</div>

@@ -62,7 +62,8 @@
   </div>
 
   <div style="vertical-align: top">
-    <?php echo $form->textFieldControlGroup($model, 'price', array('span' => 2, 'maxlength' => 12, 'labelOptions' => array('class' => 'ruble'))); ?>
+    <?php echo $form->textFieldControlGroup($model, 'price', array('span' => 2, 'maxlength' => 12
+      , 'labelOptions' => array('class' => 'ruble', 'style' => 'display:inline-block;position:relative',))); ?>
   </div>
   <?php if (Yii::app()->params['mcurrency']) { ?>
   <div style="vertical-align: top">

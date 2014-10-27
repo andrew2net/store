@@ -20,6 +20,8 @@
  */
 class Payment extends CActiveRecord {
 
+  const TYPE_CAHSH = 0, TYPE_LIQPAY = 1, TYPE_PROCESSINGKZ = 2, TYPE_BANK = 3;
+
   private static $types = array('Наличными', 'LiqPay', 'Processing.kz', 'На расчетный счет'),
       $actionUrl = array(
         0 => '',
@@ -43,7 +45,7 @@ class Payment extends CActiveRecord {
         ),
         2 => array(),
         3 => array(),
-      ),
+          ),
       $params = array(
         0 => array(),
         1 => array(
@@ -107,9 +109,10 @@ class Payment extends CActiveRecord {
     return self::$actionUrl[$this->type_id];
   }
 
-  public function getStatuses(){
+  public function getStatuses() {
     return self::$statuses[$this->type_id];
   }
+
   /**
    * @return string the associated database table name
    */
@@ -198,8 +201,8 @@ class Payment extends CActiveRecord {
     return parent::model($className);
   }
 
-  public static function getPaymentList($currency_code = '') {
-    $models = self::model()->findAll("active=1 AND (currency_code='' OR currency_code=:curr_cod OR :curr_cod='')"
+  public static function getPaymentList($currency_code = NULL) {
+    $models = self::model()->findAll("active=1 AND (currency_code='' OR currency_code=:curr_cod OR :curr_cod IS NULL)"
         , array(':curr_cod' => $currency_code));
     $list = array();
     foreach ($models as $payment) {

@@ -16,8 +16,12 @@
     'class' => 'span6'
   ));
   ?>
-  <?php echo TbHtml::activeDropDownListControlGroup($payment, 'type_id', Payment::getTypes()); ?>
-  <?php echo TbHtml::activeCheckBoxControlGroup($payment, 'active'); ?>
+  <?php
+  echo TbHtml::activeDropDownListControlGroup($payment, 'type_id', Payment::getTypes());
+  echo TbHtml::activeDropDownListControlGroup($payment, 'currency_code'
+      , CHtml::listData(Currency::model()->findAll(), 'code', 'name'), array('prompt' => ''));
+  echo TbHtml::activeCheckBoxControlGroup($payment, 'active');
+  ?>
 
   <?php
   $display = '';
@@ -28,8 +32,6 @@
     <?php
     echo TbHtml::activeTextFieldControlGroup($payment, 'merchant_id', array('class' => 'span5'));
     echo TbHtml::activeTextFieldControlGroup($payment, 'sign_key', array('class' => 'span5'));
-    echo TbHtml::activeDropDownListControlGroup($payment, 'currency_code'
-        , CHtml::listData(Currency::model()->findAll(), 'code', 'name'), array('prompt' => ''));
     ?>
   </div>
   <div class="form-actions">
@@ -45,7 +47,7 @@
     ?>
   </div>
 
-  <?php $this->endWidget() ?>
+<?php $this->endWidget() ?>
 </div>
 <script type="text/javascript">
   var pay_params = $('#pay_params');

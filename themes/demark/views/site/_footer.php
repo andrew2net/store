@@ -74,6 +74,14 @@ $groups = Category::model()->roots()->findAll();
                 ?>
               </div>
               <div class="gray bold lager" style="height: 1.5em"><?php echo Yii::app()->params['city']; ?></div>
+              <div>
+                <img src="<?php echo Yii::app()->theme->baseUrl; ?>/img/mc_ms_vs_accpt.gif" usemap="#pay-systems">
+                <map id="pay-systems" name="pay-systems">
+                  <area shape="rect" coords="1,0,61,38" href="http://www.visa.com" alt="Visa">
+                  <area shape="rect" coords="62,0,122,38" href="http://www.mastercard.com" alt="MasterCard">
+                  <area shape="rect" coords="123,0,183,38" href="http://www.maestrocard.com/gateway" alt="Maestro">
+                </map>
+              </div>
             </div>
           </div>
         </div>

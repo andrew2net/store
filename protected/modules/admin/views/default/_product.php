@@ -17,7 +17,10 @@
       </th>
       <th style="width: 4em">
         <?php
-        echo TbHtml::label('Цена', 'product_price', array('class' => $model->currency->getCss()));
+        echo TbHtml::label('Цена', 'product_price', array(
+          'class' => $model->currency->getCss(),
+          'style' => 'display:inline-block;position:relative',
+          ));
         ?>
       </th>
       <th></th>

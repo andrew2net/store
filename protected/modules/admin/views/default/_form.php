@@ -127,7 +127,7 @@
       'label' => 'Оплата',
       'content' => $this->renderPartial('_pay', array('model' => $model), TRUE),
     ),
-  ));
+      ), array('id' => 'order-table'));
   ?>
   <div class="form-actions">
     <?php
@@ -143,8 +143,16 @@
   </div>
   <?php $this->endWidget(); ?>
 </div><!-- form -->
+<?php
+$this->widget('ext.bootstrap.widgets.TbModal', array(
+  'id' => 'pay-data-modal',
+//  'header' => '',
+//  'content' => '',
+//  'footer' => array(TbHtml::button('Закрыть', array('data-dismiss' => 'modal'))),
+));
+?>
 <script type="text/javascript">
-  $(function() {
+  $(function () {
     var order_num = $('#order-num');
     var order_city = $('#Order_city');
     var coupon_code = $('#coupon_code');
@@ -161,7 +169,7 @@
       var sum = 0;
       var noDiscSum = 0;
       var discount = 0;
-      $('.row-price').each(function() {
+      $('.row-price').each(function () {
         var price = parseFloat(this.value);
         if (isNaN(price))
           price = 0;
@@ -217,30 +225,30 @@
     calcSumm();
     setStatus();
 
-    table.on('keyup change', '.row-price, #order-delivery-summ', function() {
+    table.on('keyup change', '.row-price, #order-delivery-summ', function () {
       calcSumm();
     });
 
     var quantityTimeOut;
-    table.on('keyup change', '.row-quantity', function() {
+    table.on('keyup change', '.row-quantity', function () {
       clearTimeout(quantityTimeOut);
-      quantityTimeOut = setTimeout(function(){
+      quantityTimeOut = setTimeout(function () {
         getCityDeliveries(order_city.val());
       }, 500)
     });
 
-    order_status_id.change(function() {
+    order_status_id.change(function () {
       setStatus();
     });
 
-    var response = function(event, ui) {
+    var response = function (event, ui) {
       for (var i = 0; i < ui.content.length; i++) {
         ui.content[i].label = ui.content[i].article + ', ' + ui.content[i].value;
       }
     }
 
     var current_id;
-    var selectItem = function(event, ui) {
+    var selectItem = function (event, ui) {
       current_id = ui.item.id;
       var row = $(this).parent().parent();
       var art = row.find('.row-article');
@@ -273,7 +281,7 @@
     function productSuggest(request, response) {
       var ord_pr = {};
       var summ = 0;
-      $('.row-quantity').each(function(i, e) {
+      $('.row-quantity').each(function (i, e) {
         if (e.id.length > 0) {
           var prod_id = getId(e.id);
           if (prod_id != current_id) {
@@ -287,17 +295,17 @@
         term: request.term,
         summ: summ,
         ord_pr: ord_pr},
-      function(data) {
+      function (data) {
         var result = $.parseJSON(data);
         response(result);
       });
     }
 
-    add_product.click(function(event) {
+    add_product.click(function (event) {
       event.preventDefault();
       tbody.append(newrow);
       tbody.find('.row-name').last().autocomplete({
-        source: function(request, response) {
+        source: function (request, response) {
           productSuggest(request, response);
         },
         response: response,
@@ -306,18 +314,18 @@
       setStatus();
     });
 
-    tbody.on('click', '.row-del', function() {
+    tbody.on('click', '.row-del', function () {
       $(this).parent().parent().remove();
       if ($('.row-product').length < 2)
         $('.row-del').css('display', 'none');
       getCityDeliveries(order_city.val());
     });
 
-    tbody.on('focus', '.row-name', function() {
+    tbody.on('focus', '.row-name', function () {
       current_id = getId(this.id);
     });
 
-    $(function() {
+    $(function () {
       $('.row-name').autocomplete({
         source: productSuggest,
         response: response,
@@ -328,14 +336,14 @@
     function getCityDeliveries(city) {
       var delivery_id = order_delivery_id.val();
       var products = {};
-      $('.row-quantity').each(function(i, el) {
+      $('.row-quantity').each(function (i, el) {
         var id = getId(el.id);
         products[id] = el.value;
       });
-      $.get('/admin/default/citydeliveries', {city: city, oid: order_num.html(), products: products}, function(data) {
+      $.get('/admin/default/citydeliveries', {city: city, oid: order_num.html(), products: products}, function (data) {
         var result = JSON && JSON.parse(data) || $.parseJSON(data);
         order_delivery_id.empty();
-        $.each(result, function(key, value) {
+        $.each(result, function (key, value) {
           order_delivery_id.append('<option value="' + key + '" price="' + value.price + '">'
                   + value.text + '</option>');
         });
@@ -353,14 +361,62 @@
       });
     }
 
-    order_city.on('change autocompleteselect', function(event, ui) {
+    order_city.on('change autocompleteselect', function (event, ui) {
       event.stopImmediatePropagation();
       getCityDeliveries(this.value);
     });
 
-    order_delivery_id.change(function() {
+    order_delivery_id.change(function () {
       order_delivery_summ.val(order_delivery_id.find('option:selected').attr('price'));
       calcSumm();
+    });
+
+    var payTable = $('#pay-table-body');
+    var payModal = $('#pay-data-modal');
+
+    payTable.on('click', '.pay-action~ul > li > a', function (event) {
+      event.preventDefault();
+      var tr = $(this).parents('tr');
+      var id = tr.find('input#pay_id').val();
+      $.get(this.href, {id: id}, function (data) {
+        if (data.status) {
+          payModal.find('.modal-header').html(data.header);
+          payModal.find('.modal-body').html(data.body);
+          payModal.find('.modal-footer').html(data.footer);
+          payModal.modal('show');
+        }
+        return;
+      }, 'json');
+      return;
+    });
+
+    payModal.on('click', '#modal-ok-bt', function () {
+      var btOk = $(this);
+      var btCancel = btOk.parent().find('button[data-dismiss="modal"]');
+      btOk.prop('disabled', true);
+      btCancel.prop('disabled', true);
+      var txt = payModal.find('#modal-text');
+      var prc = payModal.find('#modal-process');
+      var err = payModal.find('#modal-error');
+      err.hide();
+      txt.hide();
+      prc.show();
+      var id = payModal.find('input#modal-pay-id').val();
+      var url = btOk.attr('acturl');
+      $.post(url, {id: id}, function (data) {
+        btCancel.prop('disabled', false);
+        prc.hide();
+        if (data.status) {
+          payTable.html(data.body);
+          $('#pay-table-total').html(data.total);
+          payModal.find('#modal-success').show();
+          btOk.hide();
+          btCancel.html('Закрыть');
+        } else {
+          err.show();
+          btOk.prop('disabled', false);
+        }
+      }, 'json');
     });
   });
 </script>

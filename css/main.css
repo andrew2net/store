@@ -167,11 +167,6 @@ div.search-form
   background: #eee;
 }
 
-.portlet
-{
-
-}
-
 .portlet-decoration
 {
   padding: 3px 8px;
@@ -240,6 +235,10 @@ div.search-form
 .operations li a:hover
 {
   background: #80CFFF;
+}
+
+.red{
+  color: red;
 }
 
 .loading{
@@ -356,20 +355,25 @@ fieldset legend{
   width: 100%;
 }
 
-.ruble, .tenge{
-  margin-left: -0.3em;
-  font-weight: normal;
-}
-
 .ruble:before{
   content: '\2013';
-  position: relative;
-  left: 3.8em;
-  top: 0.07em;
+  position: absolute;
+  right: -0.1em;
+  top: 0.16em;
+  font-weight: normal;
 }
 .ruble:after{
   content: 'P';
+  position: relative;
+  right: -0.19em;
+  top: 0.06em;
 }
 .tenge:after{
   content: '₸';
+  position: relative;
+  right: -0.3em;
+  top: 0.04em;
+}
+#order-table .tab-content, #order-table .tab-content .tab-pane{
+  overflow: visible;
 }

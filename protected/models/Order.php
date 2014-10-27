@@ -134,9 +134,9 @@ class Order extends CActiveRecord {
       'delivery' => array(self::BELONGS_TO, 'Delivery', 'delivery_id'),
       'payment' => array(self::BELONGS_TO, 'Payment', 'payment_id'),
       'pay' => array(self::HAS_MANY, 'Pay', 'order_id'),
-      'paySumm' => array(self::STAT, 'Pay', 'order_id', 'select' => 'SUM(currency_amount)',
+      'paySumm' => array(self::STAT, 'Pay', 'order_id', 'select' => 'SUM(amount)',
         'condition' => 'status_id=' . Pay::PAID),
-      'authSumm' => array(self::STAT, 'Pay', 'order_id', 'select' => 'SUM(currency_amount)',
+      'authSumm' => array(self::STAT, 'Pay', 'order_id', 'select' => 'SUM(amount)',
         'condition' => 'status_id=' . Pay::AUTHORISED),
       'profile' => array(self::BELONGS_TO, 'CustomerProfile', 'profile_id'),
       'orderProducts' => array(self::HAS_MANY, 'OrderProduct', 'order_id'),
@@ -149,13 +149,13 @@ class Order extends CActiveRecord {
       'currency' => array(self::BELONGS_TO, 'Currency', 'currency_code'),
     );
   }
-  
-  public function getToPaySumm(){
-      $coupon_discount = $this->getCouponSumm();
-      $total = $this->productSumm + $this->delivery_summ - $coupon_discount;
-      $paied = $this->paySumm + $this->authSumm;
-      $to_pay = $total - $paied;
-      return $to_pay;
+
+  public function getToPaySumm() {
+    $coupon_discount = $this->getCouponSumm();
+    $total = $this->productSumm + $this->delivery_summ - $coupon_discount;
+    $paied = $this->paySumm + $this->authSumm;
+    $to_pay = $total - $paied;
+    return $to_pay;
   }
 
   /**
@@ -287,6 +287,23 @@ class Order extends CActiveRecord {
         $couponSumm = $this->notDiscountSumm * $this->coupon->value / 100;
     }
     return $couponSumm;
+  }
+
+  public function changeStatusMessage($oldStatus) {
+    if ($oldStatus != $this->status_id) {
+      Yii::import('application.modules.admin.models.Mail');
+      Yii::import('application.modules.admin.models.MailOrder');
+      $mail = new Mail;
+      $mail->uid = $this->profile->user_id;
+      $mail->type_id = 4;//Mail::TYPE_CHANGE_ORDER_STATUS;
+//              $mail->status_id = 1;
+      if ($mail->save()) {
+        $mailOrder = new MailOrder;
+        $mailOrder->mail_id = $mail->id;
+        $mailOrder->order_id = $this->id;
+        $mailOrder->save();
+      }
+    }
   }
 
 }

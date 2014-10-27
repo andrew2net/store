@@ -13,6 +13,7 @@ $(document).ready(function () {
   var cart_delivery = $('#cart-delivery');
   var cart_login_dialog = $("#cart-login-dialog");
   var user_email = $('#User_email');
+  var order_hint = $("#order-hint");
 
   function calcCartSumm() {
     var summ = 0;
@@ -76,12 +77,17 @@ $(document).ready(function () {
       var price_f = priceDelivery.formatMoney();
       $('#delivery-summ').html(price_f);
       $('#cart-total').html((priceDelivery + summ).formatMoney());
+      order_hint.hide();
       cartSubmit.show();
     }
     else {
       $('#delivery-summ').html('');
       cartSubmit.hide();
       $('#cart-total').html(summ.formatMoney());
+      if ($('#cart-delivery input').length > 0)
+        order_hint.show();
+      else
+        order_hint.hide();
     }
   }
 
@@ -131,18 +137,36 @@ $(document).ready(function () {
     });
   });
 
-  var city_typing;
+  var deliveryTimeOut;
+  var city_val;
   cart_city.keyup(function (event) {
-    if (event.keyCode == 13) // || event.keyCode == 8 || event.keyCode > 36 && event.keyCode < 41)
+    if (city_val == this.value) // || event.keyCode == 8 || event.keyCode > 36 && event.keyCode < 41)
       return false;
-    clearTimeout(city_typing);
-    city_typing = setTimeout(function () {
+    var c_val = this.value;
+    deliveryTimeOut = setTimeout(function () {
+      city_val = c_val;
       getDeliveries();
-    }, 3000);
+    }, 1000);
+  });
+
+  cart_city.keydown(function () {
+    clearTimeout(deliveryTimeOut);
+  });
+
+  cart_city.focusin(function () {
+    city_val = this.value;
+  });
+
+  cart_city.focusout(function () {
+    clearTimeout(deliveryTimeOut);
+    if (city_val != this.value){
+      city_val = this.value;
+      getDeliveries();
+    }
   });
 
   cart_city.on('autocompleteselect', function (event, elem) {
-    clearTimeout(city_typing);
+    clearTimeout(deliveryTimeOut);
     getDeliveries();
   });
 
@@ -150,17 +174,30 @@ $(document).ready(function () {
     getDeliveries();
   });
 
-  post_code.typing({
-    start: function (event, elem) {
-    },
-    stop: function (event, elem) {
+  var post_code_val;
+  post_code.keyup(function (event) {
+    if (post_code_val == this.value) // || event.keyCode == 8 || event.keyCode > 36 && event.keyCode < 41)
+      return false;
+    var pcval = this.value;
+    deliveryTimeOut = setTimeout(function () {
+      post_code_val = pcval;
       getDeliveries();
-    },
-    delay: 0
+    }, 1000);
   });
 
-  post_code.focusout(function () {
-    getDeliveries();
+  post_code.keydown(function () {
+    clearTimeout(deliveryTimeOut);
+  });
+
+  post_code.focusin(function () {
+    post_code_val = this.value;
+  });
+  post_code.focusout(function (event) {
+    clearTimeout(deliveryTimeOut);
+    if (post_code_val != this.value) {
+      post_code_val = this.value;
+      getDeliveries();
+    }
   });
 
   function getDeliveries() {
