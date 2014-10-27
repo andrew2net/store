@@ -182,7 +182,7 @@ class Order extends CActiveRecord {
       'city' => 'Город',
       'address' => 'Адрес',
       'call_time_id' => 'Время звонка',
-      'description' => 'Коменнтарий',
+      'description' => 'Комментарий',
       'summ' => 'Сумма',
       'currency_code' => 'Валюта заказа',
       'customer_delivery' => 'Транспортная компания покупателя',
