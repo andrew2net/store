@@ -197,7 +197,7 @@ class SiteController extends Controller {
     Yii::import('application.controllers.ProfileController');
     $quantity = Cart::model()->countProduct(ProfileController::getSession())->findAll();
     if (!$quantity[0]->quantity)
-      return 'Козина пуста';
+      return 'Корзина пуста';
 
     $tovar = array(1, 21, 31, 41, 51, 61, 71, 81, 91);
     $tovara = array(2, 3, 4, 22, 23, 24, 32, 33, 34, 42, 43, 44, 52, 53, 54, 62, 63, 64, 72, 73, 74, 82, 83, 84, 92, 93, 94);
