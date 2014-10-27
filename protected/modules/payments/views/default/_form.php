@@ -19,7 +19,7 @@
   <?php
   echo TbHtml::activeDropDownListControlGroup($payment, 'type_id', Payment::getTypes());
   echo TbHtml::activeDropDownListControlGroup($payment, 'currency_code'
-      , CHtml::listData(Currency::model()->findAll(), 'code', 'name'), array('prompt' => ''));
+      , CHtml::listData(Currency::model()->findAll(), 'code', 'name'));
   echo TbHtml::activeCheckBoxControlGroup($payment, 'active');
   ?>
 

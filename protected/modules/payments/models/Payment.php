@@ -127,7 +127,7 @@ class Payment extends CActiveRecord {
     // NOTE: you should only define rules for those attributes that
     // will receive user inputs.
     return array(
-      array('name, description, type_id', 'required'),
+      array('name, description, type_id, currency_code', 'required'),
       array('type_id', 'numerical', 'integerOnly' => true),
       array('name, merchant_id, sign_key', 'length', 'max' => 255),
       array('currency_code', 'length', 'max' => 3),
