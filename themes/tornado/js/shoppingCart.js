@@ -198,6 +198,8 @@ $(document).ready(function () {
         clearTimeout(getDeliveryTimeout);
         delivery_loading.hide();
         cart_delivery.html(data);
+        var input = cart_delivery.find('input:radio[name="Order[delivery_id]"]:checked~label > input[type="text"]');
+        input.prop('disabled', false);
         cart_delivery.show();
         calcTotal();
       });
