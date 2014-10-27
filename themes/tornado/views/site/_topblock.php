@@ -42,7 +42,7 @@
                 <span id="error-msg" class="red" style="display: none">неверное имя или пароль</span>
               </div>
               <div class="login-submit login-button"><div>Войти</div></div>
-              <div style="text-align: center; margin: 10px auto 5px;"><a href="/user/recovery">зарегистрироваться</a></div>
+              <div style="text-align: center; margin: 10px auto 5px;"><a href="/user/registration">зарегистрироваться</a></div>
             </div>
           </div>
         </div>

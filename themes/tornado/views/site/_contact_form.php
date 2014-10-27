@@ -98,6 +98,7 @@
         else
           $other_options['disabled'] = TRUE;
 
+        Yii::import('application.modules.delivery.models.NrjLocation');
         echo $form->dropDownList($customer_profile, 'city_l'
             , CHtml::listData(NrjLocation::model()->findAll(array('order' => 'name')), 'name', 'name')
             , $city_options);

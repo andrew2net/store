@@ -42,10 +42,8 @@ $this->pageTitle = Yii::app()->name . ' - Вход';
     </div>
     <div style="margin: 0 20px">
       <div><a href="/user/recovery">восстановить пароль</a></div>
-      <div><a href="/user/recovery">зарегистрироваться</a></div>
+      <div><a href="/user/registration">зарегистрироваться</a></div>
     </div>
   </div>
   <?php $this->endWidget(); ?>
-</div>
-
 </div>
