@@ -9,7 +9,10 @@ $groups = Category::model()->roots()->findAll();
         <div class="gray" style="margin-top: 20px">
           2014. Все права защищены.<br>DeMARK - инструменты и<br>оборудование.<br>Все торговые марки являются<br>собственностью их<br>правообладателей.
         </div>
-        <div style="margin-top: 4px; display: block">Разработка сайта<br><a style="text-decoration-line: initial; -moz-text-decoration-line: none" href="mailto:andriano@ngs.ru?subject=Разработка сайта">andriano@ngs.ru</a></div>
+        <div style="margin-top: 4px; display: block;">
+          Разработка сайта<br>
+          <a class="devem" style="text-decoration-line: initial; -moz-text-decoration-line: none" href="#">Andriano</a>
+        </div>
       </div>
 
       <div class="table-cell" style="vertical-align: middle">
@@ -34,12 +37,6 @@ $groups = Category::model()->roots()->findAll();
                 ?>
                 <div><a href="<?php echo $item['url']; ?>"><?php echo $item['label']; ?></a></div>
               <?php } ?>
-              <!--              <div><a href="/about">О компании</a></div>
-                            <div><a href="/deliver">Доставка</a></div>
-                            <div><a href="/payment">Оплата</a></div>
-                            <div><a href="/guarantee">Гарантии и обмен</a></div>-->
-              <!--<div><a href="/contact">Контакты</a></div>-->
-              <!--<div><a href="#">Наши преимущества</a></div>-->
             </div>
             <div class="table-cell footer-menu">
               <div class="bold">Товар</div>
@@ -93,19 +90,19 @@ $groups = Category::model()->roots()->findAll();
 <div id="bottom-bar">УКАЖИТЕ ВОЗРАСТ ВАШЕГО РЕБЕНКА И ПОЛУЧИТЕ СКИДКУ <span class="red">400 РУБЛЕЙ</span> НА ПЕРВУЮ ПОКУПКУ!<span id="get-discount" class="red" style="margin-left: 50px; text-decoration: underline; -moz-text-decoration-line: underline; cursor: pointer">ПОЛУЧИТЬ СКИДКУ</span></div>
 <?php // Yii::app()->clientScript->registerScriptFile('http://vk.com/js/api/share.js?90', CClientScript::POS_HEAD); ?>
 <script type="text/javascript">
-  $(function() {
+  $(function () {
 
     $('#popup-window').dialog({
       modal: true,
       resizable: false,
       autoOpen: false,
       draggable: false,
-      create: function(event, ui) {
+      create: function (event, ui) {
         $(event.target).parent().css('position', 'fixed');
       }
     });
 
-    $('#popup-window').on('click', '.popup-close', function() {
+    $('#popup-window').on('click', '.popup-close', function () {
       clearTimeout(timeout_id);
       $('#popup-window').dialog('close');
       if ($.cookie('popup') !== '2') {
@@ -114,7 +111,7 @@ $groups = Category::model()->roots()->findAll();
       }
     });
 
-    $('#get-discount').click(function() {
+    $('#get-discount').click(function () {
       $('#bottom-bar').hide();
       $('#footer').css('margin-bottom', '0');
       if ($('#popup-window').dialog('option', 'width') < 900)
@@ -146,16 +143,16 @@ $groups = Category::model()->roots()->findAll();
     $('#popup-window').dialog('option', 'height', 500);
     $('#popup-window').dialog('option', 'width', 930);
     $('#popup-window').dialog('option', 'dialogClass', 'popup-window');
-    $('#popup-window').load('/popupWindow', function() {
+    $('#popup-window').load('/popupWindow', function () {
       Cufon.replace('#popup-window .cufon');
     });
   }
 
-  $('#popup-window').on('click', '#popup-submit', function() {
+  $('#popup-window').on('click', '#popup-submit', function () {
     $(this).hide();
     $('#popup-process').show();
     var children = [];
-    $('.child').each(function() {
+    $('.child').each(function () {
       var name = $(this).find('.name').val();
       var date = $(this).find('.date').val();
       var gender = $(this).find('input[type=radio]:checked').val();
@@ -166,7 +163,7 @@ $groups = Category::model()->roots()->findAll();
     $.post('/popupWindow', {
       children: children,
       PopupForm: {accept: accept, email: email}
-    }, function(data) {
+    }, function (data) {
       $('#popup-process').hide();
       var result = JSON && JSON.parse(data) || $.parseJSON(data);
       switch (result.result) {
@@ -186,7 +183,7 @@ $groups = Category::model()->roots()->findAll();
           $('#popup-window').dialog('option', 'dialogClass', 'popup-email-exist');
           $('#popup-window').html(result.html);
           $('#popup-window').dialog('open');
-          timeout_id = setTimeout(function() {
+          timeout_id = setTimeout(function () {
             $('#popup-window').dialog('close');
           }, 5000);
           break;
@@ -200,5 +197,17 @@ $groups = Category::model()->roots()->findAll();
           break;
       }
     });
+  });
+
+  $('.devem').click(function (event) {
+    var l = $(this);
+    if (l.attr('href') !== '#')
+      return;
+    event.preventDefault();
+    var em = 'andriano';
+    em += String.fromCharCode(64);
+    em += 'ngs.ru';
+    l.attr('href', 'mailto:' + em + '?subject=Разработка сайта');
+    l.html(em);
   });
 </script>
