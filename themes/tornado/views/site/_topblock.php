@@ -1,6 +1,6 @@
 <div class="yellow-background">
   <div class="container">
-    <div class="red" style="text-align: center; font-size: 22pt">Сайт находится в разработке</div>
+    <!--<div class="red" style="text-align: center; font-size: 22pt">Сайт находится в разработке</div>-->
     <div class="table" style="padding-bottom: 10px; margin: 0">
       <div class="table-cell valign-middle" style="padding-top: 10px">
         <a href="/"><img width="300" height="65" alt="Tornado" src="/themes/<?php echo Yii::app()->theme->name; ?>/img/logo.png"></a>
