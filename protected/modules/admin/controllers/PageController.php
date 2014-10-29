@@ -60,7 +60,7 @@ class PageController extends Controller {
     if (isset($_POST['Page'])) {
       $model->attributes = $_POST['Page'];
       if ($model->save()) {
-        $this->redirect(array('admin')); //, 'id' => $model->id));
+//        $this->redirect(array('admin')); //, 'id' => $model->id));
       }
     }
 
