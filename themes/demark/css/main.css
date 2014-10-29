@@ -952,7 +952,7 @@ td.text-right{
 
 #profile-link:before{
   content: '';
-  background: url(/themes/demark/img/account.png) no-repeat;
+  /*background: url(/themes/demark/img/account.png) no-repeat;*/
   top: -7px;
   left: -4px;
 }
