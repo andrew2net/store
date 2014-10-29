@@ -905,7 +905,7 @@ td.text-right{
 }
 #open-login:before{
   content: '';
-  background: url(/themes/demark/img/login.png) no-repeat;
+  /*background: url(/themes/demark/img/login.png) no-repeat;*/
   left: 85px;
   top: -6px
 }
@@ -966,7 +966,7 @@ td.text-right{
 
 #logout-link:before{
   content: '';
-  background: url(/themes/demark/img/logout.png) no-repeat;
+  /*background: url(/themes/demark/img/logout.png) no-repeat;*/
   left: 70px;
   top: -3px;
 }
