@@ -1008,3 +1008,12 @@ td.text-right{
   bottom: 60px;
   right: -5px;
 }
+
+.selfem{
+  color: #39C;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.selfem:hover{
+  color: #09F;
+}

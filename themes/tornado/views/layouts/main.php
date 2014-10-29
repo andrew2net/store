@@ -64,7 +64,6 @@
       $(".fancybox").fancybox();
     });
   </script>
-<!-- Yandex.Metrika counter -->
 <!--<script type="text/javascript">
 var yaParams = {/*Здесь параметры визита*/};
 </script>-->
