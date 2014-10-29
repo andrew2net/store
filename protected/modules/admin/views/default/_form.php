@@ -146,8 +146,7 @@
 <?php
 $this->widget('ext.bootstrap.widgets.TbModal', array(
   'id' => 'pay-data-modal',
-//  'header' => '',
-//  'content' => '',
+  'content' => $this->renderPartial('_payModalContent', null, true),
 //  'footer' => array(TbHtml::button('Закрыть', array('data-dismiss' => 'modal'))),
 ));
 ?>
@@ -372,18 +371,33 @@ $this->widget('ext.bootstrap.widgets.TbModal', array(
     });
 
     var payTable = $('#pay-table-body');
+    var payTotal = $('#pay-table-total');
     var payModal = $('#pay-data-modal');
+    var payModalHeader = payModal.find('.modal-header > h3');
+    var payModalMessage = payModal.find('#pay-model-message');
+    var payModalProcess = payModal.find('#pay-modal-process');
+    var payModalFooter = payModal.find('.modal-footer');
 
     payTable.on('click', '.pay-action~ul > li > a', function (event) {
       event.preventDefault();
       var tr = $(this).parents('tr');
       var id = tr.find('input#pay_id').val();
+      payModalHeader.html('Обновление статуса платежа');
+      payModalMessage.hide();
+      payModalProcess.show();
+      payModalFooter.html('');
+      payModal.modal('show');
       $.get(this.href, {id: id}, function (data) {
         if (data.status) {
-          payModal.find('.modal-header').html(data.header);
-          payModal.find('.modal-body').html(data.body);
-          payModal.find('.modal-footer').html(data.footer);
-          payModal.modal('show');
+          payModalHeader.html(data.header);
+          payModalMessage.html(data.message);
+          payModalProcess.hide();
+          payModalMessage.show();
+          payModalFooter.html(data.footer);
+          if (data.body !== undefined)
+            payTable.html(data.body);
+          if (data.total !== undefined)
+            payTotal.html(data.total);
         }
         return;
       }, 'json');
@@ -395,25 +409,23 @@ $this->widget('ext.bootstrap.widgets.TbModal', array(
       var btCancel = btOk.parent().find('button[data-dismiss="modal"]');
       btOk.prop('disabled', true);
       btCancel.prop('disabled', true);
-      var txt = payModal.find('#modal-text');
-      var prc = payModal.find('#modal-process');
-      var err = payModal.find('#modal-error');
-      err.hide();
-      txt.hide();
-      prc.show();
+      payModalMessage.hide();
+      payModalProcess.show();
       var id = payModal.find('input#modal-pay-id').val();
       var url = btOk.attr('acturl');
       $.post(url, {id: id}, function (data) {
         btCancel.prop('disabled', false);
-        prc.hide();
+        payModalMessage.html(data.message);
+        payModalProcess.hide();
+        payModalMessage.show();
         if (data.status) {
           payTable.html(data.body);
-          $('#pay-table-total').html(data.total);
-          payModal.find('#modal-success').show();
+          payTotal.html(data.total);
+          if (data.ostatus !== undefined)
+            order_status_id.find('option[value="' + data.ostatus + '"]').attr('selected', 'selected');
           btOk.hide();
           btCancel.html('Закрыть');
         } else {
-          err.show();
           btOk.prop('disabled', false);
         }
       }, 'json');

@@ -221,4 +221,18 @@ class Payment extends CActiveRecord {
     return $list;
   }
 
+  public function getProcessingKzStatus($client, $rrn, $extended = false) {
+    if ($extended)
+      $params = new getExtendedTransactionStatus();
+    else
+      $params = new getTransactionStatus();
+    $params->merchantId = $this->merchant_id;
+    $params->referenceNr = $rrn;
+    if ($extended)
+      $transactionResult = $client->getExtendedTransactionStatus($params);
+    else
+      $transactionResult = $client->getTransactionStatus($params);
+    return $transactionResult;
+  }
+
 }

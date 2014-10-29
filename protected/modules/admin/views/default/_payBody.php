@@ -43,13 +43,14 @@ foreach ($model->pay as $item) {
     <td>
       <?php
       $payActions[] = array('label' => 'Данные транзакции', 'url' => '/admin/default/payData');
-
+      if ($item->status_id < 5)
+        $payActions[] = array('label' => 'Обновить статус', 'url' => '/admin/default/payGetStatus');
       if ($item->status_id == Pay::AUTHORISED) {
         $payActions[] = array('label' => 'Звершить транзакцию', 'url' => '/admin/default/payCompleteDialog');
-        $payActions[] = array('label' => 'Отменить транзакцию', 'url' => '#');
+        if ($model->status_id == Order::STATUS_PAID)
+          $payActions[] = array('label' => 'Отменить транзакцию', 'url' => '/admin/default/payCancelDialog');
       }
       if ($model->payment->type_id == Payment::TYPE_LIQPAY) {
-        $payActions[] = array('label' => 'Обновить статус', 'url' => '/admin/default/payGetStatus');
         if ($model->status_id == Order::STATUS_PAID && $item->status_id == Pay::PAID) {
           $payActions[] = array('label' => 'Возврат средств', 'url' => '/admin/default/payRefundDialog');
         }

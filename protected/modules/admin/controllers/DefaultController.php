@@ -97,7 +97,7 @@ class DefaultController extends Controller {
             }
             $model->changeStatusMessage($oldStatus);
             $tr->commit();
-            $this->redirect(array('index'));
+//            $this->redirect(array('index'));
           }
         } catch (Exception $e) {
           $tr->rollback();
@@ -218,11 +218,10 @@ class DefaultController extends Controller {
       Yii::app()->end();
     }
 
-    $header = TbHtml::button('×', array('class' => 'close', 'style' => 'font-size:20px', 'data-dismiss' => 'modal'))
-        . TbHtml::tag('h3', array(), 'Данные транзакции');
-    $body = '';
+    $header = 'Данные транзакции';
+    $message = '';
     if (count($pay->data) > 0) {
-      $body .= TbHtml::opentag('table');
+      $message .= TbHtml::opentag('table');
       foreach ($pay->data as $item) {
         $value = $item->value;
         if ($item->name == 'IP адрес покупателя') {
@@ -236,19 +235,19 @@ class DefaultController extends Controller {
               $value .= ' (' . $c_code['name_ru'] . ')';
           }
         }
-        $body .= TbHtml::openTag('tr');
-        $body .= TbHtml::tag('td', array(), $item->name);
-        $body .= TbHtml::tag('td', array(), $value);
-        $body .= TbHtml::closeTag('tr');
+        $message .= TbHtml::openTag('tr');
+        $message .= TbHtml::tag('td', array(), $item->name);
+        $message .= TbHtml::tag('td', array(), $value);
+        $message .= TbHtml::closeTag('tr');
       }
-      $body .= TbHtml::closeTag('table');
+      $message .= TbHtml::closeTag('table');
     }
     else {
-      $body .= TbHtml::tag('div', array(), 'Нет данных');
+      $message .= TbHtml::tag('div', array('style' => 'line-height:60px;text-align:center'), 'Нет данных');
     }
     $footer = TbHtml::button('Закрыть', array('data-dismiss' => 'modal', 'color' => TbHtml::BUTTON_COLOR_PRIMARY));
 
-    echo json_encode(array('status' => true, 'header' => $header, 'body' => $body, 'footer' => $footer));
+    echo json_encode(array('status' => true, 'header' => $header, 'message' => $message, 'footer' => $footer));
     Yii::app()->end();
   }
 
@@ -261,55 +260,37 @@ class DefaultController extends Controller {
       Yii::app()->end();
     }
 
-    $header = TbHtml::button('×', array('class' => 'close', 'style' => 'font-size:20px', 'data-dismiss' => 'modal'))
-        . TbHtml::tag('h3', array(), 'Завершение транзакции');
+    $header = 'Завершение транзакции';
     $topay = $pay->order->getToPaySumm();
     $currency_class = $pay->order->currency->getCss();
     $trsumm = $pay->amount;
-    $body = TbHtml::openTag('div', array('id' => 'modal-text', 'style' => 'height:60px'));
     if ($topay < 0) {
       $trsumm += $topay;
       $topay *= -1;
-      $body .= TbHtml::openTag('p', array('class' => 'red'));
-      $body .= "Сумма к оплате по заказу меньше суммы транзакции на ";
-      $body .= TbHtml::tag('span', array('class' => $currency_class), $topay);
-      $body .= TbHtml::closeTag('p');
-      $body .= TbHtml::openTag('p');
-      $body .= "Завершить транзакцию на сумму ";
-      $body .= TbHtml::tag('span', array('class' => $currency_class), $trsumm) . "&nbsp;&nbsp;?";
-      $body .= TbHtml::closeTag('p');
+      $message = TbHtml::openTag('p', array('class' => 'red'));
+      $message .= "Сумма к оплате по заказу меньше суммы транзакции на ";
+      $message .= TbHtml::tag('span', array('class' => $currency_class), $topay);
+      $message .= TbHtml::closeTag('p');
+      $message .= TbHtml::openTag('p');
+      $message .= "Завершить транзакцию на сумму ";
+      $message .= TbHtml::tag('span', array('class' => $currency_class), $trsumm) . "&nbsp;&nbsp;?";
+      $message .= TbHtml::closeTag('p');
     }
     elseif ($topay > 0) {
-      $body .= TbHtml::openTag('p', array('class' => 'red'));
-      $body .= "Сумма к оплате по заказу больше суммы транзакции на ";
-      $body .= TbHtml::tag('span', array('class' => $currency_class), $topay);
-      $body .= TbHtml::closeTag('p');
-      $body .= TbHtml::tag('p', array(), 'Завершить транзакцию?');
+      $message .= TbHtml::openTag('p', array('class' => 'red'));
+      $message .= "Сумма к оплате по заказу больше суммы транзакции на ";
+      $message .= TbHtml::tag('span', array('class' => $currency_class), $topay);
+      $message .= TbHtml::closeTag('p');
+      $message .= TbHtml::tag('p', array(), 'Завершить транзакцию?');
     }
     else
-      $body .= TbHtml::tag('p', array('style' => 'text-align:center;line-height:60px'), 'Завершить транзакцию?');
-    $body .= TbHtml::closeTag('div');
-    $body .= TbHtml::openTag('div', array(
-          'style' => 'display:none;text-align:center;line-height:60px',
-          'id' => 'modal-process',
-    ));
-    $body .= TbHtml::tag('img', array('src' => '/images/process.gif'));
-    $body .= TbHtml::closeTag('div');
-    $body .= TbHtml::openTag('div', array('id' => 'modal-success',
-          'style' => 'display:none;text-align:center;height:60px'));
-    $body .= TbHtml::tag('p', array('style' => 'line-height:60px'), 'Транзакция успешно завершена');
-    $body .= TbHtml::closeTag('div');
-    $body .= TbHtml::openTag('div', array('id' => 'modal-error',
-          'style' => 'display:none;text-align:center;height:60px'));
-    $body .= TbHtml::tag('p', array('class' => 'red'), 'Ошибка завершения транзакции!');
-    $body .= TbHtml::tag('p', array(), 'Попробовать еще раз?');
-    $body .= TbHtml::closeTag('div');
-    $body .= TbHtml::hiddenField('modal-pay-id', $id);
+      $message = TbHtml::tag('div', array('style' => 'line-height:60px'), 'Завершить транзакцию?');
+    $message .= TbHtml::hiddenField('modal-pay-id', $id);
 
     $footer = TbHtml::button('Да', array('id' => 'modal-ok-bt', 'acturl' => '/admin/default/payComplete'))
         . TbHtml::button('Нет', array('data-dismiss' => 'modal', 'color' => TbHtml::BUTTON_COLOR_PRIMARY));
 
-    echo json_encode(array('status' => true, 'header' => $header, 'body' => $body, 'footer' => $footer));
+    echo json_encode(array('status' => true, 'header' => $header, 'message' => $message, 'footer' => $footer));
     Yii::app()->end();
   }
 
@@ -320,34 +301,100 @@ class DefaultController extends Controller {
       $pay = Pay::model()->findByPk($_POST['id']);
       /* @var $pay Pay */
 
+      $message = TbHtml::tag('p', array('class' => 'red'), 'Ошибка завершения транзакции!');
+      $message .= TbHtml::tag('p', array(), 'Попробовать еще раз?');
+      $message .= TbHtml::hiddenField('modal-pay-id', $pay->id);
       try {
         $client = new CNPMerchantWebServiceClient();
         $params = new completeTransaction();
         $params->merchantId = $pay->order->payment->merchant_id;
-        $params->customerReference = $pay->operation_id;
+        $params->referenceNr = $pay->operation_id;
         $params->transactionSuccess = true;
         $topay = $pay->order->getToPaySumm();
         if ($topay < 0) {
-          $params->overrideAmount = $pay->amount + $topay;
-          $basket = PayController::getBasket($pay->order);
+          $params->overrideAmount = ($pay->amount + $topay) * 100;
+          $basket = $pay->order->getBasket();
           $params->goodsList = $basket;
         }
         $responce = $client->completeTransaction($params);
-        if ($responce) {
-          $pay->status_id = Pay::PAID;
-          if ($topay < 0) {
-            $pay->amount += $topay;
-            $pay->currency_amount = $pay->amount;
-          }
-          $pay->save();
+        if ($responce->return) {
+          $pay->renewStatus($client);
+
+          $pay->order->refresh();
           $body = $this->renderPartial('_payBody', array('model' => $pay->order), TRUE);
           $total = $this->renderPartial('_payTotal', array('model' => $pay->order), TRUE);
-          echo json_encode(array('status' => true, 'body' => $body, 'total' => $total));
+          $message = TbHtml::tag('div', array('style' => 'line-height:60px'), 'Транзакция успешно завершена');
+          echo json_encode(array('status' => true, 'body' => $body, 'total' => $total, 'message' => $message));
         }
-        else
-          echo json_encode(array('status' => FALSE));
+        else {
+          echo json_encode(array('status' => FALSE, 'message' => $message));
+        }
       } catch (Exception $ex) {
-        echo json_encode(array('status' => FALSE));
+        echo json_encode(array('status' => FALSE, 'message' => $message));
+      }
+    }
+    else
+      echo '';
+    Yii::app()->end();
+  }
+
+  public function actionPayCancelDialog($id) {
+    $pay = Pay::model()->findByPk($id);
+    /* @var $pay Pay */
+    if (is_null($pay)) {
+      echo json_encode(array('status' => false));
+      Yii::app()->end();
+    }
+
+    $header = 'Отмена транзакции';
+    $message = TbHtml::tag('div', array('style' => 'line-height:60px'), 'Отменить транзакцию?');
+    $message .= TbHtml::hiddenField('modal-pay-id', $id);
+
+    $footer = TbHtml::button('Да', array('id' => 'modal-ok-bt', 'acturl' => '/admin/default/payCancel'))
+        . TbHtml::button('Нет', array('data-dismiss' => 'modal', 'color' => TbHtml::BUTTON_COLOR_PRIMARY));
+
+    echo json_encode(array('status' => true, 'header' => $header, 'message' => $message, 'footer' => $footer));
+    Yii::app()->end();
+  }
+
+  public function actionPayCancel() {
+    if (isset($_POST['id'])) {
+      Yii::import('application.modules.payments.models.Payment');
+      require_once Yii::app()->basePath . '/extensions/CNPMerchantWebServiceClient.php';
+      $pay = Pay::model()->findByPk($_POST['id']);
+      /* @var $pay Pay */
+
+      $message = TbHtml::tag('p', array('class' => 'red'), 'Ошибка операции отмены транзакции!');
+      $message .= TbHtml::tag('p', array(), 'Попробовать еще раз?');
+      $message .= TbHtml::hiddenField('modal-pay-id', $pay->id);
+      try {
+        $client = new CNPMerchantWebServiceClient();
+        $params = new completeTransaction();
+        $params->merchantId = $pay->order->payment->merchant_id;
+        $params->referenceNr = $pay->operation_id;
+        $params->transactionSuccess = FALSE;
+        $responce = $client->completeTransaction($params);
+        if ($responce->return) {
+          $transactionResult = $pay->order->payment->getProcessingKzStatus($client, $pay->operation_id);
+          $pay->status_id = constant("Pay::{$transactionResult->return->transactionStatus}");
+          $pay->save();
+
+          $pay->order->status_id = Order::STATUS_CANCELED;
+          $pay->order->save();
+
+          $body = $this->renderPartial('_payBody', array('model' => $pay->order), TRUE);
+          $total = $this->renderPartial('_payTotal', array('model' => $pay->order), TRUE);
+          $message = TbHtml::tag('div', array('style' => 'line-height:60px'), 'Транзакция успешно отменена');
+          echo json_encode(array(
+            'status' => true,
+            'body' => $body,
+            'total' => $total,
+            'message' => $message,
+            'ostatus' => $pay->order->status_id,
+          ));
+        }
+      } catch (Exception $e) {
+        echo json_encode(array('status' => FALSE, 'message' => $message));
       }
     }
     else
@@ -364,34 +411,15 @@ class DefaultController extends Controller {
       Yii::app()->end();
     }
 
-    $header = TbHtml::button('×', array('class' => 'close', 'style' => 'font-size:20px', 'data-dismiss' => 'modal'))
-        . TbHtml::tag('h3', array(), 'Возврат средств покупателю');
+    $header = 'Возврат средств покупателю';
 
-    $body = TbHtml::openTag('div', array('id' => 'modal-text',
-          'style' => 'text-align:center;height:60px'));
-    $body .= TbHtml::tag('p', array('style' => 'line-height:60px'), 'Вернуть средства покупателю?');
-    $body .= TbHtml::closeTag('div');
-    $body .= TbHtml::openTag('div', array(
-          'style' => 'display:none;text-align:center;line-height:60px',
-          'id' => 'modal-process',
-    ));
-    $body .= TbHtml::tag('img', array('src' => '/images/process.gif'));
-    $body .= TbHtml::closeTag('div');
-    $body .= TbHtml::openTag('div', array('id' => 'modal-success',
-          'style' => 'display:none;text-align:center;height:60px'));
-    $body .= TbHtml::tag('p', array('style' => 'line-height:60px'), 'Возврат средств успешно завершен');
-    $body .= TbHtml::closeTag('div');
-    $body .= TbHtml::openTag('div', array('id' => 'modal-error',
-          'style' => 'display:none;text-align:center;height:60px'));
-    $body .= TbHtml::tag('p', array('class' => 'red'), 'Ошибка выполнения опреации возврата средств!');
-    $body .= TbHtml::tag('p', array(), 'Попробовать еще раз?');
-    $body .= TbHtml::closeTag('div');
-    $body .= TbHtml::hiddenField('modal-pay-id', $id);
+    $message = TbHtml::tag('div', array('style' => 'line-height:60px'), 'Вернуть средства покупателю?');
+    $message .= TbHtml::hiddenField('modal-pay-id', $id);
 
     $footer = TbHtml::button('Да', array('id' => 'modal-ok-bt', 'acturl' => '/admin/default/payRefund'))
         . TbHtml::button('Нет', array('data-dismiss' => 'modal', 'color' => TbHtml::BUTTON_COLOR_PRIMARY));
 
-    echo json_encode(array('status' => true, 'header' => $header, 'body' => $body, 'footer' => $footer));
+    echo json_encode(array('status' => true, 'header' => $header, 'message' => $message, 'footer' => $footer));
     Yii::app()->end();
   }
 
@@ -412,10 +440,15 @@ class DefaultController extends Controller {
       if ($responce->result == 'ok') {
         $body = $this->renderPartial('_payBody', array('model' => $pay->order));
         $total = $this->renderPartial('_payTotal', array('model' => $pay->order));
-        echo json_encode(array('status' => true, 'body' => $body, 'total' => $total));
+        $message = TbHtml::tag('p', array('style' => 'line-height:60px'), 'Возврат средств успешно завершен');
+        echo json_encode(array('status' => true, 'body' => $body, 'message' => $message, 'total' => $total));
       }
-      else
-        echo json_encode(array('status' => FALSE));
+      else {
+        $message = TbHtml::tag('p', array('class' => 'red'), 'Ошибка выполнения опреации возврата средств!');
+        $message .= TbHtml::tag('p', array(), 'Попробовать еще раз?');
+        $message .= TbHtml::hiddenField('modal-pay-id', $pay->id);
+        echo json_encode(array('status' => FALSE, 'message' => $message));
+      }
     }
     Yii::app()->end();
   }
@@ -427,26 +460,36 @@ class DefaultController extends Controller {
       echo json_encode(array('status' => false));
       Yii::app()->end();
     }
-    Yii::import('ext.LiqPay');
-    Yii::import('application.modules.payments.models.Payment');
-    $liqpay = new LiqPay($pay->order->payment->merchant_id, $pay->order->payment->sign_key);
-    $responce = $liqpay->api('payment/status', array(
-      'order_id' => $pay->order_id,
-    ));
-    if ($responce->result == 'ok') {
-      if ($responce->payment_id == $pay->operation_id) {
-        $pay->amount = $responce->amount;
-        $pay->currency = $responce->currency;
-        $statuses = $pay->order->payment->getStatuses();
-        $pay->status_id = constant("Pay::{$statuses[$responce->status]}");
-        $pay->save();
-        $body = $this->renderPartial('_payBody', array('model' => $pay->order));
-        $total = $this->renderPartial('_payTotal', array('model' => $pay->order));
-        echo json_encode(array('status' => true, 'body' => $body, 'total' => $total));
-        Yii::app()->end();
-      }
+
+    $header = 'Обновление статуса платежа';
+
+    $status_id = $pay->renewStatus();
+    if ($status_id) {
+
+      $body = $this->renderPartial('_payBody', array('model' => $pay->order), true);
+      $total = $this->renderPartial('_payTotal', array('model' => $pay->order), true);
+      $message = TbHtml::tag('div', array('style' => 'line-height:60px'), 'Статус платежа успешно обновлен');
+      $footer = TbHtml::button('Закрыть', array('data-dismiss' => 'modal', 'color' => TbHtml::BUTTON_COLOR_PRIMARY));
+      echo json_encode(array(
+        'status' => true,
+        'body' => $body,
+        'total' => $total,
+        'header' => $header,
+        'message' => $message,
+        'ostatus' => $pay->order->status_id,
+        'footer' => $footer));
+      Yii::app()->end();
     }
-    echo json_encode(array('status' => FALSE));
+
+    $message = TbHtml::tag('p', array('class' => 'red'), 'Ошибка выполнения опреации!');
+    $message .= TbHtml::tag('p', array(), 'Попробовать еще раз?');
+    $footer = TbHtml::button('Да', array('id' => 'modal-ok-bt', 'acturl' => '/admin/default/payGetStatus'))
+        . TbHtml::button('Нет', array('data-dismiss' => 'modal', 'color' => TbHtml::BUTTON_COLOR_PRIMARY));
+    echo json_encode(array(
+      'status' => FALSE,
+      'header' => $header,
+      'message' => $message,
+      'footer' => $footer));
     Yii::app()->end();
   }
 

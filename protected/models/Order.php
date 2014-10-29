@@ -296,7 +296,6 @@ class Order extends CActiveRecord {
       $mail = new Mail;
       $mail->uid = $this->profile->user_id;
       $mail->type_id = 4;//Mail::TYPE_CHANGE_ORDER_STATUS;
-//              $mail->status_id = 1;
       if ($mail->save()) {
         $mailOrder = new MailOrder;
         $mailOrder->mail_id = $mail->id;
@@ -304,6 +303,28 @@ class Order extends CActiveRecord {
         $mailOrder->save();
       }
     }
+  }
+
+  public function getBasket() {
+    Yii::import('application.modules.payments.models.Currency');
+    Yii::import('application.modules.catalog.models.Product');
+    Yii::import('application.modules.delivery.models.Delivery');
+    $basket = array();
+    foreach ($this->orderProducts as $item) {
+      $goodsItem = new GoodsItem();
+      $goodsItem->amount = $item->price * $item->quantity * 100;
+      $goodsItem->currencyCode = $this->currency->iso;
+      $goodsItem->merchantsGoodsID = $item->product->article;
+      $goodsItem->nameOfGoods = $item->product->name;
+      $basket[] = $goodsItem;
+    }
+    $goodsItem = new GoodsItem();
+    $goodsItem->amount = $this->delivery_summ * 100;
+    $goodsItem->currencyCode = $this->currency->iso;
+    $goodsItem->merchantsGoodsID = $this->delivery->name;
+    $goodsItem->nameOfGoods = 'Доставка товара';
+    $basket[] = $goodsItem;
+    return $basket;
   }
 
 }

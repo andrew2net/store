@@ -139,13 +139,85 @@ class Pay extends CActiveRecord {
 
   public function setData($name, $value) {
     $data = PayData::model()->findByAttributes(array('pay_id' => $this->id, 'name' => $name));
-    if (is_null($data)){
+    if (is_null($data)) {
       $data = new PayData();
       $data->pay_id = $this->id;
       $data->name = $name;
     }
     $data->value = $value;
     $data->save();
+  }
+
+  public function renewStatus($client = null) {
+    Yii::import('application.modules.payments.models.Payment');
+
+    $status_id = false;
+
+    switch ($this->order->payment->type_id) {
+      case Payment::TYPE_LIQPAY:
+        Yii::import('ext.LiqPay');
+        $liqpay = new LiqPay($this->order->payment->merchant_id, $this->order->payment->sign_key);
+        $responce = $liqpay->api('payment/status', array(
+          'order_id' => $this->order_id,
+        ));
+        if ($responce->result == 'ok') {
+          if ($responce->payment_id == $this->operation_id) {
+            $this->amount = $responce->amount;
+            $this->currency = $responce->currency;
+            $statuses = $this->order->payment->getStatuses();
+            $status_id = constant("Pay::{$statuses[$responce->status]}");
+            $this->status_id = $status_id;
+            $this->save();
+          }
+          break;
+        }
+      case Payment::TYPE_PROCESSINGKZ:
+        if (is_null($client)) {
+          require_once Yii::app()->basePath . '/extensions/CNPMerchantWebServiceClient.php';
+          $client = new CNPMerchantWebServiceClient();
+        }
+        $transactionResult = $this->order->payment->getProcessingKzStatus($client, $this->operation_id);
+        $status_id = constant("Pay::{$transactionResult->return->transactionStatus}");
+        switch ($status_id) {
+          case Pay::PAID:
+            $this->amount = $transactionResult->return->amountSettled / 100;
+            break;
+          case Pay::REVERSED:
+            $this->amount = $transactionResult->return->amountRequested / 100;
+            break;
+          default :
+            $this->amount = $transactionResult->return->amountAuthorised / 100;
+        }
+        $this->currency_amount = $this->amount;
+        $this->status_id = $status_id;
+        $this->save();
+
+        $extendedTranResult = $this->order->payment->getProcessingKzStatus($client, $this->operation_id, TRUE);
+        $this->setData('Код авторизации', $transactionResult->return->authCode);
+        $this->setData('Имя владельца карты', $transactionResult->return->purchaserName);
+        $this->setData('Email покупателя', $transactionResult->return->purchaserEmail);
+        $this->setData('Телефон покупателя', $transactionResult->return->purchaserPhone);
+        $this->setData('Страна банка-эмитента', $extendedTranResult->return->cardIssuerCountry);
+        $this->setData('Часть номера карты', $extendedTranResult->return->maskedCardNumber);
+        $this->setData('Проверка 3D пароля', $extendedTranResult->return->verified3D);
+        $this->setData('IP адрес покупателя', $extendedTranResult->return->purchaserIpAddress);
+        break;
+    }
+    $oldStatus = $this->order->status_id;
+    switch ($status_id) {
+      case Pay::AUTHORISED:
+      case Pay::PAID:
+        $this->order->status_id = Order::STATUS_PAID;
+        $this->order->save();
+        $this->order->changeStatusMessage($oldStatus);
+        break;
+      case Pay::REVERSED:
+        $this->order->status_id = Order::STATUS_CANCELED;
+        $this->order->save();
+        $this->order->changeStatusMessage($oldStatus);
+        break;
+    }
+    return $status_id;
   }
 
 }

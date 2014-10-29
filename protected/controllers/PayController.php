@@ -37,7 +37,7 @@ class PayController extends Controller {
         if (isset($_POST['processingkz'])) {
           require_once Yii::app()->basePath . '/extensions/CNPMerchantWebServiceClient.php';
 
-          $basket = self::getBasket($order);
+          $basket = $order->getBasket();
 
           $client = new CNPMerchantWebServiceClient();
           $transactionDetail = new TransactionDetails();
@@ -89,25 +89,6 @@ class PayController extends Controller {
     }
     else
       throw new CHttpException(404, "Заказ № $id для оплаты не найден");
-  }
-
-  public static function getBasket($order) {
-    $basket = array();
-    foreach ($order->orderProducts as $item) {
-      $goodsItem = new GoodsItem();
-      $goodsItem->amount = $item->price * $item->quantity * 100;
-      $goodsItem->currencyCode = $order->currency->iso;
-      $goodsItem->merchantsGoodsID = $item->product->article;
-      $goodsItem->nameOfGoods = $item->product->name;
-      $basket[] = $goodsItem;
-    }
-    $goodsItem = new GoodsItem();
-    $goodsItem->amount = $order->delivery_summ * 100;
-    $goodsItem->currencyCode = $order->currency->iso;
-    $goodsItem->merchantsGoodsID = $order->delivery->name;
-    $goodsItem->nameOfGoods = 'Доставка товара';
-    $basket[] = $goodsItem;
-    return $basket;
   }
 
   public function actionNotify() {
@@ -240,10 +221,7 @@ class PayController extends Controller {
 
       $client = new CNPMerchantWebServiceClient();
 
-      $params = new getTransactionStatus();
-      $params->merchantId = $payment->merchant_id;
-      $params->referenceNr = $rrn;
-      $transactionResult = $client->getTransactionStatus($params);
+      $transactionResult = $payment->getProcessingKzStatus($client, $rrn);
 
       $pay = Pay::model()->findByAttributes(array(
         'operation_id' => $rrn,
@@ -251,26 +229,7 @@ class PayController extends Controller {
       ));
       /* @var $pay Pay */
       if ($pay) {
-        $status_id = constant("Pay::{$transactionResult->return->transactionStatus}");
-        $pay->amount = //($status_id == Pay::PAID ? $transactionResult->return->amountSettled :
-            $transactionResult->return->amountAuthorised / 100;
-        $pay->currency_amount = $pay->amount;
-        $pay->status_id = $status_id;
-        $pay->save();
-
-        $paramse = new getExtendedTransactionStatus();
-        $paramse->merchantId = $payment->merchant_id;
-        $paramse->referenceNr = $rrn;
-        $extendedTranResult = $client->getExtendedTransactionStatus($paramse);
-
-        $pay->setData('Код авторизации', $transactionResult->return->authCode);
-        $pay->setData('Имя владельца карты', $transactionResult->return->purchaserName);
-        $pay->setData('Email покупателя', $transactionResult->return->purchaserEmail);
-        $pay->setData('Телефон покупателя', $transactionResult->return->purchaserPhone);
-        $pay->setData('Страна банка-эмитента', $extendedTranResult->return->cardIssuerCountry);
-        $pay->setData('Часть номера карты', $extendedTranResult->return->maskedCardNumber);
-        $pay->setData('Проверка 3D пароля', $extendedTranResult->return->verified3D);
-        $pay->setData('IP адрес покупателя', $extendedTranResult->return->purchaserIpAddress);
+        $status_id = $pay->renewStatus($client);
 
         switch ($status_id) {
           case Pay::NO_SUCH_TRANSACTION:
@@ -288,10 +247,10 @@ class PayController extends Controller {
           case Pay::AUTHORISED:
           case Pay::PAID:
             $message['title'] = 'Оплата прошла успешно';
-            $oldStatus = $pay->order->status_id;
-            $pay->order->status_id = Order::STATUS_PAID;
-            $pay->order->save();
-            $pay->order->changeStatusMessage($oldStatus);
+//            $oldStatus = $pay->order->status_id;
+//            $pay->order->status_id = Order::STATUS_PAID;
+//            $pay->order->save();
+//            $pay->order->changeStatusMessage($oldStatus);
         }
         $message['txt'] = 'Статус платежа: "' . $pay->status . '"';
       }
