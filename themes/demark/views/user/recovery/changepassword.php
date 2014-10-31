@@ -9,8 +9,9 @@ $this->pageTitle = Yii::app()->name . ' - ' . "Изменение пароля";
 <div class="container" id="page">
   
   <?php $this->renderPartial('//site/_topblock'); ?>
+  <?php $this->renderPartial('//site/_mainmenu'); ?>
 
-  <h1 style="margin-top: 40px" class="cufon blue"><?php echo "Введите новый пароль"; ?></h1>
+  <h1 style="margin-top: 40px" class="blue"><?php echo "Введите новый пароль"; ?></h1>
 
   <div class="form">
     <?php echo CHtml::beginForm(); ?>
@@ -39,3 +40,4 @@ $this->pageTitle = Yii::app()->name . ' - ' . "Изменение пароля";
     <?php echo CHtml::endForm(); ?>
   </div><!-- form -->
 </div>
+<?php $this->renderPartial('//site/_footer'); ?>

@@ -22,6 +22,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
   /* @var $form CActiveForm */
 
   echo CHtml::hiddenField('url', Yii::app()->request->url);
+  echo CHtml::hiddenField('login', 0, array('id' => 'login-fl'));
   ?>
   <fieldset>
     <legend><span class="page-title bold blue">Ваша корзина</span></legend>
@@ -76,18 +77,23 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
             <div><?php echo $form->textField($profile, 'first_name'); ?></div>
             <?php echo $form->error($profile, 'first_name', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
           </div>
+          <div style="margin-bottom: 1em"><span id="<?php echo $has_err; ?>"></span>
+            <?php echo $form->labelEx($profile, 'last_name'); ?>
+            <div><?php echo $form->textField($profile, 'last_name'); ?></div>
+            <?php echo $form->error($profile, 'last_name', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
+          </div>
           <div style="margin-bottom: 1em">
             <?php echo $form->labelEx($user, 'email'); ?>
             <div><?php echo CHtml::activeEmailField($user, 'email'); ?></div>
             <?php echo $form->error($user, 'email', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
           </div>
+        </div>
+        <div style="vertical-align: top; width: 280px; margin: 0 35px">
           <div style="margin-bottom: 1em">
             <?php echo $form->labelEx($customer_profile, 'phone'); ?>
             <div><?php echo $form->telField($customer_profile, 'phone'); ?></div>
             <?php echo $form->error($customer_profile, 'phone', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
           </div>
-        </div>
-        <div style="vertical-align: top; width: 280px; margin: 0 35px">
           <div class="inline-blocks" style="margin-bottom: 1em">
             <div>
               <?php echo $form->labelEx($customer_profile, 'country_code'); ?>
@@ -95,7 +101,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
             </div>
             <div>
               <?php echo $form->labelEx($customer_profile, 'post_code'); ?>
-              <div><?php echo $form->textField($customer_profile, 'post_code', array('style' => 'width:120px')); ?></div>
+              <div><?php echo $form->textField($customer_profile, 'post_code', array('style' => 'width:120px; margin-left:2px')); ?></div>
               <?php echo $form->error($customer_profile, 'post_code'); ?>
             </div>
           </div>
@@ -113,13 +119,13 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
             </div>
             <?php echo $form->error($customer_profile, 'city', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
           </div>
-          <div style="margin-bottom: 1em">
-            <?php echo $form->labelEx($customer_profile, 'address'); ?>
-            <div><?php echo $form->textField($customer_profile, 'address'); ?></div>
-            <?php echo $form->error($customer_profile, 'address'); ?>
-          </div>
         </div>
         <div style="margin-bottom: 1em; display: block">
+          <div style="margin-bottom: 1em">
+            <?php echo $form->labelEx($customer_profile, 'address'); ?>
+            <div><?php echo $form->textField($customer_profile, 'address', array('style' => 'width:548px')); ?></div>
+            <?php echo $form->error($customer_profile, 'address'); ?>
+          </div>
           <?php echo $form->labelEx($order, 'description'); ?>
           <div>
             <?php
@@ -183,23 +189,27 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
     </div>
     <div id="order-hint" class="red hintl" style="display: none">Выберите способ доставки</div>
   </div>
-  <?php $this->renderPartial('//site/_footer'); ?>
-  <div id="cart-login-dialog">
-    <div>Пользователь с адресом электройнной почты <span id="email-dialog" style="color: rgb(51, 153, 204)"></span> уже зарегистрирован на этом сайте.</div>
-    <div style="margin: 1em 0 2em">Чтобы войти в личный кабинет, небходимо ввести пароль.</div>
-    <?php echo CHtml::label('Пароль', 'password'); ?>
-    <?php echo CHtml::passwordField('password'); ?>
-    <?php echo CHtml::Button('Вход', array('id' => 'submit-password')); ?>
-    <span class="red" id="passw-err"></span>
-    <div style="margin-top: 1em">
-      Забыли пароль? <?php echo CHtml::Button('Восстановить', array('id' => 'recover-password')); ?>
-      <img src="/images/process.gif" style="display: none; vertical-align: middle; margin-left: 15px" id="loading-dialog" />
-    </div>
-    <div id="sent-mail-recovery" style="height: 40px"></div>
-    <div id="close-cart-dialog" class="blue" style="text-align: right; font-size: 9pt; margin-top: 1em; cursor: pointer">Закрыть окно</div>
-  </div>
-  <?php
-  $this->endWidget();
-  Yii::app()->getClientScript()->registerScriptFile('/js/shoppingCart.js', CClientScript::POS_END);
-  ?>
+  <?php $this->endWidget(); ?>
 </div>
+<div id="cart-login-dialog">
+<!--    <div>Пользователь с адресом электройнной почты <span id="email-dialog" style="color: rgb(51, 153, 204)"></span> уже зарегистрирован на этом сайте.</div>
+  <div style="margin: 1em 0 2em">Чтобы войти в личный кабинет, небходимо ввести пароль.</div>
+  <?php // echo CHtml::label('Пароль', 'password'); ?>
+  <?php // echo CHtml::passwordField('password'); ?>
+  <?php // echo CHtml::Button('Вход', array('id' => 'submit-password')); ?>
+  <span class="red" id="passw-err"></span>
+  <div style="margin-top: 1em">
+    Забыли пароль? <?php // echo CHtml::Button('Восстановить', array('id' => 'recover-password'));      ?>
+    <img src="/images/process.gif" style="display: none; vertical-align: middle; margin-left: 15px" id="loading-dialog" />
+  </div>
+  <div id="sent-mail-recovery" style="height: 40px"></div>
+  <div id="close-cart-dialog" class="blue" style="text-align: right; font-size: 9pt; margin-top: 1em; cursor: pointer">Закрыть окно</div>-->
+</div>
+<?php
+$cart_css = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'cart.css';
+$url = Yii::app()->getAssetManager()->publish($cart_css);
+$cs = Yii::app()->getClientScript();
+$cs->registerCssFile($url);
+$cs->registerScriptFile('/js/shoppingCart.js', CClientScript::POS_END);
+?>
+<?php $this->renderPartial('//site/_footer'); ?>

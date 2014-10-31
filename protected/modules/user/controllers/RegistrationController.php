@@ -47,8 +47,15 @@ class RegistrationController extends Controller {
           $model->status = ((Yii::app()->controller->module->activeAfterRegister) ? User::STATUS_ACTIVE : User::STATUS_NOACTIVE);
 
           if ($model->save()) {
+            Yii::import('application.controllers.ProfileController');
+            
             $profile->user_id = $model->id;
             $profile->save();
+            
+            $customerProfile = ProfileController::getProfile();
+            $customerProfile->moveCart($model);
+            $customerProfile->sendRegistrEmail($model, $soucePassword);
+            
             if (Yii::app()->controller->module->sendActivationMail) {
               $activation_url = $this->createAbsoluteUrl('/user/activation/activation', array("activkey" => $model->activkey, "email" => $model->email));
               UserModule::sendMail($model->email, UserModule::t("You registered from {site_name}", array('{site_name}' => Yii::app()->name)), UserModule::t("Please activate you account go to {activation_url}", array('{activation_url}' => $activation_url)));

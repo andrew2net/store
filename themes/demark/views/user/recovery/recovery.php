@@ -8,32 +8,34 @@ $this->pageTitle = Yii::app()->name . ' - ' . 'Восстановить паро
 
 <div class="container" id="page">
 
-<?php $this->renderPartial('//site/_topblock'); ?>
+  <?php $this->renderPartial('//site/_topblock'); ?>
+  <?php $this->renderPartial('//site/_mainmenu'); ?>
 
   <h1 style="margin-top: 2em" class="cufon blue bold">Восстановить пароль</h1>
 
-    <?php if (Yii::app()->user->hasFlash('recoveryMessage')): ?>
+  <?php if (Yii::app()->user->hasFlash('recoveryMessage')): ?>
     <div class="success">
-    <?php echo Yii::app()->user->getFlash('recoveryMessage'); ?>
+      <?php echo Yii::app()->user->getFlash('recoveryMessage'); ?>
     </div>
-<?php else: ?>
+  <?php else: ?>
 
     <div class="form">
       <?php echo CHtml::beginForm(); ?>
 
-  <?php echo CHtml::errorSummary($form); ?>
+      <?php echo CHtml::errorSummary($form); ?>
 
       <div class="row">
         <?php echo CHtml::activeLabel($form, 'login_or_email'); ?>
-  <?php echo CHtml::activeTextField($form, 'login_or_email') ?>
+        <?php echo CHtml::activeTextField($form, 'login_or_email') ?>
         <p class="hint"><?php echo UserModule::t("Please enter your login or email addres."); ?></p>
       </div>
 
       <div class="row submit">
-  <?php echo CHtml::submitButton(UserModule::t("Restore")); ?>
+        <?php echo CHtml::submitButton(UserModule::t("Restore")); ?>
       </div>
 
-    <?php echo CHtml::endForm(); ?>
+      <?php echo CHtml::endForm(); ?>
     </div><!-- form -->
-<?php endif; ?>
+  <?php endif; ?>
 </div>
+<?php $this->renderPartial('//site/_footer'); ?>

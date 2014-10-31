@@ -40,7 +40,7 @@
           ?>
         </div>
         <div style="width: 150px; position: relative">
-          <span id="open-login"<?php echo $login_display; ?>>ВХОД</span>
+          <a id="open-login" href="/login"<?php echo $login_display; ?>>ВХОД</a>
           <a id="profile-link" href="/profile"<?php echo $profile_display; ?>>ЛИЧНЫЙ КАБИНЕТ</a>
           <a id="logout-link" href="/logout"<?php echo $logout_display; ?>>ВЫХОД</a>
           <div id="login-dialog">
@@ -54,7 +54,7 @@
               <span id="error-msg" class="red" style="display: none">неверное имя или пароль</span>
             </div>
             <div class="login-submit"><div>Войти</div></div>
-            <div style="text-align: center; margin: 10px auto 5px;"><a href="/user/recovery">зарегистрироваться</a></div>
+            <div style="text-align: center; margin: 10px auto 5px;"><a href="/user/registration">зарегистрироваться</a></div>
           </div>
         </div>
       </div>
@@ -130,6 +130,7 @@
   var close_dialog = login_dialog.find('span.close-dialog');
 
   open_login.click(function(event) {
+    event.preventDefault();
     event.stopPropagation();
     if (login_dialog.css('display') == 'none') {
       var pos = getLoginPos();

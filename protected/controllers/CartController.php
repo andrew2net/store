@@ -90,7 +90,7 @@ class CartController extends Controller {
     $currency = Currency::model()->findByAttributes(array(
       'country_code' => $country_code));
     /* @var $currency Currency */
-    
+
     $payment = Payment::model()->getPaymentList($currency->code);
 
     if (isset($_POST['CustomerProfile'])) {
@@ -101,7 +101,8 @@ class CartController extends Controller {
           $customer_profile->city = $_POST['CustomerProfile']['city'];
         else
           $customer_profile->city_l = $_POST['CustomerProfile']['city_l'];
-        $customer_profile->other_city = $_POST['CustomerProfile']['other_city'];
+        if (isset($_POST['CustomerProfile']['other_city']))
+          $customer_profile->other_city = $_POST['CustomerProfile']['other_city'];
       }
       $valid = $customer_profile->save();
       if (isset($_POST['Profile'])) {
@@ -393,9 +394,9 @@ class CartController extends Controller {
 
     $delivery = Delivery::model()->getDeliveryList($ccode, trim($pcode), $city, $cart, $order);
 
-    if(!isset($delivery[$order->delivery_id]))
+    if (!isset($delivery[$order->delivery_id]))
       $order->delivery_id = key($delivery);
-    
+
     $profile = ProfileController::getProfile();
     if (Yii::app()->params['mcurrency'])
       $currency = Currency::model()->findByAttributes(array(

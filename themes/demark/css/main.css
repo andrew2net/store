@@ -339,8 +339,14 @@ input[type=checkbox]:checked + label:before, .weekcarousel-prev,
 .blue{
   color: #2f386b;
 }
-blue-light{
+.blue-border{
+  border: 1px solid #2f386b;
+}
+.blue-light{
   color: #66ccff;
+}
+.blue-light-background{
+  background: #66ccff;
 }
 .gray{
   color: #666666;
@@ -1016,4 +1022,7 @@ td.text-right{
 }
 .selfem:hover{
   color: #09F;
+}
+.dialog{
+  background: white;
 }

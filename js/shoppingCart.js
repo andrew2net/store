@@ -102,22 +102,23 @@ $(document).ready(function () {
       if (data == 'ok')
         $('form').submit();
       else {
-        $('#email-dialog').html(email);
-        cart_login_dialog.dialog('open');
+        cart_login_dialog.html(data);
+        cart_login_dialog.show();
       }
     });
   });
 
   cart_login_dialog.on('click', '#submit-password', function () {
     var email = user_email.val();
-    var passw = $('#password').val();
+    var passw = $('#cart-password').val();
     $.post('/login', {
       email: email,
       passw: passw
     }, function (data) {
-      if (data == 'ok')
+      if (data == 'ok'){
+        $('#login-fl').val('1');
         $('form').submit();
-      else
+      }else
         $('#passw-err').html('Неверный пароль');
     });
   });
@@ -135,6 +136,10 @@ $(document).ready(function () {
       $('#loading-dialog').hide();
       $('#recover-password').show();
     });
+  });
+
+  cart_login_dialog.on('click', '#close-cart-dialog', function () {
+    cart_login_dialog.hide();
   });
 
   var deliveryTimeOut;
@@ -159,7 +164,7 @@ $(document).ready(function () {
 
   cart_city.focusout(function () {
     clearTimeout(deliveryTimeOut);
-    if (city_val != this.value){
+    if (city_val != this.value) {
       city_val = this.value;
       getDeliveries();
     }
@@ -368,28 +373,28 @@ $(document).ready(function () {
     $(elm).parent().parent().find('.summ').html(summ.formatMoney());
   }
 
-  $(function () {
-    cart_login_dialog.dialog({
-      autoOpen: false,
-      modal: true,
-      draggable: false,
-      resizable: false,
-      width: 500,
-      dialogClass: "cart-login-alert",
-      show: {
-        effect: "blind",
-        duration: 500
-      },
-      hide: {
-        effect: "explode",
-        duration: 500
-      }
-    });
-  });
+//  $(function () {
+//    cart_login_dialog.dialog({
+//      autoOpen: false,
+//      modal: true,
+//      draggable: false,
+//      resizable: false,
+//      width: 500,
+//      dialogClass: "cart-login-alert",
+//      show: {
+//        effect: "blind",
+//        duration: 500
+//      },
+//      hide: {
+//        effect: "explode",
+//        duration: 500
+//      }
+//    });
+//  });
 
-  $('#close-cart-dialog').click(function () {
-    cart_login_dialog.dialog('close');
-  });
+//  $('#close-cart-dialog').click(function () {
+//    cart_login_dialog.dialog('close');
+//  });
 });
 function citySuggest(request, response) {
   $.get("/site/suggestcity",

@@ -87,7 +87,7 @@ $groups = Category::model()->roots()->findAll();
   </div>
 </div>
 <div id="popup-window" style="display: none"></div>
-<div id="bottom-bar">УКАЖИТЕ ВОЗРАСТ ВАШЕГО РЕБЕНКА И ПОЛУЧИТЕ СКИДКУ <span class="red">400 РУБЛЕЙ</span> НА ПЕРВУЮ ПОКУПКУ!<span id="get-discount" class="red" style="margin-left: 50px; text-decoration: underline; -moz-text-decoration-line: underline; cursor: pointer">ПОЛУЧИТЬ СКИДКУ</span></div>
+<!--<div id="bottom-bar">УКАЖИТЕ ВОЗРАСТ ВАШЕГО РЕБЕНКА И ПОЛУЧИТЕ СКИДКУ <span class="red">400 РУБЛЕЙ</span> НА ПЕРВУЮ ПОКУПКУ!<span id="get-discount" class="red" style="margin-left: 50px; text-decoration: underline; -moz-text-decoration-line: underline; cursor: pointer">ПОЛУЧИТЬ СКИДКУ</span></div>-->
 <?php // Yii::app()->clientScript->registerScriptFile('http://vk.com/js/api/share.js?90', CClientScript::POS_HEAD); ?>
 <script type="text/javascript">
   $(function () {

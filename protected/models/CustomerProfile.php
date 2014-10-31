@@ -214,4 +214,43 @@ class CustomerProfile extends CActiveRecord {
     parent::afterValidate();
   }
 
+  public function sendRegistrEmail($user, $password) {
+    $params = array(
+      'profile' => $this,
+      'login' => $user->email,
+      'passw' => $password,
+    );
+    $message = new YiiMailMessage('Личный кабинет');
+    $message->view = 'registrInfo';
+    $message->setBody($params, 'text/html');
+    $message->setFrom(Yii::app()->params['infoEmail']);
+    $message->setTo(array($user->email => $user->profile->first_name . ' ' . $user->profile->last_name));
+    Yii::app()->mail->send($message);
+  }
+
+  /**
+   * Move shopping cart to private area after login.
+   * @param type $user
+   * @param type $sessionID When move cart after registration it should be null
+   */
+  public function moveCart($user, $sessionID = null) {
+    $cart = Cart::model()->findAllByAttributes(array(
+      'session_id' => is_null($sessionID) ? $this->session_id : $sessionID,
+      ));
+    foreach ($cart as $item) {
+      $item->session_id = NULL;
+      $item->user_id = $user->id;
+      $item->update(array('session_id', 'user_id'));
+    }
+
+    if (is_null($sessionID)) {
+      $this->session_id = null;
+      $this->user_id = $user->id;
+      $this->update(array(
+        'session_id',
+        'user_id',
+      ));
+    }
+  }
+
 }

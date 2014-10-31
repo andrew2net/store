@@ -71,6 +71,7 @@ class MinutelyCommand extends CConsoleCommand {
           $message->view = 'notifyOrder';
           $params['order'] = $mail->order[0];
           $message->setSubject('Оповещение о заказе');
+          break;
       }
       $message->setBody($params, 'text/html');
       $n = Yii::app()->mail->send($message);

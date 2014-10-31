@@ -115,6 +115,7 @@ class ProfileController extends Controller {
     if (!Yii::app()->user->isGuest)
       $this->redirect('/profile');
     Yii::import('application.controllers.SiteController');
+    Yii::import('application.controllers.ProfileController');
     $loginForm = new LoginForm;
 
     if ((isset($_POST['email']) || isset($_POST['login'])) && isset($_POST['passw']) ||
@@ -152,15 +153,9 @@ class ProfileController extends Controller {
             $old_cart = Cart::model()->findAllByAttributes(array(
               'session_id' => $session_id));
             if (count($old_cart) > 0) {
-              $cart = Cart::model()->findAllByAttributes(array('user_id' => $user->id));
-              foreach ($cart as $item) {
-                $item->delete();
-              }
-              foreach ($old_cart as $item) {
-                $item->session_id = null;
-                $item->user_id = $user->id;
-                $item->update(array('session_id', 'user_id'));
-              }
+              $cart = Cart::model()->deleteAllByAttributes(array('user_id' => $user->id));
+              $customerProfile = ProfileController::getProfile();
+              $customerProfile->moveCart($user, $session_id);
             }
             echo 'ok';
           }
@@ -311,8 +306,6 @@ class ProfileController extends Controller {
   }
 
   public static function registerUser(CustomerProfile $customer_profile, Profile $profile, User $user) {
-//    $user = new User;
-//    $user->email = $profile->email;
     $user->usernameGenerator();
     $sourcePassword = User::generate_password();
     $user->activkey = UserModule::encrypting(microtime() . $sourcePassword);
@@ -321,38 +314,14 @@ class ProfileController extends Controller {
     $user->lastvisit = time();
     $user->status = User::STATUS_ACTIVE;
     if ($user->save()) {
-//      $profile = new Profile;
       $profile->user_id = $user->id;
       $profile->save();
       $identity = new UserIdentity($user->username, $sourcePassword);
       if ($identity->authenticate()) {
         Yii::app()->user->login($identity, 3600 * 24 * 7);
 
-        $cart = Cart::model()->findAllByAttributes(array('session_id' => $customer_profile->session_id));
-        foreach ($cart as $item) {
-          $item->session_id = NULL;
-          $item->user_id = Yii::app()->user->id;
-          $item->update(array('session_id', 'user_id'));
-        }
-
-        $customer_profile->session_id = null;
-        $customer_profile->user_id = $user->id;
-        $customer_profile->update(array(
-          'session_id',
-          'user_id',
-        ));
-
-        $params = array(
-          'profile' => $customer_profile,
-          'login' => $user->email,
-          'passw' => $sourcePassword,
-        );
-        $message = new YiiMailMessage('Личный кабинет');
-        $message->view = 'registrInfo';
-        $message->setBody($params, 'text/html');
-        $message->setFrom(Yii::app()->params['infoEmail']);
-        $message->setTo(array($user->email => $user->profile->first_name . ' ' . $user->profile->last_name));
-        Yii::app()->mail->send($message);
+        $customer_profile->moveCart($user);
+        $customer_profile->sendRegistrEmail($user, $sourcePassword);
       }
     }
   }
