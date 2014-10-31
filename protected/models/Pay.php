@@ -197,10 +197,12 @@ class Pay extends CActiveRecord {
         $this->setData('Имя владельца карты', $transactionResult->return->purchaserName);
         $this->setData('Email покупателя', $transactionResult->return->purchaserEmail);
         $this->setData('Телефон покупателя', $transactionResult->return->purchaserPhone);
-        $this->setData('Страна банка-эмитента', $extendedTranResult->return->cardIssuerCountry);
-        $this->setData('Часть номера карты', $extendedTranResult->return->maskedCardNumber);
-        $this->setData('Проверка 3D пароля', $extendedTranResult->return->verified3D);
-        $this->setData('IP адрес покупателя', $extendedTranResult->return->purchaserIpAddress);
+        if ($extendedTranResult) {
+          $this->setData('Страна банка-эмитента', $extendedTranResult->return->cardIssuerCountry);
+          $this->setData('Часть номера карты', $extendedTranResult->return->maskedCardNumber);
+          $this->setData('Проверка 3D пароля', $extendedTranResult->return->verified3D);
+          $this->setData('IP адрес покупателя', $extendedTranResult->return->purchaserIpAddress);
+        }
         break;
     }
     $oldStatus = $this->order->status_id;

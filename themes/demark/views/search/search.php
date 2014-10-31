@@ -1,5 +1,5 @@
 <?php
-/* @var $product CActiveDataProvider */
+/* @var $data CActiveDataProvider */
 /* @var $groups[] Category */
 /* @var $search Search */
 /* @var $brand Brand */
@@ -48,11 +48,11 @@ $this->pageTitle = Yii::app()->name . $title;
     <div>
       <div style="margin-top: 20px">
         <?php
-        if ($product->getItemCount() > 0) {
+        if ($data->getItemCount() > 0) {
           echo CHtml::beginForm('', 'post', array('id' => 'item-submit'));
           echo CHtml::hiddenField('url', Yii::app()->request->url);
           $this->widget('zii.widgets.CListView', array(
-            'dataProvider' => $product,
+            'dataProvider' => $data,
             'itemView' => '//site/_item',
             'template' => '{pager}{items}{pager}',
               )
