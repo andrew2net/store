@@ -197,7 +197,7 @@ class Pay extends CActiveRecord {
         $this->setData('Имя владельца карты', $transactionResult->return->purchaserName);
         $this->setData('Email покупателя', $transactionResult->return->purchaserEmail);
         $this->setData('Телефон покупателя', $transactionResult->return->purchaserPhone);
-        if ($extendedTranResult) {
+        if (isset($extendedTranResult->return)) {
           $this->setData('Страна банка-эмитента', $extendedTranResult->return->cardIssuerCountry);
           $this->setData('Часть номера карты', $extendedTranResult->return->maskedCardNumber);
           $this->setData('Проверка 3D пароля', $extendedTranResult->return->verified3D);
