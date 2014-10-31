@@ -42,7 +42,7 @@ foreach ($model->pay as $item) {
     </td>
     <td>
       <?php
-      $payActions[] = array('label' => 'Данные транзакции', 'url' => '/admin/default/payData');
+      $payActions = array(array('label' => 'Данные транзакции', 'url' => '/admin/default/payData'));
       if ($item->status_id < 5)
         $payActions[] = array('label' => 'Обновить статус', 'url' => '/admin/default/payGetStatus');
       if ($item->status_id == Pay::AUTHORISED) {

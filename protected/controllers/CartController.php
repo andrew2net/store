@@ -94,7 +94,7 @@ class CartController extends Controller {
     $payment = Payment::model()->getPaymentList($currency->code);
 
     if (isset($_POST['CustomerProfile'])) {
-      if (!isset($_POST['login']))
+      if (!isset($_POST['login']) || !$_POST['login'])
         $customer_profile->attributes = $_POST['CustomerProfile'];
       else {
         if (isset($_POST['CustomerProfile']['city']))
@@ -105,7 +105,7 @@ class CartController extends Controller {
       }
       $valid = $customer_profile->save();
       if (isset($_POST['Profile'])) {
-        if (!isset($_POST['login']))
+        if (!isset($_POST['login']) || !$_POST['login'])
           $profile->attributes = $_POST['Profile'];
         $valid = $profile->validate() && $valid;
       }

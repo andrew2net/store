@@ -124,8 +124,6 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
       <div>Оформить заказ</div>
     </div>
   </div>
-  <div id="cart-login-dialog">
-  </div>
   <?php
   $this->endWidget();
   $cart_css = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'cart.css';
@@ -136,6 +134,8 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
   $cs->registerScriptFile("/themes/tornado/js/shoppingCart.js", CClientScript::POS_END);
   ?>
 </div>
+  <div id="cart-login-dialog">
+  </div>
 <script type="text/javascript">
   var minsumm = <?php echo $minsumm ; ?>;
 </script>
