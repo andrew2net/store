@@ -1,4 +1,6 @@
 <?php
+/* @var $this RecoveryController */
+
 $this->pageTitle = Yii::app()->name . ' - ' . 'Восстановить пароль';
 //$this->breadcrumbs = array(
 //  UserModule::t("Login") => array('/user/login'),
@@ -11,7 +13,7 @@ $this->pageTitle = Yii::app()->name . ' - ' . 'Восстановить паро
   <?php $this->renderPartial('//site/_topblock'); ?>
   <?php $this->renderPartial('//site/_mainmenu'); ?>
 
-  <h1 style="margin-top: 2em" class="cufon blue bold">Восстановить пароль</h1>
+  <h1 style="margin-top: 2em" class="blue bold">Восстановить пароль</h1>
 
   <?php if (Yii::app()->user->hasFlash('recoveryMessage')): ?>
     <div class="success">

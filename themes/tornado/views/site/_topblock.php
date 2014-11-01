@@ -163,7 +163,7 @@
         closeLoginDialog();
         open_login.hide();
         $('#profile-link').show();
-        window.location.href = window.location.href;
+        window.location.reload();
 //        $('#shoppingCart').html(result.cart);
 //        $('#bottom-bar').css('display', 'none');
 //        $('#footer').css('margin-bottom', '0');

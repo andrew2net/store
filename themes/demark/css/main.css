@@ -1026,3 +1026,6 @@ td.text-right{
 .dialog{
   background: white;
 }
+.success{
+  margin: 10px 0;
+}

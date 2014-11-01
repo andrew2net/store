@@ -148,23 +148,30 @@ class ProfileController extends Controller {
           $user->lastvisit = time();
           $user->save();
           $session_id = self::getSession();
-          Yii::app()->user->login($identity, 3600 * 24 * 7);
-          if (isset($_POST['email'])) { //if login from shopping cart move items to profile
-            $old_cart = Cart::model()->findAllByAttributes(array(
-              'session_id' => $session_id));
-            if (count($old_cart) > 0) {
-              $cart = Cart::model()->deleteAllByAttributes(array('user_id' => $user->id));
-              $customerProfile = ProfileController::getProfile();
-              $customerProfile->moveCart($user, $session_id);
+          $old_cart = Cart::model()->findAllByAttributes(array(
+            'session_id' => $session_id));
+          $customerProfile = ProfileController::getProfile();
+          $userCart = Cart::model()->findAllByAttributes(array('user_id' => $user->id));
+          if (Yii::app()->user->login($identity, 3600 * 24 * 7)) {
+            if (isset($_POST['email'])) { //if login from shopping cart move items to profile
+              if (count($old_cart) > 0) {
+                Cart::model()->deleteAllByAttributes(array('user_id' => $user->id));
+                $customerProfile->moveCart($user, $session_id);
+              }
+              echo 'ok';
             }
-            echo 'ok';
+            elseif (isset($_POST['login'])) {
+              if (count($userCart) == 0)
+                $customerProfile->moveCart($user, $session_id);
+              echo json_encode(array('result' => TRUE)); //, 'cart' => SiteController::cartLabel()));
+            }
+            else {
+              if (count($userCart) == 0)
+                $customerProfile->moveCart($user, $session_id);
+              $this->redirect('profile');
+            }
+            Yii::app()->end();
           }
-          elseif (isset($_POST['login'])) {
-            echo json_encode(array('result' => TRUE)); //, 'cart' => SiteController::cartLabel()));
-          }
-          else
-            $this->redirect('profile');
-          Yii::app()->end();
         }
       }
       //ajax return false if not login
@@ -251,7 +258,7 @@ class ProfileController extends Controller {
           $country_code = Yii::app()->db->createCommand()->select('code')->from('net_country')
                   ->where('id=:id', array(':id' => $city['country_id']))->query();
           if ($c_code = $country_code->read())
-              $profile->price_country = $c_code['code'];
+            $profile->price_country = $c_code['code'];
         }
       }
       if (empty($profile->price_country)) {

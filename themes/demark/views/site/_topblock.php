@@ -172,6 +172,7 @@
         open_login.hide();
         $('#profile-link').show();
         $('#shoppingCart').html(result.cart);
+        window.location.reload();
 //        $('#bottom-bar').css('display', 'none');
 //        $('#footer').css('margin-bottom', '0');
       } else {
