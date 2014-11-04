@@ -17,3 +17,4 @@ $this->pageTitle = Yii::app()->name . ' - Ошибка';
 
   <div class="error blue bold"><?php echo CHtml::encode($message); ?></div>
 </div>
+<?php $this->renderPartial('_footer'); ?>
