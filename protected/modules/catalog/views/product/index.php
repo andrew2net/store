@@ -35,6 +35,7 @@ $this->breadcrumbs = array(
     'data-url' => Yii::app()->createUrl('admin/catalog/product/priceUpload'), //'admin/catalog/priceUpload',
       )
   );
+  echo TbHtml::label('Загрузка прайса', 'priceupload', array('style' => 'float:right; margin:5px'));
   ?>
   <?php
 //  echo TbHtml::checkBox('upload_image', FALSE, array('id' => 'uploadImage',
@@ -123,7 +124,7 @@ $cs->registerScriptFile('/js_plugins/jQueryFileUpload/js/jquery.fileupload.js');
     $('#priceupload').fileupload({
       dataType: 'json',
       done: function (e, data){
-//        alert('!');
+        alert('Прайс загружен!');
       }
     });
     
