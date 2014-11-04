@@ -587,4 +587,24 @@ class ProductController extends Controller {
     Yii::app()->end();
   }
 
+  public function actionPriceUpload() {
+    Yii::import('webroot.js_plugins.jQueryFileUpload.server.php.UploadHandler');
+
+    $dir = YiiBase::getPathOfAlias('webroot') . '/uploads/' . Yii::app()->theme->name . '/';
+    $tmpDir = $dir . 'temp/';
+
+    $options = array(
+      'upload_dir' => $tmpDir,
+      'accept_file_types' => '/\.(xls)$/i',
+    );
+    $upload_handler = new UploadHandler($options);
+
+    $file = 'price.xls';
+    if (isset($_FILES['files']['name'])) {
+      if (file_exists($dir . $file))
+        unlink($dir . $file);
+      rename($tmpDir . $_FILES['files']['name'], $dir . $file);
+    }
+  }
+
 }

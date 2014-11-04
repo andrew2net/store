@@ -29,11 +29,12 @@ $this->breadcrumbs = array(
 //  ));
   ?>
   <?php
-//  echo TbHtml::activeFileField($importData, 'productFile'
-//      , array(
-//    'id' => 'fileToUpload',
-//      )
-//  );
+  echo TbHtml::fileField('files', '', array(
+    'id' => 'priceupload',
+    'style' => 'float:right',
+    'data-url' => Yii::app()->createUrl('admin/catalog/product/priceUpload'), //'admin/catalog/priceUpload',
+      )
+  );
   ?>
   <?php
 //  echo TbHtml::checkBox('upload_image', FALSE, array('id' => 'uploadImage',
@@ -111,11 +112,21 @@ $this->widget('bootstrap.widgets.TbModal', array(
   ),
 ));
 ?>
-<?php Yii::app()->clientScript->registerCoreScript('jquery.ui'); ?>
-<?php Yii::app()->clientScript->registerScriptFile('/js/jquery.iframe-transport.js'); ?>
-<?php Yii::app()->clientScript->registerScriptFile('/js/jquery.fileupload.js'); ?>
+<?php
+$cs = Yii::app()->clientScript;
+//$cs->registerCoreScript('jquery.ui');
+$cs->registerScriptFile('/js_plugins/jQueryFileUpload/js/vendor/jquery.ui.widget.js');
+$cs->registerScriptFile('/js_plugins/jQueryFileUpload/js/jquery.iframe-transport.js');
+$cs->registerScriptFile('/js_plugins/jQueryFileUpload/js/jquery.fileupload.js'); ?>
 <script type="text/javascript">
   $(function () {
+    $('#priceupload').fileupload({
+      dataType: 'json',
+      done: function (e, data){
+//        alert('!');
+      }
+    });
+    
     var i;
     var lines;
     function uploadData() {
@@ -165,11 +176,11 @@ $this->widget('bootstrap.widgets.TbModal', array(
       reader.readAsText(input.files[0]);
     });
 
-    function uploadProgress() {
-      $.get('/admin/catalog/product/uploadProgress', function (data) {
-        $('#uploadProgress .bar').css('width', data);
-      });
-    }
+//    function uploadProgress() {
+//      $.get('/admin/catalog/product/uploadProgress', function (data) {
+//        $('#uploadProgress .bar').css('width', data);
+//      });
+//    }
 
     function closeModal(data) {
       i = lines.length;
