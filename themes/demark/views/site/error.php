@@ -13,8 +13,8 @@ $this->pageTitle = Yii::app()->name . ' - Ошибка';
   $this->renderPartial('_topblock');
   $this->renderPartial('_mainmenu');
   ?>
-  <h1 style="margin: 2em 0" class="bold red">Error <?php echo $code; ?></h1>
+  <h1 style="margin-top: 1em" class="bold red">Error <?php echo $code; ?></h1>
 
-  <div class="error blue bold"><?php echo CHtml::encode($message); ?></div>
+  <div style="margin-bottom: 1em" class="error blue bold"><?php echo CHtml::encode($message); ?></div>
 </div>
 <?php $this->renderPartial('_footer'); ?>
