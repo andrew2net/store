@@ -25,7 +25,7 @@ Yii::import('application.modules.payments.models.Currency');
   <div class="inline-blocks">
     <?php echo $form->textFieldControlGroup($model, 'name', array('span' => 3, 'maxlength' => 30)); ?>
     <?php echo $form->dropDownListControlGroup($model, 'zone_type_id', $model->zone_types, array('prompt' => 'Выберите вид тарифных зон')); ?>
-    <?php echo $form->dropDownListControlGroup($model, 'transport_type_id', $model->transportTypes, array('prompt'=>'Выберите тип транспорта')); ?>
+    <?php echo $form->dropDownListControlGroup($model, 'transport_type_id', $model->transportTypes, array('prompt' => 'Выберите тип транспорта')); ?>
   </div>
 
   <fieldset class="inline-blocks" style="width: 850px">
@@ -55,7 +55,9 @@ Yii::import('application.modules.payments.models.Currency');
       <?php echo $form->dropDownListControlGroup($model, 'currency_code', CHtml::listData(Currency::model()->findAll(), 'code', 'name')); ?>
     </div>
     <?php echo $form->numberFieldControlGroup($model, 'insurance', array('span' => 1, 'min' => 0)); ?>
-    <?php echo $form->checkBoxControlGroup($model, 'active'); ?>
+    <div style="margin-top: 27px">
+      <?php echo $form->checkBoxControlGroup($model, 'active'); ?>
+    </div>
   </div>
 
   <?php echo $form->textAreaControlGroup($model, 'description', array('rows' => 6, 'span' => 8)); ?>
