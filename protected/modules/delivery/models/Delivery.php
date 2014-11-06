@@ -90,7 +90,8 @@ class Delivery extends CActiveRecord {
     // NOTE: you should only define rules for those attributes that
     // will receive user inputs.
     return array(
-      array('name', 'required'),
+      array('insurance', 'default', 'value' => 0),
+      array('name, insurance', 'required'),
       array('length, width, height, oversize, insurance, size_method_id, size_summ, zone_type_id', 'numerical', 'integerOnly' => true),
       array('max_weight', 'numerical', 'numberPattern' => '/\d{1,2}\.?\d{0,2}/'),
       array('transport_type_id', 'numerical', 'integerOnly' => true),
@@ -318,7 +319,7 @@ class Delivery extends CActiveRecord {
             default :
               $deliveryRate = self::getDeliveryRate($delivery, $parcel['weight']);
               if ($deliveryRate)
-                $price += $deliveryRate->price * $oversize;
+                $price += $deliveryRate->price * $oversize * (1 + $delivery->insurance / 100);
               else {
                 $deliveryMaxRate = DeliveryRate::model()->findByAttributes(array(
                   'delivery_id' => $delivery->id,
@@ -328,7 +329,8 @@ class Delivery extends CActiveRecord {
                 ));
                 /* @var $deliveryMaxRate DeliveryRate */
                 $addition_weight = ceil($parcel['weight'] - $deliveryMaxRate->weight);
-                $price += ($deliveryMaxRate->price + $delivery->regionDeliveries[0]->weight_rate * $addition_weight) * $oversize;
+                $price += ($deliveryMaxRate->price + $delivery->regionDeliveries[0]->weight_rate * $addition_weight) *
+                    $oversize * (1 + $delivery->insurance / 100);
               }
           }
         }
@@ -351,7 +353,7 @@ class Delivery extends CActiveRecord {
               break;
             }
           if ($nrjValue) {
-            $price = ceil($nrjValue['price']);
+            $price = ceil($nrjValue['price']) * (1 + $delivery->insurance / 100);
           }
           else
             continue;
