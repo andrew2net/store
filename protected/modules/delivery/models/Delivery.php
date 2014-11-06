@@ -90,17 +90,16 @@ class Delivery extends CActiveRecord {
     // NOTE: you should only define rules for those attributes that
     // will receive user inputs.
     return array(
-      array('insurance', 'default', 'value' => 0),
+      array('active, max_weight, insurance', 'default', 'value' => 0),
       array('name, insurance', 'required'),
       array('length, width, height, oversize, insurance, size_method_id, size_summ, zone_type_id', 'numerical', 'integerOnly' => true),
-      array('max_weight', 'numerical', 'numberPattern' => '/\d{1,2}\.?\d{0,2}/'),
+      array('max_weight', 'numerical', 'numberPattern' => '/\d{1,3}\.?\d{0,2}/'),
       array('transport_type_id', 'numerical', 'integerOnly' => true),
       array('transport_type_id', 'length', 'max' => 1),
       array('length, width, height, oversize, size_summ', 'length', 'max' => 4),
       array('oversize, currency_code', 'length', 'max' => 3),
       array('insurance, zone_type_id', 'length', 'max' => 2),
       array('name', 'length', 'max' => 30),
-      array('active, max_weight', 'default', 'value' => 0),
       array('description', 'safe'),
       // The following rule is used by search().
       // @todo Please remove those attributes that should not be searched.

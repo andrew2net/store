@@ -50,7 +50,7 @@ Yii::import('application.modules.payments.models.Currency');
     </div>
   </fieldset>
   <div class="inline-blocks">
-    <?php echo $form->numberFieldControlGroup($model, 'max_weight', array('span' => 1, 'min' => 0, 'step' => 0.1)); ?>
+    <?php echo $form->numberFieldControlGroup($model, 'max_weight', array('span' => 2, 'min' => 0, 'step' => 0.01)); ?>
     <div style="margin: 0 20px">
       <?php echo $form->dropDownListControlGroup($model, 'currency_code', CHtml::listData(Currency::model()->findAll(), 'code', 'name')); ?>
     </div>
