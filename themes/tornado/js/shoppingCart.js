@@ -94,10 +94,14 @@ $(document).ready(function () {
     $.post('/cart/checkemail', {
       email: email
     }, function (data) {
-      if (data == 'ok'){
-        yaCounter26247687.reachGoal('CREATEORDER');
+      if (data == 'ok') {
+        var priceDelivery = parseFloat($('#cart-delivery input:checked + label > span').attr('price'));
+        var summ = parseFloat(cartSumm.attr('summ'));
+        if (!isNaN(priceDelivery))
+          summ += priceDelivery;
+        yaCounter26247687.reachGoal('CREATEORDER', {price: summ});
         $('form').submit();
-      }else {
+      } else {
         cart_login_dialog.html(data);
         cart_login_dialog.show();
       }
