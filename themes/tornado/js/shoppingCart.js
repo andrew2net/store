@@ -94,9 +94,10 @@ $(document).ready(function () {
     $.post('/cart/checkemail', {
       email: email
     }, function (data) {
-      if (data == 'ok')
+      if (data == 'ok'){
+        yaCounter26247687.reachGoal('CREATEORDER');
         $('form').submit();
-      else {
+      }else {
         cart_login_dialog.html(data);
         cart_login_dialog.show();
       }
