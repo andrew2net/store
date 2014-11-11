@@ -463,7 +463,7 @@ class DefaultController extends Controller {
 
     $header = 'Обновление статуса платежа';
 
-    $status_id = $pay->renewStatus();
+    $status_id = $pay->renewStatus(null, true);
     if ($status_id) {
 
       $body = $this->renderPartial('_payBody', array('model' => $pay->order), true);

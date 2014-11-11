@@ -3,26 +3,30 @@
 /* @var $giftSelection GiftSelection */
 /* @var $product Product */
 /* @var $group Category */
+/* @var $group NestedSetBehavior */
 /* @var $categories[] Category */
 /* @var $view string */
+
+$groupParent = $group;
+$parents= array();
+$breadcrumbs[] = $group->name;
+while (TRUE){
+  $parents[] = $groupParent->name;
+  $groupParent = $groupParent->getParent();
+  if (is_null($groupParent))
+    break;
+  $breadcrumbs[$groupParent->name] = array('group', 'id' => $groupParent->id);
+}
+
+$this->pageTitle = Yii::app()->name . ' - ' . implode(' - ', array_reverse($parents)); //$group->name;
 ?>
-<?php $this->pageTitle = Yii::app()->name . ' - ' . $group->name; ?>
 
 <div class="container" id="page">
   <?php
-  $breadcrumbs = array('Главная' => '/');
-  switch ($group->level) {
-    case 3:
-      $g3 = $group->getParent()->getParent();
-      $breadcrumbs[$g3->name] = array('/group', 'id' => $g3->id);
-    case 2:
-      $g2 = $group->getParent();
-      $breadcrumbs[$g2->name] = array('/group', 'id' => $g2->id);
-  }
-  $breadcrumbs[] = $group->name;
-
+  $breadcrumbs['Главная'] = '/';
+  
   $this->widget('zii.widgets.CBreadcrumbs', array(
-    'links' => $breadcrumbs,
+    'links' => array_reverse($breadcrumbs),
     'homeLink' => FALSE,
     'separator' => ' > ',
     'htmlOptions' => array(
@@ -36,7 +40,7 @@
   echo CHtml::hiddenField('currentGroup', $currentGroup->id);
   ?>
   <div class="inline-blocks" style="margin-top: 20px">
-    <?php $this->renderPartial('//site/_leftMenu', array('group' => $group)); ?>
+<?php $this->renderPartial('//site/_leftMenu', array('group' => $group)); ?>
 
     <div style="padding-left: 15px">
       <?php
@@ -45,7 +49,7 @@
       Yii::import('application.modules.discount.models.Discount');
 
       echo CHtml::beginForm('', 'post', array('id' => 'item-submit'));
-      echo CHtml::hiddenField('url', Yii::app()->request->url); 
+      echo CHtml::hiddenField('url', Yii::app()->request->url);
 
       $this->renderPartial($view, array(
         'group' => $group,

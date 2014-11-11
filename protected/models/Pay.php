@@ -148,7 +148,7 @@ class Pay extends CActiveRecord {
     $data->save();
   }
 
-  public function renewStatus($client = null) {
+  public function renewStatus($client = null, $extend = false) {
     Yii::import('application.modules.payments.models.Payment');
 
     $status_id = false;
@@ -192,16 +192,18 @@ class Pay extends CActiveRecord {
         $this->status_id = $status_id;
         $this->save();
 
-        $extendedTranResult = $this->order->payment->getProcessingKzStatus($client, $this->operation_id, TRUE);
-        $this->setData('Код авторизации', $transactionResult->return->authCode);
-        $this->setData('Имя владельца карты', $transactionResult->return->purchaserName);
-        $this->setData('Email покупателя', $transactionResult->return->purchaserEmail);
-        $this->setData('Телефон покупателя', $transactionResult->return->purchaserPhone);
-        if (isset($extendedTranResult->return)) {
-          $this->setData('Страна банка-эмитента', $extendedTranResult->return->cardIssuerCountry);
-          $this->setData('Часть номера карты', $extendedTranResult->return->maskedCardNumber);
-          $this->setData('Проверка 3D пароля', $extendedTranResult->return->verified3D);
-          $this->setData('IP адрес покупателя', $extendedTranResult->return->purchaserIpAddress);
+        if ($extend) {
+          $extendedTranResult = $this->order->payment->getProcessingKzStatus($client, $this->operation_id, TRUE);
+          $this->setData('Код авторизации', $transactionResult->return->authCode);
+          $this->setData('Имя владельца карты', $transactionResult->return->purchaserName);
+          $this->setData('Email покупателя', $transactionResult->return->purchaserEmail);
+          $this->setData('Телефон покупателя', $transactionResult->return->purchaserPhone);
+          if (isset($extendedTranResult->return)) {
+            $this->setData('Страна банка-эмитента', $extendedTranResult->return->cardIssuerCountry);
+            $this->setData('Часть номера карты', $extendedTranResult->return->maskedCardNumber);
+            $this->setData('Проверка 3D пароля', $extendedTranResult->return->verified3D);
+            $this->setData('IP адрес покупателя', $extendedTranResult->return->purchaserIpAddress);
+          }
         }
         break;
     }
