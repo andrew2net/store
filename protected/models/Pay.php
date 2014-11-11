@@ -148,7 +148,7 @@ class Pay extends CActiveRecord {
     $data->save();
   }
 
-  public function renewStatus($client = null, $extend = false) {
+  public function renewStatus($client = null) {
     Yii::import('application.modules.payments.models.Payment');
 
     $status_id = false;
@@ -192,7 +192,7 @@ class Pay extends CActiveRecord {
         $this->status_id = $status_id;
         $this->save();
 
-        if ($extend) {
+        if ($status_id == self::AUTHORISED) {
           $extendedTranResult = $this->order->payment->getProcessingKzStatus($client, $this->operation_id, TRUE);
           $this->setData('Код авторизации', $transactionResult->return->authCode);
           $this->setData('Имя владельца карты', $transactionResult->return->purchaserName);

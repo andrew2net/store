@@ -229,7 +229,7 @@ class PayController extends Controller {
       ));
       /* @var $pay Pay */
       if ($pay) {
-        $status_id = $pay->renewStatus($client, true);
+        $status_id = $pay->renewStatus($client);
 
         switch ($status_id) {
           case Pay::NO_SUCH_TRANSACTION:
