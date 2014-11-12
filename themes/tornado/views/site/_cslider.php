@@ -58,6 +58,6 @@ if (count($adds)) {
 <?php } ?>
 <script type="text/javascript">
   $(function() {
-    $('#coin-slider').coinslider({width: 1200, height: 270, links: false, navigation: true, effect: 'rain'});
+    $('#coin-slider').coinslider({width: 1200, height: 270, links: true, navigation: true, effect: 'rain'});
   });
 </script>
