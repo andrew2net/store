@@ -32,7 +32,7 @@ class CartController extends Controller {
     else {
       $cart = Cart::model()->shoppingCart($session)->findAll();
     }
-    if ($customer_profile->user) {
+    if (is_int($customer_profile->user_id)) {
       $user = $customer_profile->user;
       $profile = $user->profile;
     }
