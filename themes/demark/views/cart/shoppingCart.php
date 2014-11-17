@@ -102,7 +102,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
             <div>
               <?php echo $form->labelEx($customer_profile, 'post_code'); ?>
               <div><?php echo $form->textField($customer_profile, 'post_code', array('style' => 'width:120px; margin-left:2px')); ?></div>
-              <?php echo $form->error($customer_profile, 'post_code'); ?>
+              <?php echo $form->error($customer_profile, 'post_code', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
             </div>
           </div>
           <div style="margin-bottom: 1em">
@@ -124,7 +124,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
           <div style="margin-bottom: 1em">
             <?php echo $form->labelEx($customer_profile, 'address'); ?>
             <div><?php echo $form->textField($customer_profile, 'address', array('style' => 'width:548px')); ?></div>
-            <?php echo $form->error($customer_profile, 'address'); ?>
+            <?php echo $form->error($customer_profile, 'address', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
           </div>
           <?php echo $form->labelEx($order, 'description'); ?>
           <div>
