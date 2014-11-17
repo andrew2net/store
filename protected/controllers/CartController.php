@@ -32,7 +32,7 @@ class CartController extends Controller {
     else {
       $cart = Cart::model()->shoppingCart($session)->findAll();
     }
-    if (is_int($customer_profile->user_id)) {
+    if (!is_null($customer_profile->user_id)) { //if user is not guest
       $user = $customer_profile->user;
       $profile = $user->profile;
     }
