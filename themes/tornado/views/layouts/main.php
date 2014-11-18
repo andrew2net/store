@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="language" content="ru" />
     <link rel="icon" href="<?php echo Yii::app()->theme->baseUrl; ?>/img/favicon.png" type="image/x-icon" />
-    <!--<link rel="shortcut icon" href="<?php // echo Yii::app()->createAbsoluteUrl('');        ?>/favicon.ico" type="image/x-icon" />-->
+    <!--<link rel="shortcut icon" href="<?php // echo Yii::app()->createAbsoluteUrl('');         ?>/favicon.ico" type="image/x-icon" />-->
     <!-- blueprint CSS framework -->
     <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/themes/<?php echo Yii::app()->theme->name; ?>/css/screen.css" media="screen, projection" />
     <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/print.css" media="print" />
@@ -57,6 +57,18 @@
     echo $content;
     $this->renderPartial('//site/_footer');
     ?>
+    <!-- BEGIN JIVOSITE CODE {literal} -->
+    <script type='text/javascript'>
+      (function () {
+        var widget_id = 'vy7Ywbeb3Z';
+        var s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.async = true;
+    s.src = '//code.jivosite.com/script/widget/' + widget_id;
+    var ss = document.getElementsByTagName('script')[0];
+    ss.parentNode.insertBefore(s, ss);
+  })();</script>
+    <!-- {/literal} END JIVOSITE CODE -->
   </body>
   <script type="text/javascript">
     $(document).ready(Cufon.replace(".cufon"));
@@ -68,30 +80,35 @@
 var yaParams = {/*Здесь параметры визита*/};
 </script>-->
 
-<script type="text/javascript">
-(function (d, w, c) {
-    (w[c] = w[c] || []).push(function() {
+  <script type="text/javascript">
+    (function (d, w, c) {
+      (w[c] = w[c] || []).push(function () {
         try {
-            w.yaCounter26247687 = new Ya.Metrika({id:26247687,
-                    webvisor:true,
-                    clickmap:true,
-                    trackLinks:true,
-                    accurateTrackBounce:true,params:window.yaParams||{ }});
-        } catch(e) { }
-    });
+          w.yaCounter26247687 = new Ya.Metrika({id: 26247687,
+            webvisor: true,
+            clickmap: true,
+            trackLinks: true,
+            accurateTrackBounce: true, params: window.yaParams || {}});
+        } catch (e) {
+        }
+      });
 
-    var n = d.getElementsByTagName("script")[0],
-        s = d.createElement("script"),
-        f = function () { n.parentNode.insertBefore(s, n); };
-    s.type = "text/javascript";
-    s.async = true;
-    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+      var n = d.getElementsByTagName("script")[0],
+              s = d.createElement("script"),
+              f = function () {
+                n.parentNode.insertBefore(s, n);
+              };
+      s.type = "text/javascript";
+      s.async = true;
+      s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
 
-    if (w.opera == "[object Opera]") {
+      if (w.opera == "[object Opera]") {
         d.addEventListener("DOMContentLoaded", f, false);
-    } else { f(); }
-})(document, window, "yandex_metrika_callbacks");
-</script>
-<noscript><div><img src="//mc.yandex.ru/watch/26247687" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Yandex.Metrika counter -->
+      } else {
+        f();
+      }
+    })(document, window, "yandex_metrika_callbacks");
+  </script>
+  <noscript><div><img src="//mc.yandex.ru/watch/26247687" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+  <!-- /Yandex.Metrika counter -->
 </html>
