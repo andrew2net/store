@@ -227,6 +227,9 @@ div.search-form
 .footer-menu div{
   height: 2em;
 }
+.footer-menu > div:first-child{
+  font-size: 11pt;
+}
 .footer-menu ul{
   columns: 2;
   -webkit-columns: 2;
