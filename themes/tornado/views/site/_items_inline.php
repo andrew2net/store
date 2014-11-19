@@ -24,6 +24,7 @@ Yii::import('application.modules.payments.models.Currency');
   if (!isset($data))
     $data = Product::model()->searchCategory($group->id);
   $data->setPagination($pagination);
+  $data->sort->defaultOrder ='t.name ASC';
   $widget = $this->widget('ListView', array(
     'id' => 'product-list',
     'dataProvider' => $data,
