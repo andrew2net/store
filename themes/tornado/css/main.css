@@ -227,6 +227,16 @@ div.search-form
 .footer-menu div{
   height: 2em;
 }
+.footer-menu ul{
+  columns: 2;
+  -webkit-columns: 2;
+  -moz-columns: 2;
+  list-style-type: none;
+  line-height: 2em;
+  padding-left: 0;
+  position: relative;
+  bottom: 4px;
+}
 
 .iconsearch, input[type=radio] + label:before,
 input[type=radio]:checked + label:before, input[type=checkbox] + label:before,

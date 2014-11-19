@@ -35,16 +35,18 @@ $groups = Category::model()->roots()->findAll();
                 <div><a href="<?php echo $item['url']; ?>"><?php echo $item['label']; ?></a></div>
               <?php } ?>
             </div>
-            <div class="table-cell footer-menu">
-              <div class="bold">Товар</div>
+            <div class="table-cell footer-menu" style="width: 450px">
+              <div class="bold fmenu-items">Товар</div>
+              <ul>
               <?php
               foreach ($groups as $group) {
                 ?>
-                <div><?php
+                <li><?php
                   echo CHtml::link($group->name
                       , Yii::app()->createUrl('group', array('id' => $group->id)));
-                  ?></div>
+                  ?></li>
               <?php } ?>
+              </ul>
             </div>
             <div class="table-cell">
               <div class="bold" style="height: 2.5em">Звоните</div>
