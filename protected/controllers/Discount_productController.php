@@ -31,7 +31,7 @@ class Discount_productController extends CController {
       'search' => $search,
       'giftSelection' => $giftSelection,
       'groups' => $groups,
-      'product' => $product_data,
+      'data' => $product_data,
             ), $params)
     );
   }

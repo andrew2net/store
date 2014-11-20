@@ -22,8 +22,8 @@ $this->pageTitle = Yii::app()->name . $title;
     if (isset($brand)) {
       $notfind = 'Товар отсутствуе';
       ?>
-      <span class="cufon green bold" style="font-size: 18pt">Бренд: </span>
-      <span class="cufon" style="font-size: 18pt"><?php echo $brand->name; ?></span>
+      <span class="blue bold" style="font-size: 18pt">Бренд: </span>
+      <span class="" style="font-size: 18pt"><?php echo $brand->name; ?></span>
       <?php
     }
     else {
@@ -32,7 +32,7 @@ $this->pageTitle = Yii::app()->name . $title;
         ?>
         <span class="blue bold" style="font-size: 18pt">Вы искали: </span>
       <?php } ?>
-      <span class="cufon" style="font-size: 18pt"><?php echo $search->text; ?></span>
+      <span class="" style="font-size: 18pt"><?php echo $search->text; ?></span>
     <?php } ?>
   </div>
   <div class="inline-blocks">
@@ -46,7 +46,7 @@ $this->pageTitle = Yii::app()->name . $title;
       ?>
     </div>
     <div>
-      <div style="margin-top: 20px">
+      <div style="margin-bottom: 20px">
         <?php
         if ($data->getItemCount() > 0) {
           echo CHtml::beginForm('', 'post', array('id' => 'item-submit'));
@@ -61,7 +61,7 @@ $this->pageTitle = Yii::app()->name . $title;
         }
         else {
           ?>
-          <div class="cufon blue bold" style="font-size: 26pt; text-align: center;margin-top: 40px"><?php echo $notfind; ?></div>
+          <div class="blue bold" style="font-size: 26pt; text-align: center"><?php echo $notfind; ?></div>
           <?php
         }
         ?>
