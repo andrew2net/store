@@ -10,24 +10,28 @@
   echo CHtml::activeRadioButtonList($order, 'payment_id'
       , $payment, array(
     'labelOptions' => array(
-      'style' => 'display: block',
+      'style' => 'display: table',
     ),
   ));
   ?>
 </div>
 <div>
   <?php if ($customer_profile->price_country == 'KZ') { ?>
-  <a href="http://processing.kz/ru/about/safety_systems" title="Узнать больше" style="text-decoration: none">
-      <img src="<?php echo Yii::app()->theme->baseUrl; ?>/img/vbv.gif">
-      <img src="<?php echo Yii::app()->theme->baseUrl; ?>/img/mcsc.gif">
-    </a>
-    <a href="http://www.processing.kz"><img src="<?php echo Yii::app()->theme->baseUrl; ?>/img/pr.gif"></a>
-    <a href="http://www.halykbank.kz"><img style="margin-left: 5px" src="<?php echo Yii::app()->theme->baseUrl; ?>/img/hb.jpg"></a>
-  <?php
+    <div>
+      <a target="_blank" href="http://processing.kz/ru/about/safety_systems" title="Узнать больше" style="text-decoration: none">
+        <img src="<?php echo Yii::app()->theme->baseUrl; ?>/img/vbv.gif">
+        <img src="<?php echo Yii::app()->theme->baseUrl; ?>/img/mcsc.gif">
+      </a>
+      <a target="_blank" href="http://www.processing.kz"><img src="<?php echo Yii::app()->theme->baseUrl; ?>/img/pr.gif"></a>
+      <a target="_blank" href="http://www.halykbank.kz"><img style="margin-left: 5px" src="<?php echo Yii::app()->theme->baseUrl; ?>/img/hb.jpg"></a>
+    </div>
+    <a style="margin-left: 10px" target="_blank" href="http://processing.kz/ru/about/safety_systems" title="Узнать больше">learn more</a>
+    <a style="margin-left: 20px" target="_blank" href="http://processing.kz/ru/about/safety_systems" title="Узнать больше">learn more</a>
+    <?php
   }
   else {
     ?>
-    <img src="<?php echo Yii::app()->theme->baseUrl; ?>/img/vbv.gif">
-    <img src="<?php echo Yii::app()->theme->baseUrl; ?>/img/mcsc.gif">
-<?php } ?>
+    <img target="_blank" src="<?php echo Yii::app()->theme->baseUrl; ?>/img/vbv.gif">
+    <img target="_blank" src="<?php echo Yii::app()->theme->baseUrl; ?>/img/mcsc.gif">
+  <?php } ?>
 </div>

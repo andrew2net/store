@@ -9,7 +9,7 @@
   echo CHtml::activeRadioButtonList($order, 'payment_id'
       , $payment, array(
     'labelOptions' => array(
-      'style' => 'display: block',
+      'style' => 'display: table',
     ),
   ));
   ?>
