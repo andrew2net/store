@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="language" content="ru" />
     <link rel="icon" href="<?php echo Yii::app()->theme->baseUrl; ?>/img/favicon.ico" type="image/ico" />
-    <!--<link rel="shortcut icon" href="<?php // echo Yii::app()->createAbsoluteUrl('');      ?>/favicon.ico" type="image/x-icon" />-->
+    <!--<link rel="shortcut icon" href="<?php // echo Yii::app()->createAbsoluteUrl('');       ?>/favicon.ico" type="image/x-icon" />-->
     <!-- blueprint CSS framework -->
     <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/themes/<?php echo Yii::app()->theme->name; ?>/css/screen.css" media="screen, projection" />
     <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/print.css" media="print" />
@@ -53,7 +53,18 @@
   <body>
     <!--<div style="font-size: 24pt; text-align: center" class="red">Сайт находится в разработке</div>-->
     <?php echo $content; ?>
-  </body>
+    <!-- BEGIN JIVOSITE CODE {literal} -->
+    <script type='text/javascript'>
+      (function () {
+        var widget_id = 'jYbyTAQCNV';
+        var s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.async = true;
+        s.src = '//code.jivosite.com/script/widget/' + widget_id;
+        var ss = document.getElementsByTagName('script')[0];
+        ss.parentNode.insertBefore(s, ss);
+      })();</script>
+    <!-- {/literal} END JIVOSITE CODE --></body>
   <script type="text/javascript">
     $(document).ready(Cufon.replace(".cufon"));
     $(document).ready(function () {
