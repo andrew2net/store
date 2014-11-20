@@ -42,8 +42,8 @@ echo CHtml::tag('tr', array('style' => 'border:2px solid'));
 echo CHtml::tag('th', array('style' => 'border-right:1px solid'), 'Артикул');
 echo CHtml::tag('th', array('style' => 'border-right:1px solid'), 'Наименование товара');
 echo CHtml::tag('th', array('style' => 'border-right:1px solid'), 'Количество');
-echo CHtml::tag('th', array('style' => 'border-right:1px solid'), 'Цена');
-echo CHtml::tag('th', array(), 'Сумма');
+echo CHtml::tag('th', array('style' => 'border-right:1px solid'), 'Цена ' . $order->currency_code);
+echo CHtml::tag('th', array(), 'Сумма ' . $order->currency_code);
 echo CHtml::closeTag('tr');
 $total = $order->delivery_summ;
 foreach ($order->orderProducts as $value) {
