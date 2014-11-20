@@ -133,13 +133,13 @@ class CNPMerchantWebServiceClient extends SoapClient {
 			'completeTransaction' => 'completeTransaction',
 			'completeTransactionResponse' => 'completeTransactionResponse' 
 	);
-	public function CNPMerchantWebServiceClient($wsdl = 'https://test.processing.kz/CNPMerchantWebServices/CNPMerchantWebService.wsdl', $options = array('connection_timeout' => 60,
+	public function CNPMerchantWebServiceClient($wsdl = 'https://payment.processinggmbh.ch/CNPMerchantWebServices/services/CNPMerchantWebService?wsdl', $options = array('connection_timeout' => 60,
         'cache_wsdl' => WSDL_CACHE_MEMORY,
         'trace' => 1,
         'soap_version' => 'SOAP 1.2',
         'encoding' => 'UTF-8',
         'exceptions' => true,
-        'location' => 'https://test.processing.kz/CNPMerchantWebServices/services/CNPMerchantWebService')) {
+        'location' => 'https://payment.processinggmbh.ch/CNPMerchantWebServices/services/CNPMerchantWebService')) {
 		foreach ( self::$classmap as $key => $value ) {
 			if (! isset ( $options ['classmap'] [$key] )) {
 				$options ['classmap'] [$key] = $value;

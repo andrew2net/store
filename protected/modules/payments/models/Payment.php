@@ -59,7 +59,7 @@ class Payment extends CActiveRecord {
           'result_url' => 'Yii::app()->createAbsoluteUrl("/pay/result")',
           'pay_way' => '"card"',
           'language' => '"ru"',
-          'sandbox' => '"1"',
+          'sandbox' => '"0"',
         ),
         2 => array(
           'processingkz' => '"1"',
