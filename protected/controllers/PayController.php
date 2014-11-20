@@ -332,7 +332,7 @@ class PayController extends Controller {
 
     $sign = base64_encode(sha1($string, 1));
 
-    Yii::trace($_POST['status'], 'pay_notify');
+    Yii::log($_POST['status'], CLogger::LEVEL_INFO, 'pay_notify');
     if ($_POST['signature'] != $sign)
       throw new CHttpException('401');
 
