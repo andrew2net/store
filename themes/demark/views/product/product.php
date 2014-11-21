@@ -70,7 +70,7 @@ $txtName = html_entity_decode($product->name, ENT_COMPAT, 'UTF-8');
           echo CHtml::link('Назад', $url);
         ?>
       </div>
-      <div class="bold" style="font-size: 20pt; margin: 15px 0 20px"><?php echo $product->name; ?></div>
+      <div class="bold" style="font-size: 18pt; margin: 15px 0 20px"><?php echo $product->name; ?></div>
       <div>Артикул: <?php echo $product->article; ?></div>
       <div>Производитель: <?php echo $product->brand->name; ?></div>
       <div>Наличие: <?php echo $product->remainder ? 'товар в наличии на складе' : 'товар временно отсутствует'; ?></div>
