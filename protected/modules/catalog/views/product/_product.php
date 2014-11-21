@@ -26,7 +26,7 @@
 <input id="Product_small_img" name="Product[small_img]" type="text" value="<?php echo $model->small_img ?>" style="display: none">
 
 <div>
-  <?php echo $form->textFieldControlGroup($model, 'name', array('span' => 4, 'maxlength' => 255,)); ?>
+  <?php echo $form->textFieldControlGroup($model, 'name', array('span' => 5, 'maxlength' => 255,)); ?>
 </div>
 
 <div class="inline-blocks">
