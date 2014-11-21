@@ -52,7 +52,8 @@ $this->breadcrumbs = array(
 $columns = array(
   array(
     'name' => 'name',
-    'value' => 'mb_substr($data->name,0,40,"utf-8")'
+    'value' => 'CHtml::tag("span", array("title" => $data->name), mb_substr($data->name,0,40,"utf-8"))', //'mb_substr($data->name,0,40,"utf-8")',
+    'type' => 'html',
   ),
   'article',
 //    array(
