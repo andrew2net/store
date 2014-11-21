@@ -2,8 +2,10 @@
 /* @var $product Product */
 /* @var $productForm ProductForm */
 /* @var $search Search */
+
+$txtName = html_entity_decode($product->name, ENT_COMPAT, 'UTF-8');
 ?>
-<?php $this->pageTitle = Yii::app()->name . ' - ' . html_entity_decode($product->name, ENT_COMPAT, 'UTF-8'); ?>
+<?php $this->pageTitle = Yii::app()->name . ' - ' . $txtName; ?>
 <?php // $this->renderPartial('_topmenu');            ?>
 
 <div class="container" id="page">
@@ -13,7 +15,7 @@
   $categories = $product->category;
   if (isset($categories[0])) {
     $breadcrumbs = array();
-    $breadcrumbs[] = $product->name;
+    $breadcrumbs[] = $txtName;
     $category = $categories[0];
     while (!$category->isRoot()) {
       $breadcrumbs[$category->name] = array('/group', 'id' => $category->id);
