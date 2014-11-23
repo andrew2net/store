@@ -11,7 +11,9 @@ class ProductController extends CController{
     Yii::import('application.modules.catalog.models.Brand');
     Yii::import('application.modules.catalog.models.Category');
 
-    $product = Product::model()->with('brand')->findByPk($id);
+    $product = Product::model()->with('brand')->findByPk($id, 'show_me=1');
+    if (is_null($product))
+      throw new CHttpException(404, "Товар недоступен");
     $search = new Search;
     $productForm = new ProductForm;
 
