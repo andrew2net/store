@@ -27,12 +27,15 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
   <fieldset>
     <legend><span class="page-title bold blue">Ваша корзина</span></legend>
     <table class="striped" style="font-size: 11pt">
-      <colgroup><col><col><col><col><col><col><col></colgroup>
+      <colgroup>
+        <col style="width: 75px;"><col style="width: 244px;"><col style="width: 85px">
+        <col style="width: 75px"><col style="width: 100px"><col style="width: 110px"><col>
+      </colgroup>
       <thead>
         <tr style="font-size: 12pt; background: #414FA5 !important; color: whitesmoke">
-          <th colspan="2" style="width: 319px; text-align: center">товар</th><th style="width: 85px">артикул</th>
-          <th id="price-label" class="text-right" style="width: 75px">цена <?php echo $currency->class; ?></th>
-          <th style="width: 100px">кол-во</th><th class="text-right" style="width: 110px">сумма <?php echo $currency->class; ?></th><th></th>
+          <th colspan="2" style="text-align: center">товар</th><th>артикул</th>
+          <th id="price-label" class="text-right">цена <?php echo $currency->class; ?></th>
+          <th>кол-во</th><th class="text-right">сумма <?php echo $currency->class; ?></th><th></th>
         </tr>
       </thead>
       <tbody id="cart-items">
@@ -202,7 +205,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
   <?php // echo CHtml::Button('Вход', array('id' => 'submit-password')); ?>
   <span class="red" id="passw-err"></span>
   <div style="margin-top: 1em">
-    Забыли пароль? <?php // echo CHtml::Button('Восстановить', array('id' => 'recover-password'));        ?>
+    Забыли пароль? <?php // echo CHtml::Button('Восстановить', array('id' => 'recover-password'));         ?>
     <img src="/images/process.gif" style="display: none; vertical-align: middle; margin-left: 15px" id="loading-dialog" />
   </div>
   <div id="sent-mail-recovery" style="height: 40px"></div>
