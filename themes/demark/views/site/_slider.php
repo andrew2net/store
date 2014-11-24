@@ -1,4 +1,6 @@
 <?php
+/* @var $adds Action */
+
 Yii::import('application.modules.discount.models.Action');
 Yii::import('application.modules.discount.models.Advert');
 Yii::import('application.modules.catalog.models.Product');
@@ -51,7 +53,7 @@ $adds = Action::model()->published()->findAll();
           else {
             ?>
             <?php echo $value->url ? '<a href="' . $value->url . '">' : ''; ?>
-            <img height="270" width="950" src="<?php echo $value->img; ?>"/>
+            <img height="270" width="950" src="<?php echo $value->img; ?>" alt="<?php echo $value->name; ?>"/>
             <?php echo $value->url ? '</a>' : ''; ?>
           <?php } ?>
         </div>
