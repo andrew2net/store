@@ -207,16 +207,17 @@ class Payment extends CActiveRecord {
     $list = array();
     foreach ($models as $payment) {
       /* @var $payment Payment */
-      $output = CHtml::openTag('div', array('style' => 'display:table-cell;vertical-align:middle'));
-      $output .= CHtml::tag('div', array('class' => 'payment-' . ($payment->type_id > 0 ? 'cart' : 'cash')), '');
-      $output .= CHtml::closeTag('div');
-      $output .= CHtml::opentag('div', array('style' => 'display:inline-block;width:320px;position:relative;bottom:3px'));
-      $output .= CHtml::tag('div', array(
+      $output = CHtml::openTag('span', array('style' => 'display:table-cell;vertical-align:middle'));
+      $output .= CHtml::tag('span', array('class' => 'payment-' . ($payment->type_id > 0 ? 'cart' : 'cash')), '');
+      $output .= CHtml::closeTag('span');
+      $output .= CHtml::opentag('span', array('style' => 'display:inline-block;width:320px'));
+      $output .= CHtml::tag('span', array(
             'class' => 'bold',
             'style' => 'margin-bottom:5px',
               ), $payment->name);
+      $output .= '<br>';
       $output .= $payment->description;
-      $output .= CHtml::closeTag('div');
+      $output .= CHtml::closeTag('span');
       $list[$payment->id] = $output;
     }
     return $list;
