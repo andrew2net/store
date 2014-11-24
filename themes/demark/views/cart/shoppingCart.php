@@ -28,8 +28,8 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
     <legend><span class="page-title bold blue">Ваша корзина</span></legend>
     <table class="striped" style="font-size: 11pt">
       <colgroup>
-        <col style="width: 75px;"><col style="width: 244px;"><col style="width: 85px">
-        <col style="width: 75px"><col style="width: 100px"><col style="width: 110px"><col>
+        <col style="width: 75px;"><col style="width: 395px;"><col style="width: 85px">
+        <col style="width: 85px"><col style="width: 100px"><col style="width: 110px"><col>
       </colgroup>
       <thead>
         <tr style="font-size: 12pt; background: #414FA5 !important; color: whitesmoke">
