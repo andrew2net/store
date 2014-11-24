@@ -34,7 +34,7 @@ $(document).ready(function () {
     if (isNaN(summ))
       summ = 0;
 
-    var discountType = coupon.attr('type_id');
+    var discountType = coupon.attr('data-type-id');
     if (summNoDisc === 0) {
       coupon.prop({disabled: true});
       discountText.html('');
@@ -260,7 +260,7 @@ $(document).ready(function () {
   function getCoupon(elem) {
     var code = $.trim(elem.val());
     var err = 'неверный код';
-    elem.attr('type_id', '');
+    elem.attr('data-type-id', '');
     elem.attr('discount', '');
     if (code.length === 6) {
       $.get('/cart/coupon', {
@@ -269,10 +269,10 @@ $(document).ready(function () {
         var discount = JSON && JSON.parse(data) || $.parseJSON(data);
         if (discount.type === 3) {
           $('#discount-text').html(err);
-          coupon.attr('type_id', '');
+          coupon.attr('data-type-id', '');
           coupon.attr('discount', '');
         } else {
-          coupon.attr('type_id', discount.type);
+          coupon.attr('data-type-id', discount.type);
           coupon.attr('discount', discount.discount);
           calcCartSumm();
         }
