@@ -77,11 +77,10 @@
       em += 'demark-tools.com';
       $(this).html('<a href="mailto:' + em + '?subject=Запрос информации">' + em + '</a>');
     });
-  </script><!-- Yandex.Metrika counter -->
+  </script>
   <!-- Yandex.Metrika counter -->
-  <!--<script type="text/javascript">
-  var yaParams = {/*Здесь параметры визита*/};
-  </script>-->
+  <!-- Yandex.Metrika counter -->
+  <!--<script type="text/javascript">  var yaParams = {/*Здесь параметры визита*/};  </script>-->
 
   <script type="text/javascript">
     (function (d, w, c) {

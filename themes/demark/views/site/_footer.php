@@ -72,7 +72,7 @@ $groups = Category::model()->roots()->findAll();
               </div>
               <div class="gray bold lager" style="height: 1.5em"><?php echo Yii::app()->params['city']; ?></div>
               <div>
-                <img src="<?php echo Yii::app()->theme->baseUrl; ?>/img/mc_ms_vs_accpt.gif" usemap="#pay-systems">
+                <img src="<?php echo Yii::app()->theme->baseUrl; ?>/img/mc_ms_vs_accpt.gif" usemap="#pay-systems" alt="Pay by plastic card"/>
                 <map id="pay-systems" name="pay-systems">
                   <area target="_blank" shape="rect" coords="1,0,61,38" href="http://www.visa.com" alt="Visa">
                   <area target="_blank" shape="rect" coords="62,0,122,38" href="http://www.mastercard.com" alt="MasterCard">
@@ -87,7 +87,7 @@ $groups = Category::model()->roots()->findAll();
   </div>
 </div>
 <div id="popup-window" style="display: none"></div>
-<!--<div id="bottom-bar">УКАЖИТЕ ВОЗРАСТ ВАШЕГО РЕБЕНКА И ПОЛУЧИТЕ СКИДКУ <span class="red">400 РУБЛЕЙ</span> НА ПЕРВУЮ ПОКУПКУ!<span id="get-discount" class="red" style="margin-left: 50px; text-decoration: underline; -moz-text-decoration-line: underline; cursor: pointer">ПОЛУЧИТЬ СКИДКУ</span></div>-->
+<!--<div id="bottom-bar">ПОЛУЧИТЕ СКИДКУ <span class="red">400 РУБЛЕЙ</span> НА ПЕРВУЮ ПОКУПКУ!<span id="get-discount" class="red" style="margin-left: 50px; text-decoration: underline; -moz-text-decoration-line: underline; cursor: pointer">ПОЛУЧИТЬ СКИДКУ</span></div>-->
 <?php // Yii::app()->clientScript->registerScriptFile('http://vk.com/js/api/share.js?90', CClientScript::POS_HEAD); ?>
 <script type="text/javascript">
   $(function () {
