@@ -31,7 +31,7 @@
   }
   else {
     ?>
-    <img target="_blank" src="<?php echo Yii::app()->theme->baseUrl; ?>/img/vbv.gif">
-    <img target="_blank" src="<?php echo Yii::app()->theme->baseUrl; ?>/img/mcsc.gif">
+    <img src="<?php echo Yii::app()->theme->baseUrl; ?>/img/vbv.gif" alt="Verified by VISA">
+    <img src="<?php echo Yii::app()->theme->baseUrl; ?>/img/mcsc.gif" alt="Master Card Secure Code">
   <?php } ?>
 </div>
