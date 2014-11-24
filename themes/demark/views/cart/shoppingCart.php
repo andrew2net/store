@@ -80,7 +80,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
             <div><?php echo $form->textField($profile, 'first_name'); ?></div>
             <?php echo $form->error($profile, 'first_name', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
           </div>
-          <div style="margin-bottom: 1em"><span id="<?php echo $has_err; ?>"></span>
+          <div style="margin-bottom: 1em">
             <?php echo $form->labelEx($profile, 'last_name'); ?>
             <div><?php echo $form->textField($profile, 'last_name'); ?></div>
             <?php echo $form->error($profile, 'last_name', array('style' => 'font-size:10pt', 'class' => 'red')); ?>

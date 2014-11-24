@@ -57,7 +57,7 @@ class CartController extends Controller {
     else
       $coupon = NULL;
 
-    $has_err = '';
+    $has_err = 'no';
 
     if (!Yii::app()->params['country'])
       if (isset($_POST['CustomerProfile']['post_code']) && !isset($_POST['login']))
@@ -157,6 +157,7 @@ class CartController extends Controller {
       }
       if (!$valid)
         $has_err = 'prof';
+      
     }else {
       if (is_array($delivery))
         $order->delivery_id = key($delivery);
