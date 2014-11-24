@@ -1,7 +1,7 @@
 <div class="container">
   <div class="table" style="padding-bottom: 10px; margin: 0">
     <div class="table-cell valign-middle">
-      <a href="/"><img width="248" height="47" alt="DeMARK" src="/themes/<?php echo Yii::app()->theme->name; ?>/img/logo.png"></a>
+      <a href="/"><img width="248" height="47" alt="DeMARK" src="/themes/<?php echo Yii::app()->theme->name; ?>/img/logo.png"/></a>
     </div>
     <div class="table-cell">
       <div class="inline-blocks" style="text-align: right; margin-bottom: 20px; position: relative">
