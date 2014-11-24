@@ -33,7 +33,7 @@ $href_params = array('id' => $data->id);
 $prodName = html_entity_decode($data->name, ENT_COMPAT, 'UTF-8');
 if (isset($index) && $index == 0)
   echo CHtml::hiddenField('currentPage', $widget->dataProvider->getPagination()->getCurrentPage());
-echo CHtml::hiddenField('url', Yii::app()->request->url);
+echo CHtml::hiddenField('url', Yii::app()->request->url, array('id' => "url$data->id"));
 ?>
 <div class="helper"></div>
 <div class="item" title="<?php echo$data->name; ?>">
