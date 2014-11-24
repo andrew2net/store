@@ -112,7 +112,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
             </div>
           </div>
           <div style="margin-bottom: 1em">
-            <?php echo $form->labelEx($customer_profile, 'city'); ?>
+            <?php echo $form->labelEx($customer_profile, 'city', array('for' => 'cart-city')); ?>
             <div>
               <?php
               $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
