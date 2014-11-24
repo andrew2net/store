@@ -1,4 +1,4 @@
-<div id="mainmenuarea" cart="<?php echo ($this instanceof CartController); ?>">
+<div id="mainmenuarea" data-cart="<?php echo ($this instanceof CartController); ?>">
   <div id="mainmenucont">
     <div id="mainmenu">
       <div>
@@ -33,7 +33,7 @@
   $().ready(function($) {
     var menu = $('#mainmenuarea');
     var page = $('#page');
-    if (menu.attr('cart'))
+    if (menu.attr('data-cart'))
       return false;
     var cont = $('#mainmenucont');
     var offset = menu.offset();

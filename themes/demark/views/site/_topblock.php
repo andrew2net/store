@@ -93,7 +93,7 @@
       </div>
     </div>
 
-<?php // $this->renderPartial('//site/_city');      ?>
+    <?php // $this->renderPartial('//site/_city');      ?>
   </div>
 </div>
 <div id="callback-overlay" style="position: fixed; left: 0; top: 0; width: 100%; height: 100%; display: none; background: rgba(102,102, 102, 0.4); z-index: 100">
@@ -129,12 +129,12 @@
   var login_dialog = $('#login-dialog');
   var close_dialog = login_dialog.find('span.close-dialog');
 
-  open_login.click(function(event) {
+  open_login.click(function (event) {
     event.preventDefault();
     event.stopPropagation();
     if (login_dialog.css('display') == 'none') {
       var pos = getLoginPos();
-      login_dialog.show('scale', {origin: [pos.top, pos.left]}, function() {
+      login_dialog.show('scale', {origin: [pos.top, pos.left]}, function () {
         close_dialog.show();
       });
     }
@@ -154,17 +154,17 @@
     login_dialog.hide('scale', {origin: [pos.top, pos.left]});
   }
 
-  close_dialog.click(function() {
+  close_dialog.click(function () {
     closeLoginDialog();
   });
 
-  $('.login-submit div').click(function() {
+  $('.login-submit div').click(function () {
     var login = $('#login').val();
     var passw = $('#password').val();
     $.post('/login', {
       login: login,
       passw: passw
-    }, function(data) {
+    }, function (data) {
 //      $('#sent-mail-recovery').css('display', 'none');
       var result = JSON && JSON.parse(data) || $.parseJSON(data);
       if (result.result) {
@@ -183,24 +183,24 @@
     });
   });
 
-  $('#callback-link').click(function() {
+  $('#callback-link').click(function () {
     from = $(this).position();
     $('#callback-overlay').show();
     $('#callback-box').show('scale', {origin: [from.top, from.left + 60]});
   });
 
   function closeCallbackWindow() {
-    $('#callback-box').hide('scale', {origin: [from.top, from.left + 60]}, function() {
+    $('#callback-box').hide('scale', {origin: [from.top, from.left + 60]}, function () {
       $('#callback-overlay').hide();
       $('#callback-tel, #callback-name').css('border', 'none');
     });
   }
 
-  $('#callback-cancel').click(function() {
+  $('#callback-cancel').click(function () {
     closeCallbackWindow();
   });
 
-  $('#callback-submit').click(function() {
+  $('#callback-submit').click(function () {
     $('#callback-tel, #callback-name').css('border', 'none');
     var phone = $('#callback-tel').val();
     var name = $('#callback-name').val();
@@ -218,7 +218,7 @@
       $('#callback-form').hide();
       $('#callback-process').show();
       var note = $('#callback-note').val();
-      $.post('/site/callback', {phone: phone, name: name, note: note}, function(data) {
+      $.post('/site/callback', {phone: phone, name: name, note: note}, function (data) {
         $('#callback-process').hide();
         if (data == 'ok') {
           $('#callback-result').html('Завявка успешно отправлена.<br>В ближайшее время Вам перезвонят.');
@@ -226,14 +226,14 @@
           $('#callback-result').html('Не удалось отправить заявку.');
         }
         $('#callback-result').show();
-        setTimeout(function() {
+        setTimeout(function () {
           closeCallbackWindow();
         }, 5000);
       });
     }
   });
 
-  $('.iconsearch').click(function(event) {
+  $('.iconsearch').click(function (event) {
     event.preventDefault();
     if ($('#Search_text').val())
       $('#search-form').submit();
@@ -243,25 +243,25 @@
   var country_select = $('#country-select');
   var select = $('#select-ru, #select-kz');
 
-  country.click(function(event) {
+  country.click(function (event) {
     event.stopPropagation();
     country.hide();
     country_select.slideDown()();
   });
-  $(document).click(function(event) {
+  $(document).click(function (event) {
     var contained = $.contains(login_dialog[0], event.target);
     if (event.target.id !== login_dialog.attr('id') && !contained)
       closeLoginDialog();
 
-    country_select.slideUp(function() {
+    country_select.slideUp(function () {
       country.show();
     });
   });
-  select.click(function(event) {
+  select.click(function (event) {
     if (this.innerHTML !== country.html()) {
       event.stopPropagation();
       country_select.slideUp();
-      $.post('/profile/savecountry', {country: this.innerHTML}, function() {
+      $.post('/profile/savecountry', {country: this.innerHTML}, function () {
         window.location = window.location.href;
       });
     }
