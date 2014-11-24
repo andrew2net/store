@@ -261,7 +261,7 @@ $(document).ready(function () {
     var code = $.trim(elem.val());
     var err = 'неверный код';
     elem.attr('data-type-id', '');
-    elem.attr('discount', '');
+    elem.attr('data-discount', '');
     if (code.length === 6) {
       $.get('/cart/coupon', {
         coupon: code
@@ -270,10 +270,10 @@ $(document).ready(function () {
         if (discount.type === 3) {
           $('#discount-text').html(err);
           coupon.attr('data-type-id', '');
-          coupon.attr('discount', '');
+          coupon.attr('data-discount', '');
         } else {
           coupon.attr('data-type-id', discount.type);
-          coupon.attr('discount', discount.discount);
+          coupon.attr('data-discount', discount.discount);
           calcCartSumm();
         }
       });

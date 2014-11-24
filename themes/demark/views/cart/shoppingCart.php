@@ -51,7 +51,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
           <?php
           echo CHtml::textField('coupon', $coupon['code'], array(
             'data-type-id' => $coupon['type'],
-            'discount' => $coupon['value'],
+            'data-discount' => $coupon['value'],
             'maxlength' => 8,
             'style' => 'width:5em',
           ));
