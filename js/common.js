@@ -32,7 +32,7 @@ $(document).ready(function() {
     closeLoginDialog();
     var button = $(this);
     button.removeClass('addToCart');
-    var id = button.attr('product');
+    var id = button.attr('data-product');
     var quantity = button.find('input').val();
     if (!quantity) {
       quantity = $('#ProductForm_quantity').val();
