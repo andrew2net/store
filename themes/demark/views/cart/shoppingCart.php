@@ -27,7 +27,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
   <fieldset>
     <legend><span class="page-title bold blue">Ваша корзина</span></legend>
     <table class="striped" style="font-size: 11pt">
-      <col span="7">
+      <colgroup><col><col><col><col><col><col><col></colgroup>
       <thead>
         <tr style="font-size: 12pt; background: #414FA5 !important; color: whitesmoke">
           <th colspan="2" style="width: 319px; text-align: center">товар</th><th style="width: 85px">артикул</th>
@@ -202,7 +202,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
   <?php // echo CHtml::Button('Вход', array('id' => 'submit-password')); ?>
   <span class="red" id="passw-err"></span>
   <div style="margin-top: 1em">
-    Забыли пароль? <?php // echo CHtml::Button('Восстановить', array('id' => 'recover-password'));       ?>
+    Забыли пароль? <?php // echo CHtml::Button('Восстановить', array('id' => 'recover-password'));        ?>
     <img src="/images/process.gif" style="display: none; vertical-align: middle; margin-left: 15px" id="loading-dialog" />
   </div>
   <div id="sent-mail-recovery" style="height: 40px"></div>
