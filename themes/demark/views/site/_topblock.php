@@ -65,7 +65,7 @@
         echo CHtml::activeTextField($search, 'text', array(
           'style' => 'border: none; width: 180px; height: 23px; padding: 0 0 2px 10px; float: left; background:whitesmoke; 
             box-shadow: 0 0 1px inset; border-radius: 0; margin: 0',
-          'placeholder' => 'Поиск'
+//          'placeholder' => 'Поиск'
         ));
         echo CHtml::submitButton('', array(
           'style' => 'margin: 0 0 0 -4px; border: none; float: left; box-shadow: 0 0 1px inset',
