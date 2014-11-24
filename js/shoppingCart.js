@@ -20,7 +20,7 @@ $(document).ready(function () {
     var summNoDisc = 0;
     var discountSumm = 0;
     $('.cart-quantity').each(function () {
-      var price = $(this).attr('price');
+      var price = $(this).attr('data-price');
       var quantity = parseInt(this.value);
       if (isNaN(quantity))
         quantity = 0;
@@ -71,7 +71,7 @@ $(document).ready(function () {
   }
 
   function calcTotal() {
-    var priceDelivery = parseFloat($('#cart-delivery input:checked + label > span').attr('price'));
+    var priceDelivery = parseFloat($('#cart-delivery input:checked + label > span').attr('data-price'));
     var summ = parseFloat(cartSumm.attr('summ'));
     if (!isNaN(priceDelivery)) {
       var price_f = priceDelivery.formatMoney();
@@ -370,7 +370,7 @@ $(document).ready(function () {
   });
 
   function calcRow(elm) {
-    var summ = elm.value * $(elm).attr('price');
+    var summ = elm.value * $(elm).attr('data-price');
     $(elm).parent().parent().find('.summ').html(summ.formatMoney());
   }
 

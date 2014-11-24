@@ -47,7 +47,7 @@ $summ = $price * $product->quantity;
     echo CHtml::activeNumberField($product, "[$product->product_id]quantity", array(
 //      'style' => 'width: 2em; font-size: 16pt; border:1px dashed #BBB;border-radius:3px',
       'class' => 'cart-quantity input-number',
-      'price' => $price,
+      'data-price' => $price,
       'disc' => $disc,
       'product' => $product->product_id,
       'max' => 99,

@@ -387,7 +387,7 @@ class Delivery extends CActiveRecord {
         if ($type == 0) { //if model is carts array or call not from save order function
           $output = CHtml::tag('span', array(
                 'class' => 'bold',
-                'price' => $price,
+                'data-price' => $price,
                   ), $delivery->name);
           $storage_delivery[$delivery->id]['summ'] = $price; //save price for order edit
         }

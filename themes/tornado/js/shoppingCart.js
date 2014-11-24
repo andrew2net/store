@@ -70,7 +70,7 @@ $(document).ready(function () {
   }
 
   function calcTotal() {
-    var priceDelivery = parseFloat($('#cart-delivery input:checked + label > span').attr('price'));
+    var priceDelivery = parseFloat($('#cart-delivery input:checked + label > span').attr('data-price'));
     var summ = parseFloat(cartSumm.attr('summ'));
     if (!isNaN(priceDelivery)) {
       var price_f = priceDelivery.formatMoney();
@@ -95,7 +95,7 @@ $(document).ready(function () {
       email: email
     }, function (data) {
       if (data == 'ok') {
-        var priceDelivery = parseFloat($('#cart-delivery input:checked + label > span').attr('price'));
+        var priceDelivery = parseFloat($('#cart-delivery input:checked + label > span').attr('data-price'));
         var summ = parseFloat(cartSumm.attr('summ'));
         if (!isNaN(priceDelivery))
           summ += priceDelivery;
