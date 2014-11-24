@@ -51,16 +51,16 @@
           'id' => $category->id
       ))));
       if (($category->level - 1) == 1 && $category->url) {
-        echo CHtml::openTag('div', array('class' => 'category-menu-lev1'));
-        echo CHtml::openTag('div');
-        echo CHtml::openTag('span');
-        echo CHtml::encode($category->getAttribute('name'));
-        echo CHtml::closeTag('span');
-        echo CHtml::closeTag('div');
-        echo CHtml::openTag('div');
-        echo CHtml::tag('img', array('src' => $category->url, 'alt' => $category->name, 'width' => 34));
-        echo CHtml::closeTag('div');
-        echo CHtml::closeTag('div');
+//        echo CHtml::openTag('div', array('class' => 'category-menu-lev1'));
+//        echo CHtml::openTag('div');
+//        echo CHtml::openTag('span');
+//        echo CHtml::encode($category->getAttribute('name'));
+//        echo CHtml::closeTag('span');
+//        echo CHtml::closeTag('div');
+//        echo CHtml::openTag('div');
+//        echo CHtml::tag('img', array('src' => $category->url, 'alt' => $category->name, 'width' => 34));
+//        echo CHtml::closeTag('div');
+//        echo CHtml::closeTag('div');
       }
       else
         echo CHtml::encode($category->getAttribute('name'));
@@ -69,7 +69,7 @@
 
       $level = $category->level;
     }
-    for ($i = $level; $i; $i--) {
+    for ($i = $level-1; $i; $i--) {
       echo CHtml::closeTag('li');
       echo CHtml::closeTag('ul');
     }
