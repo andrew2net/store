@@ -27,10 +27,10 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
   <fieldset>
     <legend><span class="page-title bold blue">Ваша корзина</span></legend>
     <table class="striped" style="font-size: 11pt">
-      <colgroup>
+      <!--<colgroup>-->
         <col style="width: 75px;"><col style="width: 395px;"><col style="width: 85px">
         <col style="width: 85px"><col style="width: 100px"><col style="width: 110px"><col>
-      </colgroup>
+      <!--</colgroup>-->
       <thead>
         <tr style="font-size: 12pt; background: #414FA5 !important; color: whitesmoke">
           <th colspan="2" style="text-align: center">товар</th><th>артикул</th>
