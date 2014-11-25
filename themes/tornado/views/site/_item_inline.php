@@ -44,7 +44,7 @@ else {
 
 if (isset($index) && $index == 0)
   echo CHtml::hiddenField('currentPage', $widget->dataProvider->getPagination()->getCurrentPage());
-echo CHtml::hiddenField('url', Yii::app()->request->url);
+echo CHtml::hiddenField('url', Yii::app()->request->url, array('id' => "url$data->id"));
 ?>
 <div class="item-inline">
   <?php if ($discount) { ?>
@@ -71,7 +71,7 @@ echo CHtml::hiddenField('url', Yii::app()->request->url);
   <div class="item-inline-add">
     <!--<div class="item-inline-quantity"></div>-->
     <div class="item-inline-bt addToCart" data-product="<?php echo $data->id; ?>">
-      <?php echo CHtml::numberField('quantity', 1, array('min' => 1, 'class' => 'item-inline-quantity')); ?>
+      <?php echo CHtml::numberField('quantity', 1, array('min' => 1, 'class' => 'item-inline-quantity', 'id' => "quantity$data->id")); ?>
       <div title="Добавить в корзину"></div>
 
     </div>
