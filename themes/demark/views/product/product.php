@@ -6,7 +6,7 @@
 $txtName = html_entity_decode($product->name, ENT_COMPAT, 'UTF-8');
 ?>
 <?php $this->pageTitle = Yii::app()->name . ' - ' . $txtName; ?>
-<?php // $this->renderPartial('_topmenu');            ?>
+<?php // $this->renderPartial('_topmenu');             ?>
 
 <div class="container" id="page">
   <?php
@@ -59,7 +59,9 @@ $txtName = html_entity_decode($product->name, ENT_COMPAT, 'UTF-8');
     <div style="position: relative">
       <div class="<?php echo empty($percent) ? '' : 'discount-label-big'; ?>"><?php echo $percent; ?></div>
       <div class="img-container" style="width: 450px; height: 450px">
-        <a class="fancybox" href="<?php echo $product->img; ?>"><img class="img-anim" style="max-width: 450px; max-height: 450px" src="<?php echo $product->img; ?>"></a>
+        <a class="fancybox" href="<?php echo $product->img; ?>">
+          <img class="img-anim" style="max-width: 450px; max-height: 450px" src="<?php echo $product->img; ?>" alt="<?php echo $product->name; ?>"/>
+        </a>
       </div>
     </div>
     <div class="helper"></div>
@@ -84,17 +86,17 @@ $txtName = html_entity_decode($product->name, ENT_COMPAT, 'UTF-8');
             'class' => 'input-number cart-quantity',
             'max' => 99,
             'min' => 0,
-            'maxlength' => 2,
+//            'maxlength' => 2,
           ));
           ?>
           <span style="position: relative; bottom: -5px">шт.</span>
         </div>
-        <div class="item-bt addToCart" style="cursor: pointer; position: relative; top: 20px" product="<?php echo $product->id; ?>"><div>В корзину</div></div>
+        <div class="item-bt addToCart" style="cursor: pointer; position: relative; top: 20px" data-product="<?php echo $product->id; ?>"><div>В корзину</div></div>
       </div>
       <!--<div>-->
-        <!--<div style="text-align: center; width: 168px; float: right; font-size: 11pt; margin-top: 5px">-->
-          <!--<a id="buy-one-click" product="<?php // echo $product->id;       ?>" href="#">Купить в 1 клик</a>-->
-        <!--</div>-->
+      <!--<div style="text-align: center; width: 168px; float: right; font-size: 11pt; margin-top: 5px">-->
+        <!--<a id="buy-one-click" product="<?php // echo $product->id;        ?>" href="#">Купить в 1 клик</a>-->
+      <!--</div>-->
       <!--</div>-->
     </div>
   </div>
@@ -121,7 +123,7 @@ $txtName = html_entity_decode($product->name, ENT_COMPAT, 'UTF-8');
 </div>
 <?php $this->renderPartial('//site/_footer'); ?>
 <script>
-  $(document).ready(function() {
+  $(document).ready(function () {
     $(".fancybox").fancybox();
   });
 </script>
