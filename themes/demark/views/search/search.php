@@ -49,7 +49,7 @@ $this->pageTitle = Yii::app()->name . $title;
       <div style="margin-bottom: 20px">
         <?php
         if ($data->getItemCount() > 0) {
-          echo CHtml::beginForm('', 'post', array('id' => 'item-submit'));
+          echo CHtml::beginForm('', 'post', array('id' => 'item-submit', 'action' => '/search'));
           echo CHtml::hiddenField('url', Yii::app()->request->url);
           $this->widget('zii.widgets.CListView', array(
             'dataProvider' => $data,
