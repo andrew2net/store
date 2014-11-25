@@ -51,7 +51,7 @@ echo CHtml::hiddenField('url', Yii::app()->request->url, array('id' => "url$data
     <div class="discount-label" txt="<?php echo $percent; ?>"></div>
   <?php } ?>
   <div class="item-inline-img img-anim">
-    <img title="<?php echo $data->name; ?>" src="<?php echo $data->small_img; ?>" alt="<?php echo $data->getSmallImageAlt(); ?>" data-big-img="<?php echo $data->img; ?>">
+    <img title="<?php echo $data->name; ?>" src="<?php echo (empty($data->small_img) ? '/images/noimage.png' : $data->small_img); ?>" alt="<?php echo $data->getSmallImageAlt(); ?>" data-big-img="<?php echo $data->img; ?>">
   </div>
   <div class="item-inline-art"><?php echo $data->article; ?></div>
   <div class="item-inline-name"><?php echo $data->name; ?></div>
