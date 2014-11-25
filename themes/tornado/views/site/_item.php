@@ -52,7 +52,7 @@ echo CHtml::hiddenField('url', Yii::app()->request->url, array('id' => "url$data
         <span title="Ваша цена &quot;<?php echo $price_type->name; ?>&quot;" class="item-price blue"><?php echo $price . $currecy->class; ?></span>
     </div>
     <div class="item-bt addToCart inline-blocks" data-product="<?php echo $data->id; ?>">
-      <?php echo CHtml::numberField('quantity', 1, array('min' => 1, 'class' => 'item-inline-quantity')); ?>
+      <?php echo CHtml::numberField('quantity', 1, array('min' => 1, 'class' => 'item-inline-quantity', 'id' => "quantity$data->id")); ?>
       <div title="Добавить в корзину"></div>
     </div>
   </div>

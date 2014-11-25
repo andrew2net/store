@@ -69,7 +69,6 @@
     ss.parentNode.insertBefore(s, ss);
   })();</script>
     <!-- {/literal} END JIVOSITE CODE -->
-  </body>
   <script type="text/javascript">
     $(document).ready(Cufon.replace(".cufon"));
     $(document).ready(function () {
@@ -111,4 +110,5 @@ var yaParams = {/*Здесь параметры визита*/};
   </script>
   <noscript><div><img src="//mc.yandex.ru/watch/26247687" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
   <!-- /Yandex.Metrika counter -->
+  </body>
 </html>
