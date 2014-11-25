@@ -51,7 +51,7 @@ echo CHtml::hiddenField('url', Yii::app()->request->url);
     <div class="discount-label" txt="<?php echo $percent; ?>"></div>
   <?php } ?>
   <div class="item-inline-img img-anim">
-    <img title="<?php echo $data->name; ?>" src="<?php echo $data->small_img; ?>" alt="<?php echo $data->getSmallImageAlt(); ?>" big-img="<?php echo $data->img; ?>">
+    <img title="<?php echo $data->name; ?>" src="<?php echo $data->small_img; ?>" alt="<?php echo $data->getSmallImageAlt(); ?>" data-big-img="<?php echo $data->img; ?>">
   </div>
   <div class="item-inline-art"><?php echo $data->article; ?></div>
   <div class="item-inline-name"><?php echo $data->name; ?></div>
@@ -70,7 +70,7 @@ echo CHtml::hiddenField('url', Yii::app()->request->url);
   </div>
   <div class="item-inline-add">
     <!--<div class="item-inline-quantity"></div>-->
-    <div class="item-inline-bt addToCart" product="<?php echo $data->id; ?>">
+    <div class="item-inline-bt addToCart" data-product="<?php echo $data->id; ?>">
       <?php echo CHtml::numberField('quantity', 1, array('min' => 1, 'class' => 'item-inline-quantity')); ?>
       <div title="Добавить в корзину"></div>
 

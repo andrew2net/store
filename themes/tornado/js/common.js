@@ -18,7 +18,7 @@ $(document).ready(function () {
 
 //  $().ready(function($) {
   var menu = $('#mainmenuarea');
-  if (menu.attr('cart'))
+  if (menu.attr('data-cart'))
     return false;
   var page = $('#page');
   var offset = menu.offset();
@@ -53,7 +53,7 @@ $(document).ready(function () {
     closeLoginDialog();
     var button = $(this);
     button.removeClass('addToCart');
-    var id = button.attr('product');
+    var id = button.attr('data-product');
     var quantity = parseInt(button.find('input').val());
     if (!quantity)
       quantity = 1;
@@ -106,10 +106,10 @@ $(document).ready(function () {
                       var result = $.parseJSON(data);
                       if (result.top10 !== undefined)
                         for (var key in result.top10) {
-                          var p = $('.item[product="' + key + '"] .item-price');
+                          var p = $('.item[data-product="' + key + '"] .item-price');
                           p.html(result.top10[key].price);
                           p.attr('title', result.title);
-                          $('.item[product="' + key + '"] .item-disc').html(result.top10[key].disc);
+                          $('.item[data-product="' + key + '"] .item-disc').html(result.top10[key].disc);
                         }
                     });
                   }
@@ -155,12 +155,12 @@ $(document).ready(function () {
           });
 
   $(document).tooltip({
-    items: 'div.img-anim > img[big-img]',
+    items: 'div.img-anim > img[data-big-img]',
     track: true,
     content: function () {
       var elm = $(this);
-      if (elm.is('[big-img]')) {
-        var src = elm.attr('big-img');
+      if (elm.is('[data-big-img]')) {
+        var src = elm.attr('data-big-img');
         if (src.length > 0)
           return '<img class="img-tooltip" src="' + src + '" alt="Загрузка изображения..." />';
       }

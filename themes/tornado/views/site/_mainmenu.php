@@ -1,4 +1,4 @@
-<div id="mainmenuarea" cart="<?php echo ($this instanceof CartController); ?>">
+<div id="mainmenuarea" data-cart="<?php echo ($this instanceof CartController); ?>">
   <div id="mainmenucont" class="container">
     <div id="mainmenu" class="container">
       <div>
