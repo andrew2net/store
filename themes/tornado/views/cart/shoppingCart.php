@@ -34,7 +34,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
       <tr style="font-size: 12pt; background: #414FA5 !important; color: whitesmoke">
         <th colspan="2" style="width: 319px; text-align: center">товар</th><th style="width: 85px">артикул</th>
         <th id="price-label" class="text-right" style="width: 75px">
-      <div id="price-header" title="Ваша цена &quot<?php echo $price_type->name; ?>&quot" style="display: inline-block; text-align: center">цена<?php echo $currency->class; ?><br>
+      <div id="price-header" title='Ваша цена "<?php echo $price_type->name; ?>"' style="display: inline-block; text-align: center">цена<?php echo $currency->class; ?><br>
         <span id="price-name" style="font-weight: normal; font-size: 8pt; text-transform: lowercase"><?php echo "($price_type->name)"; ?></span>
       </div>
       </th>

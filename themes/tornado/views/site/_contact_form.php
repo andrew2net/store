@@ -89,7 +89,7 @@
     <?php // echo $form->error($customer_profile, 'post_code', array('class' => 'red'));   ?>
           </div>-->
     <div style="width: 250px">
-      <div><?php echo $form->labelEx($customer_profile, 'city'); ?></div>
+      <div><?php echo $form->labelEx($customer_profile, 'city', array('for' => 'CustomerProfile_city_l')); ?></div>
       <div><?php
         $city_options = array('empty' => 'Выберите населенный пункт');
         $other_options = array('class' => 'input-text');
