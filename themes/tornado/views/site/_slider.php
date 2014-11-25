@@ -53,7 +53,7 @@ if (count($adds)) {
             else {
               ?>
               <?php echo $value->url ? '<a href="' . $value->url . '">' : ''; ?>
-            <img height="270" width="1200" src="<?php echo $value->img; ?>" alt="<?php echo $value->name; ?>">
+            <img height="270" width="1200" src="<?php echo $value->img; ?>" alt="<?php echo $value->name; ?>"/>
               <?php echo $value->url ? '</a>' : ''; ?>
             <?php } ?>
           </div>
