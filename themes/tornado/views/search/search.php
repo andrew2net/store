@@ -50,7 +50,7 @@ $this->pageTitle = Yii::app()->name . $title;
       <div>
         <?php
         if ($data->getItemCount() > 0) {
-          echo CHtml::beginForm('', 'post', array('id' => 'item-submit'));
+          echo CHtml::beginForm('/search', 'post', array('id' => 'item-submit'));
           echo CHtml::hiddenField('url', Yii::app()->request->url);
           $this->renderPartial($view, array(
             'data' => $data,));
