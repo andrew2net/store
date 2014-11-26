@@ -373,6 +373,8 @@ input[type=checkbox]:checked + label:before, .weekcarousel-prev,
   vertical-align: middle;
   padding: 0 5px;
   border-bottom: 1px solid #D4D4D4;
+  border-left: 1px solid white;
+  border-right: 1px solid white;
 }
 .item-inline-img{
   width: 100px;
