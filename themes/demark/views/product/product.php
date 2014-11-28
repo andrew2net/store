@@ -3,7 +3,7 @@
 /* @var $productForm ProductForm */
 /* @var $search Search */
 
-$txtName = html_entity_decode($product->name, ENT_COMPAT, 'UTF-8') . $product->article;
+$txtName = html_entity_decode($product->name, ENT_COMPAT, 'UTF-8') . ' ' . $product->article;
 ?>
 <?php $this->pageTitle = Yii::app()->name . ' - ' . $txtName; ?>
 <?php // $this->renderPartial('_topmenu');             ?>
