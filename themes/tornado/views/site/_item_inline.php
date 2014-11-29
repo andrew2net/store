@@ -42,9 +42,13 @@ else {
   $remainder_class = 'gray';
 }
 
+/* @var $webUser CWebUser */
+$webUser =Yii::app()->user;
+/* @var $user User */
+$user = User::model()->with(array('customerProfile' => array('with' => 'price')))->findByPk($webUser->id);
 $wholesalePrices = array();
 foreach ($data->prices as $p) {
-  if ($p->price)
+  if ($p->price && ($webUser->isGuest || $p->price_type->summ > $user->customerProfile->price->summ))
     $wholesalePrices[] = array(
       $p->price_type->summ,
       $p->price,
