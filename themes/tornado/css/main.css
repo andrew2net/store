@@ -368,11 +368,15 @@ input[type=checkbox]:checked + label:before, .weekcarousel-prev,
   height: 110px;
   position: relative;
 }
-.item-inline > div{
+.item-inline > div, .item-inline > div.inline-blocks > div{
   display: table-cell;
   vertical-align: middle;
   padding: 0 5px;
+}
+.item-inline > div{
   border-bottom: 1px solid #D4D4D4;
+}
+.item-inline > div > img, .item-inline > div.inline-blocks > div{
   border-left: 1px solid white;
   border-right: 1px solid white;
 }
@@ -491,9 +495,8 @@ input[type=checkbox]:checked + label:before, .weekcarousel-prev,
   width: 50px;
 }
 .item-inline-bt div{
-  height: 28px;
-  position: relative;
-  left: 14px;
+  padding: 0 !important;
+  background-position: 13px !important;
 }
 .main-submit{
   font-size: 16pt;

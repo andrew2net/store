@@ -42,6 +42,15 @@ else {
   $remainder_class = 'gray';
 }
 
+$wholesalePrices = array();
+foreach ($data->prices as $p) {
+  if ($p->price)
+    $wholesalePrices[] = array(
+      $p->price_type->summ,
+      $p->price,
+    );
+}
+
 if (isset($index) && $index == 0)
   echo CHtml::hiddenField('currentPage', $widget->dataProvider->getPagination()->getCurrentPage());
 echo CHtml::hiddenField('url', Yii::app()->request->url, array('id' => "url$data->id"));
@@ -53,20 +62,22 @@ echo CHtml::hiddenField('url', Yii::app()->request->url, array('id' => "url$data
   <div class="item-inline-img img-anim">
     <img title="<?php echo $data->name; ?>" src="<?php echo (empty($data->small_img) ? '/images/noimage.png' : $data->small_img); ?>" alt="<?php echo $data->getSmallImageAlt(); ?>" data-big-img="<?php echo $data->img; ?>">
   </div>
-  <div class="item-inline-art"><?php echo $data->article; ?></div>
-  <div class="item-inline-name"><?php echo $data->name; ?></div>
-  <div class="item-inline-rest <?php echo $remainder_class; ?>"><?php echo $remainder; ?></div>
-  <div class="item-inline-price">
-    <?php if ($discount) { ?>
-      <div class="item-disc red"><?php echo $old_price; ?></div>
-    <?php } ?>
-    <div class="item-price blue"><?php echo $price; ?></div>
-  </div>
-  <div class="item-inline-price">
-    <?php if ($discount) { ?>
-      <div class="item-disc red"><?php echo $old_wholesale; ?></div>
-    <?php } ?>
-    <div class="item-price blue"><?php echo $wholesale; ?></div>
+  <div class="inline-blocks tooltip-price" data-price="<?php echo json_encode($wholesalePrices, JSON_NUMERIC_CHECK); ?>">
+    <div class="item-inline-art"><?php echo $data->article; ?></div>
+    <div class="item-inline-name"><?php echo $data->name; ?></div>
+    <div class="item-inline-rest <?php echo $remainder_class; ?>"><?php echo $remainder; ?></div>
+    <div class="item-inline-price">
+      <?php if ($discount) { ?>
+        <div class="item-disc red"><?php echo $old_price; ?></div>
+      <?php } ?>
+      <div class="item-price blue"><?php echo $price; ?></div>
+    </div>
+    <div class="item-inline-price">
+      <?php if ($discount) { ?>
+        <div class="item-disc red"><?php echo $old_wholesale; ?></div>
+      <?php } ?>
+      <div class="item-price blue"><?php echo $wholesale; ?></div>
+    </div>
   </div>
   <div class="item-inline-add">
     <!--<div class="item-inline-quantity"></div>-->

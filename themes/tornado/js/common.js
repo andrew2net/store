@@ -155,7 +155,7 @@ $(document).ready(function () {
           });
 
   $(document).tooltip({
-    items: 'div.img-anim > img[data-big-img]',
+    items: 'div.img-anim > img[data-big-img], .tooltip-price, .addToCart > div',
     track: true,
     content: function () {
       var elm = $(this);
@@ -164,6 +164,24 @@ $(document).ready(function () {
         if (src.length > 0)
           return '<img class="img-tooltip" src="' + src + '" alt="Загрузка изображения..." />';
       }
+      if (elm.is('.tooltip-price')) {
+        var pricesData = $.parseJSON(elm.attr('data-price'));
+        var text = '';
+        if (pricesData.length > 0) {
+          text = '<div>Цена зависит от общей суммы заказа</div><table style="margin-bottom:0"><tr><th colspan=2 style="text-align:center">сумма заказа<span class="ruble">Р</span></th><th style="text-align:center">цена<span class="ruble">Р</span></th></tr>';
+          $.each(pricesData, function (index, elment) {
+            text += '<tr><td style="text-align:right">от</td><td style="text-align:right;padding-right:35px">' + elment[0] + '</td><td style="text-align:right;padding-right:25px">' + elment[1] + '</td></tr>';
+          });
+          text += '</table>'
+        }
+        return text;
+      }
+      if (elm.is('.addToCart > div')){
+        return elm.attr('title');
+      }
     }
   });
+//  $(document).tooltip({
+//    items: '.tooltip-price'
+//  });
 });
