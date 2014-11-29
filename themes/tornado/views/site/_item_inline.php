@@ -48,7 +48,7 @@ $webUser =Yii::app()->user;
 $user = User::model()->with(array('customerProfile' => array('with' => 'price')))->findByPk($webUser->id);
 $wholesalePrices = array();
 foreach ($data->prices as $p) {
-  if ($p->price && ($webUser->isGuest || $p->price_type->summ > $user->customerProfile->price->summ))
+  if ($p->price && ($webUser->isGuest || $user->customerProfile->price && $p->price_type->summ > $user->customerProfile->price->summ))
     $wholesalePrices[] = array(
       $p->price_type->summ,
       $p->price,
