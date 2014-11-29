@@ -35,10 +35,10 @@ $user = User::model()->with(array('customerProfile' => array('with' => 'price'))
 $wholesalePrices = array();
 foreach ($data->prices as $p) {
   if ($p->price && ($webUser->isGuest || $p->price_type->summ > $user->customerProfile->price->summ))
-    $wholesalePrices[] = array(
-      $p->price_type->summ,
-      $p->price,
-    );
+//    $wholesalePrices[] = array(
+//      $p->price_type->summ,
+//      $p->price,
+//    );
 }
 
 if (isset($index) && $index == 0)
