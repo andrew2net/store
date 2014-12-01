@@ -13,10 +13,14 @@ class GroupController extends CController {
     Yii::import('application.modules.discount.models.Discount');
 
     $groups = Category::model()->roots()->findAll();
+    /* @var $group Category */
     $group = Category::model()->findByPk($id);
     if (!$group)
       throw new CHttpException(404, "Страница не найдена");
    
+    if ($group->seo)
+      Yii::app()->clientScript->registerMetaTag($group->seo, 'description');
+      
     $searc = new Search;
     $giftSelection = new GiftSelection;
     $product = Product::model();
