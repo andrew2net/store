@@ -599,6 +599,7 @@ class Delivery extends CActiveRecord {
       'height' => 0,
       'weight' => 0,
     );
+    set_time_limit(180);
     self::placeItems($data, $volume, $delivery);
     return $data['weight'];
   }
