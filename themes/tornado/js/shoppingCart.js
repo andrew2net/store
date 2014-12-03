@@ -192,7 +192,7 @@ $(document).ready(function () {
         c_deliver = '';
       getDeliveryTimeout = setTimeout(function () {
         delivery_loading.hide();
-      }, 60000);
+      }, 120000);
       $.get('/cart/delivery', {
         'ccode': ccode,
         'pcode': pcode,
