@@ -57,7 +57,7 @@ $this->pageTitle = Yii::app()->name . ' - ' . implode(' - ', array_reverse($pare
 
       echo CHtml::endForm();
       ?>
-      <div style="margin: 15px"><?php echo $group->seo; ?></div>
+      <!--<div style="margin: 15px"><?php // echo $group->seo; ?></div>-->
     </div>
 
   </div>
