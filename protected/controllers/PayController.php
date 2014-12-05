@@ -368,6 +368,7 @@ class PayController extends Controller {
     $oldStatus = $order->status_id;
     if ($order->getToPaySumm() <= 0) {
       $order->status_id = Order::STATUS_PAID;
+      $order->exchange = TRUE;
       $saveOrder = true;
     }
     if (empty($order->phone)) {

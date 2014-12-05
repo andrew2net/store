@@ -77,6 +77,7 @@ class CartController extends Controller {
 
 
     $order = new Order;
+    $order->exchange = TRUE;
     if (isset($_POST['Order'])) {
       $order->attributes = $_POST['Order'];
       Yii::app()->user->setState('delivery_id', (int) $order->delivery_id);
