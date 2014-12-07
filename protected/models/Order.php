@@ -295,7 +295,7 @@ class Order extends CActiveRecord {
       Yii::import('application.modules.admin.models.MailOrder');
       $mail = new Mail;
       $mail->uid = $this->profile->user_id;
-      $mail->type_id = 4;//Mail::TYPE_CHANGE_ORDER_STATUS;
+      $mail->type_id = 4; //Mail::TYPE_CHANGE_ORDER_STATUS;
       if ($mail->save()) {
         $mailOrder = new MailOrder;
         $mailOrder->mail_id = $mail->id;
@@ -309,6 +309,7 @@ class Order extends CActiveRecord {
     Yii::import('application.modules.payments.models.Currency');
     Yii::import('application.modules.catalog.models.Product');
     Yii::import('application.modules.delivery.models.Delivery');
+    require_once Yii::app()->basePath . '/extensions/CNPMerchantWebServiceClient.php';
     $basket = array();
     foreach ($this->orderProducts as $item) {
       $goodsItem = new GoodsItem();
