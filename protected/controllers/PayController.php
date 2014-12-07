@@ -54,7 +54,7 @@ class PayController extends Controller {
 //          Yii::import('ext.CNPMerchantWebServiceClient/getExtendedTransactionStatusResponse');
 //          Yii::import('ext.CNPMerchantWebServiceClient/completeTransaction');
 //          Yii::import('ext.CNPMerchantWebServiceClient/completeTransactionResponse');
-//          Yii::import('ext.CNPMerchantWebServiceClient/CNPMerchantWebServiceClient');
+          Yii::import('ext.CNPMerchantWebServiceClient/CNPMerchantWebServiceClient');
 
           $client = new CNPMerchantWebServiceClient();
 
