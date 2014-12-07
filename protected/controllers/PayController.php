@@ -35,7 +35,7 @@ class PayController extends Controller {
 
       if ($order->payment->type_id == 2) {
         if (isset($_POST['processingkz'])) {
-          require_once Yii::app()->basePath . '/extensions/CNPMerchantWebServiceClient.php';
+          require_once (Yii::getPathOfAlias('ext.CNPMerchantWebServiceClient').'.php');
 //          Yii::import('ext.CNPMerchantWebServiceClient/StartTransactionResult');
 //          Yii::import('ext.CNPMerchantWebServiceClient/TransactionDetails');
 //          Yii::import('ext.CNPMerchantWebServiceClient/Address');
