@@ -35,7 +35,26 @@ class PayController extends Controller {
 
       if ($order->payment->type_id == 2) {
         if (isset($_POST['processingkz'])) {
-          require_once Yii::app()->basePath . '/extensions/CNPMerchantWebServiceClient.php';
+//          require_once Yii::app()->basePath . '/extensions/CNPMerchantWebServiceClient.php';
+          Yii::import('ext.CNPMerchantWebServiceClient/StartTransactionResult');
+          Yii::import('ext.CNPMerchantWebServiceClient/TransactionDetails');
+          Yii::import('ext.CNPMerchantWebServiceClient/Address');
+          Yii::import('ext.CNPMerchantWebServiceClient/GoodsItem');
+          Yii::import('ext.CNPMerchantWebServiceClient/AdditionalInformation');
+          Yii::import('ext.CNPMerchantWebServiceClient/StoredTransactionStatus');
+          Yii::import('ext.CNPMerchantWebServiceClient/StoredTransactionStatusExtended');
+          Yii::import('ext.CNPMerchantWebServiceClient/startTransaction');
+          Yii::import('ext.CNPMerchantWebServiceClient/startTransactionResponse');
+          Yii::import('ext.CNPMerchantWebServiceClient/refundTransaction');
+          Yii::import('ext.CNPMerchantWebServiceClient/refundTransactionResponse');
+          Yii::import('ext.CNPMerchantWebServiceClient/getVersionResponse');
+          Yii::import('ext.CNPMerchantWebServiceClient/getTransactionStatus');
+          Yii::import('ext.CNPMerchantWebServiceClient/getTransactionStatusResponse');
+          Yii::import('ext.CNPMerchantWebServiceClient/getExtendedTransactionStatus');
+          Yii::import('ext.CNPMerchantWebServiceClient/getExtendedTransactionStatusResponse');
+          Yii::import('ext.CNPMerchantWebServiceClient/completeTransaction');
+          Yii::import('ext.CNPMerchantWebServiceClient/completeTransactionResponse');
+          Yii::import('ext.CNPMerchantWebServiceClient/CNPMerchantWebServiceClient');
 
           $basket = $order->getBasket();
 
