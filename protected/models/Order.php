@@ -309,7 +309,6 @@ class Order extends CActiveRecord {
     Yii::import('application.modules.payments.models.Currency');
     Yii::import('application.modules.catalog.models.Product');
     Yii::import('application.modules.delivery.models.Delivery');
-    include_once Yii::app()->basePath . '/extensions/CNPMerchantWebServiceClient.php';
     $basket = array();
     foreach ($this->orderProducts as $item) {
       $goodsItem = new GoodsItem();
