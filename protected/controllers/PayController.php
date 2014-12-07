@@ -56,9 +56,10 @@ class PayController extends Controller {
           Yii::import('ext.CNPMerchantWebServiceClient/completeTransactionResponse');
           Yii::import('ext.CNPMerchantWebServiceClient/CNPMerchantWebServiceClient');
 
+          $client = new CNPMerchantWebServiceClient();
+
           $basket = $order->getBasket();
 
-          $client = new CNPMerchantWebServiceClient();
           $transactionDetail = new TransactionDetails();
           $transactionDetail->merchantId = $order->payment->merchant_id;
           $transactionDetail->totalAmount = $to_pay * 100;
