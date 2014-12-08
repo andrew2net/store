@@ -100,6 +100,7 @@ $(document).ready(function () {
         if (!isNaN(priceDelivery))
           summ += priceDelivery;
         yaCounter26247687.reachGoal('CREATEORDER', {price: summ});
+        ga('send', 'event', 'order', 'click');
         $('form').submit();
       } else {
         cart_login_dialog.html(data);
