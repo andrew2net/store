@@ -1,4 +1,4 @@
-<?
+<?php
 class StartTransactionResult {
 	public $customerReference; // string
 	public $errorDescription; // string
