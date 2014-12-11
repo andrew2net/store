@@ -48,6 +48,8 @@ $this->pageTitle = Yii::app()->name . ' - ' . implode(' - ', array_reverse($pare
       Yii::import('application.modules.catalog.models.Product');
       Yii::import('application.modules.discount.models.Discount');
 
+      $this->renderPartial('/site/_news');
+
       echo CHtml::beginForm('', 'post', array('id' => 'item-submit'));
       echo CHtml::hiddenField('url', Yii::app()->request->url);
 

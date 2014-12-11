@@ -352,7 +352,16 @@ class Delivery extends CActiveRecord {
               break;
             }
           if ($nrjValue) {
-            $price = ceil($nrjValue['price']) * (1 + $delivery->insurance / 100);
+            if ($nrjValue['type'] == 'avia')
+              $price = ceil($nrjValue['price']) * (1 + $delivery->insurance / 100);
+            else {
+              if (new DateTime < new DateTime('2015/01/01') && isset($_SERVER['SERVER_NAME']) && !(strpos($_SERVER['SERVER_NAME'], 'tornado') === FALSE)) {
+                $price = 0;
+              }
+              else {
+                $price = ceil($nrjValue['price']) * (1 + $delivery->insurance / 100);
+              }
+            }
           }
           else
             continue;

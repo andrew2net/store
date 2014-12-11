@@ -25,6 +25,7 @@ Yii::import('application.modules.admin.models.Page');
     <?php $this->renderPartial('_leftMenu'); ?>
     <div style="width: 970px">
       <?php
+      $this->renderPartial('_news');
       echo CHtml::beginForm('', 'post', array('id' => 'item-submit'));
       echo CHtml::hiddenField('url', Yii::app()->request->url);
       $this->renderPartial('_weekDiscount');
