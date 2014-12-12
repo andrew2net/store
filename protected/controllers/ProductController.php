@@ -17,6 +17,9 @@ class ProductController extends CController{
     $search = new Search;
     $productForm = new ProductForm;
 
+    if ($product->seo)
+      Yii::app()->clientScript->registerMetaTag($product->seo, 'description');
+      
     if (isset($_POST['ProductForm'])) {
       $this->addToCart($_GET['id'], $_POST['ProductForm']['quantity']);
       $this->redirect('/cart');

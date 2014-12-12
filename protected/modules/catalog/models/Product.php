@@ -20,6 +20,7 @@
  * @property integer $width 
  * @property integet $height
  * @property string $code 1C code
+ * @property string $seo 
  *
  * The followings are the available model relations:
  * @property Brand $brand
@@ -58,7 +59,7 @@ class Product extends CActiveRecord {
       array('article', 'length', 'max' => 25),
       array('brand_id, code', 'length', 'max' => 11),
       array('price, price_tenge', 'length', 'max' => 12),
-      array('description, show_me', 'safe'),
+      array('description, show_me, seo', 'safe'),
       array('img, small_img', 'unsafe'),
       array('article', 'unique'),
       // The following rule is used by search().
@@ -107,6 +108,7 @@ class Product extends CActiveRecord {
       'length' => 'Длина (см)',
       'width' => 'Ширина (см)',
       'height' => 'Высота (см)',
+      'seo' => 'SEO'
     );
   }
 
