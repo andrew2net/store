@@ -127,7 +127,7 @@
           
       ?>
       <?php echo CHtml::endForm(); ?>
-      <div style="margin: 15px"><?php echo $group->seo; ?></div>
+      <!--<div style="margin: 15px"><?php // echo $group->seo; ?></div>-->
     </div>
 
   </div>
