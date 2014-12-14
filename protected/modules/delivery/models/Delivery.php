@@ -668,6 +668,8 @@ class Delivery extends CActiveRecord {
           );
 
           foreach ($new_volumes as $v) {
+            if (!($v[0]>0 && $v[1]>0 && $v[2]>0))
+              continue;
             self::placeItems($data, $v, $delivery);
             if (count($data['items']) == 0)
               return;
