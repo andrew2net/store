@@ -48,27 +48,33 @@ echo CHtml::hiddenField('url', Yii::app()->request->url, array('id' => "url$data
 <div class="helper"></div>
 <div data-product="<?php echo $data->id; ?>" class="item" title="<?php echo $data->name; ?>">
   <div class="box-item">
-    <?php if ($discount) { ?>
-      <div class="discount-label" txt="<?php echo $percent; ?>"></div>
-    <?php } ?>
-    <div class="item-img img-anim">
-      <!--<a class="fancybox" href="<?php echo $data->img; ?>">-->
-      <img src="<?php echo $data->small_img; ?>" alt="Изображение" data-big-img="<?php echo $data->img; ?>">
-      <!--</a>-->
-    </div>
-    <div class="tooltip-price" data-price="<?php echo json_encode($wholesalePrices, JSON_NUMERIC_CHECK); ?>">
-      <div class="item-name"><?php echo $data->name; ?></div>
-      <div class="item-rest <?php echo $remainder_class; ?>"><?php echo $remainder; ?></div>
-      <div class="item-price-box">
-        <?php if ($discount) { ?>
-          <span class="item-disc red"><?php echo $old_price; ?></span>
-        <?php } ?>
-        <span title="Ваша цена &quot;<?php echo $price_type->name; ?>&quot;" class="item-price blue"><?php echo $price . $currecy->class; ?></span>
+    <?php if ($this instanceof SiteController && isset($data->category[0])) { ?>
+      <a href="<?php echo Yii::app()->createUrl('/group', array('id' => $data->category[0]->id)); ?>">
+      <?php } ?>
+      <?php if ($discount) { ?>
+        <div class="discount-label" txt="<?php echo $percent; ?>"></div>
+      <?php } ?>
+      <div class="item-img img-anim">
+        <!--<a class="fancybox" href="<?php echo $data->img; ?>">-->
+        <img src="<?php echo $data->small_img; ?>" alt="Изображение" data-big-img="<?php echo $data->img; ?>">
+        <!--</a>-->
       </div>
-    </div>
-    <div class="item-bt addToCart inline-blocks" data-product="<?php echo $data->id; ?>">
-      <?php echo CHtml::numberField('quantity', 1, array('min' => 1, 'class' => 'item-inline-quantity', 'id' => "quantity$data->id")); ?>
-      <div title="Добавить в корзину"></div>
-    </div>
+      <div class="tooltip-price" data-price="<?php echo json_encode($wholesalePrices, JSON_NUMERIC_CHECK); ?>">
+        <div class="item-name"><?php echo $data->name; ?></div>
+        <div class="item-rest <?php echo $remainder_class; ?>"><?php echo $remainder; ?></div>
+        <div class="item-price-box">
+          <?php if ($discount) { ?>
+            <span class="item-disc red"><?php echo $old_price; ?></span>
+          <?php } ?>
+          <span title="Ваша цена &quot;<?php echo $price_type->name; ?>&quot;" class="item-price blue"><?php echo $price . $currecy->class; ?></span>
+        </div>
+      </div>
+      <div class="item-bt addToCart inline-blocks" data-product="<?php echo $data->id; ?>">
+        <?php echo CHtml::numberField('quantity', 1, array('min' => 1, 'class' => 'item-inline-quantity', 'id' => "quantity$data->id")); ?>
+        <div title="Добавить в корзину"></div>
+      </div>
+      <?php if ($this instanceof SiteController && isset($data->category[0])) { ?>
+      </a>
+    <?php } ?>
   </div>
 </div>
