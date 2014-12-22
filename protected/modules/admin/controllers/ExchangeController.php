@@ -590,7 +590,7 @@ class ExchangeController extends CController {
       }
 
       $p_ids = implode(',', $product_ids);
-      OrderProduct::model()->deleteAllByAttributes(array('order_id' => $order->id), 'product_id NOT IN (:p_ids)', array(':p_ids' => $p_ids));
+      OrderProduct::model()->deleteAllByAttributes(array('order_id' => $order->id), "product_id NOT IN ($p_ids)");
 
       if ($old_status != $order->status_id) {
         $mail = new Mail;

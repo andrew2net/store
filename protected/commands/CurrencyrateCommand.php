@@ -1,11 +1,15 @@
 <?php
 
 /**
- * Description of CurrencyrateCommand
- *
+ * This is console command to cron.
  */
 class CurrencyrateCommand extends CConsoleCommand {
 
+  /**
+   * Function gets currency rate from webservice and store in in DB.
+   * Command starts once a day.
+   * @param array $args CLI arguments
+   */
   public function run($args) {
     $wsdl = 'http://www.cbr.ru/dailyinfowebserv/dailyinfo.asmx?WSDL';
     $client = new SoapClient($wsdl);
