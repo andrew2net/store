@@ -3,7 +3,7 @@ Yii::import('application.modules.discount.models.Discount');
 Yii::import('application.modules.catalog.models.Category');
 Yii::import('application.modules.catalog.models.Product');
 //$week = Discount::model()->week()->findAll();
-$week = Product::model()->week()->availableOnly()->recommended()->findAll();
+$week = Product::model()->week()->availableOnly()->findAll();
 $products = array();
 $end_dates = array();
 foreach ($week as $value) {

@@ -14,8 +14,16 @@
  * @property integer $root
  * @property string $seo
  * @property string $code 1C code id
+ * 
+ * @property Product $product 
+ * @property Discount $discount 
+ * @property Category $subcategories 
+ * 
+ * @property string $count_products 
  */
 class Category extends CActiveRecord {
+
+  public $count_products;
 
   /**
    * @return string the associated database table name
@@ -54,7 +62,9 @@ class Category extends CActiveRecord {
       'discount' => array(
         self::MANY_MANY,
         'Discount',
-        'store_discount_category(category_id, discount_id)')
+        'store_discount_category(category_id, discount_id)'),
+      'subcategories' => array(self::HAS_MANY, 'Category', '',
+        'on' => 'subcategories.lft>t.lft AND subcategories.rgt<t.rgt AND subcategories.root=t.root'),
     );
   }
 
@@ -144,10 +154,10 @@ class Category extends CActiveRecord {
     $urls = array();
     foreach ($pages as $value) {
       $urls[Yii::app()
-          ->createUrl('group', array(
-            'id' => $value['id'],
-            'Product_page' => $value['page'],
-            ))] = strtotime($value['time']);
+              ->createUrl('group', array(
+                'id' => $value['id'],
+                'Product_page' => $value['page'],
+              ))] = strtotime($value['time']);
     }
     return $urls;
   }
@@ -155,6 +165,24 @@ class Category extends CActiveRecord {
   public function beforeSave() {
     $this->update_time = \date('Y-m-d H:i:s');
     return parent::beforeSave();
+  }
+
+  public function hasProducts($root=null, $level = 1) {
+
+    $this->getDbCriteria()->mergeWith(array(
+      'with' => array('subcategories' => array(
+          'select' => 'subcategories.id',
+          'join' => 'LEFT JOIN store_product_category pc ON pc.category_id IN (t.id, subcategories.id)',
+        )),
+      'select' => 't.id, t.name, t.lft, t.rgt, t.root, COUNT(pc.product_id) AS count_products',
+      'order' => 't.lft',
+      'condition' => 't.level=:level AND (t.root=:root OR :root IS NULL)',
+      'group' => 't.id',
+      'together' => 'true',
+      'having' => 'count_products>0',
+      'params' => array(':level' => $level, ':root' => $root),
+    ));
+    return $this;
   }
 
 }

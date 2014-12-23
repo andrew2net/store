@@ -2,22 +2,25 @@
 /* @var $this CController */
 /* @var $group Category */
 /* @var $group NestedSetBehavior */
+Yii::import('application.modules.catalog.models.ProductCategory');
 ?>
 
 <div id="left-menu-cont">
   <?php
-  $groups = Category::model()->roots()->findAll();
+  /* @var $groups Category */
+  /* @var $groups NestedSetBehavior */
+  $groups = Category::model()->roots()->hasProducts()->findAll();
   $items = array();
   $items[] = array('label' => 'Категории:');
   foreach ($groups as $value) {
     /* @var $value Category */
     /* @var $value NestedSetBehavior */
-    $groups1 = $value->children()->findAll();
+    $groups1 = $value->hasProducts($value->root, 2)->findAll();
     $items1 = array();
     foreach ($groups1 as $value1) {
       /* @var $value1 Category */
       /* @var $value1 NestedSetBehavior */
-      $groups2 = $value1->children()->findAll();
+      $groups2 = $value1->hasProducts($value->root, 3)->findAll();
       $items2 = array();
       foreach ($groups2 as $value2) {
         /* @var $value2 Category */
@@ -43,7 +46,7 @@
       'items' => $items1,
       'submenuOptions' => array('class' => 'left-submenu1'),
     );
-    $children = $value->children()->findAll();
+//    $children = $value->children()->findAll();
   }
   $this->widget('zii.widgets.CMenu', array(
     'items' => $items,
