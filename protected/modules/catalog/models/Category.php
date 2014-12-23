@@ -63,8 +63,8 @@ class Category extends CActiveRecord {
         self::MANY_MANY,
         'Discount',
         'store_discount_category(category_id, discount_id)'),
-      'subcategories' => array(self::HAS_MANY, 'Category', '',
-        'on' => 'subcategories.lft>t.lft AND subcategories.rgt<t.rgt AND subcategories.root=t.root'),
+//      'subcategories' => array(self::HAS_MANY, 'Category', '',
+//        'on' => 'subcategories.lft>t.lft AND subcategories.rgt<t.rgt AND subcategories.root=t.root'),
     );
   }
 
