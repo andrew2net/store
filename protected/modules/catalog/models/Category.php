@@ -170,18 +170,19 @@ class Category extends CActiveRecord {
   public function hasProducts($root = null, $level = 1) {
 
     $this->getDbCriteria()->mergeWith(array(
-      'with' => array('subcategories' => array(
-          'select' => 'subcategories.id',
-          'join' => 'LEFT JOIN store_product_category pc ON pc.category_id IN (t.id, subcategories.id) ' .
-          'LEFT JOIN store_product prod on prod.id=pc.product_id',
-        )),
+//      'with' => array('subcategories' => array(
+//          'select' => 'subcategories.id',
+      'join' => 'LEFT JOIN store_category subcat ON subcat.lft>=t.lft AND subcat.rgt<=t.rgt AND subcat.root=t.root ' .
+      'LEFT JOIN store_product_category pc ON pc.category_id IN (t.id, subcat.id) ' .
+      'LEFT JOIN store_product prod on prod.id=pc.product_id',
+//        )),
       'select' => 't.id, t.name, t.lft, t.rgt, t.root, COUNT(pc.product_id) AS count_products',
       'order' => 't.lft',
-      'condition' => 't.level=:level AND (t.root=:root OR :root IS NULL) AND prod.show_me=1 AND prod.remainder>0',
+      'condition' => 't.level=:level AND (t.root=:root OR :root IS NULL) AND (subcat.lft>:lft OR :lft IS NULL) AND (subcat.rgt>:lft OR :rgt IS NULL) AND prod.show_me=1 AND prod.remainder>0',
       'group' => 't.id',
       'together' => 'true',
       'having' => 'count_products>0',
-      'params' => array(':level' => $level, ':root' => $root),
+      'params' => array(':root' => $root, ':level' => $level, ':lft' => $this->lft, ':rgt' => $this->rgt),
     ));
     return $this;
   }
