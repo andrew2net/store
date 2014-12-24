@@ -339,12 +339,8 @@ $(document).ready(function () {
       'id': id,
       'quantity': quantity
     }, function (data) {
-//    if (data) {
-//      refreshCart(data);
-//    }
       cart_delivery.hide();
       delivery_hint.hide();
-//    cart_delivery.val('');
       var city = cart_city.val();
       if (city.length > 0) {
         delivery_loading.show();
@@ -375,28 +371,6 @@ $(document).ready(function () {
     $(elm).parent().parent().find('.summ').html(summ.formatMoney());
   }
 
-//  $(function () {
-//    cart_login_dialog.dialog({
-//      autoOpen: false,
-//      modal: true,
-//      draggable: false,
-//      resizable: false,
-//      width: 500,
-//      dialogClass: "cart-login-alert",
-//      show: {
-//        effect: "blind",
-//        duration: 500
-//      },
-//      hide: {
-//        effect: "explode",
-//        duration: 500
-//      }
-//    });
-//  });
-
-//  $('#close-cart-dialog').click(function () {
-//    cart_login_dialog.dialog('close');
-//  });
 });
 function citySuggest(request, response) {
   $.get("/site/suggestcity",

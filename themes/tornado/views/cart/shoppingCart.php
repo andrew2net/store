@@ -38,7 +38,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
         <span id="price-name" style="font-weight: normal; font-size: 8pt; text-transform: lowercase"><?php echo "($price_type->name)"; ?></span>
       </div>
       </th>
-      <th style="width: 100px">кол-во</th><th class="text-right" style="width: 110px">сумма<?php echo $currency->class; ?></th><th></th>
+      <th style="width: 100px">кол-во</th><th class="text-right" style="width: 110px">сумма<?php echo $currency->class; ?></th><th style="width: 60px"></th>
       </tr>
       <tbody id="cart-items">
         <?php
