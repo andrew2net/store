@@ -73,6 +73,7 @@ echo CHtml::hiddenField('url', Yii::app()->request->url, array('id' => "url$data
         <?php echo CHtml::numberField('quantity', 1, array('min' => 1, 'class' => 'item-inline-quantity', 'id' => "quantity$data->id")); ?>
         <div title="Добавить в корзину"></div>
       </div>
+      <div class="item-add-proc"></div>
       <?php if ($this instanceof SiteController && isset($data->category[0])) { ?>
       </a>
     <?php } ?>

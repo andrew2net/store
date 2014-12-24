@@ -524,7 +524,16 @@ input[type=checkbox]:checked + label:before, .weekcarousel-prev,
   padding-left: 25px;
   background: url(/themes/demark/img/cart-add.png) no-repeat;
 }
-
+.item-add-proc{
+  display: none;
+  background: url(../../..//images/load.gif) no-repeat;
+  background-position: center;
+  height: 55px;
+}
+.box-item > a{
+  text-decoration-line: none;
+  -moz-text-decoration-line: none;
+}
 a.item-link:hover .item-bt{
   display: initial;
 }

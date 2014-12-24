@@ -43,7 +43,7 @@ else {
 }
 
 /* @var $webUser CWebUser */
-$webUser =Yii::app()->user;
+$webUser = Yii::app()->user;
 /* @var $user User */
 $user = User::model()->with(array('customerProfile' => array('with' => 'price')))->findByPk($webUser->id);
 $wholesalePrices = array();
@@ -88,7 +88,7 @@ echo CHtml::hiddenField('url', Yii::app()->request->url, array('id' => "url$data
     <div class="item-inline-bt addToCart" data-product="<?php echo $data->id; ?>">
       <?php echo CHtml::numberField('quantity', 1, array('min' => 1, 'class' => 'item-inline-quantity', 'id' => "quantity$data->id")); ?>
       <div title="Добавить в корзину"></div>
-
     </div>
+    <div class="item-add-proc"></div>
   </div>
 </div>
