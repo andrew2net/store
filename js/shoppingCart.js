@@ -357,6 +357,7 @@ $(document).ready(function () {
   }
 
   $(document).on('click', '.cart-item-del', function () {
+    $(this).hide().parent().find('img').show();
     var id = $(this).attr('product');
     $.post('/cart/delitem', {
       'id': id

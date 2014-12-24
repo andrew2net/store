@@ -60,5 +60,8 @@ $summ = $price * $product->quantity;
   <td class="text-right summ bold">
     <?php echo number_format($summ, 0, '.', ' '); ?>
   </td>
-  <td><span class="cart-item-del" product="<?php echo $product->product_id ?>">Удалить</span></td>
+  <td>
+    <span class="cart-item-del" product="<?php echo $product->product_id ?>">Удалить</span>
+    <img style="display: none; margin-left: 10px" src="/images/load.gif">
+  </td>
 </tr>
