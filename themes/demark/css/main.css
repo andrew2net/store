@@ -520,6 +520,12 @@ a:hover > .box-item{
   font-size: 11pt;
   width: 115px;
 }
+.item-add-proc{
+  display: none;
+  background: url(../../..//images/load.gif) no-repeat;
+  background-position: center;
+  height: 55px;
+}
 .main-submit{
   font-size: 16pt;
   font-weight: bold;

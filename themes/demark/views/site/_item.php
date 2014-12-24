@@ -51,6 +51,7 @@ echo CHtml::hiddenField('url', Yii::app()->request->url, array('id' => "url$data
       <div class="item-disc red"><?php echo $old_price; ?></div>
       <div class="item-price blue"><?php echo $price . $currecy->class; ?></div>
       <div class="item-bt addToCart" data-product="<?php echo $data->id; ?>"><div>В корзину</div></div>
+      <div class="item-add-proc"></div>
     </div>
   </a>
 </div>
