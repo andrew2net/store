@@ -90,6 +90,8 @@ $(document).ready(function () {
   getDeliveries();
 
   cartSubmit.click(function () {
+    cartSubmit.hide();
+    var cartProc = cartSubmit.parent().find('img').show();
     var email = $('#User_email').val();
     $.post('/cart/checkemail', {
       email: email
@@ -103,6 +105,8 @@ $(document).ready(function () {
         ga('send', 'event', 'order', 'click');
         $('form').submit();
       } else {
+        cartProc.hide();
+        cartSubmit.show();
         cart_login_dialog.html(data);
         cart_login_dialog.show();
       }

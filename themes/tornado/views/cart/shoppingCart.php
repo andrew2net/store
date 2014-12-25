@@ -123,6 +123,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
     <div id="cart-submit" class="main-submit" style="display: none">
       <div>Оформить заказ</div>
     </div>
+    <img style="display: none; margin-left: 100px" src="/images/load.gif" />
   </div>
   <?php
   $this->endWidget();

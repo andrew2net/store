@@ -96,7 +96,7 @@ $(document).ready(function () {
 
   cartSubmit.click(function () {
     cartSubmit.hide();
-    cartSubmit.parent().find('img').show();
+    var cartProc = cartSubmit.parent().find('img').show();
     var email = user_email.val();
     $.post('/cart/checkemail', {
       email: email
@@ -105,6 +105,8 @@ $(document).ready(function () {
         yaCounter26247867.reachGoal('CREATEORDER');
         $('form').submit();
       }else {
+        cartProc.hide();
+        cartSubmit.show();
         cart_login_dialog.html(data);
         cart_login_dialog.show();
       }
