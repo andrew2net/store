@@ -94,6 +94,7 @@ $(document).ready(function() {
   });
 
   $('.submit').click(function() {
+    $(this).hide().parent().find('img').show();
     $('form').submit();
   });
 

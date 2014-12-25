@@ -88,10 +88,11 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
     }
     echo CHtml::hiddenField($order->payment->getSignName(), $order->payment->getSing($params));
     ?>
-    <div style="margin: 40px 0 20px">
+    <div style="margin: 40px 0 20px; height: 46px; position: relative">
       <div class="main-submit submit">
         <div>ОПЛАТИТЬ</div>
       </div>
+      <img style="display: none; margin: auto; position: absolute;left: 0;right: 0;top: 0;bottom: 0" src="/images/load.gif" />
     </div>
     <?php echo CHtml::endForm(); ?>
   <?php } ?>

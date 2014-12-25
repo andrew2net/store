@@ -193,6 +193,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
     <div id="cart-submit" class="main-submit">
       <div>Оформить заказ</div>
     </div>
+    <img style="display: none; margin-left: 100px" src="/images/load.gif" />
     <div id="order-hint" class="red hintl" style="display: none">Выберите способ доставки</div>
   </div>
   <?php $this->endWidget(); ?>

@@ -95,6 +95,8 @@ $(document).ready(function () {
   getDeliveries();
 
   cartSubmit.click(function () {
+    cartSubmit.hide();
+    cartSubmit.parent().find('img').show();
     var email = user_email.val();
     $.post('/cart/checkemail', {
       email: email
