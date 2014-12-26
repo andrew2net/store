@@ -51,7 +51,6 @@
       Yii::import('application.modules.catalog.models.Brand');
       Yii::import('application.modules.catalog.models.Product');
       Yii::import('application.modules.discount.models.Discount');
-      Yii::import('application.controllers.ProfileController');
       echo CHtml::beginForm('', 'post', array('id' => 'item-submit'));
       echo CHtml::hiddenField('url', Yii::app()->request->url);
       if ($group->level < 3) {

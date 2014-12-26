@@ -11,6 +11,7 @@ class GroupController extends CController {
     Yii::import('application.modules.catalog.models.Category');
     Yii::import('application.modules.catalog.models.Brand');
     Yii::import('application.modules.discount.models.Discount');
+      Yii::import('application.controllers.ProfileController');
 
     $groups = Category::model()->roots()->findAll();
     /* @var $group Category */
