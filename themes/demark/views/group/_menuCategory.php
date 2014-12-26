@@ -69,9 +69,11 @@
 
       $level = $category->level;
     }
-    for ($i = $level-1; $i; $i--) {
-      echo CHtml::closeTag('li');
-      echo CHtml::closeTag('ul');
+    if ($level > 0) {
+      for ($i = $level - 1; $i; $i--) {
+        echo CHtml::closeTag('li');
+        echo CHtml::closeTag('ul');
+      }
     }
     ?>
   </div>

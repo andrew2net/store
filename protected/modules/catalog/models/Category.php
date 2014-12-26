@@ -194,10 +194,10 @@ class Category extends CActiveRecord {
       'select' => 't.id, t.name',
       'with' => array('products'),
       'condition' => 'products.id IN (SELECT product_id FROM store_product_category WHERE category_id IN '
-      . '(SELECT id FROM store_category WHERE lft>=:lft AND rgt<=:rgt ORDER BY lft))',
+      . '(SELECT id FROM store_category WHERE lft>=:lft AND rgt<=:rgt AND root=:root ORDER BY lft))',
       'group' => 't.id',
       'order' => 't.name',
-      'params' => array(':lft' => $this->lft, ':rgt' => $this->rgt),
+      'params' => array(':lft' => $this->lft, ':rgt' => $this->rgt, ":root" => $this->root),
     ));
     return $brands;
   }
