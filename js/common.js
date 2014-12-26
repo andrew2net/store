@@ -12,18 +12,6 @@ Number.prototype.formatMoney = function (c, d, t) {
 
 $(document).ready(function () {
 
-//  $('#aSubmit').click(function() {
-//    $('#giftSelect').submit();
-//  });
-//  $('#GiftCategory').val($('#currentGroup').val());
-
-//  $('#categoryOnly').change(function() {
-//    if (this.checked)
-//      $('#GiftCategory').val($('#currentGroup').val());
-//    else
-//      $('#GiftCategory').val('');
-//  });
-
   $(document).on('click', '.addToCart > input, .addToCart', function (event) {
     event.preventDefault();
     event.stopPropagation();
@@ -102,6 +90,14 @@ $(document).ready(function () {
   });
   $(document).on('click', '.fancybox', function (event) {
     event.stopPropagation();
+  });
+
+  $('.brandFilter').change(function () {
+    var listId = 'product-list';
+    var form = $('#filterForm');
+    var filter = form.serialize();
+    var url = $.fn.yiiListView.getUrl(listId).replace(/(&|\/)filter(.*?)(=|\/)\d+/, '');
+    $.fn.yiiListView.update(listId, {url: url, data: filter});
   });
 
   $(document).on('keydown', ".input-number", function (event) {

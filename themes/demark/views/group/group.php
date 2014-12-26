@@ -7,7 +7,7 @@
 /* @var $view string */
 ?>
 <?php $this->pageTitle = Yii::app()->name . ' - ' . $group->name; ?>
-<?php // $this->renderPartial('_topmenu');   ?>
+<?php // $this->renderPartial('_topmenu');    ?>
 
 <div class="container" id="page">
   <?php $this->renderPartial('//site/_topblock', array('search' => $search)); ?>
@@ -41,11 +41,6 @@
       <?php
       $this->renderPartial('_menuCategory', array('group' => $group));
       $this->renderPartial('_filter', array('group' => $group));
-//      $this->renderPartial('_vGiftSelection', array(
-//        'giftSelection' => $giftSelection,
-//        'groups' => $groups,
-//      ));
-//      $this->renderPartial('_vAdvantage');
       ?>
     </div>
 
@@ -56,8 +51,7 @@
       Yii::import('application.modules.catalog.models.Product');
       Yii::import('application.modules.discount.models.Discount');
       echo CHtml::beginForm('', 'post', array('id' => 'item-submit'));
-      echo CHtml::hiddenField('url', Yii::app()->request->url); //, array('id' => 'currentGroup'));
-//      echo CHtml::hiddenField('currentCategory', $group->id); //, array('id' => 'currentGroup'));
+      echo CHtml::hiddenField('url', Yii::app()->request->url);
       if ($group->level < 3) {
         $discount_products = Product::model()->subCategory($group->id)->availableOnly()
                 ->discountOrder()->recommended()->findAll(array('limit' => 4, 'having' => 'percent>0'));
@@ -66,7 +60,6 @@
           <div class="inline-blocks">
             <div style="width: 100%">
               <div class="inline-blocks right">
-                <!--<div class="icon-dicount"></div>-->
                 <div class="red bold" style="font-size: 20pt; position: relative; padding: 0 10px">Товары со скидкой</div>
               </div>
             </div>
@@ -86,11 +79,12 @@
       <?php
       $this->renderPartial($view, array(
         'group' => $group,
-        'product' => $product,));
-          
+        'product' => $product,
+        'data' => $data,
+        'sizes' => $sizes,
+      ));
       ?>
       <?php echo CHtml::endForm(); ?>
-      <!--<div style="margin: 15px"><?php // echo $group->seo; ?></div>-->
     </div>
 
   </div>
