@@ -29,7 +29,7 @@ Yii::import('application.modules.payments.models.Currency');
     'emptyText' => 'Товар отсутствует',
     'itemView' => '//site/_item',
     'cssFile' => Yii::app()->theme->baseUrl . '/css/listview.css',
-    'template' => "{sizer}{sorter}{items}{pager}",
+    'template' => "{pager}{sizer}{sorter}{items}{pager}",
     'sorterHeader' => 'Сортировать:',
     'sortableAttributes' => array('price'),
     'viewData' => array('sizes' => $sizes, 'trade_price' => '', 'currency' => $currency),
