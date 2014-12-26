@@ -25,27 +25,19 @@ class GroupController extends CController {
     $giftSelection = new GiftSelection;
     $product = Product::model();
 
-    $sizes = Yii::app()->params['page_sizes'];
-    $pagination['pageSize'] = Yii::app()->request->getQuery('size', current($sizes));
-    $data = Product::model()->searchCategory($group->id);
-    $data->setPagination($pagination);
-    $data->setSort(array('defaultOrder' => array('name' => CSort::SORT_ASC)));
-
     if (Yii::app()->params['category_default_view'] == 'table')
       $view = '//site/_items_inline';
     else
       $view = '//site/_items';
 
     if (Yii::app()->request->isAjaxRequest) {
-      if (isset($filter['brands']) && count($filter['brands'])){
-        $data->criteria->compare('brand_id', $filter['brands']);
-      }
-      $this->render($view, array(
+      $this->renderPartial($view, array(
         'group' => $group,
         'product' => $product,
-        'data' => $data,
-        'sizes' => $sizes,
-        ));
+//        'data' => $data,
+//        'sizes' => $sizes,
+        'filter' => $filter,
+      ));
     }
     else {
       $params = array(
@@ -55,8 +47,9 @@ class GroupController extends CController {
         'groups' => $groups,
         'group' => $group,
         'view' => $view,
-        'data' => $data,
-        'sizes' => $sizes,
+//        'data' => $data,
+//        'sizes' => $sizes,
+        'filter' => $filter,
       );
 
       if (isset($_POST['currentPage']))

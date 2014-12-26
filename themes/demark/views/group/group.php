@@ -5,6 +5,7 @@
 /* @var $group Category */
 /* @var $categories[] Category */
 /* @var $view string */
+/* @var $data CActiveDataProvider */
 ?>
 <?php $this->pageTitle = Yii::app()->name . ' - ' . $group->name; ?>
 <?php // $this->renderPartial('_topmenu');    ?>
@@ -80,8 +81,9 @@
       $this->renderPartial($view, array(
         'group' => $group,
         'product' => $product,
-        'data' => $data,
-        'sizes' => $sizes,
+//        'data' => $data,
+//        'sizes' => $sizes,
+        'filter' => $filter,
       ));
       ?>
       <?php echo CHtml::endForm(); ?>
