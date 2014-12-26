@@ -178,7 +178,9 @@ class Category extends CActiveRecord {
 //        )),
       'select' => 't.id, t.name, t.lft, t.rgt, t.root, COUNT(pc.product_id) AS count_products',
       'order' => 't.lft',
-      'condition' => 't.level=:level AND (t.root=:root OR :root IS NULL) AND (subcat.lft>:lft OR :lft IS NULL) AND (subcat.rgt<:rgt OR :rgt IS NULL) AND prod.show_me=1 AND prod.remainder>0',
+      'condition' => 't.level=:level AND (t.root=:root OR :root IS NULL) AND '
+      . '(subcat.lft>:lft OR :lft IS NULL) AND (subcat.rgt<:rgt OR :rgt IS NULL) '
+      . 'AND prod.show_me=1 AND prod.remainder>0',
       'group' => 't.id',
       'together' => 'true',
       'having' => 'count_products>0',
@@ -187,4 +189,16 @@ class Category extends CActiveRecord {
     return $this;
   }
 
+  public function getBrands(){
+    $brands = Brand::model()->findAll(array(
+      'select' => 't.id, t.name',
+      'with' => array('products'),
+      'condition' => 'products.id IN (SELECT product_id FROM store_product_category WHERE category_id IN '
+      . '(SELECT id FROM store_category WHERE lft>=:lft AND rgt<=:rgt ORDER BY lft))',
+      'group' => 't.id',
+      'order' => 't.name',
+      'params' => array(':lft' => $this->lft, ':rgt' => $this->rgt),
+    ));
+    return $brands;
+  }
 }

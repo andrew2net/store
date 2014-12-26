@@ -6,7 +6,7 @@
 $txtName = html_entity_decode($product->name, ENT_COMPAT, 'UTF-8') . ' ' . $product->article;
 ?>
 <?php $this->pageTitle = Yii::app()->name . ' - ' . $txtName; ?>
-<?php // $this->renderPartial('_topmenu');             ?>
+<?php // $this->renderPartial('_topmenu');              ?>
 
 <div class="container" id="page">
   <?php
@@ -78,7 +78,7 @@ $txtName = html_entity_decode($product->name, ENT_COMPAT, 'UTF-8') . ' ' . $prod
       <div>Наличие: <?php echo $product->remainder ? 'товар в наличии на складе' : 'товар временно отсутствует'; ?></div>
       <div class="item-disc red" style="font-size: 18pt !important; display: inherit"><?php echo $old_price; ?></div>
       <div class="inline-blocks" style="position: relative">
-        <div class="item-price blue" style="position: relative; bottom: 3px; font-size: 32pt"><?php echo $price . $currecy; ?></div>
+        <div class="bold blue" style="position: relative; bottom: 3px; font-size: 32pt"><?php echo $price . $currecy; ?></div>
         <div style="position: relative; bottom: 28px; vertical-align: bottom"><?php
           echo CHtml::activeNumberField($productForm, 'quantity'
               , array(
@@ -86,18 +86,13 @@ $txtName = html_entity_decode($product->name, ENT_COMPAT, 'UTF-8') . ' ' . $prod
             'class' => 'input-number cart-quantity',
             'max' => 99,
             'min' => 0,
-//            'maxlength' => 2,
           ));
           ?>
           <span style="position: relative; bottom: -5px">шт.</span>
         </div>
-        <div class="item-bt addToCart" style="cursor: pointer; position: relative; top: 20px" data-product="<?php echo $product->id; ?>"><div>В корзину</div></div>
+        <div class="item-bt addToCart" style="cursor: pointer; position: relative; top: 15px;left: 20px" data-product="<?php echo $product->id; ?>"><div>В корзину</div></div>
+        <div class="item-add-proc" style="width: 150px; height: 60px; display: none"></div>
       </div>
-      <!--<div>-->
-      <!--<div style="text-align: center; width: 168px; float: right; font-size: 11pt; margin-top: 5px">-->
-        <!--<a id="buy-one-click" product="<?php // echo $product->id;        ?>" href="#">Купить в 1 клик</a>-->
-      <!--</div>-->
-      <!--</div>-->
     </div>
   </div>
   <div style="margin-bottom: 10px">

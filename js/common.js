@@ -1,4 +1,4 @@
-Number.prototype.formatMoney = function(c, d, t) {
+Number.prototype.formatMoney = function (c, d, t) {
   var n = this,
           c = isNaN(c = Math.abs(c)) ? 0 : c,
           d = d == undefined ? "." : d,
@@ -10,7 +10,7 @@ Number.prototype.formatMoney = function(c, d, t) {
 };
 
 
-$(document).ready(function() {
+$(document).ready(function () {
 
 //  $('#aSubmit').click(function() {
 //    $('#giftSelect').submit();
@@ -24,14 +24,13 @@ $(document).ready(function() {
 //      $('#GiftCategory').val('');
 //  });
 
-  $(document).on('click', '.addToCart > input, .addToCart', function(event) {
+  $(document).on('click', '.addToCart > input, .addToCart', function (event) {
     event.preventDefault();
     event.stopPropagation();
     if (this == $('.addToCart > input')[0])
       return;
     closeLoginDialog();
     var button = $(this);
-//    button.removeClass('addToCart');
     var parent = button.hide().parent();
     var itemDisc = parent.find('.item-disc').hide();
     var itemPrice = parent.find('.item-price').hide();
@@ -47,7 +46,7 @@ $(document).ready(function() {
       'id': id,
       'quantity': quantity
     },
-    function(data) {
+    function (data) {
       var result = $.parseJSON(data);
       var img = parent.parent().find('.img-anim');
       if (!img.length)
@@ -70,22 +69,20 @@ $(document).ready(function() {
         left: imgOffset.left + 50,
         right: imgOffset.right - 50,
         'z-index': 4000
-      })
-              .animate({
-                maxWidth: '83px', //img.attr('width') * 0.66,
-                maxHeight: '75px', //img.attr('height') * 0.66,
-                opacity: 0.2,
-                top: cartOffset.top + 10,
-                right: cartOffset.right + 30,
-                left: cartOffset.left - 30
-              }, 1000)
-              .fadeOut(100, function() {
+      }).animate({
+        maxWidth: '83px', //img.attr('width') * 0.66,
+        maxHeight: '75px', //img.attr('height') * 0.66,
+        opacity: 0.2,
+        top: cartOffset.top + 10,
+        right: cartOffset.right + 30,
+        left: cartOffset.left - 30
+      }, 1000)
+              .fadeOut(100, function () {
                 cart.html(result.cart);
                 addProc.hide();
                 itemDisc.css('display', "");
                 itemPrice.css('display', "");
                 button.css('display', "");
-//                button.addClass('addToCart');
                 $(this).remove();
               });
       if (result.refresh)
@@ -93,21 +90,21 @@ $(document).ready(function() {
     });
   });
 
-  $('.submit').click(function() {
+  $('.submit').click(function () {
     $(this).hide().parent().find('img').show();
     $('form').submit();
   });
 
-  $(document).on('click', '.item-link', function(event) {
+  $(document).on('click', '.item-link', function (event) {
     event.preventDefault();
     $('#item-submit').attr('action', $(this).attr('href'));
     $('#item-submit').submit();
   });
-  $(document).on('click', '.fancybox', function(event) {
+  $(document).on('click', '.fancybox', function (event) {
     event.stopPropagation();
   });
 
-  $(document).on('keydown', ".input-number", function(event) {
+  $(document).on('keydown', ".input-number", function (event) {
     // Allow: backspace, delete, tab, escape, enter and .
     if ($.inArray(event.keyCode, [46, 8, 9, 27, 13, 190]) !== -1 ||
             // Allow: Ctrl+A
