@@ -40,7 +40,7 @@
     <div style="width: 180px; margin-right: 6px; float: left">
       <?php
       $this->renderPartial('_menuCategory', array('group' => $group));
-//      $this->renderPartial('_filter', array('group' => $group));
+      $this->renderPartial('_filter', array('group' => $group));
 //      $this->renderPartial('_vGiftSelection', array(
 //        'giftSelection' => $giftSelection,
 //        'groups' => $groups,
