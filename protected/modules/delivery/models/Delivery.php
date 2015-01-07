@@ -203,7 +203,9 @@ class Delivery extends CActiveRecord {
         ':city' => empty($city),
         ':delivery_id' => $delivery_id,
         ':price_country' => $customerProfile->price_country,
-  )));
+      ),
+      'order' => 't.zone_type_id',
+    ));
     return $this;
   }
 
