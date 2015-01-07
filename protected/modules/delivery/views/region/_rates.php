@@ -26,7 +26,7 @@
           <td style="width: 150px">
             <?php
             echo TbHtml::numberField("DeliveryRate[$delivery_id][n][price]", ''
-                , array('span' => 1, 'step' => 0.01, 'min' => 0.01, 'disabled' => true));
+                , array('span' => 1, 'step' => 0.01, 'min' => 0, 'disabled' => true));
             ?>
           </td>
           <td style="width: 100px; text-align: center"><?php
@@ -46,7 +46,7 @@
             <td style="width: 150px">
               <?php
               echo $form->numberField($value, "[$delivery_id][$id]price"
-                  , array('span' => 1, 'step' => 0.01, 'min' => 0.01));
+                  , array('span' => 1, 'step' => 0.01, 'min' => 0));
               ?>
             </td>
             <td style="width: 100px; text-align: center"><?php

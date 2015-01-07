@@ -70,7 +70,7 @@
         ?>
 
         <?php
-        $options_param = Delivery::getDeliveryList($model->country_code, $model->post_code, $model->city, $model->orderProducts, $model);
+        $options_param = CalcDelivery::getDeliveryList($model->country_code, $model->post_code, $model->city, $model->orderProducts, $model);
         echo $form->dropDownListControlGroup($model, 'delivery_id'
             , isset($options_param['options']) ? $options_param['options'] : array(), array(
           'options' => isset($options_param['params']) ? $options_param['params'] : array(), 'style' => 'width:320px'));

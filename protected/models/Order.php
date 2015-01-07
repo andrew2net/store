@@ -98,7 +98,7 @@ class Order extends CActiveRecord {
       array('delivery_summ', 'numerical'),
       array('email', 'email'),
       array('fio, email, customer_delivery', 'length', 'max' => 255),
-      array('post_code', 'length', 'min' => 6, 'max' => 6),
+      array('post_code', 'length', 'min' => 0, 'max' => 6),
       array('country_code', 'length', 'max' => 2),
       array('currency_code', 'length', 'max' => 3),
       array('city', 'length', 'max' => 100),
@@ -110,8 +110,8 @@ class Order extends CActiveRecord {
       // @todo Please remove those attributes that should not be searched.
       array('id, email, fio, phone, delivery_id, payment_id, status_id, time', 'safe', 'on' => 'search'),
     );
-    if (Yii::app()->params['post_code'])
-      $rules = array_merge($rules, array(array('post_code', 'required')));
+//    if (Yii::app()->params['post_code'])
+//      $rules = array_merge($rules, array(array('post_code', 'required')));
     if (Yii::app()->params['country'])
       $rules = array_merge($rules, array(array('country_code', 'default', 'value' => Yii::app()->params['country'])));
     return $rules;

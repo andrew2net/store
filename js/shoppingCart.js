@@ -8,12 +8,11 @@ $(document).ready(function () {
   var cart_items = $('#cart-items');
   var post_code = $('#CustomerProfile_post_code');
   var cart_city = $('#cart-city');
-  var delivery_hint = $('#delivery-hint');
   var delivery_loading = $('#delivery-loading');
   var cart_delivery = $('#cart-delivery');
+  var cartPayment = $('#Order_payment_id');
   var cart_login_dialog = $("#cart-login-dialog");
   var user_email = $('#User_email');
-  var order_hint = $("#order-hint");
 
   function calcCartSumm() {
     var summ = 0;
@@ -77,22 +76,17 @@ $(document).ready(function () {
       var price_f = priceDelivery.formatMoney();
       $('#delivery-summ').html(price_f);
       $('#cart-total').html((priceDelivery + summ).formatMoney());
-      order_hint.hide();
       cartSubmit.show();
     }
     else {
       $('#delivery-summ').html('');
       cartSubmit.hide();
       $('#cart-total').html(summ.formatMoney());
-      if ($('#cart-delivery input').length > 0)
-        order_hint.show();
-      else
-        order_hint.hide();
     }
   }
 
   calcCartSumm();
-  getDeliveries();
+  getDeliveries(true);
 
   cartSubmit.click(function () {
     cartSubmit.hide();
@@ -101,10 +95,10 @@ $(document).ready(function () {
     $.post('/cart/checkemail', {
       email: email
     }, function (data) {
-      if (data == 'ok'){
+      if (data == 'ok') {
         yaCounter26247867.reachGoal('CREATEORDER');
         $('form').submit();
-      }else {
+      } else {
         cartProc.hide();
         cartSubmit.show();
         cart_login_dialog.html(data);
@@ -120,10 +114,10 @@ $(document).ready(function () {
       email: email,
       passw: passw
     }, function (data) {
-      if (data == 'ok'){
+      if (data == 'ok') {
         $('#login-fl').val('1');
         $('form').submit();
-      }else
+      } else
         $('#passw-err').html('Неверный пароль');
     });
   });
@@ -210,15 +204,14 @@ $(document).ready(function () {
     }
   });
 
-  function getDeliveries() {
+  function getDeliveries(call) {
     cartSubmit.hide();
     var pcode = post_code.val();
-    if (pcode.length === 6) {
+    var city = cart_city.val();
+    if (pcode.length === 6 || city.length > 0 || call) {
       var ccode = country_code.val();
       cart_delivery.hide();
-      delivery_hint.hide();
       delivery_loading.show();
-      var city = cart_city.val();
       var delivery = $('input:radio[name="Order[delivery_id]"]:checked');
       var d_id = 0;
       if (delivery.length > 0)
@@ -234,18 +227,60 @@ $(document).ready(function () {
         'delivery_id': d_id,
         'c_deliver': c_deliver
       }, function (data) {
-        delivery_loading.hide();
         cart_delivery.html(data);
         cart_delivery.show();
-        calcTotal();
+        showDeliveries(pcode, city);
       });
     } else {
-      delivery_loading.hide();
-      cart_delivery.hide();
-      cart_delivery.html('');
-      delivery_hint.show();
-      calcTotal();
+      var lbls = cart_delivery.find('label > span:not([data-self])').parent();
+      lbls.prev().remove();
+      lbls.next().remove();
+      lbls.remove();
+      if (cart_delivery.find('input:checked').length === 0)
+        cart_delivery.find('input:first-child').prop('checked', true);
+      showDeliveries(pcode, city);
     }
+  }
+
+  post_code.tooltip({
+    items: '[data-hint]',
+    content: 'Укажите индекс для отображения всех доступных способов доставки',
+    position: {my: 'top', at: 'bottom+15', collision: 'none', using: function (position, feedback) {
+        $(this).css(position);
+        $('<div>').addClass('tt-arrow').addClass(feedback.vertical).addClass(feedback.horizontal).appendTo(this);
+      }
+    }
+  });
+
+  cart_city.tooltip({
+    items: '[data-hint]',
+    content: 'Укажите город или населенный пункт для отображения всех доступных способов доставки',
+    position: {my: 'top', at: 'bottom+15', collision: 'none', using: function (position, feedback) {
+        $(this).css(position);
+        $('<div>').addClass('tt-arrow').addClass(feedback.vertical).addClass(feedback.horizontal).appendTo(this);
+      }
+    }
+  });
+
+  var tooltipInterval;
+  function showDeliveries(pcode, city) {
+    clearInterval(tooltipInterval);
+    delivery_loading.hide();
+    post_code.tooltip('disable');
+    cart_city.tooltip('disable');
+    if (pcode.length !== 6) {
+      post_code.tooltip('enable').tooltip("open");
+      tooltipInterval = setInterval(function () {
+        post_code.tooltip('enable').tooltip("open");
+      }, 30000);
+    } else if (city.length === 0) {
+      cart_city.tooltip('enable').tooltip("open");
+      tooltipInterval = setInterval(function () {
+        cart_city.tooltip('enable').tooltip("open");
+      }, 30000);
+    }
+    checkCashPayment();
+    calcTotal();
   }
 
   coupon.typing({
@@ -289,8 +324,16 @@ $(document).ready(function () {
   }
 
   cart_delivery.on('change', 'input[name="Order[delivery_id]"]', function () {
+    checkCashPayment();
     calcTotal();
   });
+
+  function checkCashPayment() {
+    var disCash = cart_delivery.find('input:checked').next('label').find('span[data-self]').length === 0;
+    cartPayment.find('span[data-cash]').parent().prev('input').prop('disabled', disCash);
+    if (disCash && cartPayment.find('input:enabled:checked').length === 0)
+      cartPayment.find('input:enabled:first').prop('checked', true);
+  }
 
   var quantityTimeOut;
   $(document).on('change', '.cart-quantity', function () {
@@ -344,7 +387,6 @@ $(document).ready(function () {
       'quantity': quantity
     }, function (data) {
       cart_delivery.hide();
-      delivery_hint.hide();
       var city = cart_city.val();
       if (city.length > 0) {
         delivery_loading.show();

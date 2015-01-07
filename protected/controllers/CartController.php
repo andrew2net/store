@@ -14,9 +14,11 @@ class CartController extends Controller {
     Yii::import('application.modules.payments.models.Payment');
     Yii::import('application.modules.discount.models.Coupon');
     Yii::import('application.controllers.ProfileController');
+    Yii::import('ext.CalcDelivery');
 
     $minimal_summ = Price::getMinimalSumm();
     $customer_profile = ProfileController::getProfile();
+    $city = $customer_profile->other_city ? $customer_profile->city : $customer_profile->city_l;
     $session = ProfileController::getSession();
     if (isset($_POST['Cart'])) {
       $cart = array();
@@ -84,8 +86,6 @@ class CartController extends Controller {
         Yii::app()->user->setState('customer_delivery', $order->customer_delivery);
     }
 
-    $delivery = array();
-
     Yii::import('application.modules.payments.models.Currency');
     $currency = Currency::model()->findByAttributes(array(
       'country_code' => $country_code));
@@ -97,10 +97,14 @@ class CartController extends Controller {
       if (!isset($_POST['login']) || !$_POST['login'])
         $customer_profile->attributes = $_POST['CustomerProfile'];
       else {
-        if (isset($_POST['CustomerProfile']['city']))
+        if (isset($_POST['CustomerProfile']['city'])) {
           $customer_profile->city = $_POST['CustomerProfile']['city'];
-        else
+          $city = $customer_profile->city;
+        }
+        else {
           $customer_profile->city_l = $_POST['CustomerProfile']['city_l'];
+          $city = $customer_profile->city_l;
+        }
         if (isset($_POST['CustomerProfile']['other_city']))
           $customer_profile->other_city = $_POST['CustomerProfile']['other_city'];
       }
@@ -139,8 +143,6 @@ class CartController extends Controller {
             if (count($cart) > 0) {
               $this->saveOrderProducts($order, $customer_profile, $profile, $user, $coupon, $count_products);
 
-//              foreach ($cart as $item)
-//                $item->delete();
               Cart::model()->shoppingCart($session)->deleteAll();
               $fl = TRUE;
             }
@@ -157,12 +159,7 @@ class CartController extends Controller {
       }
       if (!$valid)
         $has_err = 'prof';
-      
     }else {
-      if (is_array($delivery))
-        $order->delivery_id = key($delivery);
-      else
-        $order->delivery_id = 0;
 
       if (is_array($payment))
         $order->payment_id = key($payment);
@@ -179,7 +176,6 @@ class CartController extends Controller {
       'user' => $user,
       'profile' => $profile,
       'order' => $order,
-      'delivery' => $delivery,
       'payment' => $payment,
       'coupon' => $coupon_data,
       'has_err' => $has_err,
@@ -238,7 +234,7 @@ class CartController extends Controller {
       else
         $city = $customer_profile->city_l;
       $cart = Cart::model()->shoppingCart(ProfileController::getSession())->findAll();
-      $delivery = Delivery::getDeliveryList($customer_profile->country_code, $customer_profile->post_code, $city, $cart, $order, $_POST['Order']['delivery_id']);
+      $delivery = CalcDelivery::getDeliveryList($customer_profile->country_code, $customer_profile->post_code, $city, $cart, $order, $_POST['Order']['delivery_id']);
       $order->delivery_summ = $delivery['params'][$_POST['Order']['delivery_id']]['price'];
     }
 
@@ -259,8 +255,14 @@ class CartController extends Controller {
     $order->address = $customer_profile->address;
     $price_country = Yii::app()->params['mcurrency'] ? $customer_profile->price_country : Yii::app()->params['country'];
     $order->currency_code = Currency::model()->findByCountry($price_country)->code;
-    $order->status_id = Yii::app()->params['order']['new_status'];
+    $order->status_id = $order->payment->type_id == Payment::TYPE_CAHSH ?
+        Yii::app()->params['order']['payCash_status'] : Yii::app()->params['order']['new_status'];
     $order->time = date('Y-m-d H:i:s');
+    
+    //don't allow pay by cash if not self delivery
+    if ($order->delivery->zone_type_id == Delivery::ZONE_SELF && 
+        $order->payment->type_id != Payment::TYPE_BANK && $order->payment->type_id != Payment::TYPE_CAHSH)
+      $order->payment_id = Payment::model()->findByAttributes(['type_id' => Payment::TYPE_CAHSH])->id;
 
     if ($coupon && $count_products['couponDisc'])
       $order->coupon_id = $coupon->id;
@@ -382,6 +384,7 @@ class CartController extends Controller {
     Yii::import('application.controllers.ProfileController');
     Yii::import('application.modules.catalog.models.Product');
     Yii::import('application.modules.payments.models.Currency');
+    Yii::import('ext.CalcDelivery');
 
     $cart = Cart::model()->shoppingCart(ProfileController::getSession())->findAll();
     $order = new Order;
@@ -393,7 +396,7 @@ class CartController extends Controller {
     Yii::app()->user->setState('delivery_id', NULL);
     Yii::app()->user->setState('customer_delivery', NULL);
 
-    $delivery = Delivery::model()->getDeliveryList($ccode, trim($pcode), $city, $cart, $order);
+    $delivery = CalcDelivery::getDeliveryList($ccode, trim($pcode), $city, $cart, $order);
 
     if (!isset($delivery[$order->delivery_id]))
       $order->delivery_id = key($delivery);

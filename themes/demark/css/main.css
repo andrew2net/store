@@ -989,39 +989,6 @@ td.text-right{
   margin: 20px 0;
 }
 
-#order-hint{
-  left: 410px;
-  top: 0;
-}
-#delivery-hint{
-  left: 100px;
-}
-.hintl, .hintr{
-  font-size: 14pt;
-  background: #FFB770;
-  border-radius: 10px;
-  position: absolute;
-  padding: 20px;
-}
-.hintl:before{
-  content: "";
-  background: url(../img/cornerl.png) no-repeat;
-  width: 50px;
-  height: 50px;
-  position: absolute;
-  bottom: 60px;
-  left: -5px;
-}
-.hintr:before{
-  content: "";
-  background: url(../img/cornerr.png) no-repeat;
-  width: 90px;
-  height: 250px;
-  position: absolute;
-  bottom: 60px;
-  right: -5px;
-}
-
 .selfem{
   color: #39C;
   text-decoration: underline;
@@ -1035,4 +1002,33 @@ td.text-right{
 }
 .success{
   margin: 10px 0;
+}
+
+.ui-tooltip{
+  font-size: 8pt !important;
+  background: #FFF7BC !important;
+  max-width: 250px !important;
+}
+.tt-arrow:after{
+  border: 2px solid #aaa;
+  content: "";
+  background: #FFF7BC;
+  position: absolute;
+  left: 20px;
+  bottom: -20px;
+  width: 25px;
+  height: 25px;
+  box-shadow: 6px 5px 9px -9px black;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.tt-arrow{
+  width: 70px;
+  height: 16px;
+  overflow: hidden;
+  position: absolute;
+  left: 50%;
+  margin-left: -35px;
+  top: -16px;
 }

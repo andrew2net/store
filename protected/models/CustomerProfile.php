@@ -53,11 +53,9 @@ class CustomerProfile extends CActiveRecord {
     // NOTE: you should only define rules for those attributes that
     // will receive user inputs.
     $rules = array(
-      array('city, address', 'required'),
       array('user_id, price_id, entity_id', 'numerical', 'integerOnly' => true),
       array('entity_id', 'default', 'value' => Yii::app()->params['legal_entity']),
       array('session_id', 'length', 'max' => 32),
-      array('post_code', 'postCodeValidate'),
       array('address', 'length', 'max' => 255),
       array('phone', 'length', 'max' => 20),
       array('other_city', 'boolean'),
@@ -68,8 +66,27 @@ class CustomerProfile extends CActiveRecord {
       // @todo Please remove those attributes that should not be searched.
       array('id, session_id, user_id, fio, email, phone, city, address', 'safe', 'on' => 'search'),
     );
-    if (Yii::app()->params['post_code'])
-      $rules = array_merge($rules, array(array('post_code', 'required')));
+
+    $delivery = false;
+    if (isset($_POST['Order']['delivery_id'])) {
+      /* @var $delivery Delivery */
+      $delivery = Delivery::model()->findByPk($_POST['Order']['delivery_id']);
+    }
+    if (Yii::app()->params['post_code']) {
+      if (!($delivery && ($delivery->zone_type_id == Delivery::ZONE_SELF ||
+          $delivery->zone_type_id == Delivery::ZONE_CUSTOM || $delivery->zone_type_id == Delivery::ZONE_NRJ))) {
+        $rules = array_merge($rules, [['post_code', 'postCodeValidate']]);
+      }
+    }
+    if (!($delivery && $delivery->zone_type_id == Delivery::ZONE_SELF)) {
+      $rules = array_merge($rules, [['city, address', 'required']]);
+      if ($delivery && ($delivery->zone_type_id == Delivery::ZONE_COURIER || $delivery->zone_type_id == Delivery::ZONE_CUSTOM)) {
+        $rules = array_merge($rules, [['phone', 'required']]);
+      }
+    }
+    else {
+      $rules = array_merge($rules, [['phone', 'required']]);
+    }
     if (Yii::app()->params['country'])
       $rules = array_merge($rules, array(array('country_code', 'default', 'value' => Yii::app()->params['country'])));
     else
@@ -236,7 +253,7 @@ class CustomerProfile extends CActiveRecord {
   public function moveCart($user, $sessionID = null) {
     $cart = Cart::model()->findAllByAttributes(array(
       'session_id' => is_null($sessionID) ? $this->session_id : $sessionID,
-      ));
+    ));
     foreach ($cart as $item) {
       $item->session_id = NULL;
       $item->user_id = $user->id;

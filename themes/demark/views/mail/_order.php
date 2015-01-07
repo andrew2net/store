@@ -13,17 +13,20 @@ echo CHtml::tag('div', array(), 'Город: ' . CHtml::encode($order->city));
 echo CHtml::tag('div', array(), 'Адрес: ' . CHtml::encode($order->address));
 
 switch ($order->delivery->zone_type_id) {
-  case 3:
+  case Delivery::ZONE_NRJ:
     $delivery = $order->delivery->name . ' (' . $order->delivery->transportType . ')';
     break;
-  case 4:
+  case Delivery::ZONE_CUSTOM:
     $delivery = $order->customer_delivery;
+    break;
+  case Delivery::ZONE_SELF:
+    $delivery = $order->delivery->name.' ' . $order->delivery->description;
     break;
   default :
     $delivery = $order->delivery->name;
 }
-echo CHtml::tag('div', array(), 'Вид доставки: ' . CHtml::encode($delivery));
-echo CHtml::tag('div', array('style' => 'margin-bottom:1em'), 'Вид оплаты: ' . $order->payment->name);
+echo CHtml::tag('div', array(), 'Вид оплаты: ' . $order->payment->name);
+echo CHtml::tag('div', array('style' => 'margin-bottom:1em'), 'Вид доставки: ' . CHtml::encode($delivery));
 echo CHtml::closeTag('td');
 echo CHtml::tag('td', array('style' => 'vertical-align: top; padding-left: 20px'));
 //echo CHtml::tag('div', array('style' => 'font-weight:bold;margin-top:1em'), 'Реквизиты для оплаты:');

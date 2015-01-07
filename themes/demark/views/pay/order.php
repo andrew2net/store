@@ -19,15 +19,17 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
   ?>
   <?php if ($errors) echo CHtml::tag('p', array('class' => 'red', $errors)); ?>
   <h1 class="bold blue" style="margin: 20px 0">Информация о заказе:</h1>
-  <div>Заказ №: <?php echo $order->id; ?></div>
-  <div>Статус заказа: <?php echo $order->status; ?></div>
-  <div>Покупатель: <?php echo $order->fio; ?></div>
-  <div>Телефон: <?php echo $order->phone; ?></div>
-  <div>Страна: <?php echo ProfileController::getCountryName($order->country_code); ?></div>
-  <div>Почтовый индекс: <?php echo $order->post_code; ?></div>
-  <div>Город: <?php echo $order->city; ?></div>
-  <div>Адрес: <?php echo $order->address; ?></div>
-  <div style="margin-bottom: 10px">Вид доставки: <?php echo $order->delivery->name; ?></div>
+  <div><b>Заказ №:</b> <?php echo $order->id; ?> <b>от</b> <?php echo Yii::app()->dateFormatter->format('DD.MM.yyyy',$order->time); ?></div>
+  <div><b>Статус заказа:</b> <?php echo $order->status; ?></div>
+  <div><b>Покупатель:</b> <?php echo $order->fio; ?></div>
+  <div><b>Телефон:</b> <?php echo $order->phone; ?></div>
+  <div><b>Страна:</b> <?php echo ProfileController::getCountryName($order->country_code); ?></div>
+  <div><b>Почтовый индекс:</b> <?php echo $order->post_code; ?></div>
+  <div><b>Город:</b> <?php echo $order->city; ?></div>
+  <div><b>Адрес:</b> <?php echo $order->address; ?></div>
+  <div><b>Вид оплаты:</b> <?php echo $order->payment->name; ?></div>
+  <div style="margin-bottom: 10px"><b>Вид доставки:</b> <?php echo $order->delivery->name . 
+      ($order->delivery->zone_type_id == Delivery::ZONE_SELF ? ' '.$order->delivery->description : ''); ?></div>
   <table cellpadding="4" style="border-collapse: collapse">
     <tr style="background: whitesmoke">
       <th>Артикул</th>
@@ -80,7 +82,7 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
     <?php } ?>
   </table>
   <?php
-  if ($to_pay > 0 && $order->status_id == Order::STATUS_WAITING_FOR_PAY) {
+  if ($to_pay > 0 && $order->status_id == Order::STATUS_WAITING_FOR_PAY && $order->payment->type_id != Payment::TYPE_CAHSH) {
     echo CHtml::beginForm($order->payment->getActionUrl());
     $params = $order->payment->getParams($order);
     foreach ($params as $key => $value) {

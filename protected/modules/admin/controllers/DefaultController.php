@@ -46,6 +46,8 @@ class DefaultController extends Controller {
     Yii::import('application.modules.catalog.models.Product');
     Yii::import('application.modules.catalog.models.Price');
     Yii::import('application.modules.discount.models.Coupon');
+    Yii::import('ext.CalcDelivery');
+    Yii::import('application.modules.payments.models.Currency');
 
     $model = $this->loadModel($id);
     $products = array();
@@ -183,9 +185,10 @@ class DefaultController extends Controller {
 
   public function actionCitydeliveries($city, $oid, array $products) {
     Yii::import('application.modules.delivery.models.Delivery');
+    Yii::import('ext.CalcDelivery');
     $order = Order::model()->findByPk($oid);
     /* @var $order Order */
-    $delivery_list = Delivery::getDeliveryList($order->country_code, $order->post_code, $city, $products, $order);
+    $delivery_list = CalcDelivery::getDeliveryList($order->country_code, $order->post_code, $city, $products, $order);
     echo json_encode($delivery_list);
     Yii::app()->end();
   }

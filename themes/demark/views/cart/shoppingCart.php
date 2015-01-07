@@ -4,7 +4,6 @@
 /* @var $user User */
 /* @var $profile Profile */
 /* @var $order Order */
-/* @var $delivery array */
 /* @var $payment Payment */
 /* @var $currency Currency */
 /* @var $has_err string */
@@ -28,8 +27,8 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
     <legend><span class="page-title bold blue">Ваша корзина</span></legend>
     <table class="striped" style="font-size: 11pt">
       <!--<colgroup>-->
-        <col style="width: 75px;"><col style="width: 395px;"><col style="width: 85px">
-        <col style="width: 85px"><col style="width: 100px"><col style="width: 110px"><col>
+      <col style="width: 75px;"><col style="width: 395px;"><col style="width: 85px">
+      <col style="width: 85px"><col style="width: 100px"><col style="width: 110px"><col>
       <!--</colgroup>-->
       <thead>
         <tr style="font-size: 12pt; background: #414FA5 !important; color: whitesmoke">
@@ -107,9 +106,9 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
             </div>
             <div>
               <?php echo $form->labelEx($customer_profile, 'post_code'); ?>
-              <div><?php echo $form->textField($customer_profile, 'post_code', array('style' => 'width:120px; margin-left:2px')); ?></div>
-              <?php echo $form->error($customer_profile, 'post_code', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
+              <div><?php echo $form->textField($customer_profile, 'post_code', array('style' => 'width:120px; margin-left:2px', 'data-hint' => '')); ?></div>
             </div>
+            <?php echo $form->error($customer_profile, 'post_code', array('style' => 'font-size:10pt', 'class' => 'red')); ?>
           </div>
           <div style="margin-bottom: 1em">
             <?php echo $form->labelEx($customer_profile, 'city', array('for' => 'cart-city')); ?>
@@ -120,6 +119,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
                 'model' => $customer_profile,
                 'attribute' => 'city',
                 'source' => new CJavaScriptExpression('function (request, response){citySuggest(request, response);}'),
+                'htmlOptions' => array('data-hint' => ''),
               ));
               ?>
             </div>
@@ -148,11 +148,23 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
         <div class="bold gray">Оформление заказа</div>
         <div style="font-size: 10pt; margin-top: 10px; border: 1px dashed #DDD">
           <ol style="margin: 10px">
-            <li>Выберите товар</li>
-            <li>Обязательно укажите Ваше имя, электронную почту и почтовый адрес</li>
-            <li>Выберите способ доставки товара (подробности о доставке, можно узнать в разделе <a href="/info/delivery">ДОСТАВКА</a>)</li>
-            <li>После оформления заказа введите реквизиты банковской карточки на безопасной платежной странице <?php echo $customer_profile->price_country == 'KZ' ? 'Processing.kz' : 'LiqPay.com'; ?></li>
-            <li>Подтвердите заказ и сохраните чек</li>
+            <?php if ($customer_profile->price_country == 'KZ') { ?>
+              <li>Выберите товар</li>
+              <li>Обязательно укажите Ваше имя и электронную почту</li>
+              <li>Если необходима доставка товара, обязательно укажите Ваш почтовый адрес</li>
+              <li>Выберите способ доставки товара (подробности о доставке, можно узнать в разделе <a href="/info/delivery">ДОСТАВКА</a>)</li>
+              <li>Если Вы выбрали безналичный способ оплаты то, после оформления заказа, введите реквизиты банковской карточки на безопасной платежной странице Processing.kz. Подтвердите заказ и сохраните чек</li>
+              <li>Оплата наличными возможна только при получении товара в торговом зале или пунктах выдачи</li>
+              <?php
+            }
+            else {
+              ?>
+              <li>Выберите товар</li>
+              <li>Обязательно укажите Ваше имя, электронную почту и почтовый адрес</li>
+              <li>Выберите способ доставки товара (подробности о доставке, можно узнать в разделе <a href="/info/delivery">ДОСТАВКА</a>)</li>
+              <li>После оформления заказа, введите реквизиты банковской карточки на безопасной платежной странице LiqPay.com</li>
+              <li>Подтвердите заказ и сохраните чек</li>
+            <?php } ?>
           </ol>
         </div>
       </div>
@@ -161,19 +173,10 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
   <fieldset>
     <legend><span class="page-title blue bold">Доставка и оплата</span></legend>
     <div class="inline-blocks">
-      <div style="width: 440px; vertical-align: top; margin-right: 40px; min-height: 250px; position: relative">
+      <div style="width: 440px; vertical-align: top; margin: 0 40px 15px 0; min-height: 250px; position: relative">
         <div class="bold gray" style="font-size: 12pt; margin-bottom: 20px">Способ доставки</div>
-        <div id="cart-delivery">
-          <?php
-          $this->renderPartial('_delivery', array(
-            'order' => $order,
-            'delivery' => $delivery,
-            'currency' => $currency,
-          ));
-          ?>
-        </div>
-        <div id="delivery-loading" class="loading" style="position: relative; display: none; top: 15px"></div>
-        <div id="delivery-hint" class="red hintr" style="display: none">Укажите адрес доставки</div>
+        <div id="cart-delivery"></div>
+        <div id="delivery-loading" class="loading" style="position: relative; top: 15px"></div>
       </div>
       <div style="vertical-align: top">
         <?php
@@ -194,7 +197,6 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
       <div>Оформить заказ</div>
     </div>
     <img style="display: none; margin-left: 100px" src="/images/load.gif" />
-    <div id="order-hint" class="red hintl" style="display: none">Выберите способ доставки</div>
   </div>
   <?php $this->endWidget(); ?>
 </div>
@@ -203,10 +205,10 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
   <div style="margin: 1em 0 2em">Чтобы войти в личный кабинет, небходимо ввести пароль.</div>
   <?php // echo CHtml::label('Пароль', 'password'); ?>
   <?php // echo CHtml::passwordField('password'); ?>
-  <?php // echo CHtml::Button('Вход', array('id' => 'submit-password')); ?>
+  <?php // echo CHtml::Button('Вход', array('id' => 'submit-password'));    ?>
   <span class="red" id="passw-err"></span>
   <div style="margin-top: 1em">
-    Забыли пароль? <?php // echo CHtml::Button('Восстановить', array('id' => 'recover-password'));         ?>
+    Забыли пароль? <?php // echo CHtml::Button('Восстановить', array('id' => 'recover-password'));               ?>
     <img src="/images/process.gif" style="display: none; vertical-align: middle; margin-left: 15px" id="loading-dialog" />
   </div>
   <div id="sent-mail-recovery" style="height: 40px"></div>

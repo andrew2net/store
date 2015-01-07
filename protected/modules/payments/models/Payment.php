@@ -207,7 +207,10 @@ class Payment extends CActiveRecord {
     $list = array();
     foreach ($models as $payment) {
       /* @var $payment Payment */
-      $output = CHtml::openTag('span', array('style' => 'display:table-cell;vertical-align:middle'));
+      $params = ['style' => 'display:table-cell;vertical-align:middle'];
+      if ($payment->type_id == self::TYPE_CAHSH)
+        $params['data-cash'] = true;
+      $output = CHtml::openTag('span', $params);
       $output .= CHtml::tag('span', array('class' => 'payment-' . ($payment->type_id > 0 ? 'cart' : 'cash')), '');
       $output .= CHtml::closeTag('span');
       $output .= CHtml::opentag('span', array('style' => 'display:inline-block;width:320px'));
