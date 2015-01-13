@@ -1,11 +1,23 @@
 <?php
+/**
+ * ListView is the customized CListView class.
+ * PHP version 5
+ * 
+ */
 
 Yii::import('zii.widgets.CListView');
 
 class ListView extends CListView {
 
+  /**
+   * File name of the view for header
+   * @var string 
+   */
   public $headerView;
 
+  /**
+   * Sizer is used to change number of items in list.
+   */
   public function renderSizer() {
     if ($this->dataProvider->getTotalItemCount() > 0) {
       $links = array();
@@ -22,6 +34,9 @@ class ListView extends CListView {
     }
   }
 
+  /*
+   * Header is used for a list in a table.
+   */
   public function renderHeader() {
     if ($this->dataProvider->getTotalItemCount() > 0) {
       $view_file = $this->getOwner()->getViewFile($this->headerView);
