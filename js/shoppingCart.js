@@ -268,17 +268,26 @@ $(document).ready(function () {
     delivery_loading.hide();
     post_code.tooltip('disable');
     cart_city.tooltip('disable');
-    if (pcode.length !== 6) {
-      post_code.tooltip('enable').tooltip("open");
+
+    var tooltipField = false;
+    if (pcode.length !== 6)
+      tooltipField = post_code;
+    else if (city.length === 0)
+      tooltipField = cart_city;
+
+    if (tooltipField) {
+      tooltipField.tooltip('enable').tooltip("open");
+      setTimeout(function () {
+        tooltipField.tooltip('close');
+      }, 6000);
       tooltipInterval = setInterval(function () {
-        post_code.tooltip('enable').tooltip("open");
-      }, 30000);
-    } else if (city.length === 0) {
-      cart_city.tooltip('enable').tooltip("open");
-      tooltipInterval = setInterval(function () {
-        cart_city.tooltip('enable').tooltip("open");
+        tooltipField.tooltip('enable').tooltip("open");
+        setTimeout(function () {
+          tooltipField.tooltip('close');
+        }, 6000);
       }, 30000);
     }
+
     checkCashPayment();
     calcTotal();
   }
