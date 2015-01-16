@@ -98,7 +98,10 @@ class Price extends CActiveRecord {
   }
 
   /**
-   * 
+   * Calculate type of a price which is depend of total summ of crat or order
+   * @param array $products_table Array of items or null if using cart items. 
+   * The items use to callc total summ. A prise is depend of totoal summ.
+   * @param int $uid User id if this calculation for other or null.
    * @return Price price type object
    */
   public static function getPrice(&$products_table = NULL, $uid = NULL) {
@@ -112,7 +115,12 @@ class Price extends CActiveRecord {
       $query = "DROP TABLE IF EXISTS {$table};";
       $query .= "CREATE TEMPORARY TABLE {$table} (product_id int(11) unsigned, quantity smallint(5) unsigned);";
       foreach ($products_table as $item) {
-        $product = Product::model()->findByAttributes(array('code' => (string) $item->code));
+        
+        if ($item instanceof OrderProduct)
+          $product = Product::model()->findByAttributes(array('id' => (string) $item->product_id));
+        else
+          $product = Product::model()->findByAttributes(array('code' => (string) $item->code));
+        
         if ($product) {
           $query .= "INSERT INTO {$table} VALUES ({$product->id}, {$item->quantity});";
         }
@@ -152,7 +160,7 @@ class Price extends CActiveRecord {
 
     if ($products_table)
       Yii::app()->db->createCommand("DROP TABLE IF EXISTS {$table};")->execute();
-      
+
     if ($uid)
       $profile = CustomerProfile::model()->with('price')->findByAttributes(array('user_id' => $uid));
     else

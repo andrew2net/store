@@ -176,7 +176,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
       <div style="width: 440px; vertical-align: top; margin: 0 40px 15px 0; min-height: 250px; position: relative">
         <div class="bold gray" style="font-size: 12pt; margin-bottom: 20px">Способ доставки</div>
         <div id="cart-delivery"></div>
-        <div id="delivery-loading" class="loading" style="position: relative; top: 15px"></div>
+        <div id="delivery-loading" class="loading" style="position: relative; top: 50px"></div>
       </div>
       <div style="vertical-align: top">
         <?php

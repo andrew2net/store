@@ -242,6 +242,11 @@ class Product extends CActiveRecord {
     parent::afterDelete();
   }
 
+  /**
+   * Return percentof discount on date
+   * @param string $date the date on which you need to get the discount
+   * @return int percent of discount
+   */
   public function getActualDiscount($date = NULL) {
     if ($date)
       $date = Yii::app()->dateFormatter->format('yyyy-MM-dd', $date);
@@ -291,6 +296,10 @@ class Product extends CActiveRecord {
     ));
   }
 
+  /**
+   * Add to the product criteria filter discounted products
+   * @return \Product
+   */
   public function discount() {
     $discount_all = Discount::model()
         ->count("actual=1 AND type_id IN (0,1) AND product_id=0 AND (begin_date<=:date OR begin_date='0000-00-00') AND (end_date>=:date OR end_date='0000-00-00')"
@@ -320,8 +329,11 @@ class Product extends CActiveRecord {
     return $this;
   }
 
+  /**
+   * Add to the product criteria filter discounted products for current week
+   * @return \Product
+   */
   public function week() {
-
     $discount_category = Yii::app()->db->createCommand()
         ->select('d.percent, d.begin_date, d.end_date, d.type_id, d.actual, s.id')
         ->from('store_discount_category dc')
@@ -364,6 +376,10 @@ class Product extends CActiveRecord {
     return $this;
   }
 
+  /**
+   * Add to the product criteria the sorting by discounted products
+   * @return \Product
+   */
   public function discountOrder() {
     $discount_all = Yii::app()->db->createCommand()
             ->select("a.percent")
@@ -505,6 +521,12 @@ class Product extends CActiveRecord {
     parent::afterConstruct();
   }
 
+  /**
+   * Return price of the product
+   * @param Price $price_type type of wholsale price
+   * @param string $currency_code currency code (RUR, KZT, ...)
+   * @return float price of the product
+   */
   public function getPrice($price_type, $currency_code) {
     if ($price_type)
       return $this->getTradePrice($price_type);
@@ -522,6 +544,11 @@ class Product extends CActiveRecord {
     }
   }
 
+  /**
+   * Return wholesale price of the product
+   * @param Price $price type of wholesale price
+   * @return float wholesale price of the product
+   */
   public function getTradePrice(Price $price) {
     Yii::import('application.modules.catalog.models.ProductPrice');
     $trade_price = ProductPrice::model()->findByAttributes(array('price_id' => $price->id, 'product_id' => $this->id));
@@ -541,6 +568,9 @@ class Product extends CActiveRecord {
     }
   }
 
+  /**
+   * Create small a imge from the big one.
+   */
   public function createThumbnail() {
     $img_storage = '/images/' . Yii::app()->params['img_storage'] . '/product/';
     $root_path = Yii::getPathOfAlias('webroot');
@@ -562,6 +592,10 @@ class Product extends CActiveRecord {
     return parent::beforeSave();
   }
 
+  /**
+   * Return alt attribute fo a small image
+   * @return string alt attribute
+   */
   public function getSmallImageAlt() {
     if (!empty($this->small_img) && file_exists(Yii::getPathOfAlias('webroot') .  $this->small_img))
       $img_alt = $this->name;
