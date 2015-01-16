@@ -13,7 +13,7 @@ class CalcDelivery {
    * @param string $country_code Country code of the location
    * @param string $post_code Post code of the location
    * @param string $city City
-   * @param array $products Frray of Catr, OrderProduct or String
+   * @param array $products Array of Catr, OrderProduct or String
    * @param Order $order Order
    * @param int $delivery_id Selected delivery
    * @return array list of deliveries
@@ -25,10 +25,19 @@ class CalcDelivery {
     Yii::import('application.modules.catalog.models.Product');
     Yii::import('application.modules.payments.models.Currency');
     Yii::import('application.modules.payments.models.CurrencyRate');
+    Yii::import('application.modules.catalog.models.Price');
 
     $items = $products;
+    $currency = self::getCurrency($items, $order->currency_code);
     $type = self::getItemsType($items, $delivery_id);
-    $product_sizes = self::getProductSizes($items);
+
+    if ($type)
+      $price_type = Price::getPrice($products);
+    else
+      $price_type = Price::getPrice();
+
+    $product_sizes = self::getProductSizes($items, $currency->code, $price_type, $order->isNewRecord ? date('Y-m-d') : $order->time);
+    $subsidy = round(array_sum(array_column($product_sizes, 5)) * Yii::app()->params['order']['subsidy'] / 100);
 
     $list = array();
     if (count($product_sizes) == 0) {
@@ -63,10 +72,16 @@ class CalcDelivery {
       if (!self::calcPrice($parcels, $delivery, $city, $city_from, $price, $nrjValue))
         continue;
 
-      $currency = self::getCurrency($items, $order->currency_code);
-
       if (!self::convertCurrency($delivery->currency_code, $currency->code, $price))
         continue;
+
+      if ($price > $subsidy) {
+        $price = $price - $subsidy;
+        $priceTxt = $price . $currency->class;
+      }else {
+        $price = 0;
+        $priceTxt = 'бесплатно';
+      }
 
       if ($type == 0) { //if model is carts array or call not from save order function
         $params = ['class' => 'bold', 'data-price' => $price];
@@ -79,7 +94,7 @@ class CalcDelivery {
         case Delivery::ZONE_NRJ: //it's Energy delivery company
           if ($type == 0) {
             $output .= ' (' . $delivery->transportType . " доставка {$nrjValue['term']}) "
-                . CHtml::tag('span', array('class' => 'red delivery-price'), $price . $currency->class);
+                . CHtml::tag('span', array('class' => 'red delivery-price'), $priceTxt);
           }
           elseif ($type == 1) {
             $list['params'][$delivery->id]['price'] = $price;
@@ -108,12 +123,12 @@ class CalcDelivery {
             continue 2;
           }
           break;
-        case Delivery::ZONE_COURIER:
-        case Delivery::ZONE_SELF:
-          if ($type == 0) {
-            $output .= ' (' . $delivery->description . ') ';
-            break;
-          }
+//        case Delivery::ZONE_COURIER:
+//        case Delivery::ZONE_SELF:
+//          if ($type == 0) {
+//            $output .= ' (' . $delivery->description . ') ';
+//            break;
+//          }
 //          elseif ($type == 1) {
 //            $list['params'][$delivery_id]['price'] = $price;
 //            $list['options'][$delivery_id] = $delivery->name . ' ' . $delivery->description;
@@ -121,7 +136,7 @@ class CalcDelivery {
         default :
           if ($type == 0) {
             $output .= ' (' . $delivery->description . ') ' .
-                CHtml::tag('span', array('class' => 'red delivery-price'), $price . $currency->class);
+                CHtml::tag('span', array('class' => 'red delivery-price'), $priceTxt);
           }
       }
       if ($type == 0)
@@ -129,7 +144,7 @@ class CalcDelivery {
       elseif ($type == 1) {
         $list['params'][$delivery->id]['price'] = $price;
         if ($delivery->zone_type_id == Delivery::ZONE_SELF)
-          $list['options'][$delivery->id] = $delivery->name. ' ' . $delivery->description;
+          $list['options'][$delivery->id] = $delivery->name . ' ' . $delivery->description;
         else
           $list['options'][$delivery->id] = $delivery->name;
       }
@@ -204,9 +219,12 @@ class CalcDelivery {
   /**
    * Retur array of products data fo delivery fee calculation
    * @param array $items Array of Cart, OrderProduct or stdClass
-   * @return array Array of arrays of product data (length, width, height, weight, product_id)
+   * @param string $currency_code Code of the currency
+   * @param Price $price_tyipe Type of the wholesale price
+   * @param string $date Order date or today if products from cart
+   * @return array Array of arrays of product data (length, width, height, weight, product_id, price)
    */
-  private static function getProductSizes($items) {
+  private static function getProductSizes($items, $currency_code, $price_type, $date) {
     $total_weight = 0;
     $product_weights = array();
     $product_sizes = array();
@@ -224,6 +242,13 @@ class CalcDelivery {
       $product_id = (int) $item->product_id;
       $quantity = (int) $item->quantity;
 
+      if ($item instanceof OrderProduct)
+        $price = $item->price;
+      else {
+        $disc = $item->product->getActualDiscount($date);
+        $price = round($item->product->getPrice($price_type, $currency_code) * (1 - $disc / 100));
+      }
+
       $total_weight += $weight * $quantity;
       for ($i = 0; $i < $quantity; $i++) {
         $product_lengths[] = $length;
@@ -235,6 +260,7 @@ class CalcDelivery {
           $height,
           $weight,
           $product_id,
+          $price,
         );
         $product_weights[] = $weight;
       }
