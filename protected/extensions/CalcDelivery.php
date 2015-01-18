@@ -78,7 +78,8 @@ class CalcDelivery {
       if ($price > $subsidy) {
         $price = $price - $subsidy;
         $priceTxt = $price . $currency->class;
-      }else {
+      }
+      else {
         $price = 0;
         $priceTxt = 'бесплатно';
       }
@@ -287,7 +288,9 @@ class CalcDelivery {
    * @return boolean if true plase the delivery to list if false continue to calc next delivery
    */
   private static function calcPrice($parcels, $delivery, $city, $city_from, &$price, &$nrjValue) {
+    static $nrj_deliveries;
     $nrj_weight = 0;
+    $nrjVolume = 0;
     $nrj_places = count($parcels['parcels']);
     foreach ($parcels['parcels'] as $parcel) {
 
@@ -297,6 +300,7 @@ class CalcDelivery {
         case Delivery::ZONE_NRJ:
 //          $nrj_places++;
           $nrj_weight += $parcel['weight'];
+          $nrjVolume += round($parcel['length'] * $parcel['width'] * $parcel['height'] / 1000000, 3);
           break;
         case Delivery::ZONE_CUSTOM:
         case Delivery::ZONE_COURIER:
@@ -323,7 +327,7 @@ class CalcDelivery {
 
     if ($delivery->zone_type_id == Delivery::ZONE_NRJ) {
       if (!isset($nrj_deliveries)) {
-        $nrj_deliveries = self::getNrjDeliveries($city, $city_from, $nrj_weight, $nrj_places);
+        $nrj_deliveries = self::getNrjDeliveries($city, $city_from, $nrj_weight, $nrj_places, $nrjVolume, $delivery);
       }
       if (is_null($nrj_deliveries))
         return false;
@@ -386,16 +390,17 @@ class CalcDelivery {
    * ]]]
    * Where 'type' is type of delivery, 'price' is delivery price, 'term' is term of delivery
    */
-  private static function getNrjDeliveries($city, $city_from, $nrj_weight, $nrj_places) {
+  private static function getNrjDeliveries($city, $city_from, $nrj_weight, $nrj_places, $nrjVolume, Delivery $delivery) {
     Yii::import('application.modules.delivery.models.NrjLocation');
     $pref = '^';
     $suff = '($|\\(|\\*|\\,|\\ )';
+    $oversize = $nrj_weight > $delivery->max_weight || $nrjVolume > $delivery->size_summ ? 1 : 0;
     $location = NrjLocation::model()->find('LOWER(name) REGEXP :name', array(
       ':name' => $pref . mb_strtolower(quotemeta(trim($city)), 'UTF-8') . $suff));
     $location_from = NrjLocation::model()->find('LOWER(name) REGEXP :name', array(
       ':name' => $pref . mb_strtolower(quotemeta(trim($city_from)), 'UTF-8') . $suff));
     if ($location && $location != $location_from) {
-      $nrj_ch = curl_init("http://api.nrg-tk.ru/api/rest/?method=nrg.calculate&from=$location_from->id&to=$location->id&weight=$nrj_weight&volume=0&place=$nrj_places");
+      $nrj_ch = curl_init("http://api.nrg-tk.ru/api/rest/?method=nrg.calculate&from=$location_from->id&to=$location->id&weight=$nrj_weight&volume=$nrjVolume&place=$nrj_places&oversize=$oversize");
       curl_setopt($nrj_ch, CURLOPT_RETURNTRANSFER, TRUE);
       curl_setopt($nrj_ch, CURLOPT_HEADER, FALSE);
       curl_setopt($nrj_ch, CURLOPT_CONNECTTIMEOUT, 30);
@@ -429,19 +434,14 @@ class CalcDelivery {
    */
   private static function checkSizes(array $items, Delivery &$delivery) {
 
-    $volume = array($delivery->length, $delivery->width, $delivery->height, 0, 0, 0);
+    $volume = new Volume($delivery);
 
     //check if there are items that oversize for size method 0 or overweight for size method 1
     $oversize_items = array();
     switch ($delivery->size_method_id) {
-      case Delivery::SIZE_LENGTH_CIRCLE_SUMM:
+      case Delivery::SIZE_EMS_KAZ:
         foreach ($items as $item) {
-          if ($item[0] > $volume[0] || $item[1] > $volume[1] || $item[2] > $volume[2] ||
-              $item[0] > $volume[0] || $item[2] > $volume[1] || $item[1] > $volume[2] ||
-              $item[1] > $volume[0] || $item[0] > $volume[1] || $item[2] > $volume[2] ||
-              $item[1] > $volume[0] || $item[2] > $volume[1] || $item[0] > $volume[2] ||
-              $item[2] > $volume[0] || $item[0] > $volume[1] || $item[1] > $volume[2] ||
-              $item[2] > $volume[0] || $item[1] > $volume[1] || $item[0] > $volume[2]) {
+          if ($volume->checkItemSize($item)) {
             $oversize_items[] = $item[4];
           }
           else {
@@ -454,7 +454,7 @@ class CalcDelivery {
           }
         }
 //        break;
-      case Delivery::SIZE_LENGTH_WIDTH_HEIGHT:
+      case Delivery::SIZE_POST_KAZ:
         foreach ($items as $item) {
           if ($item[3] > $delivery->max_weight) {
             $oversize_items[] = $item[4];
@@ -467,18 +467,25 @@ class CalcDelivery {
 
     $parcels = array();
     switch ($delivery->size_method_id) {
-      case Delivery::SIZE_LENGTH_CIRCLE_SUMM:
+      case Delivery::SIZE_EMS_KAZ:
         while (count($items) > 0) {
-          $parcels['parcels'][] = array('weight' => self::makeParcel($items, $volume, $delivery));
+          $parcels['parcels'][] = self::makeParcel($items, $volume, $delivery);
         }
         $parcels['result'] = true;
         break;
-      case Delivery::SIZE_LENGTH_WIDTH_HEIGHT:
+      case Delivery::SIZE_POST_KAZ:
+        while (count($items) > 0) {
+          $data = self::makeParcel($items, $volume, $delivery);
+          $parcels['parcels'][] = array_merge($data, ['oversize' => $volume->checkParcelSize($data)]);
+        }
+        $parcels['result'] = true;
+        break;
+      case Delivery::SIZE_NRJ:
         while (count($items) > 0) {
           $parcel_items = array();
           $weight = 0;
           foreach ($items as $key => $item) {
-            if ($weight + $item[3] > $delivery->max_weight) {
+            if ($weight + $item[3] > $delivery->max_weight && $parcel_items) {
               continue;
             }
             else {
@@ -487,11 +494,8 @@ class CalcDelivery {
             }
           }
           $items = array_diff_key($items, $parcel_items);
-          self::makeParcel($parcel_items, $volume, $delivery);
-          $parcels['parcels'][] = array(
-            'weight' => $weight,
-            'oversize' => count($parcel_items) > 0,
-          );
+          $data = self::makeParcel($parcel_items, $volume, $delivery);
+          $parcels['parcels'][] = array_merge($data, ['oversize' => $delivery->max_weight < $data['weight']]);
         }
         $parcels['result'] = true;
         break;
@@ -556,7 +560,7 @@ class CalcDelivery {
     return true;
   }
 
-  private static function makeParcel(&$items, $volume, &$delivery) {
+  private static function makeParcel(&$items, Volume &$volume, &$delivery) {
 
     $data = array(
       'items' => &$items,
@@ -567,81 +571,62 @@ class CalcDelivery {
     );
     set_time_limit(180);
     self::placeItems($data, $volume, $delivery);
-    return $data['weight'];
+    return $data;
   }
 
-  private static function placeItems(array &$data, array $volume, Delivery &$delivery) {
-    static $orientations = array(
-      array(0, 1, 2),
-      array(0, 2, 1),
-      array(1, 0, 2),
-      array(1, 2, 0),
-      array(2, 0, 1),
-      array(2, 1, 0),
-    );
+  private static function placeItems(array &$data, Volume &$volume, Delivery &$delivery) {
 
     foreach ($data['items'] as $key => $item) {
 
       $weight = $data['weight'] + $item[3];
-      if ($weight > $delivery->max_weight) {
+      if ($weight > $delivery->max_weight && $delivery->size_method_id != Delivery::SIZE_NRJ) {
         continue;
       }
 
-      foreach ($orientations as $orientation) {
-
-        if ($item[$orientation[0]] <= $volume[0] && $item[$orientation[1]] <= $volume[1] && $item[$orientation[2]] <= $volume[2]) {
-
-          $length = max(array($data['length'], $volume[3] + $item[$orientation[0]]));
-          $width = max(array($data['width'], $volume[4] + $item[$orientation[1]]));
-          $height = max(array($data['height'], $volume[5] + $item[$orientation[2]]));
-
-          switch ($delivery->size_method_id) {
-            case Delivery::SIZE_LENGTH_CIRCLE_SUMM:
-              $size_summ = $length + ($width + $height) * 2;
-              if ($size_summ > $delivery->size_summ)
-                continue 2;
-              break;
-            case Delivery::SIZE_LENGTH_WIDTH_HEIGHT:
-//              $data['oversize'] = ($length > $delivery->length) || $data['oversize'];
-              break;
-          }
-
-          $data['length'] = $length;
-          $data['width'] = $width;
-          $data['height'] = $height;
-          $data['weight'] += $item[3];
-
-          $data['items'] = array_diff_key($data['items'], array($key => $item));
-          if (count($data['items']) == 0)
-            return;
-
-          $new_volumes = array(
-            array($item[$orientation[0]], $item[$orientation[1]], $volume[2] - $item[$orientation[2]],
-              $volume[3], $volume[4], $volume[5] + $item[$orientation[2]]),
-            array($item[$orientation[0]], $volume[1] - $item[$orientation[1]], $volume[2],
-              $volume[3], $volume[4] + $item[$orientation[1]], $volume[5]),
-            array($volume[0] - $item[$orientation[0]], $volume[1], $volume[2],
-              $volume[3] + $item[$orientation[0]], $volume[4], $volume[5]),
-          );
-
-          foreach ($new_volumes as $v) {
-            if (!($v[0] > 0 && $v[1] > 0 && $v[2] > 0))
-              continue;
-            self::placeItems($data, $v, $delivery);
-            if (count($data['items']) == 0)
-              return;
-          }
-          return; //$rest_items;
-        }
+      if (!$orientation = $volume->getItemOrientation($item, \count($data['items'] == 0))) {
+        continue;
       }
+
+      $length = max(array($data['length'], $volume->maxLength + $item[$orientation[0]]));
+      $width = max(array($data['width'], $volume->maxWidth + $item[$orientation[1]]));
+      $height = max(array($data['height'], $volume->maxHeight + $item[$orientation[2]]));
+
+      if ($delivery->size_method_id == Delivery::SIZE_EMS_KAZ) {
+        $size_summ = $length + ($width + $height) * 2;
+        if ($size_summ > $delivery->size_summ)
+          continue 2;
+      }
+
+      $data['length'] = $length;
+      $data['width'] = $width;
+      $data['height'] = $height;
+      $data['weight'] += $item[3];
+
+      $data['items'] = array_diff_key($data['items'], array($key => $item));
+      if (count($data['items']) == 0)
+        return;
+
+      $new_volumes = [
+        new Volume($item[$orientation[0]], $item[$orientation[1]], $volume->height - $item[$orientation[2]], $volume->maxLength, $volume->maxWidth, $volume->maxHeight + $item[$orientation[2]]),
+        new Volume($item[$orientation[0]], $volume->width - $item[$orientation[1]], $volume->height, $volume->maxLength, $volume->maxWidth + $item[$orientation[1]], $volume->maxHeight),
+        new Volume($volume->length - $item[$orientation[0]], $volume->width, $volume->height, $volume->maxLength + $item[$orientation[0]], $volume->maxWidth, $volume->maxHeight),
+      ];
+
+      foreach ($new_volumes as $v) {
+        if (!($v->length > 0 && $v->width > 0 && $v->height > 0))
+          continue;
+        self::placeItems($data, $v, $delivery);
+        if (count($data['items']) == 0)
+          return;
+      }
+      return;
     }
-//    return $rest_items;
   }
 
 }
 
 /**
- * Parcel object
+ * Parcel class
  * 
  * @property boolean $result True if all items can be placed into the boxes
  * @property array $items Array of the products
@@ -653,5 +638,138 @@ class CalcDelivery {
 class Parcel {
 
   public $result, $items, $length, $width, $height, $weight;
+
+}
+
+/**
+ * Volume class
+ */
+class Volume {
+
+  /** @var $orientations 6 possibles orientations of an item */
+  protected static $orientations = array(
+    array(0, 1, 2),
+    array(0, 2, 1),
+    array(1, 0, 2),
+    array(1, 2, 0),
+    array(2, 0, 1),
+    array(2, 1, 0),
+  );
+
+  /** @var float $length the length of the empty volume */
+  public $length,
+      /** @var float $width the width of the empty volume */
+      $width,
+      /** @var float $height the height of the empty volume */
+      $height,
+      /** @var float $maxLength the width of the filled volume */
+      $maxLength,
+      /** @var float $maxWidth the width of the filled volume */
+      $maxWidth,
+      /** @var float $maxHeight the width of the filled volume */
+      $maxHeight;
+
+  function __construct() {
+    $a = func_get_args();
+    $i = func_num_args();
+    if (method_exists($this, $f = "__construct$i")) {
+      call_user_func_array([$this, $f], $a);
+    }
+  }
+
+  /**
+   * Constract a Volume with initial values from the Delyvery.
+   * @param Delivery $delivery
+   */
+  function __construct1(Delivery $delivery) {
+    $this->__consruct6($delivery->length, $delivery->width, $delivery->height);
+  }
+
+  /**
+   * Constract a Volume with initial values
+   * @param float $length
+   * @param float $width
+   * @param float $height
+   * @param float $maxLenght
+   * @param float $maxWidth
+   * @param float $maxHeight
+   */
+  function __consruct6($length, $width, $height, $maxLenght = 0, $maxWidth = 0, $maxHeight = 0) {
+    $this->length = $length;
+    $this->width = $width;
+    $this->height = $height;
+    $this->maxLength = $maxLenght;
+    $this->maxWidth = $maxWidth;
+    $this->maxHeight = $maxHeight;
+  }
+
+  /**
+   * Checks whether the item can be placed in the volume.
+   * @param array $item sizes of the item
+   * @return boolean true if item can't be placed into value
+   */
+  public function checkItemSize($item) {
+    return $item[0] > ($this->length || $item[1] > $this->width || $item[2] > $this->height) &&
+        ($item[0] > $this->length || $item[2] > $this->width || $item[1] > $this->height) &&
+        ($item[1] > $this->length || $item[0] > $this->width || $item[2] > $this->height) &&
+        ($item[1] > $this->length || $item[2] > $this->width || $item[0] > $this->height) &&
+        ($item[2] > $this->length || $item[0] > $this->width || $item[1] > $this->height) &&
+        ($item[2] > $this->length || $item[1] > $this->width || $item[0] > $this->height);
+  }
+
+  /**
+   * Checks whether the item can be placed into the volume with the orientation
+   * @param array $item sizes of the item
+   * @param array $orientation
+   * @return boolean true if item can be pcaced into volume with the orientation
+   */
+  function checkItemOrientation($item, $orientation) {
+    return $item[$orientation[0]] <= $this->length &&
+        $item[$orientation[1]] <= $this->width &&
+        $item[$orientation[2]] <= $this->height;
+  }
+
+  /**
+   * Returns a proper orientation for the item in the volume.
+   * @param array $item the sizes of the item
+   * @param boolean $emptyParcel true if the parcel empty yet
+   * @return mixed array of an orientation data or false if the item can't be placed into the volume
+   */
+  function getItemOrientation($item, $emptyParcel) {
+    $result = false;
+    foreach (self::$orientations as $key => $orientation) {
+      if ($this->checkItemOrientation($item, $orientation))
+        return $orientation;
+      if ($emptyParcel) {
+        $overlength = $item[$orientation[0]] > $this->length ? $item[$orientation[0]] - $this->length : 0;
+        $overwidth = $item[$orientation[1]] > $this->width ? $item[$orientation[1]] - $this->width : 0;
+        $overheight = $item[$orientation[2]] > $this->height ? $item[$orientation[2]] - $this->height : 0;
+        $oversizesSumm = $overlength + $overwidth + $overheight;
+        if (!isset($oversizeMinSumm)) {
+          $oversizeMinSumm = $oversizesSumm;
+          $result = $orientation;
+        }
+        elseif ($oversizeMinSumm > $oversizesSumm) {
+          $oversizeMinSumm = $oversizesSumm;
+          $result = $orientation;
+        }
+      }
+    }
+    return $result;
+  }
+
+  /**
+   * Checks whether the parcel can be placed in the volume.
+   * @param array $data sizes of the parcel
+   * @return boolean true if parcel can't be placed into value
+   */
+  function checkParcelSize($data) {
+    return ($data['length'] > $this->length || $data['width'] > $this->width || $data['height'] > $this->height) &&
+        ($data['length'] > $this->length || $data['height'] > $this->width || $data['width'] > $this->height) &&
+        ($data['width'] > $this->length || $data['length'] > $this->width || $data['height'] > $this->height) &&
+        ($data['width'] > $this->length || $data['height'] > $this->width || $data['length'] > $this->height) &&
+        ($data['height'] > $this->length || $data['length'] > $this->width || $data['width'] > $this->height) &&
+        ($data['height'] > $this->length || $data['width'] > $this->width || $data['length'] > $this->height);
+  }
 
 }
