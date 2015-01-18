@@ -28,7 +28,7 @@ Yii::import('application.modules.payments.models.Currency');
     <?php echo $form->dropDownListControlGroup($model, 'transport_type_id', $model->transportTypes, array('prompt' => 'Выберите тип транспорта')); ?>
   </div>
 
-  <fieldset class="inline-blocks" style="width: 850px">
+  <fieldset class="inline-blocks" style="width: 885px">
     <legend>Максимальный размер отправления (см)</legend>
     <div>
       <?php echo $form->numberFieldControlGroup($model, 'length', array('span' => 1, 'min' => 0)); ?>
@@ -43,7 +43,7 @@ Yii::import('application.modules.payments.models.Currency');
       <?php echo $form->dropDownListControlGroup($model, 'size_method_id', $model->size_methods); ?>
     </div>
     <div>
-      <?php echo $form->numberFieldControlGroup($model, 'size_summ', array('span' => 1, 'min' => 0)); ?>
+      <?php echo $form->numberFieldControlGroup($model, 'size_summ', array('span' => 1, 'min' => 0, 'step' => 0.1)); ?>
     </div>
     <div style="margin-left: 20px">
       <?php echo $form->numberFieldControlGroup($model, 'oversize', array('span' => 1, 'min' => 0)); ?>

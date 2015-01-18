@@ -15,8 +15,8 @@
  * @property boolean $active 
  * @property string $currency_code
  * @property string $max_weight
- * @property string $size_method_id
- * @property integer $size_summ
+ * @property string $size_method_id method of calclation the size limits
+ * @property string $size_summ depemd on size method: summa length and circumference; summa length, width and height; volume
  * @property string $zone_type_id
  * @property string $transport_type_id 
  *
@@ -35,11 +35,11 @@
  */
 class Delivery extends CActiveRecord {
 
-  const SIZE_LENGTH_CIRCLE_SUMM = 1, SIZE_LENGTH_WIDTH_HEIGHT = 2;
+  const SIZE_EMS_KAZ = 1, SIZE_POST_KAZ = 2, SIZE_NRJ = 3;
   const ZONE_KAZPOST = 1, ZONE_KAZEMS = 2, ZONE_NRJ = 3, ZONE_CUSTOM = 4, ZONE_COURIER = 5, ZONE_SELF = 6;
   const NRJ_AUTO = 1, NRJ_AVIA = 2, NRJ_RW = 3;
 
-  private static $size_methods = array(1 => 'Сумма длины и окружности', 2 => 'Ограничение дл. шир. выс.');
+  private static $size_methods = array(1 => 'Сумма длины и окружности', 2 => 'Ограничение дл. шир. выс.', 3 => 'Ограничение веса и объема');
   private static $zone_type = array(1 => 'КазПочта', 2 => 'EMS-Казахстан', 3 => 'т/к Энергия', 4 => 'т/к покупателя', 5 => 'Курьер', 6 => 'Самовывоз');
   private static $nrj_types = array(1 => 'avto', 2 => 'avia', 3 => 'rw');
   private static $transport_types = array(1 => 'авто', 2 => 'авиа', 3 => 'ж/д');
@@ -92,7 +92,8 @@ class Delivery extends CActiveRecord {
     return array(
       array('active, max_weight, insurance', 'default', 'value' => 0),
       array('name, insurance', 'required'),
-      array('length, width, height, oversize, insurance, size_method_id, size_summ, zone_type_id', 'numerical', 'integerOnly' => true),
+      array('length, width, height, oversize, insurance, size_method_id, zone_type_id', 'numerical', 'integerOnly' => true),
+      ['size_summ', 'numerical'],
       array('max_weight', 'numerical', 'numberPattern' => '/\d{1,3}\.?\d{0,2}/'),
       array('transport_type_id', 'numerical', 'integerOnly' => true),
       array('transport_type_id', 'length', 'max' => 1),
@@ -138,7 +139,7 @@ class Delivery extends CActiveRecord {
       'currency_code' => 'Валюта',
       'max_weight' => 'Максимальный вес (кг)',
       'size_method_id' => 'Способ расчета',
-      'size_summ' => 'Сумма размеров',
+      'size_summ' => 'Сумма размеров / объем',
       'zone_type_id' => 'Тарифные зоны',
       'transport_type_id' => 'Вид транспорта',
     );
