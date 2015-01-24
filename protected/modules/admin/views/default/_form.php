@@ -179,7 +179,7 @@ $this->widget('ext.bootstrap.widgets.TbModal', array(
           quantity = 0;
         var disc = $(this).parent().find('.row-discount').val(); //parseFloat($(this).attr('disc'));
         var s = price * quantity;
-        if (disc)
+        if (disc > 0)
           discount += disc * quantity;
         else
           noDiscSum += s;
@@ -231,6 +231,7 @@ $this->widget('ext.bootstrap.widgets.TbModal', array(
     var quantityTimeOut;
     table.on('keyup change', '.row-quantity', function () {
       clearTimeout(quantityTimeOut);
+      calcSumm();
       quantityTimeOut = setTimeout(function () {
         getCityDeliveries(order_city.val());
       }, 500)

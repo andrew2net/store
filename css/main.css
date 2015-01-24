@@ -1,379 +1,379 @@
 body
 {
-  margin: 0;
-  padding: 0;
-  color: #555;
-  font: normal 10pt Arial,Helvetica,sans-serif;
-  background: #EFEFEF;
+    margin: 0;
+    padding: 0;
+    color: #555;
+    font: normal 10pt Arial,Helvetica,sans-serif;
+    background: #EFEFEF;
 }
 
 #page
 {
-  margin-top: 5px;
-  margin-bottom: 5px;
-  background: white;
-  border: 1px solid #C9E0ED;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    background: white;
+    border: 1px solid #C9E0ED;
 }
 
 #header
 {
-  margin: 0;
-  padding: 0;
-  border-top: 3px solid #C9E0ED;
+    margin: 0;
+    padding: 0;
+    border-top: 3px solid #C9E0ED;
 }
 
 #content
 {
-  padding: 20px;
+    padding: 20px;
 }
 
 #sidebar
 {
-  padding: 20px 20px 20px 0;
+    padding: 20px 20px 20px 0;
 }
 
 #footer
 {
-  padding: 10px;
-  margin: 10px 20px;
-  font-size: 0.8em;
-  text-align: center;
-  border-top: 1px solid #C9E0ED;
+    padding: 10px;
+    margin: 10px 20px;
+    font-size: 0.8em;
+    text-align: center;
+    border-top: 1px solid #C9E0ED;
 }
 
 #logo
 {
-  padding: 10px 20px;
-  font-size: 200%;
+    padding: 10px 20px;
+    font-size: 200%;
 }
 
 #mainmenu
 {
-  background:white url(bg.gif) repeat-x left top;
+    background:white url(bg.gif) repeat-x left top;
 }
 
 #mainmenu ul
 {
-  padding:6px 20px 5px 20px;
-  margin:0px;
+    padding:6px 20px 5px 20px;
+    margin:0px;
 }
 
 #mainmenu ul li
 {
-  display: inline;
+    display: inline;
 }
 
 #mainmenu ul li a
 {
-  color:#ffffff;
-  background-color:transparent;
-  font-size:12px;
-  font-weight:bold;
-  text-decoration:none;
-  padding:5px 8px;
+    color:#ffffff;
+    background-color:transparent;
+    font-size:12px;
+    font-weight:bold;
+    text-decoration:none;
+    padding:5px 8px;
 }
 
 #mainmenu ul li a:hover, #mainmenu ul li.active a
 {
-  color: #6399cd;
-  background-color:#EFF4FA;
-  text-decoration:none;
+    color: #6399cd;
+    background-color:#EFF4FA;
+    text-decoration:none;
 }
 
 #img1{
-  max-height: 450px;
-  max-width: 450px;
+    max-height: 450px;
+    max-width: 450px;
 }
 
 #img2{
-  max-height: 200px;
-  max-width: 200px;
+    max-height: 200px;
+    max-width: 200px;
 }
 
 #img1, #img2{
-  text-align: center;
+    text-align: center;
 }
 
 div.flash-error, div.flash-notice, div.flash-success
 {
-  padding:.8em;
-  margin-bottom:1em;
-  border:2px solid #ddd;
+    padding:.8em;
+    margin-bottom:1em;
+    border:2px solid #ddd;
 }
 
 div.flash-error
 {
-  background:#FBE3E4;
-  color:#8a1f11;
-  border-color:#FBC2C4;
+    background:#FBE3E4;
+    color:#8a1f11;
+    border-color:#FBC2C4;
 }
 
 div.flash-notice
 {
-  background:#FFF6BF;
-  color:#514721;
-  border-color:#FFD324;
+    background:#FFF6BF;
+    color:#514721;
+    border-color:#FFD324;
 }
 
 div.flash-success
 {
-  background:#E6EFC2;
-  color:#264409;
-  border-color:#C6D880;
+    background:#E6EFC2;
+    color:#264409;
+    border-color:#C6D880;
 }
 
 div.flash-error a
 {
-  color:#8a1f11;
+    color:#8a1f11;
 }
 
 div.flash-notice a
 {
-  color:#514721;
+    color:#514721;
 }
 
 div.flash-success a
 {
-  color:#264409;
+    color:#264409;
 }
 
 div.form .rememberMe label
 {
-  display: inline;
+    display: inline;
 }
 
 div.view
 {
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #C9E0ED;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #C9E0ED;
 }
 
 div.breadcrumbs
 {
-  font-size: 0.9em;
-  padding: 5px 20px;
+    font-size: 0.9em;
+    padding: 5px 20px;
 }
 
 div.breadcrumbs span
 {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 div.search-form
 {
-  padding: 10px;
-  margin: 10px 0;
-  background: #eee;
+    padding: 10px;
+    margin: 10px 0;
+    background: #eee;
 }
 
 .portlet-decoration
 {
-  padding: 3px 8px;
-  background: #B7D6E7;
-  border-left: 5px solid #6FACCF;
+    padding: 3px 8px;
+    background: #B7D6E7;
+    border-left: 5px solid #6FACCF;
 }
 
 .portlet-title
 {
-  font-size: 12px;
-  font-weight: bold;
-  padding: 0;
-  margin: 0;
-  color: #298dcd;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 0;
+    margin: 0;
+    color: #298dcd;
 }
 
 .portlet-content
 {
-  font-size:0.9em;
-  margin: 0 0 15px 0;
-  padding: 5px 8px;
-  background:#EFFDFF;
+    font-size:0.9em;
+    margin: 0 0 15px 0;
+    padding: 5px 8px;
+    background:#EFFDFF;
 }
 
 .portlet-content ul
 {
-  list-style-image:none;
-  list-style-position:outside;
-  list-style-type:none;
-  margin: 0;
-  padding: 0;
+    list-style-image:none;
+    list-style-position:outside;
+    list-style-type:none;
+    margin: 0;
+    padding: 0;
 }
 
 .portlet-content li
 {
-  padding: 2px 0 4px 0px;
+    padding: 2px 0 4px 0px;
 }
 
 .operations
 {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
 }
 
 .operations li
 {
-  padding-bottom: 2px;
+    padding-bottom: 2px;
 }
 
 .operations li a
 {
-  font: bold 12px Arial;
-  color: #0066A4;
-  display: block;
-  padding: 2px 0 2px 8px;
-  line-height: 15px;
-  text-decoration: none;
+    font: bold 12px Arial;
+    color: #0066A4;
+    display: block;
+    padding: 2px 0 2px 8px;
+    line-height: 15px;
+    text-decoration: none;
 }
 
 .operations li a:visited
 {
-  color: #0066A4;
+    color: #0066A4;
 }
 
 .operations li a:hover
 {
-  background: #80CFFF;
+    background: #80CFFF;
 }
 
 .red{
-  color: red;
+    color: red;
 }
 
 .loading{
-  background: url(/images/loading.gif) center no-repeat;
-  border: 1px solid;
+    background: url(/images/loading.gif) center no-repeat;
+    border: 1px solid;
 }
 
 .noimg{
-  /*background: url(/images/DummyLogo.png) no-repeat*/
-  border: 1px solid;
+    /*background: url(/images/DummyLogo.png) no-repeat*/
+    border: 1px solid;
 }
 
 .img{
-  position:absolute;
-  margin:auto;
-  top:0;
-  bottom:0;
-  left:0;
-  right:0;
+    position:absolute;
+    margin:auto;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
 }
 
 #product-grid #Product_age, #product-grid #Product_remainder, #product-grid #Product_price,
 #product-grid #Product_price_tenge{
-  width: 4em;
+    width: 4em;
 }
 
 #product-grid #Product_name{
-  width: 20em;
+    width: 20em;
 }
 
 #product-grid #Product_article{
-  width: 8em;
+    width: 8em;
 }
 
 #product-no-discount #Product_gender_id, #product-no-discount #Product_remainder,
 #product-no-discount #Product_price{
-  width: 4em;
+    width: 4em;
 }
 #product-no-discount #Product_brand_id{
-  width: 6em;
+    width: 6em;
 }
 #product-no-discount #Product_name{
-  width: 14em;
+    width: 14em;
 }
 
 #product-no-discount #Product_article{
-  width: 4em;
+    width: 4em;
 }
 
 .inline-blocks > div{
-  display: inline-block;
-  vertical-align: top;
+    display: inline-block;
+    vertical-align: top;
 }
 
 .table{
-  display: table;
+    display: table;
 }
 
 .table > div{
-  display: table-cell
+    display: table-cell
 }
 
 #Order_time, #Order_profile_phone {
-  width: 8em;
+    width: 8em;
 }
 
 .display-field {
-  border:1px solid #DDD;
-  height:2em;
-  border-radius:5px;
-  line-height: 2;
-  padding: 0 4px;
+    border:1px solid #DDD;
+    height:2em;
+    border-radius:5px;
+    line-height: 2;
+    padding: 0 4px;
 }
 
 #order-grid #Order_id{
-  width: 2em;
+    width: 2em;
 }
 
 .f-nav{
-  z-index: 200;
-  position: fixed;
-  left: 62px;
-  top: 0;
-  width: 100%;
+    z-index: 200;
+    position: fixed;
+    left: 62px;
+    top: 0;
+    width: 100%;
 }
 
 .f-form{
-  position: fixed;
-  top: 25px;
+    position: fixed;
+    top: 25px;
 }
 
 .f-tree-wrapper{
-  margin-top: 80px !important;
+    margin-top: 80px !important;
 }
 
 fieldset{
-  border: solid 1px #CCC !important;
-  border-radius: 4px;
+    border: solid 1px #CCC !important;
+    border-radius: 4px;
 }
 fieldset legend{
-  margin: 0;
-  border: none;
-  width: initial;
-  padding: 0 5px;
-  font-size: 11pt;
-  font-weight: bold;
+    margin: 0;
+    border: none;
+    width: initial;
+    padding: 0 5px;
+    font-size: 11pt;
+    font-weight: bold;
 }
 
 .tabs-left > .nav-tabs > li{
-  margin-right: -1px;
+    margin-right: -1px;
 }
 
 #order-product td:nth-child(2){
-  width: 100%;
+    width: 100%;
 }
 
 .ruble:before{
-  content: '\2013';
-  position: absolute;
-  right: -0.1em;
-  top: 0.16em;
-  font-weight: normal;
+    content: '\2013';
+    position: absolute;
+    right: -0.1em;
+    top: 0.16em;
+    font-weight: normal;
 }
 .ruble:after{
-  content: 'P';
-  position: relative;
-  right: -0.19em;
-  top: 0.06em;
+    content: 'P';
+    position: relative;
+    right: -0.19em;
+    top: 0.06em;
 }
 .tenge:after{
-  content: '₸';
-  position: relative;
-  right: -0.3em;
-  top: 0.04em;
+    content: '₸';
+    position: relative;
+    right: -0.3em;
+    top: 0.04em;
 }
 #order-table .tab-content, #order-table .tab-content .tab-pane{
-  overflow: visible;
+    overflow: visible;
 }

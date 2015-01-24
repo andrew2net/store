@@ -32,8 +32,8 @@
 
         // create other function-scope variables
         var $elem = $(elem),
-            typing = false,
-            delayedCallback;
+                typing = false,
+                delayedCallback;
 
         // start typing
         function startTyping(event) {
@@ -78,7 +78,7 @@
         $elem.blur(function (event) {
             stopTyping(event, 0);
         });
-        
+
         $elem.bind('paste', function (event) {
             startTyping(event);
         });

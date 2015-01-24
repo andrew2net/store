@@ -116,7 +116,7 @@ class Price extends CActiveRecord {
       $query .= "CREATE TEMPORARY TABLE {$table} (product_id int(11) unsigned, quantity smallint(5) unsigned);";
       foreach ($products_table as $item) {
         
-        if ($item instanceof OrderProduct)
+        if ($item instanceof OrderProduct || $item instanceof stdClass)
           $product = Product::model()->findByAttributes(array('id' => (string) $item->product_id));
         else
           $product = Product::model()->findByAttributes(array('code' => (string) $item->code));

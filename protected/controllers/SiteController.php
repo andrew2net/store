@@ -12,7 +12,7 @@ class SiteController extends Controller {
     $this->setPageTitle(Yii::app()->name . ' - ' . $model->title);
     $this->render('page', array(
       'model' => $model,
-        )
+      )
     );
   }
 
@@ -59,8 +59,7 @@ class SiteController extends Controller {
       if ($discount) {
         $result['top10'][$item->id]['disc'] = '<span>' . number_format($price, 0, '.', ' ') . '</span>' . $currecy->class;
         $price = number_format(round($price * (1 - $discount / 100)), 0, '.', ' ');
-      }
-      else {
+      } else {
         $price = number_format($price, 0, '.', ' ');
       }
       $result['top10'][$item->id]['price'] = $price . $currecy->class;
@@ -97,7 +96,7 @@ class SiteController extends Controller {
     }
 
     $product_data = new CActiveDataProvider($product
-        , array('pagination' => array('pageSize' => 20),
+      , array('pagination' => array('pageSize' => 20),
     ));
 
     $this->render('sort', array(
@@ -124,7 +123,7 @@ class SiteController extends Controller {
     $product = Product::model();
     $product->brandFilter($id)->discountOrder();
     $product_data = new CActiveDataProvider('Product'
-        , array('criteria' => $product->getDbCriteria(),
+      , array('criteria' => $product->getDbCriteria(),
       'pagination' => array('pageSize' => 20),
     ));
 
@@ -229,11 +228,10 @@ class SiteController extends Controller {
         $profile->email = $_POST['email'];
         $profile->session_id = $session_id;
         $profile->save(FALSE);
-        $this->registerUser($profile);
+        ProfileController::registerUser($profile, new Profile, new User);
         echo json_encode(array('result' => true));
       }
-    }
-    else
+    } else
       echo json_encode(array('result' => false, 'msg' => 'Адрес задан неверно'));
     Yii::app()->end();
   }
@@ -250,18 +248,17 @@ class SiteController extends Controller {
     if (isset($_GET['country'])) {
       $condition .= ' AND net_country.code=:country';
       $params[':country'] = $_GET['country'];
-    }
-    elseif (Yii::app()->params['country']) {
+    } elseif (Yii::app()->params['country']) {
       $condition .= ' AND net_country.code=:country';
       $params[':country'] = Yii::app()->params['country'];
     }
 
     $suggest_cities = Yii::app()->db->createCommand()
-        ->select('net_city.name_ru')->from('net_city')
-        ->leftJoin('net_country', 'net_country.id=net_city.country_id')
-        ->where($condition, $params)->limit(10)
-        ->group('net_city.name_ru')
-        ->queryAll();
+      ->select('net_city.name_ru')->from('net_city')
+      ->leftJoin('net_country', 'net_country.id=net_city.country_id')
+      ->where($condition, $params)->limit(10)
+      ->group('net_city.name_ru')
+      ->queryAll();
     if (is_array($suggest_cities))
       $suggest = array_map('formatArray', $suggest_cities);
     else
@@ -281,7 +278,7 @@ class SiteController extends Controller {
         'user_id' => Yii::app()->user->id
       ));
       $child = Child::model()->findByPk($_POST['id'], 'profile_id=:id'
-          , array(':id' => $profile->id));
+        , array(':id' => $profile->id));
       if (is_null($child))
         $child = new Child;
       $child->profile_id = $profile->id;
@@ -295,8 +292,7 @@ class SiteController extends Controller {
           'result' => TRUE,
           'html' => $this->renderPartial('_childUpdate', array('child' => $child), true)
         ));
-      }
-      else {
+      } else {
         $child->refresh();
         if ($_POST['id'] == 0)
           $output = $this->renderPartial('_childAdd', array('child' => $child), TRUE);
@@ -314,10 +310,10 @@ class SiteController extends Controller {
   public function actionDelChild() {
     if (isset($_POST['id'])) {
       $child = Child::model()->with('profile')->findByPk($_POST['id']
-          , array(
+        , array(
         'condition' => 'profile.user_id=:uid',
         'params' => array(':uid' => Yii::app()->user->id)
-          )
+        )
       );
       echo ($child && $child->delete());
     }
@@ -325,10 +321,13 @@ class SiteController extends Controller {
   }
 
   public function actionPopupWindow() {
-    $children = array();
+    Yii::import('application.controllers.ProfileController');
+    Yii::import('application.modules.user.models.Profile');
+    Yii::import('application.modules.user.models.User');
+    
     $popup_form = new PopupForm();
 
-    if (isset($_POST['children'])) {
+    if (isset($_POST['PopupForm'])) {
       if (!Yii::app()->user->isGuest) {
         echo json_encode(array(
           'result' => 'exist',
@@ -337,54 +336,35 @@ class SiteController extends Controller {
         Yii::app()->end();
       }
       $valid = TRUE;
-      if (isset($_POST['PopupForm'])) {
-        $user = User::model()->findByAttributes(array(
-          'email' => $_POST['PopupForm']['email']
+      $user = User::model()->findByAttributes(array(
+        'email' => $_POST['PopupForm']['email']
+      ));
+      if ($user) {
+        echo json_encode(array(
+          'result' => 'exist',
+          'html' => $this->renderPartial('_popupEmailExist', array(
+            'email' => $_POST['PopupForm']['email'],
+            ), TRUE),
         ));
-        if ($user) {
-          echo json_encode(array(
-            'result' => 'exist',
-            'html' => $this->renderPartial('_popupEmailExist', array(
-              'email' => $_POST['PopupForm']['email'],
-                ), TRUE),
-          ));
-          Yii::app()->end();
-        }
-        $popup_form->attributes = $_POST['PopupForm'];
-        $valid = $popup_form->validate() && $valid;
+        Yii::app()->end();
       }
-      foreach ($_POST['children'] as $id => $value) {
-        $child = new Child('popup');
-        $child->attributes = $value;
-        $valid = $child->validate() && $valid;
-        $children[] = $child;
-      }
+      $popup_form->attributes = $_POST['PopupForm'];
+      $valid = $popup_form->validate() && $valid;
       if ($valid) {
         $tr = Yii::app()->db->beginTransaction();
         try {
-          $profile = CustomerProfile::model()->findByAttributes(array(
-            'email' => $_POST['PopupForm']['email']
-          ));
-          if (is_null($profile)) {
-            $profile = new CustomerProfile;
-            $profile->email = $_POST['PopupForm']['email'];
-            $profile->save(FALSE);
-          }
-          foreach ($_POST['children'] as $id => $value) {
-            $child = new Child;
-            $child->attributes = $value;
-            $child->profile_id = $profile->id;
-            $child->save();
-          }
-          $this->registerUser($profile);
+          $profile = ProfileController::getProfile();
+          $user = new User;
+          $user->email = $_POST['PopupForm']['email'];
+          ProfileController::registerUser($profile, new Profile, $user);
           $tr->commit();
           Yii::import('application.modules.discount.models.Coupon');
           $coupon = new Coupon;
           $coupon->generateCode();
-          $coupon->type_id = 0;
-          $coupon->value = 400;
+          $coupon->type_id = 1;
+          $coupon->value = 5;
           $coupon->used_id = 0;
-          $coupon->date_limit = date('d.m.Y', strtotime('+3 days'));
+          $coupon->date_limit = date('d.m.Y', strtotime('+5 days'));
           if ($coupon->save()) {
             $message = new YiiMailMessage('Купон со скидкой');
             $message->view = 'coupon';
@@ -394,7 +374,7 @@ class SiteController extends Controller {
             );
             $message->setBody($params, 'text/html');
             $message->setFrom(Yii::app()->params['infoEmail']);
-            $message->setTo(array($profile->email => $profile->fio));
+            $message->setTo(array($user->email => $user->username));
             Yii::app()->mail->send($message);
           }
           echo json_encode(array(
@@ -406,22 +386,13 @@ class SiteController extends Controller {
           $tr->rollback();
         }
       }
-      $par = array(
-        'children' => $children,
-        'popup_form' => $popup_form,
-      );
-      if (isset($_POST['suff']) && $_POST['suff'] != 0)
-        $par['suff'] = $_POST['suff'];
       echo json_encode(array(
         'result' => 'error',
-        'html' => $this->renderPartial('_popupForm', $par, TRUE)));
+        'html' => $this->renderPartial('_popupForm', ['popup_form' => $popup_form], TRUE)));
       Yii::app()->end();
     }
-    else
-      $children[] = new Child('popup');
 
     $this->renderPartial('_popupWindow', array(
-      'children' => $children,
       'popup_form' => $popup_form,
     ));
   }

@@ -322,7 +322,7 @@ class ProfileController extends Controller {
     $user->status = User::STATUS_ACTIVE;
     if ($user->save()) {
       $profile->user_id = $user->id;
-      $profile->save();
+      $profile->save(FALSE);
       $identity = new UserIdentity($user->username, $sourcePassword);
       if ($identity->authenticate()) {
         Yii::app()->user->login($identity, 3600 * 24 * 7);
