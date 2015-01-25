@@ -139,7 +139,7 @@ $groups = Category::model()->roots()->findAll();
 
   function loadPopup() {
       $('#popup-window').dialog('option', 'height', 440);
-      $('#popup-window').dialog('option', 'width', 790);
+      $('#popup-window').dialog('option', 'width', 800);
       $('#popup-window').dialog('option', 'dialogClass', 'popup-window');
       $('#popup-window').load('/site/popupWindow', function () {
           Cufon.replace('#popup-window .cufon');
