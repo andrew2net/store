@@ -262,7 +262,7 @@
       event.stopPropagation();
       country_select.slideUp();
       $.post('/profile/savecountry', {country: this.innerHTML}, function () {
-        window.location = window.location.href;
+        window.location.reload();
       });
     }
   });

@@ -15,6 +15,8 @@ class CartController extends Controller {
     Yii::import('application.modules.discount.models.Coupon');
     Yii::import('application.controllers.ProfileController');
     Yii::import('ext.CalcDelivery');
+    
+    Yii::app()->clientScript->registerMetaTag($_SERVER['REQUEST_METHOD'], 'request-method', null, null, [], 'request-vethod');
 
     $minimal_summ = Price::getMinimalSumm();
     $customer_profile = ProfileController::getProfile();

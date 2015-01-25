@@ -37,7 +37,8 @@ class CalcDelivery {
       $price_type = Price::getPrice();
 
     $product_sizes = self::getProductSizes($items, $currency->code, $price_type, $order->isNewRecord ? date('Y-m-d') : $order->time);
-    $subsidy = round(array_sum(array_column($product_sizes, 5)) * Yii::app()->params['order']['subsidy'] / 100);
+    $productSumm = array_sum(array_column($product_sizes, 5));
+    $subsidy = round($productSumm * Yii::app()->params['order']['subsidy'] / 100);
 
     $list = array();
     if (count($product_sizes) == 0) {
@@ -60,6 +61,8 @@ class CalcDelivery {
     foreach ($models as $delivery) {
       /* @var $delivery Delivery */
 
+      $insurance = round($productSumm * $delivery->insurance / 100);
+
       $parcels = self::checkSizes($product_sizes, $delivery);
       if (!$parcels['result']) {
         self::collectOversizeItems($parcels, $list_oversize);
@@ -68,11 +71,13 @@ class CalcDelivery {
 
       $price = 0;
       $nrjValue = FALSE;
-      if (!self::calcPrice($parcels, $delivery, $city, $city_from, $price, $nrjValue))
+      if (!self::calcPrice($parcels, $delivery, $city, $city_from, $price, $nrjValue)) {
         continue;
+      }
 
-      if (!self::convertCurrency($delivery->currency_code, $currency->code, $price))
+      if (!self::convertCurrency($delivery->currency_code, $currency->code, $price)) {
         continue;
+      }
 
       if ($price > $subsidy) {
         $price = $price - $subsidy;
@@ -83,7 +88,7 @@ class CalcDelivery {
       }
 
       if ($type == 0) { //if model is carts array or call not from save order function
-        $params = ['class' => 'bold', 'data-price' => $price];
+        $params = ['class' => 'bold', 'data-price' => $price, 'data-insurance' => $insurance];
         if ($delivery->zone_type_id == Delivery::ZONE_SELF)
           $params['data-self'] = true;
         $output = CHtml::tag('span', $params, $delivery->name);
@@ -294,7 +299,6 @@ class CalcDelivery {
 
       switch ($delivery->zone_type_id) {
         case Delivery::ZONE_NRJ:
-//          $nrj_places++;
           $nrj_weight += $parcel['weight'];
           $nrjVolume += round($parcel['length'] * $parcel['width'] * $parcel['height'] / 1000000, 3);
           break;
@@ -305,7 +309,7 @@ class CalcDelivery {
         default :
           $deliveryRate = self::getDeliveryRate($delivery, $parcel['weight']);
           if ($deliveryRate)
-            $price += $deliveryRate->price * $oversize * (1 + $delivery->insurance / 100);
+            $price += $deliveryRate->price * $oversize;
           else {
             $deliveryMaxRate = DeliveryRate::model()->findByAttributes(array(
               'delivery_id' => $delivery->id,
@@ -316,7 +320,7 @@ class CalcDelivery {
             /* @var $deliveryMaxRate DeliveryRate */
             $addition_weight = ceil($parcel['weight'] - $deliveryMaxRate->weight);
             $price += ($deliveryMaxRate->price + $delivery->regionDeliveries[0]->weight_rate * $addition_weight) *
-              $oversize * (1 + $delivery->insurance / 100);
+              $oversize;
           }
       }
     }
@@ -339,12 +343,12 @@ class CalcDelivery {
         }
       if ($nrjValue) {
         if ($nrjValue['type'] == 'avia')
-          $price = ceil($nrjValue['price']) * (1 + $delivery->insurance / 100);
+          $price = ceil($nrjValue['price']);
         else {
           if (new DateTime < new DateTime('2015/01/01') && isset($_SERVER['SERVER_NAME']) && !(strpos($_SERVER['SERVER_NAME'], 'tornado') === FALSE)) {
             $price = 0;
           } else {
-            $price = ceil($nrjValue['price']) * (1 + $delivery->insurance / 100);
+            $price = ceil($nrjValue['price']);
           }
         }
       } else

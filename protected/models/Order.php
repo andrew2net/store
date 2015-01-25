@@ -24,6 +24,7 @@
  * @property string $currency_code
  * @property string $customer_delivery 
  * @property strins $exchange if true order should be passed to 1C
+ * @property boolean $insurance An insurance of a delivery
  *
  * The followings are the available model relations:
  * @property Coupon $coupon
@@ -102,6 +103,7 @@ class Order extends CActiveRecord {
       array('country_code', 'length', 'max' => 2),
       array('currency_code', 'length', 'max' => 3),
       array('city', 'length', 'max' => 100),
+      ['insurance', 'boolean'],
       array('time, address, description', 'safe'),
       array('fio, email, phone, address, description, post_code, city, customer_delivery',
         'filter', 'filter' => array($obj = new CHtmlPurifier(), 'purify')),
@@ -186,7 +188,8 @@ class Order extends CActiveRecord {
       'summ' => 'Сумма',
       'currency_code' => 'Валюта заказа',
       'customer_delivery' => 'Транспортная компания покупателя',
-      'exchange' => 'Передать в 1С'
+      'exchange' => 'Передать в 1С',
+      'insurance' => 'Страховка посылки',
     );
   }
 
@@ -238,6 +241,11 @@ class Order extends CActiveRecord {
   public static function model($className = __CLASS__) {
     return parent::model($className);
   }
+  
+  public function afterConstruct() {
+    $this->insurance = true;
+    parent::afterConstruct();
+  }
 
   public function afterFind() {
 
@@ -247,29 +255,8 @@ class Order extends CActiveRecord {
 
   public function beforeSave() {
     $this->time = Yii::app()->dateFormatter->format('yyyy-MM-dd HH:mm:ss', $this->time);
-//    $this->coupon_id
     return parent::beforeSave();
   }
-
-//  public function getCouponDiscount() {
-//    Yii::import('application.modules.discount.models.Coupon');
-//    $summa = 0;
-//    $total = 0;
-//    if ($this->coupon) {
-//      foreach ($this->orderProducts as $product) {
-//        $total += $product->price * $product->quantity;
-//        if ($product->discount == 0)
-//          if ($this->coupon->type_id)
-//            $summa += $product->price * $product->quantity * $this->coupon->value / 100;
-//          else
-//            $summa += $product->price * $product->quantity;
-//      }
-//      if (!$this->coupon->type_id)
-//        if ($this->coupon->value < $summa)
-//          $summa = $this->coupon->value;
-//    }
-//    return $summa;
-//  }
 
   public function getCouponSumm() {
     Yii::import('application.modules.discount.models.Coupon');
