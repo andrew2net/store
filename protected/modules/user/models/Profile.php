@@ -188,4 +188,10 @@ class Profile extends UActiveRecord {
     }
   }
 
+  public function afterConstruct() {
+    if (isset($this->legal_form)){
+      $this->legal_form = " 3";
+    }
+    parent::afterConstruct();
+  }
 }
