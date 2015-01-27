@@ -20,7 +20,7 @@ switch ($order->delivery->zone_type_id) {
     $delivery = $order->customer_delivery;
     break;
   case Delivery::ZONE_SELF:
-    $delivery = $order->delivery->name.' ' . $order->delivery->description;
+    $delivery = $order->delivery->name . ' ' . $order->delivery->description;
     break;
   default :
     $delivery = $order->delivery->name;
@@ -64,9 +64,17 @@ echo CHtml::tag('tr', array('style' => 'border:2px solid'));
 echo CHtml::tag('td', array('colspan' => 4, 'style' => 'text-align:right'), 'Стоимость доставки:');
 echo CHtml::tag('td', array('style' => 'text-align:right;border-left:1px solid'), money_format('%n', $order->delivery_summ));
 echo CHtml::closeTag('tr');
-echo CHtml::tag('tr', array('style' => 'border:2px solid'));
+if ($order->insurance) {
+  $insuranceSumm = $order->insuranceSumm;
+  $total += $insuranceSumm;
+  echo CHtml::tag('tr', array('style' => 'border:2px solid'));
+  echo CHtml::tag('td', array('colspan' => 4, 'style' => 'text-align:right'), 'Страховка посылки:');
+  echo CHtml::tag('td', array('style' => 'text-align:right;border-left:1px solid'), money_format('%n', $insuranceSumm));
+  echo CHtml::closeTag('tr');
+}
 if ($couponSumm = $order->getCouponSumm() > 0) {
   $total -= $couponSumm;
+  echo CHtml::tag('tr', array('style' => 'border:2px solid'));
   echo CHtml::tag('td', array('colspan' => 4, 'style' => 'text-align:right'), 'Скидка по купону:');
   echo CHtml::tag('td', array('style' => 'text-align:right;border-left:1px solid'), money_format('%n', $couponSumm));
   echo CHtml::closeTag('tr');

@@ -13,6 +13,8 @@ $(document).ready(function () {
     var cartPayment = $('#Order_payment_id');
     var cart_login_dialog = $("#cart-login-dialog");
     var user_email = $('#User_email');
+    var insurance = $('#insurance');
+    var insurancePrice = insurance.find('span#insurance-price');
 
     function calcCartSumm() {
         var summ = 0;
@@ -70,9 +72,13 @@ $(document).ready(function () {
     }
 
     function calcTotal() {
-        var priceDelivery = parseFloat($('#cart-delivery input:checked + label > span').attr('data-price'));
+        var delivery = $('#cart-delivery input:checked + label > span');
+        var priceDelivery = parseFloat(delivery.attr('data-price'));
         var summ = parseFloat(cartSumm.attr('summ'));
         if (!isNaN(priceDelivery)) {
+            if (insurance.find('input[type="checkbox"]:checked').length > 0){
+                summ += parseFloat(delivery.attr('data-insurance'));
+            }
             var price_f = priceDelivery.formatMoney();
             $('#delivery-summ').html(price_f);
             $('#cart-total').html((priceDelivery + summ).formatMoney());
@@ -210,6 +216,7 @@ $(document).ready(function () {
         var city = cart_city.val();
         if (pcode.length === 6 || city.length > 0 || call) {
             var ccode = country_code.val();
+            insurance.hide();
             cart_delivery.hide();
             delivery_loading.show();
             var delivery = $('input:radio[name="Order[delivery_id]"]:checked');
@@ -230,6 +237,7 @@ $(document).ready(function () {
                 cart_delivery.html(data);
                 cart_delivery.show();
                 showDeliveries(pcode, city);
+                showInsurance();
             });
         } else {
             var lbls = cart_delivery.find('label > span:not([data-self])').parent();
@@ -291,6 +299,20 @@ $(document).ready(function () {
         checkCashPayment();
         calcTotal();
     }
+    
+    function showInsurance(){
+        var price = parseFloat($('#cart-delivery input:checked + label > span').attr('data-insurance'));
+        if (price > 0){
+            insurancePrice.html(price);
+            insurance.show();
+        }else{
+            insurance.hide();
+        }
+    }
+    
+    insurance.change(function (){
+        calcTotal(); 
+    });
 
     coupon.typing({
         start: function (event, elem) {
@@ -334,6 +356,7 @@ $(document).ready(function () {
 
     cart_delivery.on('change', 'input[name="Order[delivery_id]"]', function () {
         checkCashPayment();
+        showInsurance();
         calcTotal();
     });
 
@@ -395,10 +418,11 @@ $(document).ready(function () {
             'id': id,
             'quantity': quantity
         }, function (data) {
-//            cart_delivery.hide();
+            cart_delivery.hide();
+            insurance.hide();
 //            var city = cart_city.val();
 //            if (city.length > 0) {
-//                delivery_loading.show();
+                delivery_loading.show();
                 clearTimeout(cartTimeout);
                 cartTimeout = setTimeout(function () {
                     getDeliveries();
