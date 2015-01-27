@@ -418,10 +418,11 @@ $(document).ready(function () {
             'id': id,
             'quantity': quantity
         }, function (data) {
-//            cart_delivery.hide();
+            cart_delivery.hide();
+            insurance.hide();
 //            var city = cart_city.val();
 //            if (city.length > 0) {
-//                delivery_loading.show();
+                delivery_loading.show();
                 clearTimeout(cartTimeout);
                 cartTimeout = setTimeout(function () {
                     getDeliveries();

@@ -177,16 +177,16 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
                 <div style="min-height: 305px">
                     <div class="bold gray" style="font-size: 12pt; margin-bottom: 20px">Способ доставки</div>
                     <div id="cart-delivery"></div>
-                    <div id="delivery-loading" class="loading" style="position: relative; top: 50px"></div>
+                    <div id="delivery-loading" class="loading" style="position: relative; top: 65px; left: 10px"></div>
                 </div>
                 <div style="height: 25px; margin-top: 15px">
-                <div id="insurance" style="display: none">
-                    <?php
-                    echo CHtml::activeCheckBox($order, 'insurance');
-                    echo CHtml::activeLabelEx($order, 'insurance', ['style' => 'padding-right:0px']);
-                    ?>
-                    <span class="red"><span id="insurance-price"></span> <?php echo $currency->class; ?></span>
-                </div>
+                    <div id="insurance" style="display: none">
+                        <?php
+                        echo CHtml::activeCheckBox($order, 'insurance');
+                        echo CHtml::activeLabelEx($order, 'insurance', ['style' => 'padding-right:0px']);
+                        ?>
+                        <span class="red"><span id="insurance-price"></span> <?php echo $currency->class; ?></span>
+                    </div>
                 </div>
             </div>
             <div style="vertical-align: top">
@@ -219,7 +219,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
     <?php // echo CHtml::Button('Вход', array('id' => 'submit-password'));    ?>
   <span class="red" id="passw-err"></span>
   <div style="margin-top: 1em">
-    Забыли пароль? <?php // echo CHtml::Button('Восстановить', array('id' => 'recover-password'));                 ?>
+    Забыли пароль? <?php // echo CHtml::Button('Восстановить', array('id' => 'recover-password'));                  ?>
     <img src="/images/process.gif" style="display: none; vertical-align: middle; margin-left: 15px" id="loading-dialog" />
   </div>
   <div id="sent-mail-recovery" style="height: 40px"></div>

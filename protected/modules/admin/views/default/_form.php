@@ -166,6 +166,8 @@ $this->widget('ext.bootstrap.widgets.TbModal', array(
       var tbody = table.find('tbody');
       var orderTotal = $('#order-total');
       var orderCouponDiscount = $('#order-coupon-discount');
+      var orderInsurance = $('#Order_insurance');
+      var orderInsuranceSumm = $('#order-insurance');
       var newrow = '<tr class="row-product"><td><input readonly="readonly" class="row-article" type="text" maxlength="25"/></td><td><input class="row-name input-block-level" type="text" maxlength="255" /></td><td><input class="row-quantity" type="number" value="1" /></td><td><input class="row-price" type="number" /><input class="row-discount" type="hidden" /></td><td><i class="row-del icon-trash" style="cursor:pointer" rel="tooltip" title="Удалить"></i></td></tr>';
 
       function calcSumm() {
@@ -203,6 +205,12 @@ $this->widget('ext.bootstrap.widgets.TbModal', array(
           sum -= couponSum;
           var delivery = parseFloat(order_delivery_summ.val());
           sum += delivery;
+          var insuranceSumm = 0;
+          if (orderInsurance.prop('checked')) {
+              insuranceSumm = parseFloat(order_delivery_id.find('option:selected').attr('data-insurance'));
+              sum += insuranceSumm;
+          }
+          orderInsuranceSumm.html(insuranceSumm);
           orderTotal.html(sum);
           orderCouponDiscount.html(couponSum);
       }
@@ -223,10 +231,20 @@ $this->widget('ext.bootstrap.widgets.TbModal', array(
           order_delivery_summ.prop('readonly', read);
           order_delivery_id.prop('disabled', read);
           order_payment.prop('disabled', read);
+          orderInsurance.prop('readonly', read);
       }
 
       calcSumm();
       setStatus();
+
+      orderInsurance.click(function () {
+          if (orderInsurance.prop('readonly')) {
+              return false;
+          }
+      });
+      orderInsurance.change(function () {
+          calcSumm();
+      });
 
       table.on('keyup change', '.row-price, #order-delivery-summ', function () {
           calcSumm();

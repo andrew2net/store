@@ -4,7 +4,7 @@
  * CalcDelivery is a class for making list of avalable deliveries 
  * and calc delivery fee.
  *
- * @author Andrew <android.2netg@gmail.com>
+ * @author Andrew <android.2net@gmail.com>
  */
 class CalcDelivery {
 
@@ -31,12 +31,12 @@ class CalcDelivery {
     $currency = self::getCurrency($order->currency_code);
     $type = self::getItemsType($items, $delivery_id);
 
-    if ($type){
+    if ($type) {
       $price_type = Price::getPrice($items);
-    }else{
+    } else {
       $price_type = Price::getPrice();
     }
-    
+
     $product_sizes = self::getProductSizes($items, $currency->code, $price_type, $order->isNewRecord ? date('Y-m-d') : $order->time);
     $productSumm = array_sum(array_column($product_sizes, 5));
     $subsidy = round($productSumm * Yii::app()->params['order']['subsidy'] / 100);
@@ -102,6 +102,7 @@ class CalcDelivery {
               . CHtml::tag('span', array('class' => 'red delivery-price'), $priceTxt);
           } elseif ($type == 1) {
             $list['params'][$delivery->id]['price'] = $price;
+            $list['params'][$delivery->id]['data-insurance'] = $insurance;
             $list['options'][$delivery->id] = $delivery->name . ' (' . $delivery->transportType . ')';
             continue 2;
           } else {
@@ -118,6 +119,7 @@ class CalcDelivery {
               CHtml::error($order, 'customer_delivery', array('class' => 'red')) . '<div>(' . $delivery->description . ')</div>';
           }elseif ($type == 1) {
             $list['params'][$delivery->id]['price'] = $price;
+            $list['params'][$delivery->id]['data-insurance'] = $insurance;
             $list['options'][$delivery->id] = $delivery->zone_type . ' (' . $order->customer_delivery . ')';
             continue 2;
           } else {
@@ -145,6 +147,7 @@ class CalcDelivery {
         $list[$delivery->id] = $output;
       elseif ($type == 1) {
         $list['params'][$delivery->id]['price'] = $price;
+        $list['params'][$delivery->id]['data-insurance'] = $insurance;
         if ($delivery->zone_type_id == Delivery::ZONE_SELF)
           $list['options'][$delivery->id] = $delivery->name . ' ' . $delivery->description;
         else
