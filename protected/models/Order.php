@@ -41,6 +41,7 @@
  * @property float $discountSumm 
  * @property float $notDiscountSumm summ of goods without discount 
  * @property Currency $currency
+ * @property float $insuranceSumm 
  */
 class Order extends CActiveRecord {
 
@@ -121,7 +122,7 @@ class Order extends CActiveRecord {
 
   public function customerDelivery($attribute, $params) {
     Yii::import('application.modules.delivery.models.Delivery');
-    if ($this->delivery->zone_type_id == Delivery::ZONE_CUSTOM && empty($this->$attribute))
+    if ($this->delivery_id && $this->delivery->zone_type_id == Delivery::ZONE_CUSTOM && empty($this->$attribute))
       $this->addError($attribute, 'Укажите наименование транспортной компании');
   }
 
@@ -154,10 +155,22 @@ class Order extends CActiveRecord {
 
   public function getToPaySumm() {
     $coupon_discount = $this->getCouponSumm();
-    $total = $this->productSumm + $this->delivery_summ - $coupon_discount;
+    $total = $this->productSumm + $this->delivery_summ + $this->insuranceSumm - $coupon_discount;
     $paied = $this->paySumm + $this->authSumm;
     $to_pay = $total - $paied;
     return $to_pay;
+  }
+  
+  /**
+   * Return insurance summ
+   * @return type
+   */
+  public function getInsuranceSumm(){
+    $summ = 0;
+    if ($this->insurance){
+      $summ = round($this->productSumm * $this->delivery->insurance / 100);
+    }
+    return $summ;
   }
 
   /**

@@ -109,41 +109,41 @@ class Price extends CActiveRecord {
 
     if (!$products_table) { //if it's cart products table
       $table = 'store_cart';
-    }
-    else {
+    } else {
       $table = 'temp_order_product_' . (Yii::app()->user->id ? Yii::app()->user->id : 'exchange');
       $query = "DROP TABLE IF EXISTS {$table};";
       $query .= "CREATE TEMPORARY TABLE {$table} (product_id int(11) unsigned, quantity smallint(5) unsigned);";
       foreach ($products_table as $item) {
-        
-        if ($item instanceof OrderProduct || $item instanceof stdClass)
+
+        if ($item instanceof OrderProduct || $item instanceof stdClass || $item instanceof Cart) {
           $product = Product::model()->findByAttributes(array('id' => (string) $item->product_id));
-        else
+        } else {
           $product = Product::model()->findByAttributes(array('code' => (string) $item->code));
-        
+        }
+
         if ($product) {
           $query .= "INSERT INTO {$table} VALUES ({$product->id}, {$item->quantity});";
-        }
-        else
+        } else {
           throw new Exception('Product not found. Product code: ' . $p->code);
+        }
       }
       Yii::app()->db->createCommand($query)->execute();
     }
     $query = Yii::app()->db->createCommand()
-        ->select('SUM(c.quantity*round(prices.price*(1-greatest(ifnull(disc.percent,0),ifnull(disc1.percent,0),ifnull(disc2.percent,0))/100))) as c_summ, prices.price_id')
-        ->from($table . ' c')
-        ->join('store_product product', 'c.product_id=product.id')
-        ->join('store_product_price prices', 'product.id=prices.product_id')
-        ->join('store_price price', 'price.id=prices.price_id')
-        ->leftJoin('store_discount disc', "disc.product_id=0 and disc.actual=1 and (disc.begin_date='0000-00-00' or disc.begin_date<=CURDATE()) and (disc.end_date='0000-00-00' or disc.end_date>=CURDATE())")
-        ->leftJoin('store_product_category cat', 'cat.product_id=product.id')
-        ->leftJoin('store_discount_category discat', 'discat.category_id=cat.category_id')
-        ->leftJoin('store_discount disc1', "disc1.product_id=1 and disc1.id=discat.discount_id and disc1.actual=1 and (disc1.begin_date='0000-00-00' or disc1.begin_date<=CURDATE()) and (disc1.end_date='0000-00-00' or disc1.end_date>=CURDATE())")
-        ->leftJoin('store_discount_product dispro', 'dispro.product_id=product.id')
-        ->leftJoin('store_discount disc2', "disc2.product_id=2 and disc2.id=dispro.discount_id and disc2.actual=1 and (disc2.begin_date='0000-00-00' or disc2.begin_date<=CURDATE()) and (disc2.end_date='0000-00-00' or disc2.end_date>=CURDATE())")
-        ->order('price.summ DESC')
-        ->group('prices.price_id, price.summ')
-        ->having('c_summ>price.summ');
+      ->select('SUM(c.quantity*round(prices.price*(1-greatest(ifnull(disc.percent,0),ifnull(disc1.percent,0),ifnull(disc2.percent,0))/100))) as c_summ, prices.price_id')
+      ->from($table . ' c')
+      ->join('store_product product', 'c.product_id=product.id')
+      ->join('store_product_price prices', 'product.id=prices.product_id')
+      ->join('store_price price', 'price.id=prices.price_id')
+      ->leftJoin('store_discount disc', "disc.product_id=0 and disc.actual=1 and (disc.begin_date='0000-00-00' or disc.begin_date<=CURDATE()) and (disc.end_date='0000-00-00' or disc.end_date>=CURDATE())")
+      ->leftJoin('store_product_category cat', 'cat.product_id=product.id')
+      ->leftJoin('store_discount_category discat', 'discat.category_id=cat.category_id')
+      ->leftJoin('store_discount disc1', "disc1.product_id=1 and disc1.id=discat.discount_id and disc1.actual=1 and (disc1.begin_date='0000-00-00' or disc1.begin_date<=CURDATE()) and (disc1.end_date='0000-00-00' or disc1.end_date>=CURDATE())")
+      ->leftJoin('store_discount_product dispro', 'dispro.product_id=product.id')
+      ->leftJoin('store_discount disc2', "disc2.product_id=2 and disc2.id=dispro.discount_id and disc2.actual=1 and (disc2.begin_date='0000-00-00' or disc2.begin_date<=CURDATE()) and (disc2.end_date='0000-00-00' or disc2.end_date>=CURDATE())")
+      ->order('price.summ DESC')
+      ->group('prices.price_id, price.summ')
+      ->having('c_summ>price.summ');
 
     if (!$products_table)
       $query->where("(session_id=:sid AND :sid<>'') OR (user_id=:uid AND :sid='')", array(

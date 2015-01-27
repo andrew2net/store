@@ -68,7 +68,7 @@ class CustomerProfile extends CActiveRecord {
     );
 
     $delivery = false;
-    if (isset($_POST['Order']['delivery_id'])) {
+    if (isset($_POST['Order']['delivery_id']) && !(isset($_POST['reload-post']) && $_POST['reload-post'])) {
       /* @var $delivery Delivery */
       $delivery = Delivery::model()->findByPk($_POST['Order']['delivery_id']);
     }

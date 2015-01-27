@@ -15,8 +15,8 @@ class CartController extends Controller {
     Yii::import('application.modules.discount.models.Coupon');
     Yii::import('application.controllers.ProfileController');
     Yii::import('ext.CalcDelivery');
-    
-    Yii::app()->clientScript->registerMetaTag($_SERVER['REQUEST_METHOD'], 'request-method', null, null, [], 'request-vethod');
+
+    Yii::app()->clientScript->registerMetaTag($_SERVER['REQUEST_METHOD'], 'request-method', null, ['id' => 'request-method']);
 
     $minimal_summ = Price::getMinimalSumm();
     $customer_profile = ProfileController::getProfile();
@@ -32,15 +32,13 @@ class CartController extends Controller {
           $cart[] = $c;
         }
       }
-    }
-    else {
+    } else {
       $cart = Cart::model()->shoppingCart($session)->findAll();
     }
     if (!is_null($customer_profile->user_id)) { //if user is not guest
       $user = $customer_profile->user;
       $profile = $user->profile;
-    }
-    else {
+    } else {
       $user = new User;
       $profile = new Profile;
     }
@@ -49,43 +47,48 @@ class CartController extends Controller {
     if (isset($_POST['coupon'])) {
       $coupon = Coupon::model()->findByAttributes(array(
         'code' => $_POST['coupon'])
-          , "used_id<>2 AND (date_limit>=:date OR date_limit IS NULL OR date_limit='0000-00-00')"
-          , array(':date' => date('Y-m-d')));
-      if ($coupon)
+        , "used_id<>2 AND (date_limit>=:date OR date_limit IS NULL OR date_limit='0000-00-00')"
+        , array(':date' => date('Y-m-d')));
+      if ($coupon){
         $coupon_data = array(
           'code' => $coupon->code,
           'type' => $coupon->type_id,
           'value' => $coupon->value
         );
-    }
-    else
+      }
+    } else{
       $coupon = NULL;
+    }
 
     $has_err = 'no';
 
-    if (!Yii::app()->params['country'])
-      if (isset($_POST['CustomerProfile']['post_code']) && !isset($_POST['login']))
+    if (!Yii::app()->params['country']){
+      if (isset($_POST['CustomerProfile']['post_code']) && !isset($_POST['login'])){
         $country_code = $_POST['CustomerProfile']['country_code'];
-      else
+      }else{
         $country_code = $customer_profile->price_country;
-    else
+      }
+    }else{
       $country_code = Yii::app()->params['country'];
+    }
 
-    if (Yii::app()->params['post_code'])
-      if (isset($_POST['CustomerProfile']['post_code']) && !isset($_POST['login']))
+    if (Yii::app()->params['post_code']){
+      if (isset($_POST['CustomerProfile']['post_code']) && !isset($_POST['login'])){
         $post_code = $_POST['CustomerProfile']['post_code'];
-      else
+      }else{
         $post_code = $customer_profile->post_code;
-    else
+      }
+    }else{
       $post_code = '';
-
+    }
 
     $order = new Order;
     if (isset($_POST['Order'])) {
       $order->attributes = $_POST['Order'];
       Yii::app()->user->setState('delivery_id', (int) $order->delivery_id);
-      if (isset($_POST['Order']['customer_delivery']))
+      if (isset($_POST['Order']['customer_delivery'])){
         Yii::app()->user->setState('customer_delivery', $order->customer_delivery);
+      }
     }
 
     Yii::import('application.modules.payments.models.Currency');
@@ -102,13 +105,13 @@ class CartController extends Controller {
         if (isset($_POST['CustomerProfile']['city'])) {
           $customer_profile->city = $_POST['CustomerProfile']['city'];
           $city = $customer_profile->city;
-        }
-        else {
+        } else {
           $customer_profile->city_l = $_POST['CustomerProfile']['city_l'];
           $city = $customer_profile->city_l;
         }
-        if (isset($_POST['CustomerProfile']['other_city']))
+        if (isset($_POST['CustomerProfile']['other_city'])){
           $customer_profile->other_city = $_POST['CustomerProfile']['other_city'];
+        }
       }
       $valid = $customer_profile->save();
       if (isset($_POST['Profile'])) {
@@ -134,7 +137,7 @@ class CartController extends Controller {
       }
 
       $valid = $order->validate(array('customer_delivery')) && $valid;
-      if ($valid && isset($_POST['Cart'])) {
+      if (!(isset($_POST['reload-post']) && $_POST['reload-post']) && $valid && isset($_POST['Cart'])) {
         $count_products = $this->countProducts($coupon);
         $count_products['summ'] -= $count_products['couponDisc'];
 
@@ -202,8 +205,7 @@ class CartController extends Controller {
       if (is_array($discount)) {
         $price = $discount['price'];
         $result['discount'] += ($product->price - $price) * $quantity;
-      }
-      else {
+      } else {
         $price = $product->price;
         $result['noDiscount'] += $product->price * $quantity;
         if ($coupon) {
@@ -229,8 +231,7 @@ class CartController extends Controller {
       $storage_delivery = Yii::app()->user->getState('delivery');
       $order->delivery_summ = $storage_delivery[$_POST['Order']['delivery_id']]['summ'];
       Yii::app()->user->setState('delivery', NULL);
-    }
-    else {
+    } else {
       if ($customer_profile->other_city)
         $city = $customer_profile->city;
       else
@@ -245,8 +246,7 @@ class CartController extends Controller {
       $field = ProfileField::model()->findByAttributes(array('varname' => 'legal_form'));
       $legal_forms = Profile::range($field->range);
       $order->fio = $legal_forms[$profile->legal_form] . ' ' . $profile->entity_name;
-    }
-    else
+    } else
       $order->fio = $profile->first_name . ' ' . $profile->last_name;
 
     $order->email = $user->email;
@@ -258,13 +258,18 @@ class CartController extends Controller {
     $price_country = Yii::app()->params['mcurrency'] ? $customer_profile->price_country : Yii::app()->params['country'];
     $order->currency_code = Currency::model()->findByCountry($price_country)->code;
     $order->status_id = $order->payment->type_id == Payment::TYPE_CAHSH ?
-        Yii::app()->params['order']['payCash_status'] : Yii::app()->params['order']['new_status'];
+      Yii::app()->params['order']['payCash_status'] : Yii::app()->params['order']['new_status'];
     $order->time = date('Y-m-d H:i:s');
-    
+
     //don't allow pay by cash if not self delivery
-    if ($order->delivery->zone_type_id == Delivery::ZONE_SELF && 
-        $order->payment->type_id != Payment::TYPE_BANK && $order->payment->type_id != Payment::TYPE_CAHSH)
-      $order->payment_id = Payment::model()->findByAttributes(['type_id' => Payment::TYPE_CAHSH])->id;
+    if ($order->delivery->zone_type_id == Delivery::ZONE_SELF &&
+      $order->payment->type_id != Payment::TYPE_BANK && 
+      $order->payment->type_id != Payment::TYPE_CAHSH) {
+      $order->payment_id = Payment::model()->findByAttributes([
+          'type_id' => Payment::TYPE_CAHSH,
+          'currency_code' => $order->currency_code,
+        ])->id;
+    }
 
     if ($coupon && $count_products['couponDisc'])
       $order->coupon_id = $coupon->id;
@@ -292,11 +297,10 @@ class CartController extends Controller {
           $command->update('store_coupon', array(
             'used_id' => 2,
             'time_used' => date('Y-m-d H:i:s'),
-              ), 'id=:id', array(':id' => $coupon->id));
+            ), 'id=:id', array(':id' => $coupon->id));
         }
       }
-    }
-    else
+    } else
       throw new Exception('Ошибка записи заказа');
   }
 
@@ -338,7 +342,7 @@ class CartController extends Controller {
 
   private function renderCartBody($refreshPriceName = TRUE) {
     $cart = Cart::model()->shoppingCart(ProfileController::getSession())
-            ->with('product.brand')->findAll();
+        ->with('product.brand')->findAll();
     $profile = ProfileController::getProfile();
     $price_type = Price::getPrice();
     $result = array(
@@ -346,7 +350,7 @@ class CartController extends Controller {
         'cart' => $cart,
         'customer_profile' => $profile,
         'price_type' => $price_type,
-          ), TRUE));
+        ), TRUE));
     $result['price_name'] = $refreshPriceName ? $price_type->name : $refreshPriceName;
     echo json_encode($result);
   }
@@ -357,7 +361,7 @@ class CartController extends Controller {
       Yii::import('application.controllers.ProfileController');
       $coupon = Coupon::model()->findByAttributes(array(
         'code' => $_GET['coupon']), "used_id<>2 AND (date_limit>=:date OR date_limit IS NULL OR date_limit='0000-00-00')"
-          , array(':date' => date('Y-m-d')));
+        , array(':date' => date('Y-m-d')));
       /* @var $coupon Coupon */
       if (is_null($coupon))
         $data = array('type' => 3, 'discount' => 0);
@@ -371,8 +375,7 @@ class CartController extends Controller {
             default :
               $value = $coupon->value;
           }
-        }
-        else
+        } else
           $value = $coupon->value;
         $data = array('type' => $coupon->type_id, 'discount' => $value);
       }
@@ -400,10 +403,10 @@ class CartController extends Controller {
 
     $delivery = CalcDelivery::getDeliveryList($ccode, trim($pcode), $city, $cart, $order);
 
-    if (is_array($delivery) && !isset($delivery[$order->delivery_id])){
+    if (is_array($delivery) && !isset($delivery[$order->delivery_id])) {
       $order->delivery_id = key($delivery);
     }
-    
+
     $profile = ProfileController::getProfile();
     if (Yii::app()->params['mcurrency'])
       $currency = Currency::model()->findByAttributes(array(
@@ -416,7 +419,7 @@ class CartController extends Controller {
       'order' => $order,
       'delivery' => $delivery,
       'currency' => $currency,
-        ), TRUE);
+      ), TRUE);
     Yii::app()->end();
   }
 
@@ -469,14 +472,12 @@ class CartController extends Controller {
         if (is_null($user)) { //new email
 //          Yii::app()->user->update(array('email' => $_POST['email']));
           echo 'ok';
-        }
-        else if ($user->id != Yii::app()->user->id)  //there is user with same email
+        } else if ($user->id != Yii::app()->user->id)  //there is user with same email
           echo '';
         else                //signed up
           echo 'ok';
       }
-    }
-    else
+    } else
       echo '';
     Yii::app()->end();
   }

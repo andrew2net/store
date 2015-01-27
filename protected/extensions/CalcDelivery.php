@@ -31,11 +31,12 @@ class CalcDelivery {
     $currency = self::getCurrency($order->currency_code);
     $type = self::getItemsType($items, $delivery_id);
 
-    if ($type)
+    if ($type){
       $price_type = Price::getPrice($items);
-    else
+    }else{
       $price_type = Price::getPrice();
-
+    }
+    
     $product_sizes = self::getProductSizes($items, $currency->code, $price_type, $order->isNewRecord ? date('Y-m-d') : $order->time);
     $productSumm = array_sum(array_column($product_sizes, 5));
     $subsidy = round($productSumm * Yii::app()->params['order']['subsidy'] / 100);

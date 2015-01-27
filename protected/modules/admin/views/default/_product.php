@@ -87,6 +87,21 @@
       </td>
     </tr>
     <tr>
+      <td colspan="3"><div style="text-align: right">Страховка: </div></td>
+      <td>
+        <?php
+        $insuranceSumm = $model->insuranceSumm;
+        echo TbHtml::tag('div', array(
+          'name' => 'order_insurance',
+          'class' => 'display-field',
+//          'style' => 'width:11.5em',
+          'id' => 'order-insurance'));
+        echo $insuranceSumm;
+        echo TbHtml::closeTag('div');
+        ?>
+      </td>
+    </tr>
+    <tr>
       <td colspan="3"><div style="text-align: right">Скидка по купону: </div></td>
       <td>
         <?php
@@ -111,7 +126,7 @@
       </td><td colspan="2"><div style="text-align: right">Итого: </div></td>
       <td>
         <?php
-        $total += $model->delivery_summ;
+        $total += $model->delivery_summ + $insuranceSumm;
         echo TbHtml::tag('div', array(
           'name' => 'order_total',
           'class' => 'display-field',

@@ -518,7 +518,7 @@ class ExchangeController extends CController {
       }
       return FALSE;
     }
-//    Yii::trace('hash: ' . $hash, 'exchange');
+//    Yii::trace('hash: ' . $hash, '1c_exchange');
 //    Yii::trace('pass: ' . $xml->id . $xml->date . self::PASS, '1c_exchange');
 //    Yii::trace('check: ' . strtoupper(md5($xml->id . $xml->date . self::PASS)), '1c_exchange');
     if (strtoupper(md5($xml->id . $xml->date . self::PASS)) != $hash)
@@ -532,7 +532,7 @@ class ExchangeController extends CController {
     Yii::import('application.modules.catalog.models.Price');
 
     $order = Order::model()->findByPk((int) $xml->id);
-    Yii::trace('Order ' . is_null($order), 'exchange');
+    Yii::trace('Order ' . is_null($order), '1c_exchange');
     /* @var $order Order */
     if (!$order)
       return FALSE;
@@ -608,7 +608,7 @@ class ExchangeController extends CController {
       $tr->commit();
     } catch (Exception $e) {
       $tr->rollback();
-      Yii::trace($e->getMessage() . $e->getTraceAsString(), 'exchange');
+      Yii::trace($e->getMessage() . $e->getTraceAsString(), '1c_exchange');
       return FALSE;
     }
 

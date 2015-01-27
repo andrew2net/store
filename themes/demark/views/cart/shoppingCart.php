@@ -22,6 +22,7 @@ $this->pageTitle = Yii::app()->name . ' - Корзина';
 
     echo CHtml::hiddenField('url', Yii::app()->request->url);
     echo CHtml::hiddenField('login', 0, array('id' => 'login-fl'));
+    echo CHtml::hiddenField('reload-post', 0); // setted 1 when the form is submited for reload purpose
     ?>
     <fieldset>
         <legend><span class="page-title bold blue">Ваша корзина</span></legend>
