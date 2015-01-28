@@ -67,8 +67,7 @@ class ExchangeController extends CController {
             $model->delete();
             continue;
           }
-        }
-        else {
+        } else {
           $model = new Product;
           $model->show_me = TRUE;
         }
@@ -147,8 +146,7 @@ class ExchangeController extends CController {
               unset($imgSmall);
               fclose($fileSmall);
               $model->small_img = $imgPath . $fileNameSmall;
-            }
-            else
+            } else
               $model->createThumbnail();
 
             $this->validate($code . ': ' . $name, $model, $resultDOM, $resultRootNode, array('img', 'small_img'));
@@ -237,8 +235,7 @@ class ExchangeController extends CController {
             $model->delete();
             continue;
           }
-        }
-        else {
+        } else {
           $model = new Price;
         }
         $model->name = $name;
@@ -298,8 +295,7 @@ class ExchangeController extends CController {
             $model->delete();
             continue;
           }
-        }
-        else {
+        } else {
           $model = new Price;
         }
         $model->name = $name;
@@ -370,8 +366,7 @@ class ExchangeController extends CController {
       if (!$item[$key][2]) {
         return $model->deleteNode();
       }
-    }
-    else {
+    } else {
       $model = new Category;
     }
     $model->name = $item[$key][2];
@@ -399,8 +394,7 @@ class ExchangeController extends CController {
       $parent_key = $this->category_parent_search($item[1], $category);
       if ($parent_key) {
         $result = $this->saveCategory($parent_key, $category, $DOMdoc, $node);
-      }
-      else {
+      } else {
         $result = Category::model()->findByAttributes(array('code' => $item[1]));
       }
       if ($result instanceof Category) {
@@ -470,6 +464,10 @@ class ExchangeController extends CController {
     $deliveryNode->appendChild($domDoc->createElement('name', $deliveryName));
     $deliveryNode->appendChild($domDoc->createElement('price', $order->delivery_summ));
 
+    if ($order->insurance) {
+      $orderNode->appendChild($domDoc->createElement('insurance', $order->insuranceSumm));
+    }
+
     $customerEl = $domDoc->createElement('customer');
     $customerNode = $orderNode->appendChild($customerEl);
     $customerNode->appendChild($domDoc->createElement('name', $order->fio));
@@ -494,7 +492,7 @@ class ExchangeController extends CController {
     $xml = $domDoc->saveXML();
 
     if ($order->status_id == Yii::app()->params['order']['new_status'] &&
-        $order->status_id != Yii::app()->params['order']['process_status']) {
+      $order->status_id != Yii::app()->params['order']['process_status']) {
       $order->status_id = Yii::app()->params['order']['process_status'];
     }
     $order->exchange = 0;
@@ -568,8 +566,7 @@ class ExchangeController extends CController {
             $price = $product->getPrice($price_type, $order->currency_code);
             $orderProduct->discount = $price > $orderProduct->price ? $price - $orderProduct->price : 0;
             $orderProduct->save();
-          }
-          else {
+          } else {
             $save = FALSE;
             if ($orderProduct->quantity != $p->quantity) {
               $orderProduct->quantity = (string) $p->quantity;
@@ -584,8 +581,7 @@ class ExchangeController extends CController {
             if ($save)
               $orderProduct->save();
           }
-        }
-        else
+        } else
           throw new Exception('Product not found. Product code: ' . $p->code);
       }
 
