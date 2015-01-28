@@ -172,12 +172,12 @@ $site_config = array(
           'class' => 'CFileLogRoute',
           'levels' => 'trace, error, warning, info',
         ),
-        [
-          'class' => 'CEmailLogRoute',
+//        [
+//          'class' => 'CEmailLogRoute',
 //          'categories' => '1c_exchange',
-          'emails' => ['andriano@ngs.ru'],
-          'sentFrom' => 'andriano@ngs.ru',
-        ],
+//          'emails' => ['andriano@ngs.ru'],
+//          'sentFrom' => 'andriano@ngs.ru',
+//        ],
       // uncomment the following to show log messages on web pages
       /*
         array(
