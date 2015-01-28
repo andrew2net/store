@@ -512,7 +512,7 @@ class ExchangeController extends CController {
     $xml = new SimpleXMLElement($o);
     if (!$xml) {
       foreach (libxml_get_errors() as $error) {
-        Yii::trace($error->message, '1c_exchange');
+        Yii::log($error->message, CLogger::LEVEL_ERROR, '1c_exchange');
       }
       return FALSE;
     }
@@ -521,7 +521,7 @@ class ExchangeController extends CController {
 //    Yii::trace('check: ' . strtoupper(md5($xml->id . $xml->date . self::PASS)), '1c_exchange');
     if (strtoupper(md5($xml->id . $xml->date . self::PASS)) != $hash)
       return FALSE;
-    Yii::trace('password', '1c_exchange');
+    Yii::log('auth pass', CLogger::LEVEL_INFO, '1c_exchange');
     Yii::import('application.models.Order');
     Yii::import('application.models.OrderProduct');
     Yii::import('application.models.CustomerProfile');
@@ -530,7 +530,7 @@ class ExchangeController extends CController {
     Yii::import('application.modules.catalog.models.Price');
 
     $order = Order::model()->findByPk((int) $xml->id);
-    Yii::trace('Order ' . is_null($order), '1c_exchange');
+    Yii::log('Order ' . is_null($order), CLogger::LEVEL_INFO, '1c_exchange');
     /* @var $order Order */
     if (!$order)
       return FALSE;
@@ -604,7 +604,7 @@ class ExchangeController extends CController {
       $tr->commit();
     } catch (Exception $e) {
       $tr->rollback();
-      Yii::trace($e->getMessage() . $e->getTraceAsString(), '1c_exchange');
+      Yii::log($e->getMessage() . $e->getTraceAsString(), CLogger::LEVEL_ERROR, '1c_exchange');
       return FALSE;
     }
 
