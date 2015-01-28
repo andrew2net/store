@@ -509,6 +509,7 @@ class ExchangeController extends CController {
    * @soap
    */
   public function setOrder($o, $hash) {
+    Yii::log('start order uploading', CLogger::LEVEL_INFO, '1c_exchange');
     $xml = new SimpleXMLElement($o);
     if (!$xml) {
       foreach (libxml_get_errors() as $error) {
