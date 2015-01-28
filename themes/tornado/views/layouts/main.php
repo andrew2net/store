@@ -5,7 +5,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <!--<meta name="language" content="ru" />-->
         <link rel="icon" href="<?php echo Yii::app()->theme->baseUrl; ?>/img/favicon.png" type="image/x-icon" />
-        <!--<link rel="shortcut icon" href="<?php // echo Yii::app()->createAbsoluteUrl('');          ?>/favicon.ico" type="image/x-icon" />-->
+        <!--<link rel="shortcut icon" href="<?php // echo Yii::app()->createAbsoluteUrl('');           ?>/favicon.ico" type="image/x-icon" />-->
         <!-- blueprint CSS framework -->
         <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/themes/<?php echo Yii::app()->theme->name; ?>/css/screen.css" media="screen, projection" />
         <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/print.css" media="print" />
@@ -29,8 +29,40 @@
         <?php Yii::app()->clientScript->registerScriptFile(Yii::app()->theme->baseUrl . '/js/common.js'); ?>
         <?php Yii::app()->clientScript->registerScriptFile(Yii::app()->theme->baseUrl . '/js/cufon-yui.js'); ?>
         <?php Yii::app()->clientScript->registerScriptFile(Yii::app()->theme->baseUrl . '/js/RotondaC_400-RotondaC_700.font.js'); ?>
-    <!--<script type="text/javascript" src="http://vk.com/js/api/share.js?90" charset="windows-1251"></script>-->
         <title><?php echo CHtml::encode($this->pageTitle); ?></title>
+        <!-- Yandex.Metrika counter -->
+        <script type="text/javascript">
+          (function (d, w, c) {
+              (w[c] = w[c] || []).push(function () {
+                  try {
+                      w.yaCounter26247687 = new Ya.Metrika({id: 26247687,
+                          webvisor: true,
+                          clickmap: true,
+                          trackLinks: true,
+                          accurateTrackBounce: true});
+                  } catch (e) {
+              }
+              });
+
+              var n = d.getElementsByTagName("script")[0],
+                      s = d.createElement("script"),
+                      f = function () {
+                      n.parentNode.insertBefore(s, n);
+                    };
+              s.type = "text/javascript";
+              s.async = true;
+              s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+              if (w.opera == "[object Opera]") {
+                  d.addEventListener("DOMContentLoaded", f, false);
+              } else {
+              f();
+            }
+          })(document, window, "yandex_metrika_callbacks");
+        </script>
+        <noscript><div><img src="//mc.yandex.ru/watch/26247687" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+        <!-- /Yandex.Metrika counter -->
+
         <script type="text/javascript">
           (function (i, s, o, g, r, a, m) {
               i['GoogleAnalyticsObject'] = r;
@@ -75,36 +107,5 @@
               $(".fancybox").fancybox();
           });
         </script>
-      <!--<script type="text/javascript">
-      var yaParams = {/*Здесь параметры визита*/};
-      </script>-->
-
-<!-- Yandex.Metrika counter -->
-<script type="text/javascript">
-(function (d, w, c) {
-    (w[c] = w[c] || []).push(function() {
-        try {
-            w.yaCounter26247687 = new Ya.Metrika({id:26247687,
-                    webvisor:true,
-                    clickmap:true,
-                    trackLinks:true,
-                    accurateTrackBounce:true});
-        } catch(e) { }
-    });
-
-    var n = d.getElementsByTagName("script")[0],
-        s = d.createElement("script"),
-        f = function () { n.parentNode.insertBefore(s, n); };
-    s.type = "text/javascript";
-    s.async = true;
-    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
-
-    if (w.opera == "[object Opera]") {
-        d.addEventListener("DOMContentLoaded", f, false);
-    } else { f(); }
-})(document, window, "yandex_metrika_callbacks");
-</script>
-<noscript><div><img src="//mc.yandex.ru/watch/26247687" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Yandex.Metrika counter -->
     </body>
 </html>
