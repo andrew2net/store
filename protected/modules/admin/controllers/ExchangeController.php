@@ -520,8 +520,10 @@ class ExchangeController extends CController {
 //    Yii::trace('hash: ' . $hash, '1c_exchange');
 //    Yii::trace('pass: ' . $xml->id . $xml->date . self::PASS, '1c_exchange');
 //    Yii::trace('check: ' . strtoupper(md5($xml->id . $xml->date . self::PASS)), '1c_exchange');
-    if (strtoupper(md5($xml->id . $xml->date . self::PASS)) != $hash)
+    if (strtoupper(md5($xml->id . $xml->date . self::PASS)) != $hash) {
+      Yii::log("auth dont pass $xml->id $xml->date", CLogger::LEVEL_INFO, '1c_exchange');
       return FALSE;
+    }
     Yii::log('auth pass', CLogger::LEVEL_INFO, '1c_exchange');
     Yii::import('application.models.Order');
     Yii::import('application.models.OrderProduct');
@@ -531,10 +533,12 @@ class ExchangeController extends CController {
     Yii::import('application.modules.catalog.models.Price');
 
     $order = Order::model()->findByPk((int) $xml->id);
-    Yii::log('Order ' . is_null($order), CLogger::LEVEL_INFO, '1c_exchange');
+    Yii::log("Order $xml->id" . is_null($order), CLogger::LEVEL_INFO, '1c_exchange');
     /* @var $order Order */
-    if (!$order)
+    if (!$order) {
+      Yii::log("Order find false", CLogger::LEVEL_INFO, '1c_exchange');
       return FALSE;
+    }
 
     $old_status = $order->status_id;
 
