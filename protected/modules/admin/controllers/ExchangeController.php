@@ -521,7 +521,7 @@ class ExchangeController extends CController {
 //    Yii::trace('pass: ' . $xml->id . $xml->date . self::PASS, '1c_exchange');
 //    Yii::trace('check: ' . strtoupper(md5($xml->id . $xml->date . self::PASS)), '1c_exchange');
     if (strtoupper(md5($xml->id . $xml->date . self::PASS)) != $hash) {
-      Yii::log("auth dont pass $xml->id $xml->date", CLogger::LEVEL_INFO, '1c_exchange');
+      Yii::log("auth dont pass $xml->id $xml->date $hash", CLogger::LEVEL_INFO, '1c_exchange');
       return FALSE;
     }
     Yii::log('auth pass', CLogger::LEVEL_INFO, '1c_exchange');
