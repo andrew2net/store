@@ -73,10 +73,18 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
               <td colspan="4" style="text-align: right">Скидка по купону:</td>
               <td style="text-align: right"><?php echo number_format($coupon_discount, 0, '.', ' ') ?></td>
           </tr>
-        <?php } ?>
+          <?php
+        }
+
+        $totalRU = $total;
+        if ($order->currency_code != 'RUB') {
+          $currencyTo = Currency::model()->findByAttributes(['code' => 'RUB']);
+          $currencyTo->convert($order->currency->code, $totalRU);
+        }
+        ?>
         <tr style="background: whitesmoke">
             <td class="bold" colspan="4" style="text-align: right">Итого:</td>
-            <td class="bold" style="text-align: right"><?php echo number_format($total, 0, '.', ' ') ?></td>
+            <td id="order-total" data-summ="<?php echo $totalRU; ?>" class="bold" style="text-align: right"><?php echo number_format($total, 0, '.', ' ') ?></td>
         </tr>
         <?php
         if ($paied > 0) {
@@ -88,7 +96,7 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
           <?php if ($to_pay > 0) { ?>
             <tr>
                 <td class="bold" colspan="4" style="text-align: right">К оплате:</td>
-                <td id="to-pay" class="bold" style="text-align: right" data-topay="<?php echo $to_pay; ?>"><?php echo number_format($to_pay, 0, '.', ' ') ?></td>
+                <td class="bold" style="text-align: right"><?php echo number_format($to_pay, 0, '.', ' ') ?></td>
             </tr>
           <?php } ?>
         <?php } ?>
@@ -115,11 +123,12 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
 <?php $this->renderPartial('//site/_footer'); ?>
 <script type="text/javascript">
   $('.main-submit').click(function () {
+      var totalRU = parseFloat($('#order-total').attr('data-summ'));
       ga('send', {
           'hitType': 'event',
           'eventCategory': 'order',
-          'eventAction': 'createorder',
-          'eventValue': parseFloat($('#to-pay').attr('data-topay'))
+          'eventAction': 'payorder',
+          'eventValue': totalRU
       });
   });
 </script>
