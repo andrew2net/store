@@ -88,7 +88,7 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
           <?php if ($to_pay > 0) { ?>
             <tr>
                 <td class="bold" colspan="4" style="text-align: right">К оплате:</td>
-                <td class="bold" style="text-align: right"><?php echo number_format($to_pay, 0, '.', ' ') ?></td>
+                <td id="to-pay" class="bold" style="text-align: right" data-topay="<?php echo $to_pay; ?>"><?php echo number_format($to_pay, 0, '.', ' ') ?></td>
             </tr>
           <?php } ?>
         <?php } ?>
@@ -113,3 +113,13 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
     <div style="text-align: center; margin-bottom: 15px"><?php echo CHtml::link('Перейти в личный кабинет', '/profile'); ?></div>
 </div>
 <?php $this->renderPartial('//site/_footer'); ?>
+<script type="text/javascript">
+  $('.main-submit').click(function () {
+      ga('send', {
+          'hitType': 'event',
+          'eventCategory': 'order',
+          'eventAction': 'createorder',
+          'eventValue': $('#to-pay').attr('data-topay');
+      });
+  });
+</script>

@@ -25,12 +25,6 @@ class SiteController extends Controller {
     Yii::import('application.modules.catalog.models.Category');
     Yii::import('application.modules.catalog.models.Price');
 
-    if (!Yii::app()->user->isGuest)
-      Yii::app()->request->cookies['popup'] = new CHttpCookie('popup', '2', array(
-        'expire' => time() + 2592000,
-        'path' => '/',
-      ));
-
 //    $searc = new Search;
     $price_type = Price::getPrice();
 

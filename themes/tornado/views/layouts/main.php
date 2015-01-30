@@ -5,7 +5,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <!--<meta name="language" content="ru" />-->
         <link rel="icon" href="<?php echo Yii::app()->theme->baseUrl; ?>/img/favicon.png" type="image/x-icon" />
-        <!--<link rel="shortcut icon" href="<?php // echo Yii::app()->createAbsoluteUrl('');           ?>/favicon.ico" type="image/x-icon" />-->
+        <!--<link rel="shortcut icon" href="<?php // echo Yii::app()->createAbsoluteUrl('');            ?>/favicon.ico" type="image/x-icon" />-->
         <!-- blueprint CSS framework -->
         <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/themes/<?php echo Yii::app()->theme->name; ?>/css/screen.css" media="screen, projection" />
         <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/print.css" media="print" />
@@ -21,6 +21,11 @@
         $cs->registerCssFile($cs->getCoreScriptUrl() . '/jui/css/base/jquery-ui.css');
         $cs->registerCssFile('/js/fancybox2/jquery.fancybox.css');
         $cs->registerScriptFile('/js/fancybox2/jquery.fancybox.js', CClientScript::POS_HEAD);
+        if (!Yii::app()->user->isGuest)
+          Yii::app()->request->cookies['popup'] = new CHttpCookie('popup', '2', array(
+            'expire' => time() + 2592000,
+            'path' => '/',
+          ));
         ?>
         <?php Yii::app()->clientScript->registerCoreScript('jquery'); ?>
         <?php Yii::app()->clientScript->registerCoreScript('cookie'); ?>
@@ -41,14 +46,14 @@
                           trackLinks: true,
                           accurateTrackBounce: true});
                   } catch (e) {
-              }
+                  }
               });
 
               var n = d.getElementsByTagName("script")[0],
                       s = d.createElement("script"),
                       f = function () {
-                      n.parentNode.insertBefore(s, n);
-                    };
+                          n.parentNode.insertBefore(s, n);
+                      };
               s.type = "text/javascript";
               s.async = true;
               s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
@@ -56,8 +61,8 @@
               if (w.opera == "[object Opera]") {
                   d.addEventListener("DOMContentLoaded", f, false);
               } else {
-              f();
-            }
+                  f();
+              }
           })(document, window, "yandex_metrika_callbacks");
         </script>
         <noscript><div><img src="//mc.yandex.ru/watch/26247687" style="position:absolute; left:-9999px;" alt="" /></div></noscript>

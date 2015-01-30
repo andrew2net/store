@@ -10,6 +10,7 @@ $(document).ready(function () {
     var cart_city = $('#cart-city');
     var delivery_loading = $('#delivery-loading');
     var cart_delivery = $('#cart-delivery');
+    var cartTotal = $('#cart-total');
     var cartPayment = $('#Order_payment_id');
     var cart_login_dialog = $("#cart-login-dialog");
     var user_email = $('#User_email');
@@ -71,23 +72,25 @@ $(document).ready(function () {
         cartDiscount.attr('summ', discountSumm);
     }
 
+    var summTotal;
     function calcTotal() {
         var delivery = $('#cart-delivery input:checked + label > span');
         var priceDelivery = parseFloat(delivery.attr('data-price'));
-        var summ = parseFloat(cartSumm.attr('summ'));
+        summTotal = parseFloat(cartSumm.attr('summ'));
         if (!isNaN(priceDelivery)) {
-            if (insurance.find('input[type="checkbox"]:checked').length > 0){
-                summ += parseFloat(delivery.attr('data-insurance'));
+            if (insurance.find('input[type="checkbox"]:checked').length > 0) {
+                summTotal += parseFloat(delivery.attr('data-insurance'));
             }
             var price_f = priceDelivery.formatMoney();
             $('#delivery-summ').html(price_f);
-            $('#cart-total').html((priceDelivery + summ).formatMoney());
+            summTotal += priceDelivery;
+            cartTotal.html(summTotal.formatMoney());
             cartSubmit.show();
         }
         else {
             $('#delivery-summ').html('');
             cartSubmit.hide();
-            $('#cart-total').html(summ.formatMoney());
+            cartTotal.html(summTotal.formatMoney());
         }
     }
 
@@ -103,6 +106,12 @@ $(document).ready(function () {
         }, function (data) {
             if (data == 'ok') {
                 yaCounter26247867.reachGoal('CREATEORDER');
+                ga('send', {
+                    'hitType': 'event',
+                    'eventCategory': 'order',
+                    'eventAction': 'createorder',
+                    'eventValue': summTotal
+                });
                 $('form').submit();
             } else {
                 cartProc.hide();
@@ -299,19 +308,19 @@ $(document).ready(function () {
         checkCashPayment();
         calcTotal();
     }
-    
-    function showInsurance(){
+
+    function showInsurance() {
         var price = parseFloat($('#cart-delivery input:checked + label > span').attr('data-insurance'));
-        if (price > 0){
+        if (price > 0) {
             insurancePrice.html(price);
             insurance.show();
-        }else{
+        } else {
             insurance.hide();
         }
     }
-    
-    insurance.change(function (){
-        calcTotal(); 
+
+    insurance.change(function () {
+        calcTotal();
     });
 
     coupon.typing({
@@ -422,11 +431,11 @@ $(document).ready(function () {
             insurance.hide();
 //            var city = cart_city.val();
 //            if (city.length > 0) {
-                delivery_loading.show();
-                clearTimeout(cartTimeout);
-                cartTimeout = setTimeout(function () {
-                    getDeliveries();
-                }, 3000);
+            delivery_loading.show();
+            clearTimeout(cartTimeout);
+            cartTimeout = setTimeout(function () {
+                getDeliveries();
+            }, 3000);
 //            }
         });
     }
