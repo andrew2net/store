@@ -119,7 +119,7 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
           'hitType': 'event',
           'eventCategory': 'order',
           'eventAction': 'createorder',
-          'eventValue': $('#to-pay').attr('data-topay');
+          'eventValue': parseFloat($('#to-pay').attr('data-topay'))
       });
   });
 </script>
