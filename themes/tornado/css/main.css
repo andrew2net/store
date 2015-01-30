@@ -193,15 +193,18 @@ div.view
   border: 1px solid #C9E0ED;
 }
 
-div.search-form
-{
+div.search-form{
   padding: 10px;
   margin: 10px 0;
   background: #eee;
 }
 
-.align-right
-{
+.input-text{
+    border: 1px solid #aaa;
+    border-radius: 5px
+}
+
+.align-right{
   float: right;
   position: relative;
   /*text-align: right;*/
@@ -834,6 +837,36 @@ span#Order_payment_id, span#Order_delivery_id{
 }
 #profile-grid-order .even{
   background-color: whitesmoke;
+}
+
+#popup-window{
+    overflow: visible;
+}
+.popup-window, .ui-dialog {
+    border-radius: 0 !important;
+    overflow: visible !important;
+}
+.ui-dialog .ui-dialog-titlebar{
+    display: none;
+}
+.popup-close{
+    background: url('/js_plugins/fancybox2/fancybox_sprite.png');
+    width: 36px;
+    height: 36px;
+    position: absolute; right: -18px; top: -18px; z-index: 1005; cursor: pointer
+}
+#bottom-bar{
+    display: none;
+    background: rgb(245, 197, 34);
+    z-index: 10;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    height: 35px;
+    line-height: 35px;
+    font-weight: bold;
+    font-size: 11pt;
 }
 
 .loading{

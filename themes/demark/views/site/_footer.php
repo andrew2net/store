@@ -86,11 +86,12 @@ $groups = Category::model()->roots()->findAll();
     </div>
 </div>
 <div id="popup-window" style="display: none"></div>
-<div id="bottom-bar">ПОЛУЧИТЕ СКИДКУ <span class="red">5%</span> НА ПЕРВУЮ ПОКУПКУ!<span id="get-discount" class="red" style="margin-left: 50px; text-decoration: underline; -moz-text-decoration-line: underline; cursor: pointer">ПОЛУЧИТЬ СКИДКУ</span></div>
+<div id="bottom-bar">ПОЛУЧИТЕ СКИДКУ <span class="red"><?php echo Yii::app()->params['popupWindow']['discount']; ?>%</span> НА ПЕРВУЮ ПОКУПКУ!<span id="get-discount" class="red" style="margin-left: 50px; text-decoration: underline; -moz-text-decoration-line: underline; cursor: pointer">ПОЛУЧИТЬ СКИДКУ</span></div>
 <script type="text/javascript">
   $(function () {
+      var popupWindow = $('#popup-window');
 
-      $('#popup-window').dialog({
+      popupWindow.dialog({
           modal: true,
           resizable: false,
           autoOpen: false,
@@ -100,21 +101,27 @@ $groups = Category::model()->roots()->findAll();
           }
       });
 
-      $('#popup-window').on('click', '.popup-close', function () {
+      popupWindow.on('click', '.popup-close', function () {
           clearTimeout(timeout_id);
-          $('#popup-window').dialog('close');
+          popupWindow.dialog('close');
           if ($.cookie('popup') !== '2') {
               $.cookie('popup', '1', {expires: 2592000, path: '/'});
               showBottomBar();
           }
       });
 
+      popupWindow.on('submit', 'form#popupForm', function (event) {
+          $('#popup-submit').hide();
+          event.preventDefault();
+          submitForm();
+      });
+
       $('#get-discount').click(function () {
           $('#bottom-bar').hide();
           $('#footer').css('margin-bottom', '0');
-          if ($('#popup-window').dialog('option', 'width') < 900)
+          if (popupWindow.dialog('option', 'width') < 900)
               loadPopup();
-          $('#popup-window').dialog('open');
+          popupWindow.dialog('open');
       });
       var popup = $.cookie('popup');
       switch (popup) {
@@ -122,85 +129,89 @@ $groups = Category::model()->roots()->findAll();
               $.cookie('popup', '0', {expires: 2592000, path: '/'});
           case '0':
               loadPopup();
-              $('#popup-window').dialog('open');
+              popupWindow.dialog('open');
               break;
           case '1':
               loadPopup();
               showBottomBar();
       }
-  });
 
-  var timeout_id;
+      var timeout_id;
 
-  function showBottomBar() {
-      $('#bottom-bar').show();
-      $('#footer').css('margin-bottom', '44px');
-  }
+      function showBottomBar() {
+          $('#bottom-bar').show();
+          $('#footer').css('margin-bottom', '44px');
+      }
 
-  function loadPopup() {
-      $('#popup-window').dialog('option', 'height', 440);
-      $('#popup-window').dialog('option', 'width', 800);
-      $('#popup-window').dialog('option', 'dialogClass', 'popup-window');
-      $('#popup-window').load('/site/popupWindow', function () {
-          Cufon.replace('#popup-window .cufon');
+      function loadPopup() {
+          popupWindow.dialog('option', 'height', 440);
+          popupWindow.dialog('option', 'width', 800);
+          popupWindow.dialog('option', 'dialogClass', 'popup-window');
+          popupWindow.load('/site/popupWindow', function () {
+              Cufon.replace('#popup-window .cufon');
+          });
+      }
+
+      popupWindow.on('click', '#popup-submit', function () {
+          $(this).hide();
+          submitForm();
       });
-  }
 
-  $('#popup-window').on('click', '#popup-submit', function () {
-      $(this).hide();
-      $('#popup-process').show();
-      var accept = $('#PopupForm_accept').prop('checked') ? 1 : 0;
-      var email = $('#PopupForm_email').val();
-      $.post('/site/popupWindow', {
-          PopupForm: {accept: accept, email: email}
-      }, function (data) {
-          $('#popup-process').hide();
-          var result = JSON && JSON.parse(data) || $.parseJSON(data);
-          switch (result.result) {
-              case 'error':
-                  $('#popup-submit').show();
-                  $('#popup-form').html(result.html);
-                  $('input[type="radio"][class~="error"], input[type="checkbox"][class~="error"]')
-                          .parent()
-                          .css('border', '1px solid #cc3333')
-                          .css('border-radius', '5px')
-                          .css('padding', '4px');
-                  break;
-              case 'exist':
-                  $('#popup-window').dialog('close');
-                  $('#popup-window').dialog('option', 'height', 120);
-                  $('#popup-window').dialog('option', 'width', 310);
-                  $('#popup-window').dialog('option', 'dialogClass', 'popup-email-exist');
-                  $('#popup-window').html(result.html);
-                  $('#popup-window').dialog('open');
-                  timeout_id = setTimeout(function () {
-                      $('#popup-window').dialog('close');
-                      showBottomBar();
-                  }, 5000);
-                  break;
-              case 'register':
-                  $('#popup-body').html(result.html);
-                  $('#popup-window').dialog('option', 'height', 360);
-                  $('#popup-window').dialog('option', 'width', 600);
-                  Cufon.replace('#popup-window .cufon');
-                  $.cookie('popup', '2', {expires: 2592000, path: '/'});
-                  $('#open-login').hide();
-                  $('#profile-link').show();
+      function submitForm() {
+          $('#popup-process').show();
+          var accept = $('#PopupForm_accept').prop('checked') ? 1 : 0;
+          var email = $('#PopupForm_email').val();
+          $.post('/site/popupWindow', {
+              PopupForm: {accept: accept, email: email}
+          }, function (data) {
+              $('#popup-process').hide();
+              var result = JSON && JSON.parse(data) || $.parseJSON(data);
+              switch (result.result) {
+                  case 'error':
+                      $('#popup-submit').show();
+                      $('#popup-form').html(result.html);
+                      $('input[type="radio"][class~="error"], input[type="checkbox"][class~="error"]')
+                              .parent()
+                              .css('border', '1px solid #cc3333')
+                              .css('border-radius', '5px')
+                              .css('padding', '4px');
+                      break;
+                  case 'exist':
+                      popupWindow.dialog('close');
+                      popupWindow.dialog('option', 'height', 120);
+                      popupWindow.dialog('option', 'width', 310);
+                      popupWindow.dialog('option', 'dialogClass', 'popup-email-exist');
+                      popupWindow.html(result.html);
+                      popupWindow.dialog('open');
+                      timeout_id = setTimeout(function () {
+                          popupWindow.dialog('close');
+                          showBottomBar();
+                      }, 5000);
+                      break;
+                  case 'register':
+                      $('#popup-body').html(result.html);
+                      popupWindow.dialog('option', 'height', 360);
+                      popupWindow.dialog('option', 'width', 600);
+                      Cufon.replace('#popup-window .cufon');
+                      $.cookie('popup', '2', {expires: 2592000, path: '/'});
+                      $('#open-login').hide();
+                      $('#profile-link').show();
 //          yaCounter23309737.reachGoal('discount');
-                  break;
-          }
-      });
-  });
+                      break;
+              }
+          });
+      }
 
-  $('.devem').click(function (event) {
-      var l = $(this);
-      if (l.attr('href') !== '#')
-          return;
-      event.preventDefault();
-      var em = 'andriano';
-      em += String.fromCharCode(64);
-      em += 'ngs.ru';
-      l.attr('href', 'mailto:' + em + '?subject=Разработка сайта');
-      l.html(em);
+      $('.devem').click(function (event) {
+          var l = $(this);
+          if (l.attr('href') !== '#')
+              return;
+          event.preventDefault();
+          var em = 'andriano';
+          em += String.fromCharCode(64);
+          em += 'ngs.ru';
+          l.attr('href', 'mailto:' + em + '?subject=Разработка сайта');
+          l.html(em);
+      });
   });
 </script>

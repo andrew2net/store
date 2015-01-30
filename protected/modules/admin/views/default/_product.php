@@ -110,7 +110,7 @@
           'class' => 'display-field',
 //          'style' => 'width:11.5em',
           'id' => 'order-coupon-discount'));
-        echo $model->delivery_summ;
+//        echo money_format('%n', $model->getCouponSumm());
         echo TbHtml::closeTag('div');
         ?>
       </td>

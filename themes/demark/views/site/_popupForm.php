@@ -3,7 +3,7 @@
 /* @var $popup_form PopupForm */
 
 /* @var $form CActiveForm */
-$form = $this->beginWidget('CActiveForm');
+$form = $this->beginWidget('CActiveForm', ['id' => 'popupForm']);
 ?>
 <div style="margin: 10px 0">
     <div style="margin-bottom: 10px">

@@ -467,6 +467,11 @@ class ExchangeController extends CController {
     if ($order->insurance) {
       $orderNode->appendChild($domDoc->createElement('insurance', $order->insuranceSumm));
     }
+    
+    $couponDiscount = $order->getCouponSumm();
+    if ($couponDiscount > 0){
+      $orderNode->appendChild($domDoc->createElement('coupon', $couponDiscount));
+    }
 
     $customerEl = $domDoc->createElement('customer');
     $customerNode = $orderNode->appendChild($customerEl);

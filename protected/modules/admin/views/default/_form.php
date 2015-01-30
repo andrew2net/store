@@ -199,7 +199,7 @@ $this->widget('ext.bootstrap.widgets.TbModal', array(
                   couponSum = noDiscSum > couponDisc ? couponDisc : noDiscSum;
                   break;
               case '1':
-                  couponSum = noDiscSum * couponDisc / 100;
+                  couponSum = Math.round(noDiscSum * couponDisc / 100);
                   break;
           }
           sum -= couponSum;

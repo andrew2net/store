@@ -76,7 +76,7 @@ class CalcDelivery {
         continue;
       }
 
-      if (!self::convertCurrency($delivery->currency_code, $currency->code, $price)) {
+      if (!$currency->convert($delivery->currency_code, $price)) {
         continue;
       }
 
@@ -127,16 +127,6 @@ class CalcDelivery {
             continue 2;
           }
           break;
-//        case Delivery::ZONE_COURIER:
-//        case Delivery::ZONE_SELF:
-//          if ($type == 0) {
-//            $output .= ' (' . $delivery->description . ') ';
-//            break;
-//          }
-//          elseif ($type == 1) {
-//            $list['params'][$delivery_id]['price'] = $price;
-//            $list['options'][$delivery_id] = $delivery->name . ' ' . $delivery->description;
-//          }
         default :
           if ($type == 0) {
             $output .= ' (' . $delivery->description . ') ' .
@@ -533,31 +523,6 @@ class CalcDelivery {
       $currency = Currency::model()->findByCountry(Yii::app()->params['country']);
     }
     return $currency;
-  }
-
-  /**
-   * Convert price to the order currency
-   * @param string $deliveryCurrencyCode
-   * @param string $currencyCode
-   * @param float $price summa to converting
-   * @return boolean return false if currency rate is not found
-   */
-  private static function convertCurrency($deliveryCurrencyCode, $currencyCode, &$price) {
-    if ($deliveryCurrencyCode != $currencyCode) {
-      $curency_rate = CurrencyRate::model()->getRate($deliveryCurrencyCode, $currencyCode)->find();
-      /* @var $curency_rate CurrencyRate */
-      if ($curency_rate)
-        $price = round($price * $curency_rate->rate * $curency_rate->to_quantity / $curency_rate->from_quantity);
-      else {
-        $curency_rate = CurrencyRate::model()->getRate($currencyCode, $deliveryCurrencyCode)->find();
-        if ($curency_rate)
-          $price = round($price * $curency_rate->from_quantity / $curency_rate->rate / $curency_rate->to_quantity);
-        else
-          return false;
-      }
-    } else
-      $price = round($price);
-    return true;
   }
 
   private static function makeParcel(&$items, Volume &$volume, &$delivery) {

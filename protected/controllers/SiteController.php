@@ -138,14 +138,32 @@ class SiteController extends Controller {
 
   public function actionAddToCart() {
     Yii::import('application.modules.catalog.models.Price');
+    Yii::import('application.modules.catalog.models.Product');
+    Yii::import('application.modules.payments.models.Currency');
+
+    $id = filter_input(INPUT_POST, 'id');
+    $quantity = filter_input(INPUT_POST, 'quantity');
 
     $old_price_type = Price::getPrice();
-    self::addToCart($_POST['id'], $_POST['quantity']);
+    self::addToCart($id, $quantity);
     $new_price_type = Price::getPrice();
     $result = array('refresh' => $old_price_type != $new_price_type);
     $result['cart'] = $this->cartLabel();
-    if ($new_price_type)
+    if ($new_price_type) {
       $result['price'] = 'Установлена цена "' . $new_price_type->name . '"';
+    }
+
+    $profile = ProfileController::getProfile();
+    $product = \Product::model()->findByAttributes(['id' => $id]);
+    $currency = Currency::model()->findByAttributes(['country_code' => $profile->price_country]);
+    $value = $product->getPrice($new_price_type, $currency->code) *
+      (1 - $product->getActualDiscount() / 100) * $quantity;
+    if ($profile->price_country != 'RU'){
+      $currencyTo = Currency::model()->findByAttributes(['country_code' => 'RU']);
+      $currencyTo->convert($currency->code, $value);
+    }
+    $result['value'] = $value;
+
     echo json_encode($result);
     Yii::app()->end();
   }
@@ -324,7 +342,7 @@ class SiteController extends Controller {
     Yii::import('application.controllers.ProfileController');
     Yii::import('application.modules.user.models.Profile');
     Yii::import('application.modules.user.models.User');
-    
+
     $popup_form = new PopupForm();
 
     if (isset($_POST['PopupForm'])) {
@@ -362,7 +380,7 @@ class SiteController extends Controller {
           $coupon = new Coupon;
           $coupon->generateCode();
           $coupon->type_id = 1;
-          $coupon->value = 5;
+          $coupon->value = Yii::app()->params['popupWindow']['discount'];
           $coupon->used_id = 0;
           $coupon->date_limit = date('d.m.Y', strtotime('+5 days'));
           if ($coupon->save()) {

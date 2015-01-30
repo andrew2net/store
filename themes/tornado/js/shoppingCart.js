@@ -309,6 +309,7 @@ $(document).ready(function () {
         }
         calcRow(this);
         calcCartSumm();
+        calcTotal();
         changeCart(id, quantity);
     });
 

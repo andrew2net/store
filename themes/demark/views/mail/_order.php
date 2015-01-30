@@ -72,7 +72,8 @@ if ($order->insurance) {
   echo CHtml::tag('td', array('style' => 'text-align:right;border-left:1px solid'), money_format('%n', $insuranceSumm));
   echo CHtml::closeTag('tr');
 }
-if ($couponSumm = $order->getCouponSumm() > 0) {
+$couponSumm = $order->getCouponSumm();
+if ($couponSumm > 0) {
   $total -= $couponSumm;
   echo CHtml::tag('tr', array('style' => 'border:2px solid'));
   echo CHtml::tag('td', array('colspan' => 4, 'style' => 'text-align:right'), 'Скидка по купону:');

@@ -284,7 +284,7 @@ class Order extends CActiveRecord {
         $couponSumm = $this->coupon->value < $this->notDiscountSumm ? $this->coupon->value : $this->notDiscountSumm;
         break;
       case 1:
-        $couponSumm = $this->notDiscountSumm * $this->coupon->value / 100;
+        $couponSumm = round($this->notDiscountSumm * $this->coupon->value / 100);
     }
     return $couponSumm;
   }

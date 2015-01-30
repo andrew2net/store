@@ -49,36 +49,36 @@ class CartController extends Controller {
         'code' => $_POST['coupon'])
         , "used_id<>2 AND (date_limit>=:date OR date_limit IS NULL OR date_limit='0000-00-00')"
         , array(':date' => date('Y-m-d')));
-      if ($coupon){
+      if ($coupon) {
         $coupon_data = array(
           'code' => $coupon->code,
           'type' => $coupon->type_id,
           'value' => $coupon->value
         );
       }
-    } else{
+    } else {
       $coupon = NULL;
     }
 
     $has_err = 'no';
 
-    if (!Yii::app()->params['country']){
-      if (isset($_POST['CustomerProfile']['post_code']) && !isset($_POST['login'])){
+    if (!Yii::app()->params['country']) {
+      if (isset($_POST['CustomerProfile']['post_code']) && !isset($_POST['login'])) {
         $country_code = $_POST['CustomerProfile']['country_code'];
-      }else{
+      } else {
         $country_code = $customer_profile->price_country;
       }
-    }else{
+    } else {
       $country_code = Yii::app()->params['country'];
     }
 
-    if (Yii::app()->params['post_code']){
-      if (isset($_POST['CustomerProfile']['post_code']) && !isset($_POST['login'])){
+    if (Yii::app()->params['post_code']) {
+      if (isset($_POST['CustomerProfile']['post_code']) && !isset($_POST['login'])) {
         $post_code = $_POST['CustomerProfile']['post_code'];
-      }else{
+      } else {
         $post_code = $customer_profile->post_code;
       }
-    }else{
+    } else {
       $post_code = '';
     }
 
@@ -86,7 +86,7 @@ class CartController extends Controller {
     if (isset($_POST['Order'])) {
       $order->attributes = $_POST['Order'];
       Yii::app()->user->setState('delivery_id', (int) $order->delivery_id);
-      if (isset($_POST['Order']['customer_delivery'])){
+      if (isset($_POST['Order']['customer_delivery'])) {
         Yii::app()->user->setState('customer_delivery', $order->customer_delivery);
       }
     }
@@ -109,7 +109,7 @@ class CartController extends Controller {
           $customer_profile->city_l = $_POST['CustomerProfile']['city_l'];
           $city = $customer_profile->city_l;
         }
-        if (isset($_POST['CustomerProfile']['other_city'])){
+        if (isset($_POST['CustomerProfile']['other_city'])) {
           $customer_profile->other_city = $_POST['CustomerProfile']['other_city'];
         }
       }
@@ -245,9 +245,11 @@ class CartController extends Controller {
     if ($customer_profile->entity_id == 1) {
       $field = ProfileField::model()->findByAttributes(array('varname' => 'legal_form'));
       $legal_forms = Profile::range($field->range);
-      $order->fio = $legal_forms[$profile->legal_form] . ' ' . $profile->entity_name;
-    } else
+      $order->fio = strlen($profile->entity_name) > 0 ? $legal_forms[$profile->legal_form] . ' ' . $profile->entity_name :
+        $profile->first_name . ' ' . $profile->last_name;
+    } else{
       $order->fio = $profile->first_name . ' ' . $profile->last_name;
+    }
 
     $order->email = $user->email;
     $order->phone = $customer_profile->phone;
@@ -263,12 +265,16 @@ class CartController extends Controller {
 
     //don't allow pay by cash if not self delivery
     if ($order->delivery->zone_type_id == Delivery::ZONE_SELF &&
-      $order->payment->type_id != Payment::TYPE_BANK && 
+      $order->payment->type_id != Payment::TYPE_BANK &&
       $order->payment->type_id != Payment::TYPE_CAHSH) {
       $order->payment_id = Payment::model()->findByAttributes([
           'type_id' => Payment::TYPE_CAHSH,
           'currency_code' => $order->currency_code,
         ])->id;
+    }
+
+    if ($order->delivery->insurance == 0) {
+      $order->insurance = FALSE;
     }
 
     if ($coupon && $count_products['couponDisc'])
