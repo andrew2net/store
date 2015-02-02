@@ -71,24 +71,25 @@ $(document).ready(function () {
         cartDiscount.attr('summ', discountSumm);
     }
 
+    var summTotal;
     function calcTotal() {
         var delivery = $('#cart-delivery input:checked + label > span');
         var priceDelivery = parseFloat(delivery.attr('data-price'));
-        var summ = parseFloat(cartSumm.attr('summ'));
+        summTotal = parseFloat(cartSumm.attr('summ'));
         if (!isNaN(priceDelivery)) {
             if (insurance.find('input[type="checkbox"]:checked').length > 0) {
-                summ += parseFloat(delivery.attr('data-insurance'));
+                 summTotal += parseFloat(delivery.attr('data-insurance'));
             }
             var price_f = priceDelivery.formatMoney();
             $('#delivery-summ').html(price_f);
-            $('#cart-total').html((priceDelivery + summ).formatMoney());
-            if (summ >= minsumm)
+            $('#cart-total').html((priceDelivery +  summTotal).formatMoney());
+            if ( summTotal >= minsumm)
                 cartSubmit.show();
         }
         else {
             $('#delivery-summ').html('');
             cartSubmit.hide();
-            $('#cart-total').html(summ.formatMoney());
+            $('#cart-total').html( summTotal.formatMoney());
         }
     }
 
@@ -108,7 +109,12 @@ $(document).ready(function () {
                 if (!isNaN(priceDelivery))
                     summ += priceDelivery;
                 yaCounter26247687.reachGoal('CREATEORDER', {price: summ});
-                ga('send', 'event', 'order', 'click');
+                ga('send', {
+                    'hitType': 'event',
+                    'eventCategory': 'order',
+                    'eventAction': 'createorder',
+                    'eventValue': summTotal
+                });
                 $('form').submit();
             } else {
                 cartProc.hide();

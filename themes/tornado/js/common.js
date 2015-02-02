@@ -64,6 +64,12 @@ $(document).ready(function () {
         },
         function (data) {
             var result = $.parseJSON(data);
+            ga('send', {
+                'hitType':'event',
+                'eventCategory':'order',
+                'eventAction':'addtocart',
+                'eventValue': result.value
+            });
             var img = parent.parent().find('.img-anim');
             if (!img.length)
                 img = $('.img-anim');
