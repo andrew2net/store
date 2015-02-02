@@ -6,12 +6,17 @@
 <div id="popup-body">
     <div class="inline-blocks">
         <div style="width: 365px; text-align: center; margin: 0 10px">
+            <!--[if lt IE 9]>
+            <div class="bold" style="font-size: 18pt">Зарегистрируйтесь на нашем</div>
+            <div class="bold" style="font-size: 18pt; margin-top: 10px">сайте и получите скидку</div>
+            <div class="red bold" style="font-size: 120pt"><?php echo Yii::app()->params['popupWindow']['discount']; ?>%</div>
+            <div class="cufon bold" style="font-size: 18pt">на первую покупку</div>
+            <![endif]-->
             <div class="cufon bold" style="font-size: 18pt">Зарегистрируйтесь на нашем</div>
             <div class="cufon bold" style="font-size: 18pt; margin-top: 10px">сайте и получите скидку</div>
             <div class="cufon red bold" style="font-size: 120pt"><?php echo Yii::app()->params['popupWindow']['discount']; ?>%</div>
             <!--<div class="cufon red bold" style="font-size: 72pt">рублей</div>-->
             <div class="cufon bold" style="font-size: 18pt">на первую покупку</div>
-            <!--<div class="cufon gray">Так же мы будем рекомендовать только те игрушки которые будут интересны вашему ребенку.</div>-->
         </div>
         <div style="vertical-align: top; position: relative">
             <div style="height: 240px">
