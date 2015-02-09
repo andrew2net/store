@@ -538,12 +538,14 @@ class ExchangeController extends CController {
     Yii::import('application.modules.catalog.models.Price');
 
     $order = Order::model()->findByPk((int) $xml->id);
-    Yii::log("Order $xml->id" . is_null($order), CLogger::LEVEL_INFO, '1c_exchange');
+    Yii::log("Order $xml->id", CLogger::LEVEL_INFO, '1c_exchange');
     /* @var $order Order */
     if (!$order) {
       Yii::log("Order find false", CLogger::LEVEL_INFO, '1c_exchange');
       return FALSE;
     }
+
+    Yii::log("Status $order->status; $xml->status", CLogger::LEVEL_INFO, '1c_exchange');
 
     $old_status = $order->status_id;
 
