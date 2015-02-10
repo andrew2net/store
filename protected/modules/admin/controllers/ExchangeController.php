@@ -545,7 +545,7 @@ class ExchangeController extends CController {
       return FALSE;
     }
 
-    Yii::log("Status $order->status; $xml->status", CLogger::LEVEL_INFO, '1c_exchange');
+    Yii::log("Status $order->status_id; $xml->status", CLogger::LEVEL_INFO, '1c_exchange');
 
     $old_status = $order->status_id;
 
