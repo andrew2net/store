@@ -536,6 +536,7 @@ class ExchangeController extends CController {
     Yii::import('application.modules.admin.models.Mail');
     Yii::import('application.modules.admin.models.MailOrder');
     Yii::import('application.modules.catalog.models.Price');
+    Yii::import('application.modules.catalog.models.Product');
 
     $order = Order::model()->findByPk((int) $xml->id);
     Yii::log("Order $xml->id", CLogger::LEVEL_INFO, '1c_exchange');
@@ -557,9 +558,12 @@ class ExchangeController extends CController {
       if (isset($xml->delivery_summ))
         $order->delivery_summ = (float) $xml->delivery_summ;
 
+      Yii::log("Before save", CLogger::LEVEL_INFO, '1c_exchange');
       $order->save();
+      Yii::log("After save", CLogger::LEVEL_INFO, '1c_exchange');
 
       $price_type = Price::getPrice($xml->products->product, $order->profile->user_id);
+      Yii::log("After get price", CLogger::LEVEL_INFO, '1c_exchange');
 
       $product_ids = array();
       foreach ($xml->products->product as $p) {
@@ -592,11 +596,13 @@ class ExchangeController extends CController {
             }
             if ($save) {
               $orderProduct->save();
-              Yii::log("Save order $order->id", CLogger::LEVEL_INFO, '1c_exchange');
+              Yii::log("Save orderProduct $orderProduct->product_id", CLogger::LEVEL_INFO, '1c_exchange');
             }
           }
-        } else
+        } else {
+          Yii::log("Product not found $p->code", CLogger::LEVEL_INFO, '1c_exchange');
           throw new Exception('Product not found. Product code: ' . $p->code);
+        }
       }
 
       $p_ids = implode(',', $product_ids);
