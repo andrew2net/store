@@ -467,9 +467,9 @@ class ExchangeController extends CController {
     if ($order->insurance) {
       $orderNode->appendChild($domDoc->createElement('insurance', $order->insuranceSumm));
     }
-    
+
     $couponDiscount = $order->getCouponSumm();
-    if ($couponDiscount > 0){
+    if ($couponDiscount > 0) {
       $orderNode->appendChild($domDoc->createElement('coupon', $couponDiscount));
     }
 
@@ -590,8 +590,10 @@ class ExchangeController extends CController {
               $orderProduct->discount = $price - $orderProduct->price;
               $save = TRUE;
             }
-            if ($save)
+            if ($save) {
               $orderProduct->save();
+              Yii::log("Save order $order->id", CLogger::LEVEL_INFO, '1c_exchange');
+            }
           }
         } else
           throw new Exception('Product not found. Product code: ' . $p->code);
