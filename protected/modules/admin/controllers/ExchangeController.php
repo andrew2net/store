@@ -618,7 +618,9 @@ class ExchangeController extends CController {
       OrderProduct::model()->deleteAllByAttributes(array('order_id' => $order->id), "product_id NOT IN ($p_ids)");
 
       if ($old_status != $order->status_id) {
+        Yii::log("Before mail", CLogger::LEVEL_INFO, '1c_exchange');
         $mail = new Mail;
+        Yii::log("After mail", CLogger::LEVEL_INFO, '1c_exchange');
         $mail->uid = $order->profile->user_id;
         $mail->type_id = 4;
         $mail->status_id = 1;
@@ -630,7 +632,9 @@ class ExchangeController extends CController {
         }
       }
 
+      Yii::log("Before commit", CLogger::LEVEL_INFO, '1c_exchange');
       $tr->commit();
+      Yii::log("After commit", CLogger::LEVEL_INFO, '1c_exchange');
     } catch (Exception $e) {
       $tr->rollback();
       Yii::log($e->getMessage() . $e->getTraceAsString(), CLogger::LEVEL_ERROR, '1c_exchange');
