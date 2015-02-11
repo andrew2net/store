@@ -8,7 +8,7 @@ if (count($top10)) {
   ?>
   <div class="blue bold" style="font-size: 16pt; margin-bottom: 10px">Лидеры продаж</div>
   <div style="position: relative">
-    <div class="top10carousel" style="padding: 15px 0 0 15px">
+    <div class="top10carousel" style="padding: 15px 0 0">
       <ul>
         <?php foreach ($top10 as $value) { ?>
           <li>
