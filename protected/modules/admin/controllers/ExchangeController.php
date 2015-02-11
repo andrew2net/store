@@ -603,8 +603,9 @@ class ExchangeController extends CController {
               $save = TRUE;
             }
             if ($save) {
+              Yii::log("Before save orderProduct $orderProduct->product_id", CLogger::LEVEL_INFO, '1c_exchange');
               $orderProduct->save();
-              Yii::log("Save orderProduct $orderProduct->product_id", CLogger::LEVEL_INFO, '1c_exchange');
+              Yii::log("After save orderProduct $orderProduct->product_id", CLogger::LEVEL_INFO, '1c_exchange');
             }
           }
         } else {
