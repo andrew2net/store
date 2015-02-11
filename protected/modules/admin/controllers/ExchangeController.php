@@ -567,16 +567,16 @@ class ExchangeController extends CController {
 
       $product_ids = array();
       foreach ($xml->products->product as $p) {
-        Yii::log("Before get product", CLogger::LEVEL_INFO, '1c_exchange');
+//        Yii::log("Before get product", CLogger::LEVEL_INFO, '1c_exchange');
         $product = Product::model()->findByAttributes(array('code' => (string) $p->code));
-        Yii::log("After get product", CLogger::LEVEL_INFO, '1c_exchange');
+//        Yii::log("After get product", CLogger::LEVEL_INFO, '1c_exchange');
         /* @var $product Product */
         if ($product) {
-          Yii::log("Product found", CLogger::LEVEL_INFO, '1c_exchange');
+//          Yii::log("Product found", CLogger::LEVEL_INFO, '1c_exchange');
           $product_ids[] = $product->id;
-          Yii::log("Before get orderProduct", CLogger::LEVEL_INFO, '1c_exchange');
+//          Yii::log("Before get orderProduct", CLogger::LEVEL_INFO, '1c_exchange');
           $orderProduct = OrderProduct::model()->findByPk(array('order_id' => $order->id, 'product_id' => $product->id));
-          Yii::log("After get orderProduct", CLogger::LEVEL_INFO, '1c_exchange');
+//          Yii::log("After get orderProduct", CLogger::LEVEL_INFO, '1c_exchange');
           /* @var $orderProduct OrderProduct */
           if (!$orderProduct) {
             Yii::log("OrderProduct not found, create new", CLogger::LEVEL_INFO, '1c_exchange');
