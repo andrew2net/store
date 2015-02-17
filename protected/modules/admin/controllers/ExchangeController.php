@@ -360,7 +360,8 @@ class ExchangeController extends CController {
     $category = array_diff_key($category, $item);
     $model = Category::model()->findByAttributes(array('code' => $item[$key][0]));
     if (!$model) {
-      $model = Category::model()->findByAttributes(array('name' => $item[$key][2]));
+        return FALSE;
+//      $model = Category::model()->findByAttributes(array('name' => $item[$key][2]));
     }
     if ($model) {
       if (!$item[$key][2]) {
