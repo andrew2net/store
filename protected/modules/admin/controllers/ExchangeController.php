@@ -346,7 +346,7 @@ class ExchangeController extends CController {
       }
 
       while ($item = each($category)) {
-        $this->saveCategory(array($item['key'] => $item['value']), $category, $resultDOM, $resultRootNode);
+        $this->saveCategory([$item['key'] => $item['value']], $category, $resultDOM, $resultRootNode);
       }
     } catch (Exception $e) {
       Yii::trace($e->getMessage() . $e->getTraceAsString(), '1c_exchange');
@@ -356,7 +356,8 @@ class ExchangeController extends CController {
 
   private function saveCategory($item, &$category, DOMDocument &$DOMdoc, DOMNode &$node) {
     $key = key($item);
-//    Yii::trace($item[$key][2], 'exchange');
+    if ($item[$key][2] == '00000173666')
+        Yii::log($item[$key][2], CLogger::LEVEL_INFO, 'cat_exch');
     $category = array_diff_key($category, $item);
     $model = Category::model()->findByAttributes(array('code' => $item[$key][0]));
 //    if (!$model) {
