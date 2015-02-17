@@ -356,8 +356,8 @@ class ExchangeController extends CController {
 
   private function saveCategory($item, &$category, DOMDocument &$DOMdoc, DOMNode &$node) {
     $key = key($item);
-    if ($item[$key][2] == '00000173666')
-        Yii::log($item[$key][2], CLogger::LEVEL_INFO, 'cat_exch');
+    if ($item[$key][0] == '00000173666' || $item[$key] == '00000173665')
+        Yii::log("{$item[$key][0]} {$item[$key][2]}", CLogger::LEVEL_INFO, 'cat_exch');
     $category = array_diff_key($category, $item);
     $model = Category::model()->findByAttributes(array('code' => $item[$key][0]));
 //    if (!$model) {
@@ -368,6 +368,8 @@ class ExchangeController extends CController {
         return $model->deleteNode();
       }
     } else {
+      if ($item[$key][0] == '00000173666' || $item[$key] == '00000173665')
+        Yii::log("New", CLogger::LEVEL_INFO, 'cat_exch');
       $model = new Category;
     }
     $model->name = $item[$key][2];
@@ -375,6 +377,8 @@ class ExchangeController extends CController {
     if ($this->saveParent($model, $item[$key], $category, $DOMdoc, $node)) {
       $this->validate($model->name, $model, $DOMdoc, $node);
       if ($model->saveNode()) {
+        if ($item[$key][0] == '00000173666' || $item[$key] == '00000173665')
+          Yii::log("Saved", CLogger::LEVEL_INFO, 'cat_exch');
         return $model;
       }
     }
@@ -390,8 +394,17 @@ class ExchangeController extends CController {
     return FALSE;
   }
 
+  /**
+   * Save parent category
+   * @param Category $model
+   * @param array $item array [code, perent_code, name]
+   * @param array $category
+   * @param DOMDocument $DOMdoc
+   * @param DOMNode $node
+   * @return boolean|\Category
+   */
   private function saveParent(Category $model, $item, &$category, DOMDocument &$DOMdoc, DOMNode &$node) {
-    if ($item[1]) {
+    if ($item[1]) { //if has parent
       $parent_key = $this->category_parent_search($item[1], $category);
       if ($parent_key) {
         $result = $this->saveCategory($parent_key, $category, $DOMdoc, $node);
@@ -399,13 +412,19 @@ class ExchangeController extends CController {
         $result = Category::model()->findByAttributes(array('code' => $item[1]));
       }
       if ($result instanceof Category) {
+        if ($item[$key][0] == '00000173666' || $item[$key] == '00000173665')
+          Yii::log("Find parent", CLogger::LEVEL_INFO, 'cat_exch');
         if ($model->isNewRecord) {
+          if ($item[$key][0] == '00000173666' || $item[$key] == '00000173665')
+            Yii::log("Save category", CLogger::LEVEL_INFO, 'cat_exch');
           $this->validate($model->name, $model, $DOMdoc, $node);
           return $result->append($model);
 //          return $model;
         }
         $parent = $model->getParent();
         if (!$parent || $result->code != $parent->code) {
+          if ($item[$key][0] == '00000173666' || $item[$key] == '00000173665')
+            Yii::log("Move category", CLogger::LEVEL_INFO, 'cat_exch');
           return $model->moveAsLast($result);
 //          return $model;
         }
