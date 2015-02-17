@@ -359,10 +359,9 @@ class ExchangeController extends CController {
 //    Yii::trace($item[$key][2], 'exchange');
     $category = array_diff_key($category, $item);
     $model = Category::model()->findByAttributes(array('code' => $item[$key][0]));
-    if (!$model) {
-        return FALSE;
+//    if (!$model) {
 //      $model = Category::model()->findByAttributes(array('name' => $item[$key][2]));
-    }
+//    }
     if ($model) {
       if (!$item[$key][2]) {
         return $model->deleteNode();
