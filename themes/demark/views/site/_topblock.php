@@ -11,7 +11,7 @@
                   if (is_array($phone)) {
                     ?>
                     <div>
-                        <span class="bold" style="vertical-align: middle; font-size: 25pt"><?php echo $phone['cod']; ?></span>
+                        <span class="bold" style="vertical-align: middle; font-size: 20pt"><?php echo $phone['cod']; ?></span>
                         <span class="blue bold" style="font-size: 25pt; vertical-align: middle"><?php echo $phone['num']; ?></span>
                     </div>
                     <?php
