@@ -50,7 +50,7 @@ $groups = Category::model()->roots()->findAll();
                             <?php } ?>
                         </div>
                         <div class="table-cell">
-                            <div class="bold" style="height: 2.5em">Звоните</div>
+                            <div class="bold" style="height: 2.5em">Звоните, заказывайте</div>
                             <div>
                                 <?php
                                 foreach (Yii::app()->params['enterprise']['phone'] as $phone) {
