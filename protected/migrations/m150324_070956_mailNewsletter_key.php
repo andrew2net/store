@@ -4,7 +4,7 @@ class m150324_070956_mailNewsletter_key extends CDbMigration
 {
 	public function up()
 	{
-      $this->addPrimaryKey('pk_mail_newsletter', 'store_mail_newsletter', ['mail_id', 'newsletter_id']);
+      $this->addPrimaryKey('pk_mail_newsletter', 'store_mail_newsletter', 'mail_id, newsletter_id');
 	}
 
 	public function down()
