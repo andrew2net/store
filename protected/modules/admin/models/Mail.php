@@ -6,21 +6,25 @@
  * The followings are the available columns in table 'store_mail':
  * @property string $id
  * @property integer $uid if 0 send notify to email from app options
- * @property string $type_id 1 - registration; 2 - recovery password; 3 - confirm order; 4 - change order status; 5 - new order notify; 8 - send coupon
+ * @property string $type_id 1 - registration; 2 - recovery password; 3 - confirm order; 4 - change order status;
+ *                           5 - new order notify; 6 - send coupon; 7 - send newsletter
+ * 
  * @property string $status_id 1 - not sent; 2 - sent
  * @property string $made_time 
  * @property string $sent_time 
  *
  * The followings are the available model relations:
  * @property MailOrder[] $mailOrders
- * @property Order $order 
+ * @property Order[] $order 
+ * @property Newsletter[] $newsletter 
  * @property User $user 
  */
 class Mail extends CActiveRecord {
 
   const TYPE_REGISTRATION = 1, TYPE_RECOVERY_PASSWORD = 2, TYPE_CONFIRM_ORDER = 3,
-      TYPE_CHANGE_ORDER_STATUS = 4, TYPE_NEW_ORDER_NOTIFY = 5, TYPE_SEND_COUPON = 6,
-      STATUS_NOT_SENT = 1, STATUS_SENT = 2;
+    TYPE_CHANGE_ORDER_STATUS = 4, TYPE_NEW_ORDER_NOTIFY = 5, TYPE_SEND_COUPON = 6,
+    TYPE_SEND_NEWSLETTER = 7,
+    STATUS_NOT_SENT = 1, STATUS_SENT = 2;
 
   /**
    * @return string the associated database table name
@@ -57,6 +61,7 @@ class Mail extends CActiveRecord {
     return array(
       'mailOrders' => array(self::HAS_MANY, 'MailOrder', 'mail_id'),
       'order' => array(self::MANY_MANY, 'Order', 'store_mail_order(mail_id, order_id)'),
+      'newsletter' => array(self::MANY_MANY, 'Newsletter', 'store_mail_newsletter(mail_id, newsletter_id)'),
       'user' => array(self::BELONGS_TO, 'User', 'uid'),
     );
   }

@@ -377,3 +377,40 @@ fieldset legend{
 #order-table .tab-content, #order-table .tab-content .tab-pane{
     overflow: visible;
 }
+.image-thumbnail{
+    margin-top: 4px;
+    position: relative;
+    height: 140px;
+    width: 193px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    text-align: center;
+    line-height: 135px;
+}
+.image-thumbnail > canvas{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+.btn.remove-img{
+    display: none;
+    width: 170px;
+}
+.btn.remove-img, .btn.fileinput-button{
+    line-height: 15px;
+}
+.fileinput-button > input[type="file"]{
+    margin: 0;
+}
+.image-thumbnail > img{
+    max-height: 100%;
+}
+.remove-block{
+    margin-top: 80px;
+}
+.send-newsletter{
+    cursor: pointer;
+}

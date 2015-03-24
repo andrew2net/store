@@ -14,6 +14,8 @@ class MinutelyCommand extends CConsoleCommand {
     Yii::import('application.models.Pay');
     Yii::import('application.models.OrderProduct');
     Yii::import('application.models.CustomerProfile');
+//    Yii::import('application.models.Newsletter');
+//    Yii::import('application.models.NewsletterBlock');
     Yii::import('application.modules.catalog.models.Product');
     Yii::import('application.modules.user.models.User');
     Yii::import('application.modules.user.models.Profile');
@@ -72,7 +74,36 @@ class MinutelyCommand extends CConsoleCommand {
           $params['order'] = $mail->order[0];
           $message->setSubject('Оповещение о заказе');
           break;
+//        case Mail::TYPE_SEND_NEWSLETTER:
+//          $imagepath = dirname(Yii::app()->getBasePath()) . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR .
+//            Yii::app()->params['img_storage'] . DIRECTORY_SEPARATOR . 'newsletter' . DIRECTORY_SEPARATOR;
+//
+//          $logo = Swift_Image::fromPath(dirname(Yii::app()->getBasePath()) . '/themes/' . 
+//            Yii::app()->params['img_storage'] . '/img/logo.png');
+//          $imageIds['logo'] = $message->embed($logo);
+//          $imageIds['blocks'] = [];
+//          foreach ($mail->newsletter[0]->newsletterBlocks as $key => $block) {
+//            if (!$block->image) {
+//              continue;
+//            }
+//            $image = Swift_Image::fromPath($imagepath . $block->image);
+//            $imageIds['blocks'][$key] = $message->embed($image);
+//          }
+//
+//          if ($mail->newsletter[0]->send_price) {
+//            $price = Swift_Attachment::fromPath(dirname(Yii::app()->getBasePath()) . '/uploads/' .
+//              Yii::app()->params['img_storage'] . '/price.xls');
+//            $message->attach($price);
+//          }
+//
+//          $params['imageIds'] = $imageIds;
+//          $params['profile'] = $mail->user->profile;
+//          $params['newsletter'] = $mail->newsletter[0];
+//          $message->view = 'newsletter';
+//          $message->setSubject($mail->newsletter[0]->subject);
+//          break;
       }
+
       $message->setBody($params, 'text/html');
       $n = Yii::app()->mail->send($message);
       if ($n) {
@@ -85,8 +116,7 @@ class MinutelyCommand extends CConsoleCommand {
               Yii::log($err, CLogger::LEVEL_INFO, 'cron');
             }
           }
-        }
-        else
+        } else
           $mail->save();
       }
     }

@@ -60,6 +60,12 @@
             Yii::app()->user->checkAccess('delivery.delivery.*') ||
             Yii::app()->user->checkAccess('delivery.region.*')
           ),
+          [
+            'label' => 'Рассылки',
+            'url' => '/admin/newsletter',
+            'active' => $this instanceof NewsletterController,
+            'visble' => Yii::app()->user->checkAccess('admin.newsletter.*'),
+          ],
           array(
             'label' => 'Пользователи',
             'url' => '/admin/user',

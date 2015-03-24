@@ -41,6 +41,7 @@ class ProfileController extends Controller {
       try {
         $valid = true;
         $profile->attributes = $_POST['Profile'];
+        $profile->newsletter = $_POST['Profile']['newsletter'];
         $valid = $profile->save() && $valid;
         $user->email = $_POST['User']['email'];
         $valid = $user->save() && $valid;

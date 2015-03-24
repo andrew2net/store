@@ -74,12 +74,11 @@
       <div><?php echo $form->emailField($user, 'email', array('style' => 'width:150px')); ?></div>
       <?php echo $form->error($user, 'email', array('class' => 'red')); ?>
     </div>
-    <div style="width: 160px">
-      <div><?php echo $form->labelEx($customer_profile, 'phone'); ?></div>
-      <div><?php echo $form->telField($customer_profile, 'phone', array('style' => 'width:150px')); ?></div>
-      <?php echo $form->error($customer_profile, 'phone', array('class' => 'red')); ?>
+     <div style="width: 160px">
+      <?php echo $form->checkBox($profile, 'newsletter'); ?>
+      <?php echo $form->labelEx($profile, 'newsletter', ['style' => 'top:20px']); ?>
     </div>
-  </div>
+ </div>
   <div class="inline-blocks" style="margin-bottom: 20px">
     <!--      <div style="width: 250px">
             <div><?php // echo $form->labelEx($customer_profile, 'post_code');                        ?></div>
@@ -108,6 +107,11 @@
       <div><?php echo $form->labelEx($customer_profile, 'address'); ?></div>
       <div><?php echo $form->textField($customer_profile, 'address', array('style' => 'width:405px')); ?></div>
       <?php echo $form->error($customer_profile, 'address', array('class' => 'red')); ?>
+    </div>
+    <div style="width: 160px">
+      <div><?php echo $form->labelEx($customer_profile, 'phone'); ?></div>
+      <div><?php echo $form->telField($customer_profile, 'phone', array('style' => 'width:150px')); ?></div>
+      <?php echo $form->error($customer_profile, 'phone', array('class' => 'red')); ?>
     </div>
   </div>
   <div class="inline-blocks" style="margin-bottom: 10px">
