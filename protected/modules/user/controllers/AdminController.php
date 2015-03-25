@@ -12,7 +12,7 @@ class AdminController extends Controller {
    */
   public function filters() {
     return CMap::mergeArray(parent::filters(), array(
-          array('auth.filters.AuthFilter'),
+        array('auth.filters.AuthFilter'),
 //			'accessControl', // perform access control for CRUD operations
     ));
   }
@@ -78,6 +78,9 @@ class AdminController extends Controller {
     $this->performAjaxValidation(array($model, $profile));
     if (isset($_POST['User'])) {
       $model->attributes = $_POST['User'];
+      $model->username = $_POST['User']['username'];
+      $model->email = $_POST['User']['email'];
+      $model->usernameGenerator();
       $model->activkey = Yii::app()->controller->module->encrypting(microtime() . $model->password);
       $profile->attributes = $_POST['Profile'];
       $profile->user_id = 0;
@@ -89,8 +92,7 @@ class AdminController extends Controller {
           $customer_profile->save(false);
         }
         $this->redirect(array('/admin/user')); //,'id'=>$model->id));
-      }
-      else
+      } else
         $profile->validate();
     }
 
@@ -112,6 +114,9 @@ class AdminController extends Controller {
 
     $customer_profile = CustomerProfile::model()->findByAttributes(array('user_id' => $model->id));
     /* @var $customer_profile CustomerProfile */
+    if (!$customer_profile){
+      $customer_profile = new CustomerProfile;
+    }
 
     $this->performAjaxValidation(array($model, $profile));
     if (isset($_POST['User'])) {
@@ -130,8 +135,7 @@ class AdminController extends Controller {
         $profile->save();
         $customer_profile->save();
         $this->redirect(array('/admin/user')); //,'id'=>$model->id));
-      }
-      else
+      } else
         $profile->validate();
     }
 
@@ -158,8 +162,7 @@ class AdminController extends Controller {
       // if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
       if (!isset($_POST['ajax']))
         $this->redirect(array('/user/admin'));
-    }
-    else
+    } else
       throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
   }
 

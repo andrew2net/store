@@ -194,12 +194,14 @@ class User extends CActiveRecord {
   }
 
   public function usernameGenerator() {
-
+    if($this->username && !User::model()->findByAttributes(['username' => $this->username])){
+      return;
+    }
     $matches = array();
     preg_match('/[A-Za-z0-9_]+/u', str_replace('-', '_', $this->email), $matches);
     $this->username = $matches[0];
     $n = 1;
-    while (!$this->validate('username') && $n < 1000) {
+    while (User::model()->findByAttributes(['username' => $this->username]) && $n < 1000) {
       $err = $this->getErrors();
       $this->username = $matches[0] . '_' . $n;
       $n += 1;
@@ -230,4 +232,8 @@ class User extends CActiveRecord {
     parent::afterFind();
   }
 
+  protected function afterConstruct() {
+    $this->status = 1;
+    parent::afterConstruct();
+  }
 }
