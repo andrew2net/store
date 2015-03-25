@@ -77,3 +77,4 @@ $cs->registerScriptFile('/js/newsLetter.js');
     <?php $this->endWidget(); ?>
 
 </div><!-- form -->
+<div class="loading"></div>

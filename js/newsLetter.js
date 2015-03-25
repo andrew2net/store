@@ -59,11 +59,10 @@ $(function () {
         p.find('input[type="hidden"]').val('d');
     });
 
-//    $('button[type="submit"]').click(function (event) {
+    $('button[type="submit"]').click(function (event) {
 //        event.preventDefault();
-//        var a = $('input[type="file"]').fileupload('active');
-//        
-//    });
+        $('div.loading').show();
+    });
 
     var blocks = $('#blocks');
     var nextId = function (i, v) {

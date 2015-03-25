@@ -414,3 +414,13 @@ fieldset legend{
 .send-newsletter{
     cursor: pointer;
 }
+
+div.loading{
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(200,200,200, 0.7);
+    display: none;
+}
