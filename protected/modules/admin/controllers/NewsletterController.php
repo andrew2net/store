@@ -106,7 +106,7 @@ class NewsletterController extends Controller {
               $value->update('image');
               continue;
             }
-            $files = glob($uploaddir . Yii::app()->user->id . '_' . $key . '.*');
+            $files = glob($uploaddir . 'u' . Yii::app()->user->id . '_' . $key . '.*');
             foreach ($files as $file) {
               $fileInfo = new SplFileInfo(strtolower($file));
               $filename = $model->id . '_' . $value->id . '.' . $fileInfo->getExtension();
@@ -139,7 +139,7 @@ class NewsletterController extends Controller {
     foreach ($_FILES['NewsletterBlock']['name'] as $key => $value) {
       $tmp_file = $_FILES['NewsletterBlock']['tmp_name'][$key]['image'];
       $fileInfo = new SplFileInfo(strtolower($_FILES['NewsletterBlock']['name'][$key]['image']));
-      $filename = Yii::app()->user->id . '_' . $key . '.' . $fileInfo->getExtension();
+      $filename = 'u' . Yii::app()->user->id . '_' . $key . '.' . $fileInfo->getExtension();
       $uploadfile = $uploaddir . $filename;
       move_uploaded_file($tmp_file, $uploadfile);
     }
@@ -206,7 +206,7 @@ class NewsletterController extends Controller {
       $mailNewsletter->mail_id = $mail->id;
       $mailNewsletter->newsletter_id = $newsletter->id;
       $mailNewsletter->save();
-      
+
       $newsletter->is_sent = 1;
       $f = $newsletter->save();
     }

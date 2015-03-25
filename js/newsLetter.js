@@ -18,9 +18,12 @@ $(function () {
                 data.context = p.find('.image-thumbnail');
                 p.find('input[type="hidden"]').val('');
                 $('button[type="submit"]').on('click', function (e) {
-//                    e.preventDefault();
-                    data.submit();
-//                    window.location = '/admin/newsletter'
+                    e.preventDefault();
+                    data.submit().complete(function (){
+                        if (!$('input[type="file"]').fileupload('active')){
+                            $('form').submit();
+                        }
+                    });
                 });
             }).on('fileuploadprocessalways', function (e, data) {
                 var index = data.index,
@@ -58,6 +61,8 @@ $(function () {
 
 //    $('button[type="submit"]').click(function (event) {
 //        event.preventDefault();
+//        var a = $('input[type="file"]').fileupload('active');
+//        
 //    });
 
     var blocks = $('#blocks');
