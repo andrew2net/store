@@ -84,16 +84,16 @@ class AdminController extends Controller {
       $model->activkey = Yii::app()->controller->module->encrypting(microtime() . $model->password);
       $profile->attributes = $_POST['Profile'];
       $profile->user_id = 0;
-      if ($model->validate() && $profile->validate()) {
+      if ($model->validate()) {
         $model->password = Yii::app()->controller->module->encrypting($model->password);
         if ($model->save()) {
           $profile->user_id = $model->id;
-          $profile->save();
+          $profile->save(FALSE);
           $customer_profile->save(false);
         }
         $this->redirect(array('/admin/user')); //,'id'=>$model->id));
-      } else
-        $profile->validate();
+      } //else
+//        $profile->validate();
     }
 
     $this->render('create', array(
@@ -124,7 +124,7 @@ class AdminController extends Controller {
       $profile->attributes = $_POST['Profile'];
       $customer_profile->price_id = $_POST['CustomerProfile']['price_id'];
 
-      if ($model->validate() && $profile->validate()) {
+      if ($model->validate()) {
         $old_password = User::model()->notsafe()->findByPk($model->id);
         /* @var $old_password User */
         if ($old_password->password != $_POST['User']['password']) {
@@ -132,11 +132,11 @@ class AdminController extends Controller {
           $model->activkey = Yii::app()->controller->module->encrypting(microtime() . $_POST['User']['password']);
         }
         $model->save();
-        $profile->save();
+        $profile->save(FALSE);
         $customer_profile->save();
         $this->redirect(array('/admin/user')); //,'id'=>$model->id));
-      } else
-        $profile->validate();
+      } //else
+//        $profile->validate();
     }
 
     $this->render('update', array(
