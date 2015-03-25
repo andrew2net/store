@@ -99,7 +99,7 @@ class NewsletterController extends Controller {
             $value->save();
             $keys[] = $value->id;
             if ($_POST['NewsletterBlock'][$key]['image'] == 'd') {
-              if (file_exists($uploaddir . $value->image)) {
+              if ($value->image && file_exists($uploaddir . $value->image)) {
                 unlink($uploaddir . $value->image);
               }
               $value->image = '';
