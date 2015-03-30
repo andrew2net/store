@@ -35,7 +35,7 @@ Yii::import('application.modules.payments.models.Currency');
     'template' => "{pager}{sizer}{sorter}{header}{items}{pager}",
     'sorterHeader' => 'Сортировать:',
     'sortableAttributes' => array('name', 'price'),
-    'afterAjaxUpdate' => 'showTooltip',
+    'afterAjaxUpdate' => 'scrollUp',
     'viewData' => array('sizes' => $sizes, 'trade_price' => $trade_price, 'currency' => $currency),
       )
   );

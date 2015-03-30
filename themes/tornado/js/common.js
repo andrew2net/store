@@ -10,7 +10,8 @@ Number.prototype.formatMoney = function (c, d, t) {
 };
 
 var price_mess;
-function showTooltip(id, data) {
+function scrollUp() {
+    $('html, body').animate({scrollTop: 0});
 }
 
 $(document).ready(function () {
