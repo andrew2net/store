@@ -8,10 +8,10 @@ $this->breadcrumbs = array(
 ?>
 
 <h3>Заказы</h3>
-<?php // $this->beginWidget('CHtmlPurifier'); ?>
 <?php
 Yii::import('application.modules.payment.models.Payment');
 Yii::import('application.modules.delivery.models.Delivery');
+Yii::import('application.models.CustomerProfile');
 $this->widget('bootstrap.widgets.TbGridView', array(
   'id' => 'order-grid',
   'dataProvider' => $model->timeOrderDesc()->search(),
@@ -27,8 +27,9 @@ $this->widget('bootstrap.widgets.TbGridView', array(
 //    'fio',
     array(
       'header' => 'Покупатель',
-      'value' => '$data->fio',
+      'value' => 'CHtml::link(CHtml::encode($data->fio), ["/user/user/view", "id"=>$data->profile->user_id])',
       'filter' => CHtml::activeTextField($model, 'fio'),
+      'type' => 'raw',
     ),
     'email',
 //    array(
@@ -58,4 +59,3 @@ $this->widget('bootstrap.widgets.TbGridView', array(
     )
 );
 ?>
-<?php // $this->endWidget(); ?>

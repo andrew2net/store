@@ -41,3 +41,35 @@ $this->menu=array(
 	));
 
 ?>
+<h3>Заказы</h3>
+<?php
+Yii::import('application.modules.payments.models.Payment');
+Yii::import('application.modules.delivery.models.Delivery');
+Yii::import('application.models.CustomerProfile');
+$this->widget('bootstrap.widgets.TbGridView', array(
+  'id' => 'order-grid',
+  'dataProvider' => $orders,
+  'columns' => array(
+    'id',
+    'time',
+    [
+      'name' => 'productSumm',
+      'value' => 'number_format($data->productSumm + $data->delivery_summ + $data->insuranceSumm - $data->getCouponSumm(),2,"."," ")',
+      'htmlOptions' => ['style' => 'text-align:right;width:90px']
+    ],
+    array(
+      'name' => 'status_id',
+      'value' => '$data->status',
+    ),
+    array(
+      'name' => 'payment_id',
+      'value' => '$data->payment->name',
+    ),
+    array(
+      'name' => 'delivery_id',
+      'value' => '$data->delivery->zone_type_id == 4 ? $data->delivery->zone_type : ($data->delivery->zone_type_id == 3 ? $data->delivery->name . " (" . $data->delivery->transportType . ")" : $data->delivery->name)',
+    ),
+  )
+    )
+);
+?>

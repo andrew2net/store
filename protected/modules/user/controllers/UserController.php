@@ -39,8 +39,16 @@ class UserController extends Controller {
    */
   public function actionView() {
     $model = $this->loadModel();
+    $orders = new CActiveDataProvider('Order', [
+      'criteria' => [
+        'with' => ['profile'],
+        'condition' => 'profile.user_id=:uid',
+        'params' => [':uid' => $model->id],
+      ]
+    ]);
     $this->render('view', array(
       'model' => $model,
+      'orders' => $orders
     ));
   }
 

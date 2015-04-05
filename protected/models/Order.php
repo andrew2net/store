@@ -203,6 +203,7 @@ class Order extends CActiveRecord {
       'customer_delivery' => 'Транспортная компания покупателя',
       'exchange' => 'Передать в 1С',
       'insurance' => 'Страховка посылки',
+      'productSumm' => 'Сумма заказа'
     );
   }
 
