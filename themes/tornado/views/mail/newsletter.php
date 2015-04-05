@@ -4,6 +4,8 @@
 /* @var $imageIds Array */
 /* @var $newsletter Newsletter */
 /* @var $this CController */
+
+$email = Yii::app()->params['enterprise']['email'];
 ?>
 <html>
     <head>
@@ -31,7 +33,9 @@
             <table class="title">
                 <tr>
                     <td>
-                        <img src="<?php echo $imageIds['logo']; ?>" /><div class="title">оптовая компания</div>
+                        <a href="<?php echo Yii::app()->createAbsoluteUrl('') ?>">
+                            <img src="<?php echo $imageIds['logo']; ?>" /><div class="title">оптовая компания</div>
+                        </a>
                     </td>
                 </tr>
             </table>
@@ -51,6 +55,8 @@
                 <?php } ?>
             </table>
             <?php $this->renderInternal(dirname(__FILE__) . '/_footer.php'); ?>
+            <p style="font-size: 8pt">Если Вы не желаете получать данную рассылку, Вы можете отключить опцию "Получать новости" в <a href="<?php echo Yii::app()->createAbsoluteUrl('profile'); ?>">личном кабинете</a>,
+                или прислать <a href="mailto:<?php echo key($email) ?>?subject=Отказ от рассылки">письмо</a> с отказом от рассылки.</p>
         </div>
     </body>
 </html>
