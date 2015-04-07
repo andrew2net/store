@@ -31,97 +31,74 @@ class MinutelyCommand extends CConsoleCommand {
       'condition' => 't.status_id=1'));
     /* @var $mails Mail[] */
     foreach ($mails as $mail) {
-      $message = new YiiMailMessage;
-      $message->setFrom(Yii::app()->params['infoEmail']);
-//      Yii::trace("user $mail->uid", 'Send_mail');
-      $message->setTo(array($mail->user->email => $mail->user->profile->first_name . ' ' . $mail->user->profile->last_name));
-      switch ($mail->type_id) {
-        case Mail::TYPE_CONFIRM_ORDER:
-          $message->view = 'confirmOrder';
-          $params['order'] = $mail->order[0];
-          $params['profile'] = $mail->user->profile;
-          $message->setSubject("Ваш заказ");
-          break;
-        case Mail::TYPE_CHANGE_ORDER_STATUS:
-          $message->view = 'processOrder';
-          $params['order'] = $mail->order[0];
-          $params['profile'] = $mail->user->profile;
-          switch ($mail->order[0]->status_id) {
-            case Order::STATUS_WAITING_FOR_PAY:
-              $message->view = 'payOrder';
-              $message->setSubject("Оплата заказа");
-              $params['text'] = 'готов к оплате';
-              break;
-            case Order::STATUS_PAID:
-              $message->setSubject("Поступила оплата");
-              $params['text'] = 'оплачен и готов к отгрузке';
-              break;
-            case Order::STATUS_SENT:
-              $message->setSubject("Заказ отгружен");
-              $params['text'] = 'отгружен со склада';
-              break;
-            case Order::STATUS_CANCELED:
-              $message->setSubject("Отмена заказа");
-              $params['text'] = 'отменен';
-              break;
-            default :
-              $message->setSubject("Изменение статуса заказа");
-              $params['text'] = mb_strtolower($mail->order[0]->status, 'utf8');
-              break;
-          }
-          break;
-        case Mail::TYPE_NEW_ORDER_NOTIFY:
-          $message->view = 'notifyOrder';
-          $params['order'] = $mail->order[0];
-          $message->setSubject('Оповещение о заказе');
-          break;
-//        case Mail::TYPE_SEND_NEWSLETTER:
-//          $imagepath = dirname(Yii::app()->getBasePath()) . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR .
-//            Yii::app()->params['img_storage'] . DIRECTORY_SEPARATOR . 'newsletter' . DIRECTORY_SEPARATOR;
-//
-//          $logo = Swift_Image::fromPath(dirname(Yii::app()->getBasePath()) . '/themes/' . 
-//            Yii::app()->params['img_storage'] . '/img/logo.png');
-//          $imageIds['logo'] = $message->embed($logo);
-//          $imageIds['blocks'] = [];
-//          foreach ($mail->newsletter[0]->newsletterBlocks as $key => $block) {
-//            if (!$block->image) {
-//              continue;
-//            }
-//            $image = Swift_Image::fromPath($imagepath . $block->image);
-//            $imageIds['blocks'][$key] = $message->embed($image);
-//          }
-//
-//          if ($mail->newsletter[0]->send_price) {
-//            $price = Swift_Attachment::fromPath(dirname(Yii::app()->getBasePath()) . '/uploads/' .
-//              Yii::app()->params['img_storage'] . '/price.xls');
-//            $message->attach($price);
-//          }
-//
-//          $params['imageIds'] = $imageIds;
-//          $params['profile'] = $mail->user->profile;
-//          $params['newsletter'] = $mail->newsletter[0];
-//          $message->view = 'newsletter';
-//          $message->setSubject($mail->newsletter[0]->subject);
-//          break;
-      }
-
-      if (!isset($params)){
-        continue;
-      }
-      $message->setBody($params, 'text/html');
-      $n = Yii::app()->mail->send($message);
-      if ($n) {
-        $mail->status_id = 2;
-        $mail->sent_time = Yii::app()->dateFormatter->format('dd-MM-yyyy HH:mm:ss', time());
-        if (!$mail->validate()) {
-          $result = $mail->getErrors();
-          foreach ($result as $item) {
-            foreach ($item as $err) {
-              Yii::log($err, CLogger::LEVEL_INFO, 'cron');
+      $tr = Yii::app()->db->beginTransaction();
+      try {
+        $message = new YiiMailMessage;
+        $message->setFrom(Yii::app()->params['infoEmail']);
+        $message->setTo(array($mail->user->email => $mail->user->profile->first_name . ' ' . $mail->user->profile->last_name));
+        switch ($mail->type_id) {
+          case Mail::TYPE_CONFIRM_ORDER:
+            $message->view = 'confirmOrder';
+            $params['order'] = $mail->order[0];
+            $params['profile'] = $mail->user->profile;
+            $message->setSubject("Ваш заказ");
+            break;
+          case Mail::TYPE_CHANGE_ORDER_STATUS:
+            $message->view = 'processOrder';
+            $params['order'] = $mail->order[0];
+            $params['profile'] = $mail->user->profile;
+            switch ($mail->order[0]->status_id) {
+              case Order::STATUS_WAITING_FOR_PAY:
+                $message->view = 'payOrder';
+                $message->setSubject("Оплата заказа");
+                $params['text'] = 'готов к оплате';
+                break;
+              case Order::STATUS_PAID:
+                $message->setSubject("Поступила оплата");
+                $params['text'] = 'оплачен и готов к отгрузке';
+                break;
+              case Order::STATUS_SENT:
+                $message->setSubject("Заказ отгружен");
+                $params['text'] = 'отгружен со склада';
+                break;
+              case Order::STATUS_CANCELED:
+                $message->setSubject("Отмена заказа");
+                $params['text'] = 'отменен';
+                break;
+              default :
+                $message->setSubject("Изменение статуса заказа");
+                $params['text'] = mb_strtolower($mail->order[0]->status, 'utf8');
+                break;
             }
+            break;
+          case Mail::TYPE_NEW_ORDER_NOTIFY:
+            $message->view = 'notifyOrder';
+            $params['order'] = $mail->order[0];
+            $message->setSubject('Оповещение о заказе');
+            break;
+        }
+
+        if (isset($params)) {
+          $message->setBody($params, 'text/html');
+          $n = Yii::app()->mail->send($message);
+          if ($n) {
+            $mail->status_id = 2;
+            $mail->sent_time = Yii::app()->dateFormatter->format('dd-MM-yyyy HH:mm:ss', time());
+            if (!$mail->validate()) {
+              $result = $mail->getErrors();
+              foreach ($result as $item) {
+                foreach ($item as $err) {
+                  Yii::log($err, CLogger::LEVEL_INFO, 'cron');
+                }
+              }
+            } else
+              $mail->save();
           }
-        } else
-          $mail->save();
+        }
+        $tr->commit();
+      } catch (Exception $e) {
+        Yii::trace("user $mail->uid", 'Send_mail_error');
+        $tr->rollback();
       }
     }
   }
