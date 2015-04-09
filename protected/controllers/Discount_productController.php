@@ -11,6 +11,11 @@ class Discount_productController extends CController {
     Yii::import('application.modules.catalog.models.Category');
     Yii::import('application.modules.discount.models.Discount');
 
+    if (Yii::app()->params['category_default_view'] == 'table')
+      $view = '//site/_items_inline';
+    else
+      $view = '//site/_items';
+
     $search = new Search;
     $giftSelection = new GiftSelection;
     $groups = Category::model()->roots()->findAll();
@@ -24,7 +29,7 @@ class Discount_productController extends CController {
     }
 
     $product_data = new CActiveDataProvider('Product'
-        , array('criteria' => $criteria,
+      , array('criteria' => $criteria,
       'pagination' => array('pageSize' => 20),
     ));
     $this->render('//search/search', array_merge(array(
@@ -32,7 +37,8 @@ class Discount_productController extends CController {
       'giftSelection' => $giftSelection,
       'groups' => $groups,
       'data' => $product_data,
-            ), $params)
+      'view' => $view,
+        ), $params)
     );
   }
 
