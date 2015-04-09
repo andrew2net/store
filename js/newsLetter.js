@@ -1,5 +1,11 @@
 $(function () {
     attachFu($('input[type="file"]'));
+//    tinyMCE.init({
+//        theme: "advanced",
+//        mode: 'textareas',
+//        height: "350px",
+//        width: "600px"
+//    });
     function attachFu(el) {
         el.each(function () {
             $(this).fileupload({
@@ -19,8 +25,8 @@ $(function () {
                 p.find('input[type="hidden"]').val('');
                 $('button[type="submit"]').on('click', function (e) {
                     e.preventDefault();
-                    data.submit().complete(function (){
-                        if (!$('input[type="file"]').fileupload('active')){
+                    data.submit().complete(function () {
+                        if (!$('input[type="file"]').fileupload('active')) {
                             $('form').submit();
                         }
                     });

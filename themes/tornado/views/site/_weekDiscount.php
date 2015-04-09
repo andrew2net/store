@@ -25,7 +25,7 @@ if (count($end_dates)) {
       <ul>
         <?php foreach ($products as $value) { ?>
           <li>
-            <?php $this->renderPartial('_item', array('data' => $value)); ?>
+            <?php $this->renderPartial('_item', array('data' => $value, 'price_type' => $price_type)); ?>
           </li>
         <?php } ?>
       </ul>

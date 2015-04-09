@@ -28,7 +28,7 @@ Yii::import('application.modules.admin.models.Page');
       $this->renderPartial('_news');
       echo CHtml::beginForm('', 'post', array('id' => 'item-submit'));
       echo CHtml::hiddenField('url', Yii::app()->request->url);
-      $this->renderPartial('_weekDiscount');
+      $this->renderPartial('_weekDiscount', ['price_type' => $price_type]);
       ?>
       <div id="top10">
         <?php $this->renderPartial('_top10', array('price_type' => $price_type)); ?>

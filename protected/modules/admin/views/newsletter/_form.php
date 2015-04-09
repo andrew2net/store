@@ -16,6 +16,8 @@ $cs->registerScriptFile('/js_plugins/jQueryFileUpload/js/jquery.fileupload-proce
 $cs->registerScriptFile('/js_plugins/jQueryFileUpload/js/jquery.fileupload-image.js');
 $cs->registerScriptFile('/js_plugins/jQueryFileUpload/js/jquery.fileupload-validate.js');
 $cs->registerScriptFile('/js/newsLetter.js');
+$cs->registerScriptFile(Yii::app()->assetManager->
+    publish(Yii::getPathOfAlias('ext.tinymce.vendors.tinymce.jscripts.tiny_mce') . '/tiny_mce.js'));
 ?>
 
 <div class="form">
@@ -43,6 +45,24 @@ $cs->registerScriptFile('/js/newsLetter.js');
         <?php foreach ($blocks as $key => $value) { ?>
           <div class="inline-blocks">
               <?php echo $form->textAreaControlGroup($value, "[$key]text", ['span' => 6, 'rows' => 6]); ?>
+              <!--<div>-->
+              <?php
+//              $this->widget('ext.tinymce.TinyMce', array(
+////                  'name'=>'Page_content',
+//                'model' => $value,
+//                'attribute' => "[$key]text",
+//                
+//                'fileManager' => array(
+//                  'class' => 'ext.elFinder.TinyMceElFinder',
+//                  'connectorRoute' => '/admin/elfinder/connector',
+//                ),
+////                   'editorTemplate'=>'full',
+//                   'htmlOptions'=>array('cols' => '200','rows' => 5),
+//                
+//                )
+//              );
+              ?>
+              <!--</div>-->
               <div>
                   <span class="btn remove-img"<?php echo ($value->image ? ' style="display:inline-block"' : ''); ?>>Удалить изображение..</span>
                   <span class="btn fileinput-button"<?php echo ($value->image ? ' style="display:none"' : ''); ?>>
@@ -61,7 +81,7 @@ $cs->registerScriptFile('/js/newsLetter.js');
           </div>
         <?php } ?>
     </div>
-    <?php echo TbHtml::linkButton('Добавить блок', ['id' => 'add-block']); ?>
+    <?php echo TbHtml::linkButton('Добавить блок', ['id' => 'add-block', 'style' => 'margin-top:15px']); ?>
     <div class="form-actions">
         <?php
         echo TbHtml::linkButton('Закрыть', array(
