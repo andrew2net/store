@@ -29,8 +29,8 @@ if (count($end_dates)) {
           </li>
         <?php } ?>
       </ul>
-      <a class="weekcarousel-prev" href="#"></a>
-      <a class="weekcarousel-next" href="#"></a>
+<!--      <a class="weekcarousel-prev" href="#"></a>
+      <a class="weekcarousel-next" href="#"></a>-->
     </div>
   </div>
   <div style="text-align: right; line-height: 3"><a class="red" href="<?php echo Yii::app()->createUrl('discount_product'); ?>">Все товары со скидкой</a></div>
