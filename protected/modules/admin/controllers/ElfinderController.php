@@ -2,6 +2,8 @@
 
 class ElfinderController extends CController {
 
+  public $layout = false;
+
   public function filters() {
     return array(array('auth.filters.AuthFilter'));
   }
@@ -10,15 +12,21 @@ class ElfinderController extends CController {
     $img_storage = '/images/' . Yii::app()->params['img_storage'] . '/common/';
     return array(
       'connector' => array(
-        'class' => 'ext.elFinder.ElFinderConnectorAction',
+        'class' => 'ext.elFinder2.ElFinderConnectorAction',
         'settings' => array(
-          'root' => Yii::getPathOfAlias('webroot') . $img_storage,
-          'URL' => Yii::app()->baseUrl . $img_storage,
-          'rootAlias' => 'Home',
-          'mimeDetect' => 'none'
+          'roots' => array(
+            array(
+              'driver' => 'LocalFileSystem', // driver for accessing file system (REQUIRED)
+              'path' => Yii::getPathOfAlias('webroot') . $img_storage, // path to files (REQUIRED)
+              'URL' => Yii::app()->baseUrl . $img_storage, // URL to files (REQUIRED)
+              'accessControl' => 'access'             // disable and hide dot starting files (OPTIONAL)
+            ))
         )
       ),
     );
   }
 
+  public function actionElfinder(){
+    $this->render('elfinder');
+  }
 }

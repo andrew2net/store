@@ -15,9 +15,10 @@ $cs->registerScriptFile('/js_plugins/jQueryFileUpload/js/jquery.fileupload.js');
 $cs->registerScriptFile('/js_plugins/jQueryFileUpload/js/jquery.fileupload-process.js');
 $cs->registerScriptFile('/js_plugins/jQueryFileUpload/js/jquery.fileupload-image.js');
 $cs->registerScriptFile('/js_plugins/jQueryFileUpload/js/jquery.fileupload-validate.js');
+$tiny_mce_path = Yii::app()->assetManager->publish(Yii::getPathOfAlias('ext.tinymce.vendors.tinymce.jscripts.tiny_mce'));
+$cs->registerScriptFile($tiny_mce_path . '/tiny_mce.js');
+$cs->registerScriptFile($tiny_mce_path . '/jquery.tinymce.js');
 $cs->registerScriptFile('/js/newsLetter.js');
-$cs->registerScriptFile(Yii::app()->assetManager->
-    publish(Yii::getPathOfAlias('ext.tinymce.vendors.tinymce.jscripts.tiny_mce') . '/tiny_mce.js'));
 ?>
 
 <div class="form">
@@ -45,24 +46,6 @@ $cs->registerScriptFile(Yii::app()->assetManager->
         <?php foreach ($blocks as $key => $value) { ?>
           <div class="inline-blocks">
               <?php echo $form->textAreaControlGroup($value, "[$key]text", ['span' => 6, 'rows' => 6]); ?>
-              <!--<div>-->
-              <?php
-//              $this->widget('ext.tinymce.TinyMce', array(
-////                  'name'=>'Page_content',
-//                'model' => $value,
-//                'attribute' => "[$key]text",
-//                
-//                'fileManager' => array(
-//                  'class' => 'ext.elFinder.TinyMceElFinder',
-//                  'connectorRoute' => '/admin/elfinder/connector',
-//                ),
-////                   'editorTemplate'=>'full',
-//                   'htmlOptions'=>array('cols' => '200','rows' => 5),
-//                
-//                )
-//              );
-              ?>
-              <!--</div>-->
               <div>
                   <span class="btn remove-img"<?php echo ($value->image ? ' style="display:inline-block"' : ''); ?>>Удалить изображение..</span>
                   <span class="btn fileinput-button"<?php echo ($value->image ? ' style="display:none"' : ''); ?>>
