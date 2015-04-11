@@ -83,7 +83,7 @@ $cs->registerScriptFile($tiny_mce_path . '/jquery.tinymce.js');
               });
               return false;
           },
-          theme_advanced_buttons1: 'formatselect,fontselect,fontsizeselect,forecolor,backcolor,italic,underline,strikethrough,sub,sup,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,outdent,indent,undo,redo,link,unlink,cleanup,hr,image,fullscreen'
+          theme_advanced_buttons1: 'formatselect,fontselect,fontsizeselect,forecolor,backcolor,italic,underline,strikethrough,sub,sup,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,outdent,indent,undo,redo,link,unlink,cleanup,hr,image,code,fullscreen'
       });
 //      tinyMCE.execCommand('mceAddControl', false, this.id);
   });
