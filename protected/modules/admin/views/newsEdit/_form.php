@@ -1,6 +1,6 @@
 <?php
-/* @var $this PageController */
-/* @var $model Page */
+/* @var $this NewsEditController */
+/* @var $model News */
 /* @var $form TbActiveForm */
 
 $cs = Yii::app()->clientScript;
@@ -14,7 +14,7 @@ $cs->registerScriptFile($tiny_mce_path . '/jquery.tinymce.js');
 
     <?php
     $form = $this->beginWidget('bootstrap.widgets.TbActiveForm', array(
-      'id' => 'page-form',
+      'id' => 'news-form',
       // Please note: When you enable ajax validation, make sure the corresponding
       // controller action is handling ajax validation correctly.
       // There is a call to performAjaxValidation() commented in generated controller code.
@@ -28,28 +28,33 @@ $cs->registerScriptFile($tiny_mce_path . '/jquery.tinymce.js');
     <?php echo $form->errorSummary($model); ?>
 
     <div class="inline-blocks">
+        <?php echo $form->textFieldControlGroup($model, 'title', array('span' => 7, 'maxlength' => 255)); ?>
+
         <div>
-            <?php echo $form->textFieldControlGroup($model, 'url', array('span' => 5, 'maxlength' => 255)); ?>
-        </div>
-        <div class="table-cell">
-            <?php echo $form->textFieldControlGroup($model, 'menu_show', array('span' => 1, 'maxlength' => 3)); ?>
+            <?php
+            echo $form->labelEx($model, 'date');
+            $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+              'model' => $model,
+              'attribute' => 'date',
+              'language' => 'ru',
+              'htmlOptions' => array('style' => 'width: 80px')
+            ));
+            ?>
         </div>
     </div>
 
-    <?php echo $form->textFieldControlGroup($model, 'title', array('span' => 5, 'maxlength' => 255)); ?>
+    <?php echo $form->textAreaControlGroup($model, 'text', array('rows' => 20, 'span' => 8)); ?>
 
-    <?php // echo CHtml::activeLabel($model, 'content')// echo $form->textAreaControlGroup($model,'content',array('rows'=>6,'span'=>8)); ?>
-    <?php echo $form->textAreaControlGroup($model, 'content', ['rows'=>20,]); ?>
+    <?php echo $form->checkBoxControlGroup($model, 'active'); ?>
 
     <div class="form-actions">
         <?php
         echo TbHtml::linkButton('Закрыть', array(
-          'url' => '/admin/page'));
+          'url' => ['index']));
         ?>
         <?php
-        echo TbHtml::submitButton('Сохранить', array(
+        echo TbHtml::submitButton('Записать', array(
           'color' => TbHtml::BUTTON_COLOR_PRIMARY,
-          'size' => TbHtml::BUTTON_SIZE_SMALL,
         ));
         ?>
     </div>
@@ -85,6 +90,5 @@ $cs->registerScriptFile($tiny_mce_path . '/jquery.tinymce.js');
           },
           theme_advanced_buttons1: 'formatselect,fontselect,fontsizeselect,forecolor,backcolor,italic,underline,strikethrough,sub,sup,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,outdent,indent,undo,redo,link,unlink,cleanup,hr,image,code,fullscreen'
       });
-//      tinyMCE.execCommand('mceAddControl', false, this.id);
   });
 </script>

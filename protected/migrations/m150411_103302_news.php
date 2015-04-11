@@ -4,6 +4,13 @@ class m150411_103302_news extends CDbMigration
 {
 	public function up()
 	{
+      $this->createTable('store_news', [
+        'id' => 'int(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY',
+        'title' => 'string',
+        'date' => 'date',
+        'text' => 'text',
+        'active' => 'boolean',
+      ]);
 	}
 
 	public function down()

@@ -66,6 +66,12 @@
             'active' => $this instanceof NewsletterController,
             'visble' => Yii::app()->user->checkAccess('admin.newsletter.*'),
           ],
+          [
+            'label' => 'Новости',
+            'url' => '/admin/newsEdit',
+            'active' => $this instanceof NewsEditController,
+            'visble' => Yii::app()->user->checkAccess('admin.news.*'),
+          ],
           array(
             'label' => 'Пользователи',
             'url' => '/admin/user',

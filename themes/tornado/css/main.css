@@ -984,7 +984,7 @@ td.text-right{
 }
 
 #left-menu-cont{
-    border: 2px solid #FFD324; width: 200px; font-size: 12pt; margin: 0px 14px 0 0; min-height: 650px;
+    border: 2px solid #FFD324; width: 200px; font-size: 12pt; margin: 0px 14px 15px 0;
 }
 .left-menu-item{
     position: relative;
@@ -1036,4 +1036,13 @@ td.text-right{
 
 tbody#cart-items > tr > td:first-child{
     text-align: center;
+}
+
+#news-cont-mini{
+    border: 2px solid #FFD324;
+    width: 200px;
+    margin-right: 14px;
+}
+div#news-list > div.items{
+    min-height: 250px;
 }

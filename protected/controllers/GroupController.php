@@ -32,6 +32,8 @@ class GroupController extends CController {
       $view = '//site/_items';
 
     if (Yii::app()->request->isAjaxRequest) {
+      switch ($_GET['ajax']){
+      case 'product-list':
       $this->renderPartial($view, array(
         'group' => $group,
         'product' => $product,
@@ -39,6 +41,10 @@ class GroupController extends CController {
 //        'sizes' => $sizes,
         'filter' => $filter,
       ));
+      break;
+      case 'news-list':
+        $this->renderPartial('//site/_newsMini');
+      }
     }
     else {
       $params = array(
