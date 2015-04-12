@@ -2,4 +2,6 @@
 /* $data News */
 ?>
 <?php echo $data->date; ?>
-<h5><a href="<?php echo $this->createUrl('news/item', ['id' => $data->id]); ?>"><?php echo $data->title; ?></a></h5>
+<p<?php echo (isset($news_id) && $data->id == $news_id ? ' class="bold"' : ''); ?>>
+    <a href="<?php echo $this->createUrl('news/item', ['id' => $data->id]); ?>"><?php echo $data->title; ?></a>
+</p>

@@ -9,19 +9,20 @@ if ($newsData->getTotalItemCount() > 0) {
       <h4 class="left-menu-item"><span>Новости:</span></h4>
       <?php
       $this->widget('zii.widgets.CListView', [
-        'id' => 'news-list',
-        'dataProvider' => $newsData,
-        'itemView' => '//site/_newsItemMini',
-        'template' => '{items}{pager}',
-        'htmlOptions' => ['style' => 'margin: 015px'],
-        'pager' => array(
-          'firstPageLabel' => '<<',
-          'prevPageLabel' => '<',
-          'nextPageLabel' => '>',
-          'lastPageLabel' => '>>',
-          'maxButtonCount' => '3',
-          'header' => '',
-        ),]);
+      'id' => 'news-list',
+      'dataProvider' => $newsData,
+      'itemView' => '//site/_newsItemMini',
+      'viewData' => isset($news_id) ? ['news_id' => $news_id]:[],
+      'template' => '{items}{pager}',
+      'htmlOptions' => ['style' => 'margin: 015px'],
+      'pager' => array(
+      'firstPageLabel' => '<<',
+      'prevPageLabel' => '<',
+      'nextPageLabel' => '>',
+      'lastPageLabel' => '>>',
+      'maxButtonCount' => '3',
+      'header' => '',
+      ),]);
       ?>
       <!--<h5><a href="">Посмотреть все новости</a></h5>-->
   </div>

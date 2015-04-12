@@ -71,6 +71,9 @@ $cs->registerScriptFile($tiny_mce_path . '/jquery.tinymce.js');
           language: 'ru',
           plugins: "inlinepopups,fullscreen,advimage",
           dialog_type: "modal",
+          convert_urls : true,
+          relative_urls : false,
+          remove_script_host: true,
           file_browser_callback: function (field_name, url, type, win) {
               var elfinder_url = '/admin/elfinder/elfinder';    // use an absolute path!
               tinyMCE.activeEditor.windowManager.open({
