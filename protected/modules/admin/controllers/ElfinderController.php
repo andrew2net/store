@@ -9,7 +9,7 @@ class ElfinderController extends CController {
   }
 
   public function actions() {
-    $img_storage = '/images/' . Yii::app()->params['img_storage'] . '/common/';
+    $img_storage = '/images/' . Yii::app()->params['img_storage'];
     return array(
       'connector' => array(
         'class' => 'ext.elFinder2.ElFinderConnectorAction',
@@ -17,16 +17,19 @@ class ElfinderController extends CController {
           'roots' => array(
             array(
               'driver' => 'LocalFileSystem', // driver for accessing file system (REQUIRED)
-              'path' => Yii::getPathOfAlias('webroot') . $img_storage, // path to files (REQUIRED)
-              'URL' => Yii::app()->baseUrl . $img_storage, // URL to files (REQUIRED)
-              'accessControl' => 'access'             // disable and hide dot starting files (OPTIONAL)
+              'path' => Yii::getPathOfAlias('webroot') . $img_storage. '/common/', // path to files (REQUIRED)
+              'URL' => Yii::app()->baseUrl . $img_storage. '/common/', // URL to files (REQUIRED)
+              'accessControl' => 'access', // disable and hide dot starting files (OPTIONAL)
+              'tmbPath' => Yii::getPathOfAlias('webroot') . $img_storage . '/.tmb',
+              'tmbURL' => Yii::app()->baseUrl . $img_storage. '/.tmb',
             ))
         )
       ),
     );
   }
 
-  public function actionElfinder(){
+  public function actionElfinder() {
     $this->render('elfinder');
   }
+
 }
