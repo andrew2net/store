@@ -17,6 +17,16 @@ $(document).ready(function () {
     var insurance = $('#insurance');
     var insurancePrice = insurance.find('span#insurance-price');
 
+    post_code.tooltip({
+        items: '[data-hint]',
+        content: 'Укажите Ваш индекс для расчета льготной доставки',
+        position: {my: 'left', at: 'right+12', collision: 'none', using: function (position, feedback) {
+                $(this).css(position);
+                $('<div>').addClass('tt-arrow').addClass(feedback.vertical).addClass(feedback.horizontal).appendTo(this);
+            }
+        }
+    });
+
     function calcCartSumm() {
         var summ = 0;
         var summNoDisc = 0;
@@ -173,9 +183,13 @@ $(document).ready(function () {
         }, 3000);
     });
 
-    post_code.mask('999999');
+    post_code.mask('999999', {completed: function () {
+            clearTimeout(pcode_typing);
+            getDeliveries();
+        }});
     post_code.keyup(function (event) {
-        if ((event.keyCode < 48 || event.keyCode > 57) && event.keyCode != 8){ // || event.keyCode == 8 || event.keyCode > 36 && event.keyCode < 41)
+        post_code.tooltip('open');
+        if ((event.keyCode < 48 || event.keyCode > 57) && event.keyCode != 8) { // || event.keyCode == 8 || event.keyCode > 36 && event.keyCode < 41)
             return false;
         }
         clearTimeout(pcode_typing);
@@ -207,6 +221,9 @@ $(document).ready(function () {
 
     var getDeliveryTimeout;
     function getDeliveries() {
+        if (post_code.val().length < 6) {
+            post_code.tooltip('open');
+        }
         cartSubmit.hide();
         var city = getCity();
         if (city.length > 0) {

@@ -1046,3 +1046,32 @@ tbody#cart-items > tr > td:first-child{
 div#news-list > div.items{
     min-height: 250px;
 }
+
+.ui-tooltip{
+    font-size: 8pt !important;
+    background: #FFF7BC !important;
+    max-width: 250px !important;
+}
+.tt-arrow:after{
+    border: 2px solid #aaa;
+    content: "";
+    background: #FFF7BC;
+    position: absolute;
+    left: 11px;
+    bottom: 32px;
+    width: 25px;
+    height: 25px;
+    box-shadow: 6px 5px 9px -9px black;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+.tt-arrow{
+    width: 16px;
+    height: 70px;
+    overflow: hidden;
+    position: absolute;
+    left: 50%;
+    margin-left: -149px;
+    top: -2px;
+}

@@ -141,7 +141,7 @@ Yii::app()->clientScript->registerScriptFile('/js/jquery.maskedinput.min.js');
         </div>
         <div style="width: 160px">
             <div style="margin-bottom: 8px"><?php echo $form->labelEx($customer_profile, 'post_code'); ?></div>
-            <div><?php echo $form->telField($customer_profile, 'post_code', array('style' => 'width:150px')); ?></div>
+            <div><?php echo $form->telField($customer_profile, 'post_code', array('style' => 'width:150px', 'data-hint' => '')); ?></div>
             <?php echo $form->error($customer_profile, 'post_code', array('class' => 'red')); ?>
         </div>
     </div>
