@@ -10,12 +10,10 @@ class m150412_182331_zone_pk extends CDbMigration {
     $this->addColumn('store_zone', 'id', 'INT(11) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT');
 //      $this->alterColumn('store_zone', 'id', 'INT(11) UNSIGNED NOT NULL AUTO_INCREMENT');
     $this->alterColumn('store_zone', 'post_code', 'VARCHAR(20)');
-    $this->insertMultiple('store_zone', [
-      ['type_id' => 3, 'country_code' => 'RU', 'post_code' => "^(?=63)\d{6}$", 'zone' => 1],
-      ['type_id' => 3, 'country_code' => 'RU', 'post_code' => "^(?!63)\d{6}$", 'zone' => 2],
-      ['type_id' => 4, 'country_code' => 'RU', 'post_code' => "^(?=63)\d{6}$", 'zone' => 1],
-      ['type_id' => 4, 'country_code' => 'RU', 'post_code' => "^(?!63)\d{6}$", 'zone' => 2],
-    ]);
+    $this->insert('store_zone', ['type_id' => 3, 'country_code' => 'RU', 'post_code' => "^(?=63)\d{6}$", 'zone' => 1]);
+    $this->insert('store_zone', ['type_id' => 3, 'country_code' => 'RU', 'post_code' => "^(?!63)\d{6}$", 'zone' => 2]);
+    $this->insert('store_zone', ['type_id' => 4, 'country_code' => 'RU', 'post_code' => "^(?=63)\d{6}$", 'zone' => 1]);
+    $this->insert('store_zone', ['type_id' => 4, 'country_code' => 'RU', 'post_code' => "^(?!63)\d{6}$", 'zone' => 2]);
 //      $this->addForeignKey('fk_zone_delivery', 'store_zone', 'type_id', 'store_delivery', 'id');
   }
 
