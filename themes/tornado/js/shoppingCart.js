@@ -20,7 +20,7 @@ $(document).ready(function () {
     post_code.tooltip({
         items: '[data-hint]',
         content: 'Укажите Ваш индекс для расчета льготной доставки',
-        position: {my: 'left', at: 'right+12', collision: 'none', using: function (position, feedback) {
+        position: {my: 'left top-18', at: 'right+12', collision: 'none', using: function (position, feedback) {
                 $(this).css(position);
                 $('<div>').addClass('tt-arrow').addClass(feedback.vertical).addClass(feedback.horizontal).appendTo(this);
             }
