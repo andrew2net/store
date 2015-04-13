@@ -441,7 +441,10 @@ class Product extends CActiveRecord {
   }
 
   public function searchCategory($id) {
-    $this->availableOnly()->subCategory($id)->discountOrder();
+    if (!Yii::app()->params['showStockOut']){
+      $this->availableOnly();
+    }
+    $this->subCategory($id)->discountOrder();
     return new CActiveDataProvider($this, array(
       'criteria' => $this->searchCriteria(),
     ));

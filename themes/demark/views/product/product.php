@@ -79,6 +79,7 @@ $txtName = html_entity_decode($product->name, ENT_COMPAT, 'UTF-8') . ' ' . $prod
       <div class="item-disc red" style="font-size: 18pt !important; display: inherit"><?php echo $old_price; ?></div>
       <div class="inline-blocks" style="position: relative">
         <div class="bold blue" style="position: relative; bottom: 3px; font-size: 32pt"><?php echo $price . $currecy; ?></div>
+        <?php if ($product->remainder > 0){ ?>
         <div style="position: relative; bottom: 28px; vertical-align: bottom"><?php
           echo CHtml::activeNumberField($productForm, 'quantity'
               , array(
@@ -92,6 +93,7 @@ $txtName = html_entity_decode($product->name, ENT_COMPAT, 'UTF-8') . ' ' . $prod
         </div>
         <div class="item-bt addToCart" style="cursor: pointer; position: relative; top: 15px;left: 20px" data-product="<?php echo $product->id; ?>"><div>В корзину</div></div>
         <div class="item-add-proc" style="width: 150px; height: 60px; display: none"></div>
+        <?php } ?>
       </div>
     </div>
   </div>

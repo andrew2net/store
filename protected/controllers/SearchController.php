@@ -26,6 +26,9 @@ class SearchController extends CController {
       $product->searchByName($_GET['Search']['text']);
     }
 
+    if (!Yii::app()->params['showStockOut']){
+      $product->availableOnly();
+    }
     $product->discountOrder();
     $product_data = new CActiveDataProvider('Product'
         , array('criteria' => $product->getDbCriteria(),

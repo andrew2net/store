@@ -15,9 +15,11 @@ $this->pageTitle = Yii::app()->name . ' - Новости: ' . $model->title;
       )
     ));
     ?>
-    <div class="inline-blocks" style="margin-top: 20px">
+    <div style="margin-top: 20px; display: table; width: 100%">
+        <div style="display: table-cell; width: 220px">
         <?php $this->renderPartial('//site/_newsMini', ['news_id' => $model->id]); ?>
-        <div>
+        </div>
+        <div style="display: table-cell">
             <h1><?php echo $model->title; ?></h1>
             <?php echo $model->text; ?>
         </div>

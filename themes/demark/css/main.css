@@ -564,7 +564,7 @@ a.item-link:hover .item-bt{
     display: block;
 }
 
-a.item-link:hover .item-disc, a.item-link:hover .item-price{
+a.item-link:hover .item-hide{
     display: none;
 }
 

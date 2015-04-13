@@ -69,6 +69,7 @@ $cs->registerScriptFile($tiny_mce_path . '/jquery.tinymce.js');
           convert_urls : true,
           relative_urls : false,
           remove_script_host: true,
+          forced_root_block: false,
           file_browser_callback: function (field_name, url, type, win) {
               var elfinder_url = '/admin/elfinder/elfinder';    // use an absolute path!
               tinyMCE.activeEditor.windowManager.open({
@@ -86,7 +87,7 @@ $cs->registerScriptFile($tiny_mce_path . '/jquery.tinymce.js');
               });
               return false;
           },
-          theme_advanced_buttons1: 'formatselect,fontselect,fontsizeselect,forecolor,backcolor,italic,underline,strikethrough,sub,sup,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,outdent,indent,undo,redo,link,unlink,cleanup,hr,image,code,fullscreen'
+          theme_advanced_buttons1: 'formatselect,fontselect,fontsizeselect,forecolor,backcolor,bold,italic,underline,strikethrough,sub,sup,charmap,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,outdent,indent,undo,redo,link,unlink,cleanup,hr,image,code,fullscreen'
       });
 //      tinyMCE.execCommand('mceAddControl', false, this.id);
   });
