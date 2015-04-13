@@ -4,24 +4,28 @@
             <a href="/"><img width="248" height="47" alt="DeMARK" src="/themes/<?php echo Yii::app()->theme->name; ?>/img/logo.png"/></a>
         </div>
         <div class="table-cell" style="position: relative">
-            <div style="position: absolute; top: 20px; left: 0px">
+            <div style="position: absolute; top: 20px; left: -25px">
                 <div class="bold blue">Звоните, заказывайте</div>
+                <!--<div class="inline-blocks">-->
                 <?php
                 foreach (Yii::app()->params['enterprise']['phone'] as $phone) {
                   if (is_array($phone)) {
                     ?>
-                    <div>
-                        <span class="bold" style="vertical-align: middle; font-size: 20pt"><?php echo $phone['cod']; ?></span>
-                        <span class="blue bold" style="font-size: 25pt; vertical-align: middle"><?php echo $phone['num']; ?></span>
-                    </div>
+                    <!--<div>-->
+                        <span class="blue" style="position: relative; top: 3px; font-size: 14pt"><?php echo $phone['cod']; ?></span>
+                        <span class="blue bold" style="font-size: 20pt; vertical-align: middle"><?php echo $phone['num']; ?></span>
+                    <!--</div>-->
                     <?php
                   } else {
                     ?>
-                    <div><span class="blue" style="font-size: 16pt; vertical-align: middle"><?php echo $phone; ?></span></div>
+                    <!--<div>-->
+                        <span class="blue" style="font-size: 16pt; vertical-align: middle"><?php echo $phone; ?></span>
+                    <!--</div>-->
                     <?php
                   }
                 }
                 ?>
+                <!--</div>-->
             </div>
             <div class="inline-blocks" style="text-align: right; margin-bottom: 20px; position: relative">
                 <div>

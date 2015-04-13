@@ -8,6 +8,7 @@ $(document).ready(function () {
     var price_name = $('#price-name');
     var price_header = $('#price-header');
     var cart_city = $('#cart-city');
+    var post_code = $('#CustomerProfile_post_code');
     var delivery_hint = $('#delivery-hint');
     var delivery_loading = $('#delivery-loading');
     var cart_delivery = $('#cart-delivery');
@@ -78,18 +79,18 @@ $(document).ready(function () {
         summTotal = parseFloat(cartSumm.attr('summ'));
         if (!isNaN(priceDelivery)) {
             if (insurance.find('input[type="checkbox"]:checked').length > 0) {
-                 summTotal += parseFloat(delivery.attr('data-insurance'));
+                summTotal += parseFloat(delivery.attr('data-insurance'));
             }
             var price_f = priceDelivery.formatMoney();
             $('#delivery-summ').html(price_f);
-            $('#cart-total').html((priceDelivery +  summTotal).formatMoney());
-            if ( summTotal >= minsumm)
+            $('#cart-total').html((priceDelivery + summTotal).formatMoney());
+            if (summTotal >= minsumm)
                 cartSubmit.show();
         }
         else {
             $('#delivery-summ').html('');
             cartSubmit.hide();
-            $('#cart-total').html( summTotal.formatMoney());
+            $('#cart-total').html(summTotal.formatMoney());
         }
     }
 
@@ -155,11 +156,14 @@ $(document).ready(function () {
         });
     });
 
-    $('#CustomerProfile_city_l, #CustomerProfile_other_city').change(function () {
+    var pcode_typing;
+    var city_typing;
+    $('#CustomerProfile_city_l, #CustomerProfile_other_city, #CustomerProfile_post_code').change(function () {
+        clearTimeout(city_typing);
+        clearTimeout(pcode_typing);
         getDeliveries();
     });
 
-    var city_typing;
     cart_city.keyup(function (event) {
         if (event.keyCode == 13) // || event.keyCode == 8 || event.keyCode > 36 && event.keyCode < 41)
             return false;
@@ -167,6 +171,18 @@ $(document).ready(function () {
         city_typing = setTimeout(function () {
             getDeliveries();
         }, 3000);
+    });
+
+    post_code.mask('999999');
+    post_code.keyup(function (event) {
+        if ((event.keyCode < 48 || event.keyCode > 57) && event.keyCode != 8){ // || event.keyCode == 8 || event.keyCode > 36 && event.keyCode < 41)
+            return false;
+        }
+        clearTimeout(pcode_typing);
+        pcode_typing = setTimeout(function () {
+            getDeliveries();
+        }, 3000);
+
     });
 
     cart_city.on('autocompleteselect', function (event, elem) {
@@ -198,8 +214,8 @@ $(document).ready(function () {
             delivery_hint.hide();
             insurance.hide();
             delivery_loading.show();
-            var ccode = '';
-            var pcode = '';
+            var ccode = 'RU';
+            var pcode = post_code.val();
             var delivery = $('input:radio[name="Order[delivery_id]"]:checked');
             var d_id = 0;
             if (delivery.length > 0)

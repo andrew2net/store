@@ -76,6 +76,17 @@ class CalcDelivery {
         continue;
       }
 
+      /*
+       * Free delivery if summ of the order more then free delivery summ
+       */
+      foreach ($delivery->regionDeliveries as $region) {
+        if (is_null($region->zones) || !preg_match('/'.$region->zones->post_code.'/', $post_code) ||
+          $region->free_summ == 0 || $region->free_summ > $productSumm) {
+          continue;
+        }
+        $price = 0;
+      }
+
       if (!$currency->convert($delivery->currency_code, $price)) {
         continue;
       }

@@ -196,7 +196,7 @@ class Delivery extends CActiveRecord {
         ),
       ),
       'condition' => '(:pcode REGEXP zones.post_code AND region.country_code=:ccode AND zones.country_code=:ccode OR '
-      . 't.zone_type_id=6 AND region.country_code=:price_country OR t.zone_type_id IN (4) OR t.zone_type_id=3 AND :city=0 OR '
+      . 't.zone_type_id=6 AND region.country_code=:price_country OR t.zone_type_id=4 OR t.zone_type_id=3 AND :city=0 OR '
       . 't.zone_type_id=5 AND :city=1) AND (:delivery_id IS NULL OR t.id=:delivery_id) AND t.active=1',
       'params' => array(
         ':ccode' => $country_code,

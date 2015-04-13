@@ -75,5 +75,6 @@
           , array('span' => 1, 'min' => 0));
       ?>
     </div>
+      <?php echo $form->numberFieldControlGroup($delivery['regionDelivery'], "[$delivery_id]free_summ", ['span' => 2]); ?>
   </div>
 </div>
