@@ -381,6 +381,7 @@ $(document).ready(function () {
 
     var cartTimeout;
     function changeCart(id, quantity) {
+        cartSubmit.hide();
         $.post('/cart/changeCart', {
             'id': id,
             'quantity': quantity
