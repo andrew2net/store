@@ -143,7 +143,7 @@ class DefaultController extends Controller {
     $product = strtr($term, array('%' => '\%', '_' => '\_'));
     $product_ids = implode(',', $ord_pr);
     $criteria = new CDbCriteria(array(
-      'select' => 'id, name, article',
+      'select' => 'id, name, article, price, price_tenge',
       'condition' => '(name LIKE :data OR article LIKE :data)' . ($product_ids ? 'AND id NOT IN (' . $product_ids . ')' : ''),
       'params' => array(':data' => '%' . $product . '%'),
       'limit' => 20,
@@ -160,7 +160,7 @@ class DefaultController extends Controller {
     foreach ($suggest as $value) {
       /* @var $value Product */
       $price = $value->getPrice($price_type, $order->currency_code);
-      if ($summ + $price > $price_type->summ) {
+      if ($price_type && $summ + $price > $price_type->summ) {
         foreach ($price_types as $pt) {
           $price_next = $value->getPrice($pt, $order->currency_code);
           if ($summ + $price_next <= $pt->summ)
