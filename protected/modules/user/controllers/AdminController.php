@@ -135,7 +135,7 @@ class AdminController extends Controller {
         }
         $model->save();
         $profile->save(FALSE);
-        $customer_profile->save();
+        $customer_profile->save(false);
         $this->redirect(array('/admin/user')); //,'id'=>$model->id));
       } //else
 //        $profile->validate();
