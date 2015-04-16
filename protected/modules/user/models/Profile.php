@@ -36,6 +36,7 @@ class Profile extends UActiveRecord {
       $numerical = array();
       $float = array();
       $decimal = array();
+      $boolean = [];
       $rules = array();
 
       $model = $this->getFields();
@@ -50,6 +51,8 @@ class Profile extends UActiveRecord {
           array_push($decimal, $field->varname);
         if ($field->field_type == 'INTEGER')
           array_push($numerical, $field->varname);
+        if ($field->field_type == 'BOOL')
+          array_push($boolean, $field->varname);
         if ($field->field_type == 'VARCHAR' || $field->field_type == 'TEXT') {
           $field_rule = array($field->varname, 'length', 'max' => $field->field_size, 'min' => $field->field_size_min);
           if ($field->error_message)
@@ -94,6 +97,7 @@ class Profile extends UActiveRecord {
 
       array_push($rules, array(implode(',', $required), 'required'));
       array_push($rules, array(implode(',', $numerical), 'numerical', 'integerOnly' => true));
+      array_push($rules, array(implode(',', $boolean), 'boolean'));
       array_push($rules, array(implode(',', $float), 'type', 'type' => 'float'));
       array_push($rules, array(implode(',', $decimal), 'match', 'pattern' => '/^\s*[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*$/'));
       $this->_rules = $rules;

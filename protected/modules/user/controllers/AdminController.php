@@ -110,6 +110,8 @@ class AdminController extends Controller {
   public function actionUpdate() {
     $model = $this->loadModel();
     /* @var $model User */
+    
+    /* @var $profile Profile */
     $profile = $model->profile;
 
     $customer_profile = CustomerProfile::model()->findByAttributes(array('user_id' => $model->id));

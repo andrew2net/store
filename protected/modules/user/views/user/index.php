@@ -1,4 +1,5 @@
 <?php
+/* $model User */
 $this->breadcrumbs = array(
   UserModule::t("Users"),
 );
@@ -25,13 +26,15 @@ if (UserModule::isAdmin()) {
 </div>
 <?php
 $this->widget('ext.bootstrap.widgets.TbGridView', array(
-  'dataProvider' => $dataProvider,
+  'dataProvider' => $model->search(),
+  'filter' => $model,
   'columns' => array(
     array(
       'name' => 'username',
       'type' => 'raw',
       'value' => 'CHtml::link(CHtml::encode($data->username),array("user/view","id"=>$data->id))',
     ),
+    'email',
     'create_at',
     'lastvisit_at',
     array(

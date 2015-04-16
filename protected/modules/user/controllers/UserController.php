@@ -7,12 +7,12 @@ class UserController extends Controller {
    */
   private $_model;
 
-   /**
+  /**
    * @return array action filters
    */
   public function filters() {
     return CMap::mergeArray(parent::filters(), array(
-          array('auth.filters.AuthFilter'),
+        array('auth.filters.AuthFilter'),
 //			'accessControl', // perform access control for CRUD operations
     ));
   }
@@ -56,17 +56,30 @@ class UserController extends Controller {
    * Lists all models.
    */
   public function actionIndex() {
-    $dataProvider = new CActiveDataProvider('User', array(
-      'criteria' => array(
-        'condition' => 'status>' . User::STATUS_BANNED,
-      ),
-      'pagination' => array(
-        'pageSize' => Yii::app()->controller->module->user_page_size,
-      ),
-    ));
+    $model = new User('search');
+    $model->unsetAttributes();  // clear any default values
+    if (isset($_GET['User'])) {
+      $model->attributes = $_GET['User'];
+      Yii::app()->user->setState('User', $_GET['User']);
+    }
+    elseif (Yii::app()->user->hasState('User')) {
+      $model->attributes = Yii::app()->user->getState('User');
+    }
+
+    if (isset($_GET['User_page']))
+      Yii::app()->user->setState('User_page', $_GET['User_page']);
+    elseif (isset($_GET['ajax']))
+      Yii::app()->user->setState('User_page', NULL);
+    elseif (Yii::app()->user->hasState('User_page'))
+      $_GET['User_page'] = (int) Yii::app()->user->getState('User_page');
+
+    if (isset($_GET['User_sort']))
+      Yii::app()->user->setState('User_sort', $_GET['User_sort']);
+    elseif (Yii::app()->user->hasState('User_sort'))
+      $_GET['User_sort'] = Yii::app()->user->getState('User_sort');
 
     $this->render('index', array(
-      'dataProvider' => $dataProvider,
+      'model' => $model,
     ));
   }
 
