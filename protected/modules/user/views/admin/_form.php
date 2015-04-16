@@ -10,7 +10,7 @@ Yii::import('application.modules.catalog.models.Price');
     $form = $this->beginWidget('CActiveForm', array(
       'id' => 'user-form',
       'enableAjaxValidation' => true,
-      'htmlOptions' => array('enctype' => 'multipart/form-data'),
+      'htmlOptions' => array('enctype' => 'multipart/form-data', 'autocomplete' => 'off'),
     ));
     /* @var $form CActiveForm */
     ?>
