@@ -29,6 +29,7 @@ $this->widget('ext.bootstrap.widgets.TbGridView', array(
   'dataProvider' => $model->search(),
   'filter' => $model,
   'columns' => array(
+    'id',
     array(
       'name' => 'username',
       'type' => 'raw',
