@@ -74,32 +74,40 @@ Yii::import('application.modules.catalog.models.Price');
                     ?>
                     <?php echo $form->error($profile, $field->varname); ?>
                 </div>
-                    <?php
-                  }
-                }
-                ?>
+                <?php
+              }
+            }
+            ?>
         </div>
         <div style="vertical-align: top">
             <div class="row">
-<?php echo $form->labelEx($customer_profile, 'price_id'); ?>
-<?php
-echo $form->dropDownList($customer_profile, 'price_id'
-  , CHtml::listData(Price::model()->findAll(), 'id', 'name')
-  , array('prompt' => 'Прайс не выбран'));
-?>
+                <?php echo $form->labelEx($customer_profile, 'entity_id'); ?>
+                <?php
+                echo $form->dropDownList($customer_profile, 'entity_id'
+                  , $customer_profile->getEntities());
+                ?>
+                <?php echo $form->error($customer_profile, 'entity_id'); ?>
+            </div>
+            <div class="row">
+                <?php echo $form->labelEx($customer_profile, 'price_id'); ?>
+                <?php
+                echo $form->dropDownList($customer_profile, 'price_id'
+                  , CHtml::listData(Price::model()->findAll(), 'id', 'name')
+                  , array('prompt' => 'Прайс не выбран'));
+                ?>
                 <?php echo $form->error($customer_profile, 'price_id'); ?>
             </div>
         </div>
     </div>
     <div class="row buttons">
-<?php
-echo TbHtml::formActions(array(
-  TbHtml::linkButton('Закрыть', array('url' => '/admin/user')),
-  TBHtml::submitButton('Сохранить', array('color' => TbHtml::BUTTON_COLOR_PRIMARY)),
-));
-?>
+        <?php
+        echo TbHtml::formActions(array(
+          TbHtml::linkButton('Закрыть', array('url' => '/admin/user')),
+          TBHtml::submitButton('Сохранить', array('color' => TbHtml::BUTTON_COLOR_PRIMARY)),
+        ));
+        ?>
     </div>
 
-        <?php $this->endWidget(); ?>
+    <?php $this->endWidget(); ?>
 
 </div><!-- form -->

@@ -124,7 +124,7 @@ class AdminController extends Controller {
     if (isset($_POST['User'])) {
       $model->attributes = $_POST['User'];
       $profile->attributes = $_POST['Profile'];
-      $customer_profile->price_id = $_POST['CustomerProfile']['price_id'];
+      $customer_profile->attributes = $_POST['CustomerProfile'];
 
       if ($model->validate()) {
         $old_password = User::model()->notsafe()->findByPk($model->id);
