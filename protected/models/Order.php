@@ -46,8 +46,8 @@
 class Order extends CActiveRecord {
 
   const STATUS_UNPROCESS = 1, STATUS_IN_PROCESS = 2, STATUS_GOODS_NOT_AVAILABLE = 3,
-      STATUS_WAITING_FOR_PAY = 4, STATUS_PAID = 5, STATUS_SENT = 6, STATUS_CANCELED = 7,
-      STATUS_SHIPED = 8;
+    STATUS_WAITING_FOR_PAY = 4, STATUS_PAID = 5, STATUS_SENT = 6, STATUS_CANCELED = 7,
+    STATUS_SHIPED = 8;
 
   public $summ;
   private static $statuses = array(
@@ -160,14 +160,14 @@ class Order extends CActiveRecord {
     $to_pay = $total - $paied;
     return $to_pay;
   }
-  
+
   /**
    * Return insurance summ
    * @return type
    */
-  public function getInsuranceSumm(){
+  public function getInsuranceSumm() {
     $summ = 0;
-    if ($this->insurance){
+    if ($this->insurance) {
       $summ = round($this->productSumm * $this->delivery->insurance / 100);
     }
     return $summ;
@@ -255,7 +255,7 @@ class Order extends CActiveRecord {
   public static function model($className = __CLASS__) {
     return parent::model($className);
   }
-  
+
   public function afterConstruct() {
     $this->insurance = true;
     parent::afterConstruct();
@@ -325,13 +325,15 @@ class Order extends CActiveRecord {
     $goodsItem->merchantsGoodsID = $this->delivery->name;
     $goodsItem->nameOfGoods = 'Доставка товара';
     $basket[] = $goodsItem;
-    
-    $goodsItem = new GoodsItem();
-    $goodsItem->amount = $this->insuranceSumm * 100;
-    $goodsItem->currencyCode = $this->currency->iso;
-    $goodsItem->merchantsGoodsID = $this->delivery->name;
-    $goodsItem->nameOfGoods = 'Страховка посылки';
-    $basket[] = $goodsItem;
+
+    if ($this->insurance) {
+      $goodsItem = new GoodsItem();
+      $goodsItem->amount = $this->insuranceSumm * 100;
+      $goodsItem->currencyCode = $this->currency->iso;
+      $goodsItem->merchantsGoodsID = $this->delivery->name;
+      $goodsItem->nameOfGoods = 'Страховка посылки';
+      $basket[] = $goodsItem;
+    }
 
     return $basket;
   }

@@ -59,7 +59,7 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
         <?php
         if ($order->insurance) {
           $insurance = $order->insuranceSumm;
-          $total += $insurance;
+//          $total += $insurance;
           ?>
           <tr>
               <td colspan="4" style="text-align: right">Страховка посылки:</td>
