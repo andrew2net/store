@@ -325,6 +325,14 @@ class Order extends CActiveRecord {
     $goodsItem->merchantsGoodsID = $this->delivery->name;
     $goodsItem->nameOfGoods = 'Доставка товара';
     $basket[] = $goodsItem;
+    
+    $goodsItem = new GoodsItem();
+    $goodsItem->amount = $this->insuranceSumm * 100;
+    $goodsItem->currencyCode = $this->currency->iso;
+    $goodsItem->merchantsGoodsID = $this->delivery->name;
+    $goodsItem->nameOfGoods = 'Страховка посылки';
+    $basket[] = $goodsItem;
+
     return $basket;
   }
 
