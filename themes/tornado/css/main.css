@@ -1050,7 +1050,6 @@ div#news-list > div.items{
 .ui-tooltip{
     font-size: 8pt !important;
     background: #FFF7BC !important;
-    /*max-width: 250px !important;*/
 }
 .tt-arrow:after{
     border: 2px solid #aaa;
