@@ -102,12 +102,13 @@ class MinutelyCommand extends CConsoleCommand {
         $tr->rollback();
         if ($mail->errors > 2) {
           $mail->status_id = Mail::STATUS_ERROR;
+          $mail->user->profile->newsletter = 0;
+          $mail->user->profile->save();
         } else {
           if (is_null($mail->errors)){
             $mail->errors = 1;
           }
           $mail->errors ++;
-          
         }
         $mail->save();
         Yii::trace("user $mail->uid", 'Send_mail_error');

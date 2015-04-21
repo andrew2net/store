@@ -78,6 +78,17 @@ class HourlyCommand extends CConsoleCommand {
             $mail->save();
         }
       } catch (Exception $e) {
+        if ($mail->errors > 2) {
+          $mail->status_id = Mail::STATUS_ERROR;
+          $mail->user->profile->newsletter = 0;
+          $mail->user->profile->save();
+        } else {
+          if (is_null($mail->errors)){
+            $mail->errors = 1;
+          }
+          $mail->errors ++;
+        }
+        $mail->save();
         Yii::log($e->getMessage(), CLogger::LEVEL_ERROR, 'Send_mail_error');
       }
     }
