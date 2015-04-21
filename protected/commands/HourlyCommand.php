@@ -78,7 +78,7 @@ class HourlyCommand extends CConsoleCommand {
             $mail->save();
         }
       } catch (Exception $e) {
-        if ($mail->errors > 2) {
+        if ($mail->errors > 1) {
           $mail->status_id = Mail::STATUS_ERROR;
           $mail->user->profile->newsletter = 0;
           $mail->user->profile->save();
