@@ -166,6 +166,7 @@ class Order extends CActiveRecord {
    * @return type
    */
   public function getInsuranceSumm() {
+    Yii::import('application.modules.delivery.models.Delivery');
     $summ = 0;
     if ($this->insurance) {
       $summ = round($this->productSumm * $this->delivery->insurance / 100);
