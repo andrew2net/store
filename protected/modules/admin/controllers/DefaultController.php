@@ -280,7 +280,7 @@ class DefaultController extends Controller {
       $message .= TbHtml::closeTag('p');
     }
     elseif ($topay > 0) {
-      $message .= TbHtml::openTag('p', array('class' => 'red'));
+      $message = TbHtml::openTag('p', array('class' => 'red'));
       $message .= "Сумма к оплате по заказу больше суммы транзакции на ";
       $message .= TbHtml::tag('span', array('class' => $currency_class), $topay);
       $message .= TbHtml::closeTag('p');
