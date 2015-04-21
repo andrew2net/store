@@ -80,7 +80,7 @@ class MinutelyCommand extends CConsoleCommand {
         }
 
         if (isset($params)) {
-        Yii::trace("user $mail->uid type $mail->type_id", 'Send_mail_error');
+          Yii::trace("user $mail->uid type $mail->type_id", 'Send_mail_error');
           $message->setBody($params, 'text/html');
           $n = Yii::app()->mail->send($message);
           if ($n) {
@@ -99,8 +99,14 @@ class MinutelyCommand extends CConsoleCommand {
         }
         $tr->commit();
       } catch (Exception $e) {
-        Yii::trace("user $mail->uid", 'Send_mail_error');
         $tr->rollback();
+        if ($mail->errors > 2) {
+          $mail->status_id = Mail::STATUS_ERROR;
+        } else {
+          $mail->errors ++;
+        }
+        $mail->save();
+        Yii::trace("user $mail->uid", 'Send_mail_error');
       }
     }
   }
