@@ -32,6 +32,7 @@ class MinutelyCommand extends CConsoleCommand {
     /* @var $mails Mail[] */
     foreach ($mails as $mail) {
       $tr = Yii::app()->db->beginTransaction();
+      unset($params);
       try {
         $message = new YiiMailMessage;
         $message->setFrom(Yii::app()->params['infoEmail']);
