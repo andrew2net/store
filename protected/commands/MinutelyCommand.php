@@ -36,7 +36,7 @@ class MinutelyCommand extends CConsoleCommand {
         $message = new YiiMailMessage;
         $message->setFrom(Yii::app()->params['infoEmail']);
         $message->setTo(array($mail->user->email => $mail->user->profile->first_name . ' ' . $mail->user->profile->last_name));
-        Yii::trace("user to $mail->uid", 'Send_mail_error');
+        Yii::trace("user $mail->uid type $mail->type_id", 'Send_mail_error');
         switch ($mail->type_id) {
           case Mail::TYPE_CONFIRM_ORDER:
             $message->view = 'confirmOrder';
