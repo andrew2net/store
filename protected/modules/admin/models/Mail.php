@@ -9,9 +9,10 @@
  * @property string $type_id 1 - registration; 2 - recovery password; 3 - confirm order; 4 - change order status;
  *                           5 - new order notify; 6 - send coupon; 7 - send newsletter
  * 
- * @property string $status_id 1 - not sent; 2 - sent
+ * @property string $status_id 1 - not sent; 2 - sent; 3- error
  * @property string $made_time 
  * @property string $sent_time 
+ * @property integer $errors 
  *
  * The followings are the available model relations:
  * @property MailOrder[] $mailOrders
@@ -24,7 +25,7 @@ class Mail extends CActiveRecord {
   const TYPE_REGISTRATION = 1, TYPE_RECOVERY_PASSWORD = 2, TYPE_CONFIRM_ORDER = 3,
     TYPE_CHANGE_ORDER_STATUS = 4, TYPE_NEW_ORDER_NOTIFY = 5, TYPE_SEND_COUPON = 6,
     TYPE_SEND_NEWSLETTER = 7,
-    STATUS_NOT_SENT = 1, STATUS_SENT = 2;
+    STATUS_NOT_SENT = 1, STATUS_SENT = 2, STATUS_ERROR = 3;
 
   /**
    * @return string the associated database table name
@@ -42,7 +43,7 @@ class Mail extends CActiveRecord {
     return array(
       array('status_id', 'default', 'value' => 1),
       array('uid, type_id, status_id', 'required'),
-      array('uid', 'numerical', 'integerOnly' => true),
+      array('uid, type_id, status_id, errors', 'numerical', 'integerOnly' => true),
       array('type_id, status_id', 'length', 'max' => 1),
       array('made_time, sent_time', 'date', 'format' => 'dd-MM-yyyy HH:mm:ss'),
       array('made_time', 'default', 'value' => Yii::app()->dateFormatter->format('dd-MM-yyyy HH:mm:ss', time())),
@@ -75,6 +76,7 @@ class Mail extends CActiveRecord {
       'uid' => 'Uid',
       'type_id' => 'Type',
       'status_id' => 'Status',
+      'errors' => 'Errors',
     );
   }
 
