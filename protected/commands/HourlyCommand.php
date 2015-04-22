@@ -23,7 +23,7 @@ class HourlyCommand extends CConsoleCommand {
     Yii::import('ext.yii-mail.YiiMailMessage');
 
     $mails = Mail::model()->findAll(array(
-      'with' => array('user'),
+      'with' => array('user' => ['with' => 'profile']),
       'condition' => 't.status_id=1'));
     /* @var $mails Mail[] */
     foreach ($mails as $mail) {
@@ -78,16 +78,16 @@ class HourlyCommand extends CConsoleCommand {
             $mail->save();
         }
       } catch (Exception $e) {
+        if (is_null($mail->errors)) {
+          $mail->errors = 1;
+        } else {
+          $mail->errors ++;
+        }
         if ($mail->errors > 1) {
           $mail->status_id = Mail::STATUS_ERROR;
-          $mail->user->profile->newsletter = 0;
-          $mail->user->profile->save();
-        } else {
-          if (is_null($mail->errors)) {
-            $mail->errors = 1;
-          } else {
-            $mail->errors ++;
-          }
+          $profile = $mail->user->profile;
+          $profile->newsletter = FALSE;
+          $profile->save(FALSE);
         }
         $mail->save();
         Yii::log($e->getMessage(), CLogger::LEVEL_ERROR, 'Send_mail_error');
