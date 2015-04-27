@@ -30,6 +30,7 @@ $this->widget('bootstrap.widgets.TbGridView', array(
     'url',
     'title',
     'menu_show',
+    'lang',
     array(
       'class' => 'bootstrap.widgets.TbButtonColumn',
     ),
