@@ -14,7 +14,7 @@ class NewsletterController extends Controller {
 
   /**
    * Creates a new model.
-   * If creation is successful, the browser will be redirected to the 'view' page.
+   * If creation is successful, the browser will be redirected to the 'index' page.
    */
   public function actionCreate() {
     $model = new Newsletter;
@@ -24,10 +24,6 @@ class NewsletterController extends Controller {
     // $this->performAjaxValidation($model);
 
     if (isset($_POST['Newsletter'])) {
-//      $model->attributes = $_POST['Newsletter'];
-//      if ($model->save()) {
-//        $this->redirect('index');
-//      }
       $this->saveNewsLetter($model, $blocks);
     }
 
@@ -38,8 +34,33 @@ class NewsletterController extends Controller {
   }
 
   /**
+   * Create a copy of existing model.
+   * If copying is successful, the browser will be redirected tj the 'index' page.
+   * @param integer $id the ID of the model to be copied
+   */
+  public function actionCopy($id){
+    $model = $this->loadModel($id);
+    $newsletter = new Newsletter;
+    $newsletter->subject = $model->subject;
+    $newsletter->send_price = $model->send_price;
+    $blocks = [];
+    foreach ($model->newsletterBlocks as $block){
+      $newBlock = new NewsletterBlock;
+      $newBlock->text = $block->text;
+      $newBlock->image = $block->image;
+      $blocks[] = $newBlock;
+    }
+    
+    if (isset($_POST['Newsletter'])){
+      $this->saveNewsLetter($newsletter, $blocks);
+    }
+    
+    $this->render('create', ['model' => $newsletter, 'blocks' => $blocks]);
+  }
+
+  /**
    * Updates a particular model.
-   * If update is successful, the browser will be redirected to the 'view' page.
+   * If update is successful, the browser will be redirected to the 'index' page.
    * @param integer $id the ID of the model to be updated
    */
   public function actionUpdate($id) {
@@ -77,21 +98,25 @@ class NewsletterController extends Controller {
     $model->attributes = $_POST['Newsletter'];
     $valid = $model->validate();
 
+    $oldBlocks = $blocks;
     $blocks = [];
     if (isset($_POST['NewsletterBlock'])) {
       foreach ($_POST['NewsletterBlock'] as $key => $value) {
         $blocks[$key] = NewsletterBlock::model()->findByAttributes(['newsletter_id' => $model->id, 'id' => $key]);
-        if (!$blocks[$key]) {
+//        if (!$blocks[$key]) {
           $blocks[$key] = new NewsletterBlock;
-        }
+//        }
         $blocks[$key]->text = $value['text'];
+        if (isset($oldBlocks[$key])){
+          $blocks[$key]->image = $oldBlocks[$key]->image;
+        }
         $valid = $blocks[$key]->validate(['text']) && $valid;
       }
       if ($valid) {
         $tr = Yii::app()->db->beginTransaction();
         try {
           $model->save();
-          $model->getErrors();
+//          $model->getErrors();
           $keys = [];
           $uploaddir = $this->getImageDir();
           foreach ($blocks as $key => $value) {
@@ -112,6 +137,14 @@ class NewsletterController extends Controller {
               $filename = $model->id . '_' . $value->id . '.' . $fileInfo->getExtension();
               $newname = $fileInfo->getPath() . '/' . $filename;
               rename($file, $newname);
+              $value->image = $filename;
+              $value->update('image');
+            }
+            if ($this->action->id == 'copy' && !empty($value->image) && !preg_match("/^$model->id/", $value->image)){
+              $fileInfo = new SplFileInfo($value->image);
+              $path = $this->getImageDir();
+              $filename = preg_replace("/^\d+_\d+/", "{$model->id}_{$value->id}", $value->image);
+              copy($path . $value->image, $path . $filename);
               $value->image = $filename;
               $value->update('image');
             }
@@ -226,7 +259,7 @@ class NewsletterController extends Controller {
       'model' => $model,
     ));
   }
-
+  
   /**
    * Returns the data model based on the primary key given in the GET variable.
    * If the data model is not found, an HTTP exception will be raised.

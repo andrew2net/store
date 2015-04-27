@@ -44,10 +44,15 @@ $this->widget('bootstrap.widgets.TbGridView', array(
           'options' => ['title' => 'Разослать', 'class' => 'send-newsletter'],
           'visible' => '!$data->is_sent',
         ],
+        'copy' => [
+          'label' => '<i class="icon-file"></i>',
+          'url' => 'Yii::app()->createUrl("/admin/newsletter/copy", ["id" => $data->id])',
+          'options' => ['title' => 'Копировать'],
+        ],
         'update' => ['visible' => '!$data->is_sent'],
         'delete' => ['visible' => '!$data->is_sent'],
       ],
-      'template' => '{send}{update}{delete}',
+      'template' => '{send}{update}{copy}{delete}',
     ),
   ),
 ));
