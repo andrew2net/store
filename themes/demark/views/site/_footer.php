@@ -24,10 +24,12 @@ $groups = Category::model()->roots()->findAll();
                         <div class="table-cell footer-menu">
                             <div class="bold">DeMARK</div>
                             <?php
+                            Yii::import('application.controllers.ProfileController');
+                            $profile = ProfileController::getProfile();
                             $items = Yii::app()->db->createCommand()
                                 ->select("title AS label, CONCAT('/info/', url) AS url")
                                 ->from('{{page}}')
-                                ->where('menu_show>0')
+                                ->where('menu_show>0 AND url<>"/" AND lang=:lang', ['lang' => $profile->price_country])
                                 ->order('menu_show')->queryAll();
 
 //              $this->widget('zii.widgets.CMenu', array(
@@ -53,8 +55,6 @@ $groups = Category::model()->roots()->findAll();
                             <div class="bold" style="height: 2.5em">Звоните, заказывайте</div>
                             <div>
                                 <?php
-                                Yii::import('application.controllers.ProfileController');
-                                $profile = ProfileController::getProfile();
                                 foreach (Yii::app()->params['phones'][$profile->price_country] as $phone) {
                                   if (is_array($phone)) {
                                     ?>

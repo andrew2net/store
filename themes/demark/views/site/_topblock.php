@@ -1,10 +1,10 @@
 <div class="container">
     <div class="table" style="padding-bottom: 10px; margin: 0">
-        <div class="table-cell valign-middle">
+        <div class="table-cell valign-middle" style="width: 250px">
             <a href="/"><img width="248" height="47" alt="DeMARK" src="/themes/<?php echo Yii::app()->theme->name; ?>/img/logo.png"/></a>
         </div>
         <div class="table-cell" style="position: relative">
-            <div style="position: absolute; top: 20px; left: -25px">
+            <div style="position: absolute; top: 20px; left: 40px">
                 <div class="bold blue">Звоните, заказывайте</div>
                 <!--<div class="inline-blocks">-->
                 <?php
@@ -36,7 +36,7 @@
                     $items = Yii::app()->db->createCommand()
                         ->select("title AS label, CONCAT('/info/', url) AS url")
                         ->from('{{page}}')
-                        ->where('menu_show>0 AND url<>"/"')
+                        ->where('menu_show>0 AND url<>"/" AND lang=:lang', ['lang' => $profile->price_country])
                         ->order('menu_show')->queryAll();
 
                     $this->widget('zii.widgets.CMenu', array(
