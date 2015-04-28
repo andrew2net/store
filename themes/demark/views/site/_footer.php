@@ -53,7 +53,9 @@ $groups = Category::model()->roots()->findAll();
                             <div class="bold" style="height: 2.5em">Звоните, заказывайте</div>
                             <div>
                                 <?php
-                                foreach (Yii::app()->params['enterprise']['phone'] as $phone) {
+                                Yii::import('application.controllers.ProfileController');
+                                $profile = ProfileController::getProfile();
+                                foreach (Yii::app()->params['phones'][$profile->price_country] as $phone) {
                                   if (is_array($phone)) {
                                     ?>
                                     <div>
