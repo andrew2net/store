@@ -36,10 +36,13 @@ $cs->registerScriptFile($tiny_mce_path . '/jquery.tinymce.js');
         </div>
     </div>
 
-    <?php echo $form->textFieldControlGroup($model, 'title', array('span' => 5, 'maxlength' => 255)); ?>
+    <div class="inline-blocks">
+        <?php echo $form->textFieldControlGroup($model, 'title', array('span' => 5, 'maxlength' => 255)); ?>
+        <?php echo $form->dropDownListControlGroup($model, 'lang', $model->getLicales()); ?>
+    </div>
 
     <?php // echo CHtml::activeLabel($model, 'content')// echo $form->textAreaControlGroup($model,'content',array('rows'=>6,'span'=>8)); ?>
-    <?php echo $form->textAreaControlGroup($model, 'content', ['rows'=>20,]); ?>
+    <?php echo $form->textAreaControlGroup($model, 'content', ['rows' => 20,]); ?>
 
     <div class="form-actions">
         <?php
@@ -66,8 +69,8 @@ $cs->registerScriptFile($tiny_mce_path . '/jquery.tinymce.js');
           language: 'ru',
           plugins: "inlinepopups,fullscreen,advimage",
           dialog_type: "modal",
-          convert_urls : true,
-          relative_urls : false,
+          convert_urls: true,
+          relative_urls: false,
           remove_script_host: true,
           forced_root_block: false,
           file_browser_callback: function (field_name, url, type, win) {

@@ -4,8 +4,14 @@ class SiteController extends Controller {
 
   public function actionPage($url) {
     Yii::import('application.modules.admin.models.Page');
+    Yii::import('application.controllers.ProfileController');
     $page = new Page();
-    $model = $page->findByAttributes(array('url' => $url));
+    if (Yii::app()->params['country']) {
+      $locale = Yii::app()->params['country'];
+    }  else {
+      $locale = ProfileController::getProfile()->price_country;
+    }
+    $model = $page->findByAttributes(array('url' => $url, 'lang' => $locale));
     Yii::import('application.modules.catalog.models.Category');
     if (!$model)
       throw new CHttpException(404, "Страница {$url} не найдена");
@@ -152,7 +158,7 @@ class SiteController extends Controller {
     $currency = Currency::model()->findByAttributes(['country_code' => $profile->price_country]);
     $value = $product->getPrice($new_price_type, $currency->code) *
       (1 - $product->getActualDiscount() / 100) * $quantity;
-    if ($profile->price_country != 'RU'){
+    if ($profile->price_country != 'RU') {
       $currencyTo = Currency::model()->findByAttributes(['country_code' => 'RU']);
       $currencyTo->convert($currency->code, $value);
     }

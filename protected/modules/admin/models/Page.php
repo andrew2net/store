@@ -10,8 +10,15 @@
  * @property string $content
  * @property integer $menu_show
  * @property string $update_time 
+ * @property string $lang 
  */
 class Page extends CActiveRecord {
+  
+  protected $locales = ['RU'=>'RU', 'KZ' => 'KZ'];
+  
+  public function getLicales(){
+    return $this->locales;
+  }
 
   /**
    * @return string the associated database table name
@@ -30,6 +37,7 @@ class Page extends CActiveRecord {
       array('url, title', 'required'),
       array('url, title', 'length', 'max' => 255),
       array('menu_show', 'numerical', 'integerOnly' => TRUE, 'max' => 255),
+      ['lang', 'length', 'max' => 2],
       array('content', 'safe'),
       // The following rule is used by search().
       // @todo Please remove those attributes that should not be searched.
@@ -57,6 +65,7 @@ class Page extends CActiveRecord {
       'title' => 'Заголовок',
       'content' => 'Содержимое страницы',
       'menu_show' => 'Позиция в меню',
+      'lang' => 'Локализация',
     );
   }
 
@@ -94,6 +103,13 @@ class Page extends CActiveRecord {
    */
   public static function model($className = __CLASS__) {
     return parent::model($className);
+  }
+
+  public function afterConstruct() {
+    if (Yii::app()->params['country']){
+      $this->lang = Yii::app()->params['country'];
+    }
+    parent::afterConstruct();
   }
 
   public function beforeSave() {

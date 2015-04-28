@@ -8,18 +8,21 @@
                 <div class="bold blue">Звоните, заказывайте</div>
                 <!--<div class="inline-blocks">-->
                 <?php
-                foreach (Yii::app()->params['enterprise']['phone'] as $phone) {
+                Yii::import('application.modules.admin.models.Page');
+                Yii::import('application.controllers.ProfileController');
+                $profile = ProfileController::getProfile();
+                foreach (Yii::app()->params['phones'][$profile->price_country] as $phone) {
                   if (is_array($phone)) {
                     ?>
                     <!--<div>-->
-                        <span class="blue" style="position: relative; top: 3px; font-size: 14pt"><?php echo $phone['cod']; ?></span>
-                        <span class="blue bold" style="font-size: 20pt; vertical-align: middle"><?php echo $phone['num']; ?></span>
+                    <span class="blue" style="position: relative; top: 3px; font-size: 14pt"><?php echo $phone['cod']; ?></span>
+                    <span class="blue bold" style="font-size: 20pt; vertical-align: middle"><?php echo $phone['num']; ?></span>
                     <!--</div>-->
                     <?php
                   } else {
                     ?>
                     <!--<div>-->
-                        <span class="blue" style="font-size: 16pt; vertical-align: middle"><?php echo $phone; ?></span>
+                    <span class="blue" style="font-size: 16pt; vertical-align: middle"><?php echo $phone; ?></span>
                     <!--</div>-->
                     <?php
                   }
@@ -30,8 +33,6 @@
             <div class="inline-blocks" style="text-align: right; margin-bottom: 20px; position: relative">
                 <div>
                     <?php
-                    Yii::import('application.modules.admin.models.Page');
-                    Yii::import('application.controllers.ProfileController');
                     $items = Yii::app()->db->createCommand()
                         ->select("title AS label, CONCAT('/info/', url) AS url")
                         ->from('{{page}}')
@@ -92,7 +93,6 @@
                   'style' => 'margin: 0 0 0 -4px; border: none; float: left; box-shadow: 0 0 1px inset',
                   'class' => 'iconsearch'
                 ));
-                $profile = ProfileController::getProfile();
                 switch ($profile->price_country) {
                   case 'KZ':
                     $country_code = $profile->price_country;
