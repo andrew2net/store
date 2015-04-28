@@ -7,15 +7,12 @@
 class MinutelyCommand extends CConsoleCommand {
 
   public function run($args) {
-//    global $argv;
     Yii::import('application.modules.admin.models.Mail');
     Yii::import('application.modules.admin.models.MailOrder');
     Yii::import('application.models.Order');
     Yii::import('application.models.Pay');
     Yii::import('application.models.OrderProduct');
     Yii::import('application.models.CustomerProfile');
-//    Yii::import('application.models.Newsletter');
-//    Yii::import('application.models.NewsletterBlock');
     Yii::import('application.modules.catalog.models.Product');
     Yii::import('application.modules.user.models.User');
     Yii::import('application.modules.user.models.Profile');
@@ -23,11 +20,8 @@ class MinutelyCommand extends CConsoleCommand {
     Yii::import('application.modules.payments.models.Payment');
     Yii::import('ext.yii-mail.YiiMailMessage');
 
-//    $conn = explode('=', $argv[2]);
-//    Yii::trace('Start minutely ' . $conn[1], 'cron');
-
     $mails = Mail::model()->findAll(array(
-      'with' => array('user', 'order'),
+      'with' => array('user' => ['with' => 'customerProfile'], 'order'),
       'condition' => 't.status_id=1'));
     /* @var $mails Mail[] */
     foreach ($mails as $mail) {
@@ -42,12 +36,14 @@ class MinutelyCommand extends CConsoleCommand {
             $message->view = 'confirmOrder';
             $params['order'] = $mail->order[0];
             $params['profile'] = $mail->user->profile;
+            $params['customerProfile'] = $mail->user->customerProfile;
             $message->setSubject("Ваш заказ");
             break;
           case Mail::TYPE_CHANGE_ORDER_STATUS:
             $message->view = 'processOrder';
             $params['order'] = $mail->order[0];
             $params['profile'] = $mail->user->profile;
+            $params['customerProfile'] = $mail->user->customerProfile;
             switch ($mail->order[0]->status_id) {
               case Order::STATUS_WAITING_FOR_PAY:
                 $message->view = 'payOrder';

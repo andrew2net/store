@@ -1,5 +1,6 @@
 <?php
 /* @var $profile Profile */
+/* @var $customerProfile CustomerProfile */
 /* @var $order Order */
 /* @var $this CController */
 ?>
@@ -17,7 +18,7 @@
       'order' => $order,
     );
     $this->renderInternal(dirname(__FILE__) . '/_order.php', $params);
-    $this->renderInternal(dirname(__FILE__) . '/_footer.php');
+    $this->renderInternal(dirname(__FILE__) . '/_footer.php', ['customerProfile' => $customerProfile]);
     ?>
   </body>
 </html>

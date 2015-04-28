@@ -2,6 +2,7 @@
 /* @var $login string */
 /* @var $passw string */
 /* @var $this CController */
+/* @var $profile CustomerProfile */
 ?>
 <!DOCTYPE html>
 <html>
@@ -17,7 +18,7 @@
     <p style="font-weight:bold">Пароль: <?php echo $passw; ?></p><br>
     <p>Вы можете изменить свои регистрационные данные в разделе <a href="<?php echo Yii::app()->createAbsoluteUrl('profile'); ?>">Личный кабинет.</a></p><br>
     <?php
-    $this->renderInternal(dirname(__FILE__) . '/_footer.php');
+    $this->renderInternal(dirname(__FILE__) . '/_footer.php', ['customerProfile' => $profile]);
     ?>
   </body>
 </html>

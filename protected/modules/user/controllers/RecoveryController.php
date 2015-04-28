@@ -127,6 +127,7 @@ class RecoveryController extends Controller {
     $params = array(
       'profile' => $user->profile,
       'message' => $message,
+      'customerProfile' => $customer_profile,
     );
     $mail->setBody($params, 'text/html');
     $mail->setFrom(Yii::app()->params['infoEmail']);

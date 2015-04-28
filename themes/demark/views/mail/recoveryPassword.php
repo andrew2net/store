@@ -1,5 +1,6 @@
 <?php
 /* @var $profile Profile */
+/* @var $customerProfile CustomerProfile */
 /* @var $message array */
 /* @var $this CController */
 ?>
@@ -16,7 +17,7 @@
     echo CHtml::tag('div', array(), 'Для получения нового пароля перейдите по ссылке ', FALSE);
     echo CHtml::tag('a', array('href'=>$message['activation_url']), $message['activation_url']);
     echo CHtml::closeTag('div');
-    $this->renderInternal(dirname(__FILE__) . '/_footer.php');
+    $this->renderInternal(dirname(__FILE__) . '/_footer.php', ['customerProfile' => $customerProfile]);
     ?>
   </body>
 </html>

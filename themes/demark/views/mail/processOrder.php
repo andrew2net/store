@@ -1,5 +1,6 @@
 <?php
 /* @var $profile Profile */
+/* @var $customerProfile CustomerProfile */
 /* @var $order Order */
 /* @var $text string */
 /* @var $this CController */
@@ -16,7 +17,7 @@
     echo CHtml::tag('p', array('style' => 'font-size:16pt;font-weight:bold;margin-bottom:1em'), 'Здравствуйте ' 
         . $profile->first_name . ' ' .$profile->last_name . '!');
     echo CHtml::tag('p', array(), "Ваш заказ №{$order->id} от {$date} {$text}.");
-    $this->renderInternal(dirname(__FILE__) . '/_footer.php');
+    $this->renderInternal(dirname(__FILE__) . '/_footer.php', ['customerProfile' => $customerProfile]);
     ?>
   </body>
 </html>
