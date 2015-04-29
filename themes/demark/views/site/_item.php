@@ -19,15 +19,15 @@ if ($discount) {
   $percent = '-' . $discount . '%';
   $old_price = '<span>' . number_format($price, 0, '.', ' ') . '</span>' . $currecy->class;
   $price = number_format(round($price * (1 - $discount / 100)), 0, '.', ' ');
-  $remainder = $data->remainder > 0 ? 'Осталось ' . $data->remainder . ' шт' : 'Временно отсутствует';
+//  $remainder = $data->remainder > 0 ? 'Осталось ' . $data->remainder . ' шт' : 'Временно отсутствует';
   $remainder_class = 'gray';
 } else {
   $percent = '';
   $price = number_format($price, 0, '.', ' ');
   $old_price = '';
-  $remainder = $data->remainder > 0 ? 'В наличии' : 'Нет на складе';
   $remainder_class = 'gray';
 }
+$remainder = $data->remainder > 0 ? 'В наличии' : 'Нет на складе';
 $href_params = array('id' => $data->id);
 $prodName = html_entity_decode($data->name, ENT_COMPAT, 'UTF-8');
 if (isset($index) && $index == 0)
@@ -39,7 +39,7 @@ echo CHtml::hiddenField('url', Yii::app()->request->url, array('id' => "url$data
     <a class="item-link" href="<?php echo Yii::app()->createUrl('product', $href_params); ?>">
         <div class="box-item">
             <div class="<?php echo empty($percent) ? '' : 'discount-label'; ?>"><?php echo $percent; ?></div>
-            <!--<div class="<?php // echo $glass;      ?>"></div>-->
+            <!--<div class="<?php // echo $glass;       ?>"></div>-->
             <div class="item-img img-anim">
               <!--<a class="fancybox" href="<?php echo $data->img; ?>">-->
                 <img src="<?php echo $data->small_img; ?>" alt="Изображение">
