@@ -97,7 +97,7 @@ class Delivery extends CActiveRecord {
       array('max_weight', 'numerical', 'numberPattern' => '/\d{1,3}\.?\d{0,2}/'),
       array('transport_type_id', 'numerical', 'integerOnly' => true),
       array('transport_type_id', 'length', 'max' => 1),
-      array('length, width, height, oversize, size_summ', 'length', 'max' => 4),
+      array('length, width, height, oversize', 'length', 'max' => 4),
       array('oversize, currency_code', 'length', 'max' => 3),
       array('insurance, zone_type_id', 'length', 'max' => 2),
       array('name', 'length', 'max' => 30),

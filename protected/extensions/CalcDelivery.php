@@ -51,7 +51,14 @@ class CalcDelivery {
       }
     }
 
-    $city_from = trim(Yii::app()->params['enterprise']['city']);
+    if (!$order->isNewRecord) {
+      $city_from = trim(Yii::app()->params['point_departure'][$order->country_code]);
+    } elseif ($country_code) {
+      $city_from = trim(Yii::app()->params['point_departure'][$country_code]);
+    } else {
+      $city_from = trim(current(Yii::app()->params['point_departure']));
+    }
+
     if (mb_strtolower(trim($city), 'UTF-8') == mb_strtolower(trim($city_from), 'UTF-8'))
       $city = ''; //if city and city_from are same exclude Energy delivery
 
@@ -80,7 +87,7 @@ class CalcDelivery {
        * Free delivery if summ of the order more then free delivery summ
        */
       foreach ($delivery->regionDeliveries as $region) {
-        if (is_null($region->zones) || !preg_match('/'.$region->zones->post_code.'/', $post_code) ||
+        if (is_null($region->zones) || !preg_match('/' . $region->zones->post_code . '/', $post_code) ||
           $region->free_summ == 0 || $region->free_summ > $productSumm) {
           continue;
         }
