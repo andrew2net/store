@@ -20,7 +20,7 @@ class ProfileController extends Controller {
     /* @var $profile Profile */
 
     $customer_profile = CustomerProfile::model()->findByAttributes(
-        array('user_id' => Yii::app()->user->id));
+      array('user_id' => Yii::app()->user->id));
     if (is_null($customer_profile)) {
       $customer_profile = new CustomerProfile;
       if (!Yii::app()->user->isGuest) {
@@ -41,7 +41,8 @@ class ProfileController extends Controller {
       try {
         $valid = true;
         $profile->attributes = $_POST['Profile'];
-        $profile->newsletter = $_POST['Profile']['newsletter'];
+        if (isset($_POST['Profile']['newsletter']))
+          $profile->newsletter = $_POST['Profile']['newsletter'];
         $valid = $profile->save() && $valid;
         $user->email = $_POST['User']['email'];
         $valid = $user->save() && $valid;
@@ -51,8 +52,7 @@ class ProfileController extends Controller {
           Yii::app()->user->setFlash('saveProfile', "Контактная информация обновлена");
           $tr->commit();
           $this->redirect('profile');
-        }
-        else
+        } else
           $tr->rollback();
       } catch (Exception $e) {
         $tr->rollback();
@@ -105,8 +105,7 @@ class ProfileController extends Controller {
         $new_password->activkey = UserModule::encrypting(microtime() . $new_passw->passw1);
         if ($new_password->save())
           echo json_encode(array('result' => TRUE, 'msg' => 'Новый пароль сохранен'));
-      }
-      else
+      } else
         echo json_encode(array('result' => false, 'msg' => $new_passw->getError('passw1')));
     }
     Yii::app()->end();
@@ -120,7 +119,7 @@ class ProfileController extends Controller {
     $loginForm = new LoginForm;
 
     if ((isset($_POST['email']) || isset($_POST['login'])) && isset($_POST['passw']) ||
-        isset($_POST['LoginForm'])) {
+      isset($_POST['LoginForm'])) {
       if (isset($_POST['email']))
         $user = User::model()->findByAttributes(array('email' => $_POST['email']));
       else if (isset($_POST['login'])) {
@@ -160,8 +159,7 @@ class ProfileController extends Controller {
                 $customerProfile->moveCart($user, $session_id);
               }
               echo 'ok';
-            }
-            elseif (isset($_POST['login'])) {
+            } elseif (isset($_POST['login'])) {
               if (count($userCart) == 0)
                 $customerProfile->moveCart($user, $session_id);
               echo json_encode(array('result' => TRUE)); //, 'cart' => SiteController::cartLabel()));
@@ -179,8 +177,7 @@ class ProfileController extends Controller {
       if (isset($_POST['login'])) { //if login was from main page
         echo json_encode(array('result' => FALSE));
         Yii::app()->end();
-      }
-      else if (isset($_POST['email'])) { //if login from shopping cart
+      } else if (isset($_POST['email'])) { //if login from shopping cart
         echo '';
         Yii::app()->end();
       }
@@ -257,7 +254,7 @@ class ProfileController extends Controller {
         }
         if (empty($profile->price_country) && isset($city) && is_array($city)) {
           $country_code = Yii::app()->db->createCommand()->select('code')->from('net_country')
-                  ->where('id=:id', array(':id' => $city['country_id']))->query();
+              ->where('id=:id', array(':id' => $city['country_id']))->query();
           if ($c_code = $country_code->read())
             $profile->price_country = $c_code['code'];
         }
@@ -267,7 +264,7 @@ class ProfileController extends Controller {
         if ($row = $country_data->read()) {
           $country_id = $row['country_id'];
           $country_code = Yii::app()->db->createCommand()->select('code')->from('net_country')
-                  ->where('id=:id', array(':id' => $country_id))->query();
+              ->where('id=:id', array(':id' => $country_id))->query();
           if ($c_code = $country_code->read())
             $profile->price_country = $c_code['code'];
         }
