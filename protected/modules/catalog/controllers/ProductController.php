@@ -503,7 +503,7 @@ class ProductController extends Controller {
             'article' => $data[2],
             'brand_id' => (int) $brand->id,
             'gender_id' => $data[11],
-            'remainder' => $data[8],
+            'remainder_RU' => $data[8],
             'description' => strtr($data[12], $quotes),
             'price' => $data[9],
             'age' => $ages[0],
@@ -563,7 +563,7 @@ class ProductController extends Controller {
           $product = Product::model()->findByAttributes(array(
             'article' => $data[2]));
           if (!is_null($product)) {
-            $product->remainder = $data[1];
+            $product->remainder_RU = $data[1];
 //            $product->price = $data[3];
             $product->save(FALSE);
           }

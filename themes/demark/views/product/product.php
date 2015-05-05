@@ -54,6 +54,7 @@ $txtName = html_entity_decode($product->name, ENT_COMPAT, 'UTF-8') . ' ' . $prod
     $old_price = '';
   }
   $form = $this->beginWidget('CActiveForm');
+  $remainder = "remainder_$profile->price_country";
   ?>
   <div class="inline-blocks">
     <div style="position: relative">
@@ -75,11 +76,11 @@ $txtName = html_entity_decode($product->name, ENT_COMPAT, 'UTF-8') . ' ' . $prod
       <div class="bold" style="font-size: 16pt; margin: 15px 0 20px"><?php echo $product->name; ?></div>
       <div>Артикул: <?php echo $product->article; ?></div>
       <div>Производитель: <?php echo $product->brand->name; ?></div>
-      <div>Наличие: <?php echo $product->remainder ? 'товар в наличии на складе' : 'товар временно отсутствует'; ?></div>
+      <div>Наличие: <?php echo $product->$remainder ? 'товар в наличии на складе' : 'товар временно отсутствует'; ?></div>
       <div class="item-disc red" style="font-size: 18pt !important; display: inherit"><?php echo $old_price; ?></div>
       <div class="inline-blocks" style="position: relative">
         <div class="bold blue" style="position: relative; bottom: 3px; font-size: 32pt"><?php echo $price . $currecy; ?></div>
-        <?php if ($product->remainder > 0){ ?>
+        <?php if ($product->$remainder > 0){ ?>
         <div style="position: relative; bottom: 28px; vertical-align: bottom"><?php
           echo CHtml::activeNumberField($productForm, 'quantity'
               , array(

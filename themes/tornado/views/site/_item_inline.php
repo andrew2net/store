@@ -33,12 +33,12 @@ else {
     $wholesale = '--';
 }
 
-if ($data->remainder < 10) {
-  $remainder = $data->remainder > 0 ? $data->remainder . ' шт' : '';
+if ($data->remainder_RU < 10) {
+  $remainder = $data->remainder_RU > 0 ? $data->remainder_RU . ' шт' : '';
   $remainder_class = 'gray';
 }
 else {
-  $remainder = $data->remainder > 0 ? 'есть' : '';
+  $remainder = $data->remainder_RU > 0 ? 'есть' : '';
   $remainder_class = 'gray';
 }
 

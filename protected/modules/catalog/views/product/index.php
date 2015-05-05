@@ -63,27 +63,33 @@ $columns = array(
 //      'filter' => $model->getBrandOptions(),
 //    ),
   array(
-    'name' => 'remainder',
-    'value' => '$data->remainder',
-    'headerHtmlOptions' => array('style' => 'text-align: right; padding-right:27px'),
+    'name' => 'remainder_RU',
+    'value' => '$data->remainder_RU',
+    'headerHtmlOptions' => array('style' => 'text-align: right; padding-right:27px; width: 65px'),
     'filterHtmlOptions' => array('style' => 'text-align: right'),
     'htmlOptions' => array('style' => 'text-align: right; padding-right:27px'),
+  ),
+  array(
+    'name' => 'remainder_KZ',
+    'value' => '$data->remainder_KZ',
+    'headerHtmlOptions' => array('style' => 'text-align: right; padding-right:27px; width: 65px'),
+    'filterHtmlOptions' => array('style' => 'text-align: right'),
+    'htmlOptions' => array('style' => 'text-align: right; padding-right:27px'),
+    'visible' => Yii::app()->params['mcurrency'],
   ),
   array(
     'header' => ' Цена  <span class="ruble" style="position:relative;display:inline-block"></span>',
     'value' => '$data->price',
     'headerHtmlOptions' => array('style' => 'text-align: right;'),
     'htmlOptions' => array('style' => 'text-align: right'),
-  ),);
-if (Yii::app()->params['mcurrency'])
-  $columns = array_merge($columns, array(
+  ),
     array(
       'header' => 'Цена ',
       'value' => '$data->price_tenge',
       'headerHtmlOptions' => array('class' => 'tenge', 'style' => 'text-align: right'),
       'htmlOptions' => array('style' => 'text-align: right'),
-  )));
-$columns = array_merge($columns, array(
+      'visible' => Yii::app()->params['mcurrency'],
+  ),
   array(
     'name' => 'show_me',
     'value' => '$data->show_me ? "Да" : "Нет"',
@@ -93,8 +99,7 @@ $columns = array_merge($columns, array(
   array(
     'class' => 'bootstrap.widgets.TbButtonColumn',
     'template' => '{update}{delete}',
-  ),
-    ));
+  ));
 $this->widget('bootstrap.widgets.TbGridView', array(
   'id' => 'product-grid',
   'dataProvider' => $model->search(),

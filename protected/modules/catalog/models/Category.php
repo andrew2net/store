@@ -168,7 +168,7 @@ class Category extends CActiveRecord {
   }
 
   public function hasProducts($root = null, $level = 1) {
-
+    $cp = ProfileController::getProfile();
     $this->getDbCriteria()->mergeWith(array(
 //      'with' => array('subcategories' => array(
 //          'select' => 'subcategories.id',
@@ -180,7 +180,7 @@ class Category extends CActiveRecord {
       'order' => 't.lft',
       'condition' => 't.level=:level AND (t.root=:root OR :root IS NULL) AND '
       . '(subcat.lft>:lft OR :lft IS NULL) AND (subcat.rgt<:rgt OR :rgt IS NULL) '
-      . 'AND prod.show_me=1 AND prod.remainder>0',
+      . "AND prod.show_me=1 AND prod.remainder_$cp->price_country>0",
       'group' => 't.id',
       'together' => 'true',
       'having' => 'count_products>0',

@@ -16,7 +16,7 @@ $this->widget('bootstrap.widgets.TbGridView', array(
       'value' => '$data->brand->name',
       'filter' => $product->getBrandOptions(),
     ),
-    'remainder',
+    'remainder_RU',
     'price',
     array(
       'name' => 'show_me',
@@ -66,7 +66,7 @@ $this->widget('bootstrap.widgets.TbGridView', array(
       'name' => 'brand_id',
       'value' => '$data->brand->name',
     ),
-    'remainder',
+    'remainder_RU',
     'price',
     array(
       'name' => 'show_me',

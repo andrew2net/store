@@ -10,8 +10,9 @@
  * @property string $small_img
  * @property string $article
  * @property integer $brand_id
- * @property integer $remainder
- * @property string $description
+ * @property integer $remainder_RU
+  * @property integer $remainder_KZ
+* @property string $description
  * @property string $price
  * @property string $price_tenge
  * @property boolean $show_me
@@ -50,7 +51,7 @@ class Product extends CActiveRecord {
     // NOTE: you should only define rules for those attributes that
     // will receive user inputs.
     return array(
-      array('remainder', 'numerical', 'integerOnly' => true, 'max' => 99999, 'min' => 0),
+      array('remainder_RU, remainder_KZ', 'numerical', 'integerOnly' => true, 'max' => 99999, 'min' => 0),
       array('weight', 'numerical', 'numberPattern' => '(^\d{1,3}$|^\d{1,3}\.\d{0,3}$)'),
       array('length, width, height', 'numerical', 'max' => 9999.9, 'min' => 0),
       array('name, article, brand_id, price', 'required'),
@@ -64,7 +65,7 @@ class Product extends CActiveRecord {
       array('article', 'unique'),
       // The following rule is used by search().
       // @todo Please remove those attributes that should not be searched.
-      array('name, article, brand_id, remainder, price, price_tenge, show_me', 'safe', 'on' => 'search'),
+      array('name, article, brand_id, remainder_RU, remainder_KZ, price, price_tenge, show_me', 'safe', 'on' => 'search'),
     );
   }
 
@@ -99,7 +100,8 @@ class Product extends CActiveRecord {
       'small_img' => 'Миниатюра',
       'article' => 'Артикул',
       'brand_id' => 'Бренд',
-      'remainder' => 'Остаток',
+      'remainder_RU' => 'Ост-к RU',
+      'remainder_KZ' => 'Ост-к KZ',
       'description' => 'Описание',
       'price' => 'Цена',
       'price_tenge' => 'Цена',
@@ -137,7 +139,8 @@ class Product extends CActiveRecord {
 
     $criteria->compare('t.name', $this->name, true);
     $criteria->compare('article', $this->article, true);
-    $criteria->compare('remainder', $this->remainder);
+    $criteria->compare('remainder_RU', $this->remainder_RU);
+    $criteria->compare('remainder_KZ', $this->remainder_KZ);
     $criteria->compare('price', $this->price);
     $criteria->compare('price_tenge', $this->price);
     $criteria->compare('show_me', $this->show_me);
@@ -284,6 +287,7 @@ class Product extends CActiveRecord {
   }
 
   public function scopes() {
+    $cp = ProfileController::getProfile();
     return array_merge(parent::scopes(), array(
       'top' => array(
         'with' => array(
@@ -292,7 +296,7 @@ class Product extends CActiveRecord {
         ),
         'condition' => "show_me=1",
       ),
-      'availableOnly' => array('condition' => "remainder>0 AND remainder IS NOT NULL",),
+      'availableOnly' => array('condition' => "remainder_$cp->price_country>0 AND remainder_$cp->price_country IS NOT NULL",),
     ));
   }
 

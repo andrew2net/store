@@ -27,7 +27,8 @@ if ($discount) {
   $old_price = '';
   $remainder_class = 'gray';
 }
-$remainder = $data->remainder > 0 ? 'В наличии' : 'Нет на складе';
+$remainderLocale = "remainder_$profile->price_country";
+$remainder = $data->$remainderLocale > 0 ? 'В наличии' : 'Нет на складе';
 $href_params = array('id' => $data->id);
 $prodName = html_entity_decode($data->name, ENT_COMPAT, 'UTF-8');
 if (isset($index) && $index == 0)
@@ -39,7 +40,7 @@ echo CHtml::hiddenField('url', Yii::app()->request->url, array('id' => "url$data
     <a class="item-link" href="<?php echo Yii::app()->createUrl('product', $href_params); ?>">
         <div class="box-item">
             <div class="<?php echo empty($percent) ? '' : 'discount-label'; ?>"><?php echo $percent; ?></div>
-            <!--<div class="<?php // echo $glass;       ?>"></div>-->
+            <!--<div class="<?php // echo $glass;        ?>"></div>-->
             <div class="item-img img-anim">
               <!--<a class="fancybox" href="<?php echo $data->img; ?>">-->
                 <img src="<?php echo $data->small_img; ?>" alt="Изображение">
@@ -47,9 +48,9 @@ echo CHtml::hiddenField('url', Yii::app()->request->url, array('id' => "url$data
             </div>
             <div class="item-name blue"><?php echo (mb_strlen($prodName, 'utf-8') > 45 ? mb_substr($prodName, 0, 42, 'utf-8') . '...' : $prodName) . ' ' . $data->article; ?></div>
             <div class="item-rest bold <?php echo $remainder_class; ?>"><?php echo $remainder; ?></div>
-            <div class="item-disc <?php echo ($data->remainder > 0 ? 'item-hide ' : ''); ?>red"><?php echo $old_price; ?></div>
-            <div class="item-price <?php echo ($data->remainder > 0 ? 'item-hide ' : ''); ?>blue"><?php echo $price . $currecy->class; ?></div>
-            <?php if ($data->remainder > 0) { ?>
+            <div class="item-disc <?php echo ($data->$remainderLocale > 0 ? 'item-hide ' : ''); ?>red"><?php echo $old_price; ?></div>
+            <div class="item-price <?php echo ($data->$remainderLocale > 0 ? 'item-hide ' : ''); ?>blue"><?php echo $price . $currecy->class; ?></div>
+            <?php if ($data->$remainderLocale > 0) { ?>
               <div class="item-bt addToCart" data-product="<?php echo $data->id; ?>"><div>В корзину</div></div>
             <?php } ?>
             <div class="item-add-proc"></div>

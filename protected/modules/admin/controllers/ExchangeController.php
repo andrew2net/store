@@ -86,7 +86,7 @@ class ExchangeController extends CController {
         }
 
         if ($remainder !== FALSE)
-          $model->remainder = (int) $item->remainder;
+          $model->remainder_RU = (int) $item->remainder;
         if (isset($item->price))
           $model->price = (float) $item->price;
         if (isset($item->weight))
