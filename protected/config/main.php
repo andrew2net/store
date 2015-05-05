@@ -21,6 +21,7 @@ $site_config = array(
     'application.modules.user.components.*',
     'bootstrap.helpers.TbHtml',
     'ext.yii-mail.YiiMailMessage',
+    'ext.YmlGenerator.YmlGenerator',
   ),
 //  'theme' => 'demark', // requires you to copy the theme under your themes directory
   'modules' => array(
@@ -190,6 +191,10 @@ $site_config = array(
     'cache' => array(
       'class' => 'CFileCache',
     ),
+    'YmlGenerator' => [
+      'class'=>'SYmlGenerator',
+      'outputFile'=>dirname($_SERVER['SCRIPT_FILENAME']).'/catalogue.yml',
+    ],
   ),
   // application-level parameters that can be accessed
 // using Yii::app()->params['paramName']
