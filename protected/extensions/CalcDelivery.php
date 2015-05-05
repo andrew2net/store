@@ -27,18 +27,20 @@ class CalcDelivery {
     Yii::import('application.modules.payments.models.CurrencyRate');
     Yii::import('application.modules.catalog.models.Price');
 
-    $items = $products;
+//    $products = $products;
     $currency = self::getCurrency($order->currency_code);
-    $type = self::getItemsType($items, $delivery_id);
+    $type = self::getItemsType($products, $delivery_id);
 
     if ($type) {
-      $price_type = Price::getPrice($items);
+      $price_type = Price::getPrice($products);
     } else {
       $price_type = Price::getPrice();
     }
 
-    $product_sizes = self::getProductSizes($items, $currency->code, $price_type, $order->isNewRecord ? date('Y-m-d') : $order->time);
-    $productSumm = array_sum(array_column($product_sizes, 5));
+    $product_sizes = self::getProductSizes($products, $currency->code, $price_type, $order->isNewRecord ? date('Y-m-d') : $order->time);
+    $productSumm = 0; // array_sum(array_column($product_sizes, 5));
+    foreach ($product_sizes as $item)
+      $productSumm += $item->price;
     $subsidy = round($productSumm * Yii::app()->params['order']['subsidy'] / 100);
 
     $list = array();
@@ -232,58 +234,47 @@ class CalcDelivery {
 
   /**
    * Retur array of products data fo delivery fee calculation
-   * @param array $items Array of Cart, OrderProduct or stdClass
+   * @param array $products Array of Cart, OrderProduct or stdClass
    * @param string $currency_code Code of the currency
    * @param Price $price_tyipe Type of the wholesale price
    * @param string $date Order date or today if products from cart
    * @return array Array of arrays of product data (length, width, height, weight, product_id, price)
    */
-  private static function getProductSizes($items, $currency_code, $price_type, $date) {
+  private static function getProductSizes($products, $currency_code, $price_type, $date) {
     $total_weight = 0;
-    $product_weights = array();
+//    $product_weights = array();
     $product_sizes = array();
     $product_lengths = array();
     $product_widths = array();
     $product_heights = array();
-    foreach ($items as $item) {
+    foreach ($products as $product) {
 
-      /* @var $item Cart */
-      /* @var $item OrderProduct */
-      $length = (float) $item->product->length;
-      $width = (float) $item->product->width;
-      $height = (float) $item->product->height;
-      $weight = (float) $item->product->weight;
-      $product_id = (int) $item->product_id;
-      $quantity = (int) $item->quantity;
+      /* @var $product Cart */
+      /* @var $product OrderProduct */
+      $length = (float) $product->product->length;
+      $width = (float) $product->product->width;
+      $height = (float) $product->product->height;
+      $weight = (float) $product->product->weight;
+      $quantity = (int) $product->quantity;
 
-      if ($item instanceof OrderProduct)
-        $price = $item->price;
+      if ($product instanceof OrderProduct)
+        $price = $product->price;
       else {
-        $disc = $item->product->getActualDiscount($date);
-        $price = round($item->product->getPrice($price_type, $currency_code) * (1 - $disc / 100));
+        $disc = $product->product->getActualDiscount($date);
+        $price = round($product->product->getPrice($price_type, $currency_code) * (1 - $disc / 100));
       }
 
       $total_weight += $weight * $quantity;
       for ($i = 0; $i < $quantity; $i++) {
+        $item = new Item($product, $currency_code, $price_type, $date);
         $product_lengths[] = $length;
         $product_widths[] = $width;
         $product_heights[] = $height;
-        $product_sizes[] = array(
-          $length,
-          $width,
-          $height,
-          $weight,
-          $product_id,
-          $price,
-        );
-        $product_weights[] = $weight;
+        $product_sizes[] = $item;
+//        $product_weights[] = $weight;
       }
     }
-//    if ($product_weights)
-//      $max_weight = max($product_weights);
-//    else
-//      $max_weight = 0;
-    arsort($product_weights);
+//    arsort($product_weights);
     array_multisort($product_lengths, SORT_DESC, $product_widths, SORT_DESC
       , $product_heights, SORT_DESC, $product_sizes);
 
@@ -438,7 +429,7 @@ class CalcDelivery {
    * 
    * <samp>
    * ['result' => true, 'parcels' => [
-   * ['items' => [], 'length' => 55, 'width' => 42, 'height' => 25, weight => 8.33]
+   * ['items' => Item[], 'length' => 55, 'width' => 42, 'height' => 25, weight => 8.33]
    * ]]
    * </samp>
    */
@@ -451,22 +442,22 @@ class CalcDelivery {
     switch ($delivery->size_method_id) {
       case Delivery::SIZE_EMS_KAZ:
         foreach ($items as $item) {
+          /* @var $item Item */
           if ($volume->checkItemSize($item)) {
-            $oversize_items[] = $item[4];
+            $oversize_items[] = $item->product_id;
           } else {
-            $dim = array_slice($item, 0, 3);
-            rsort($dim);
-            $size = $dim[0] + ($dim[1] + $dim[2]) * 2;
+            $size = $item->getSizeSumm();
             if ($size > $delivery->size_summ) {
-              $oversize_items[] = $item[4];
+              $oversize_items[] = $item->product_id;
             }
           }
         }
 //        break;
       case Delivery::SIZE_POST_KAZ:
         foreach ($items as $item) {
-          if ($item[3] > $delivery->max_weight) {
-            $oversize_items[] = $item[4];
+          /* @var $item Item */
+          if ($item->weight > $delivery->max_weight) {
+            $oversize_items[] = $item->product_id;
           }
         }
         break;
@@ -494,10 +485,11 @@ class CalcDelivery {
           $parcel_items = array();
           $weight = 0;
           foreach ($items as $key => $item) {
-            if ($weight + $item[3] > $delivery->max_weight && $parcel_items) {
+            /* @var $item Item */
+            if ($weight + $item->weight > $delivery->max_weight && $parcel_items) {
               continue;
             } else {
-              $weight += $item[3];
+              $weight += $item->weight;
               $parcel_items[$key] = $item;
             }
           }
@@ -560,8 +552,8 @@ class CalcDelivery {
   private static function placeItems(array &$data, Volume &$volume, Delivery &$delivery) {
 
     foreach ($data['items'] as $key => $item) {
-
-      $weight = $data['weight'] + $item[3];
+      /* @var $item Item */
+      $weight = $data['weight'] + $item->weight;
       if ($weight > $delivery->max_weight && $delivery->size_method_id != Delivery::SIZE_NRJ) {
         continue;
       }
@@ -570,9 +562,9 @@ class CalcDelivery {
         continue;
       }
 
-      $length = max(array($data['length'], $volume->maxLength + $item[$orientation[0]]));
-      $width = max(array($data['width'], $volume->maxWidth + $item[$orientation[1]]));
-      $height = max(array($data['height'], $volume->maxHeight + $item[$orientation[2]]));
+      $length = max(array($data['length'], $volume->maxLength + $item->$orientation[0]));
+      $width = max(array($data['width'], $volume->maxWidth + $item->$orientation[1]));
+      $height = max(array($data['height'], $volume->maxHeight + $item->$orientation[2]));
 
       if ($delivery->size_method_id == Delivery::SIZE_EMS_KAZ) {
         $size_summ = $length + ($width + $height) * 2;
@@ -583,16 +575,16 @@ class CalcDelivery {
       $data['length'] = $length;
       $data['width'] = $width;
       $data['height'] = $height;
-      $data['weight'] += $item[3];
+      $data['weight'] += $item->weight;
 
       $data['items'] = array_diff_key($data['items'], array($key => $item));
       if (count($data['items']) == 0)
         return;
 
       $new_volumes = [
-        new Volume($item[$orientation[0]], $item[$orientation[1]], $volume->height - $item[$orientation[2]], $volume->maxLength, $volume->maxWidth, $volume->maxHeight + $item[$orientation[2]]),
-        new Volume($item[$orientation[0]], $volume->width - $item[$orientation[1]], $volume->height, $volume->maxLength, $volume->maxWidth + $item[$orientation[1]], $volume->maxHeight),
-        new Volume($volume->length - $item[$orientation[0]], $volume->width, $volume->height, $volume->maxLength + $item[$orientation[0]], $volume->maxWidth, $volume->maxHeight),
+        new Volume($item->$orientation[0], $item->$orientation[1], $volume->height - $item->$orientation[2], $volume->maxLength, $volume->maxWidth, $volume->maxHeight + $item->$orientation[2]),
+        new Volume($item->$orientation[0], $volume->width - $item->$orientation[1], $volume->height, $volume->maxLength, $volume->maxWidth + $item->$orientation[1], $volume->maxHeight),
+        new Volume($volume->length - $item->$orientation[0], $volume->width, $volume->height, $volume->maxLength + $item->$orientation[0], $volume->maxWidth, $volume->maxHeight),
       ];
 
       foreach ($new_volumes as $v) {
@@ -625,18 +617,59 @@ class Parcel {
 }
 
 /**
+ * Item class
+ * 
+ */
+class Item {
+
+  /** @var float $length length of the item */
+  public $length,
+    /** @var float $width width of the item */
+    $width,
+    /** @var float $height height of the item */
+    $height,
+    /** @var float $weight weight of the item */
+    $weight,
+    /** @var int $product_id product ID */
+    $product_id,
+    /** @var int $price price */
+    $price;
+
+  function __construct($product, $currency_code, $price_type, $date) {
+    $this->length = (float) $product->product->length;
+    $this->width = (float) $product->product->width;
+    $this->height = (float) $product->product->height;
+    $this->weight = (float) $product->product->weight;
+    $this->product_id = (int) $product->product_id;
+    if ($product instanceof OrderProduct)
+      $this->price = $product->price;
+    else {
+      $disc = $product->product->getActualDiscount($date);
+      $this->price = round($product->product->getPrice($price_type, $currency_code) * (1 - $disc / 100));
+    }
+  }
+
+  function getSizeSumm() {
+    $dim = [$this->length, $this->width, $this->height];
+    rsort($dim);
+    $size = $dim[0] + ($dim[1] + $dim[2]) * 2;
+  }
+
+}
+
+/**
  * Volume class
  */
 class Volume {
 
   /** @var $orientations 6 possibles orientations of an item */
   protected static $orientations = array(
-    array(0, 1, 2),
-    array(0, 2, 1),
-    array(1, 0, 2),
-    array(1, 2, 0),
-    array(2, 0, 1),
-    array(2, 1, 0),
+    array('length', 'width', 'height'),
+    array('length', 'height', 'width'),
+    array('width', 'length', 'height'),
+    array('width', 'height', 'length'),
+    array('height', 'length', 'width'),
+    array('height', 'width', 'length'),
   );
 
   /** @var float $length the length of the empty volume */
@@ -665,7 +698,7 @@ class Volume {
    * @param Delivery $delivery
    */
   function __construct1(Delivery $delivery) {
-    $this->__consruct6($delivery->length, $delivery->width, $delivery->height);
+    $this->__construct6($delivery->length, $delivery->width, $delivery->height);
   }
 
   /**
@@ -677,7 +710,7 @@ class Volume {
    * @param float $maxWidth
    * @param float $maxHeight
    */
-  function __consruct6($length, $width, $height, $maxLenght = 0, $maxWidth = 0, $maxHeight = 0) {
+  function __construct6($length, $width, $height, $maxLenght = 0, $maxWidth = 0, $maxHeight = 0) {
     $this->length = $length;
     $this->width = $width;
     $this->height = $height;
@@ -688,16 +721,16 @@ class Volume {
 
   /**
    * Checks whether the item can be placed in the volume.
-   * @param array $item sizes of the item
+   * @param Item $item sizes of the item
    * @return boolean true if item can't be placed into value
    */
-  public function checkItemSize($item) {
-    return $item[0] > ($this->length || $item[1] > $this->width || $item[2] > $this->height) &&
-      ($item[0] > $this->length || $item[2] > $this->width || $item[1] > $this->height) &&
-      ($item[1] > $this->length || $item[0] > $this->width || $item[2] > $this->height) &&
-      ($item[1] > $this->length || $item[2] > $this->width || $item[0] > $this->height) &&
-      ($item[2] > $this->length || $item[0] > $this->width || $item[1] > $this->height) &&
-      ($item[2] > $this->length || $item[1] > $this->width || $item[0] > $this->height);
+  public function checkItemSize(Item $item) {
+    return $item->length > ($this->length || $item->width > $this->width || $item->height > $this->height) &&
+      ($item->length > $this->length || $item->height > $this->width || $item->width > $this->height) &&
+      ($item->width > $this->length || $item->length > $this->width || $item->height > $this->height) &&
+      ($item->width > $this->length || $item->height > $this->width || $item->length > $this->height) &&
+      ($item->height > $this->length || $item->length > $this->width || $item->width > $this->height) &&
+      ($item->height > $this->length || $item->width > $this->width || $item->length > $this->height);
   }
 
   /**
@@ -707,9 +740,9 @@ class Volume {
    * @return boolean true if item can be pcaced into volume with the orientation
    */
   function checkItemOrientation($item, $orientation) {
-    return $item[$orientation[0]] <= $this->length &&
-      $item[$orientation[1]] <= $this->width &&
-      $item[$orientation[2]] <= $this->height;
+    return $item->$orientation[0] <= $this->length &&
+      $item->$orientation[1] <= $this->width &&
+      $item->$orientation[2] <= $this->height;
   }
 
   /**
@@ -724,9 +757,9 @@ class Volume {
       if ($this->checkItemOrientation($item, $orientation))
         return $orientation;
       if ($emptyParcel) {
-        $overlength = $item[$orientation[0]] > $this->length ? $item[$orientation[0]] - $this->length : 0;
-        $overwidth = $item[$orientation[1]] > $this->width ? $item[$orientation[1]] - $this->width : 0;
-        $overheight = $item[$orientation[2]] > $this->height ? $item[$orientation[2]] - $this->height : 0;
+        $overlength = $item->$orientation[0] > $this->length ? $item->$orientation[0] - $this->length : 0;
+        $overwidth = $item->$orientation[1] > $this->width ? $item->$orientation[1] - $this->width : 0;
+        $overheight = $item->$orientation[2] > $this->height ? $item->$orientation[2] - $this->height : 0;
         $oversizesSumm = $overlength + $overwidth + $overheight;
         if (!isset($oversizeMinSumm)) {
           $oversizeMinSumm = $oversizesSumm;
