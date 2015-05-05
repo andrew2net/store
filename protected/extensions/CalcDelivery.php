@@ -86,11 +86,13 @@ class CalcDelivery {
       }
 
       /*
-       * Free delivery if summ of the order more then free delivery summ
+       * Free delivery if summ of summ of the order more then free delivery summ
        */
       foreach ($delivery->regionDeliveries as $region) {
-        if (is_null($region->zones) || !preg_match('/' . $region->zones->post_code . '/', $post_code) ||
-          $region->free_summ == 0 || $region->free_summ > $productSumm) {
+        if ($delivery->zone_type_id != Delivery::ZONE_COURIER && (is_null($region->zones) ||
+          !preg_match('/' . $region->zones->post_code . '/', $post_code) || $region->free_summ == 0 ||
+          $region->free_summ > $productSumm) ||
+          $delivery->zone_type_id == Delivery::ZONE_COURIER && $region->free_summ > $productSumm) {
           continue;
         }
         $price = 0;
@@ -100,7 +102,9 @@ class CalcDelivery {
         continue;
       }
 
-      if ($price > $subsidy) {
+      if ($delivery->zone_type_id == Delivery::ZONE_COURIER && $price > 0) {
+        $priceTxt = $price . $currency->class;
+      } elseif ($price > $subsidy) {
         $price = $price - $subsidy;
         $priceTxt = $price . $currency->class;
       } else {
@@ -307,6 +311,10 @@ class CalcDelivery {
           break;
         case Delivery::ZONE_CUSTOM:
         case Delivery::ZONE_COURIER:
+          $deliveryRate = self::getDeliveryRate($delivery, $parcel['weight']);
+          if ($deliveryRate)
+            $price = $deliveryRate->price;
+          break;
         case Delivery::ZONE_SELF:
           break;
         default :
@@ -369,7 +377,7 @@ class CalcDelivery {
   private static function getDeliveryRate(Delivery $delivery, $weight) {
     return DeliveryRate::model()->findByAttributes(array(
         'delivery_id' => $delivery->id,
-        'region_id' => $delivery->regionDeliveries[0]->region_id,
+        'region_id' => isset($delivery->regionDeliveries[0]) ? $delivery->regionDeliveries[0]->region_id : 0,
         ), array(
         'condition' => 'weight>=:total_weight',
         'order' => 'weight',
