@@ -212,6 +212,7 @@ class ProfileController extends Controller {
 
   public static function getProfile() {
     Yii::import('application.modules.catalog.models.Price');
+    Yii::import('application.modules.user.models.User');
     if (Yii::app()->user->isGuest)
       $profile = CustomerProfile::model()->with('price', 'user')->findByAttributes(array(
         'session_id' => self::getSession()));

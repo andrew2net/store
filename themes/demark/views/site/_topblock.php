@@ -11,7 +11,8 @@
                 Yii::import('application.modules.admin.models.Page');
                 Yii::import('application.controllers.ProfileController');
                 $profile = ProfileController::getProfile();
-                foreach (Yii::app()->params['phones'][$profile->price_country] as $phone) {
+                $locale = isset($_GET['language']) ? strtoupper($_GET['language']) : $profile->price_country;
+                foreach (Yii::app()->params['phones'][$locale] as $phone) {
                   if (is_array($phone)) {
                     ?>
                     <!--<div>-->
@@ -34,9 +35,9 @@
                 <div>
                     <?php
                     $items = Yii::app()->db->createCommand()
-                        ->select("title AS label, CONCAT('/info/', url) AS url")
+                        ->select("title AS label, CONCAT('/', LOWER(lang), '/info/', url) AS url")
                         ->from('{{page}}')
-                        ->where('menu_show>0 AND url<>"/" AND lang=:lang', ['lang' => $profile->price_country])
+                        ->where('menu_show>0 AND url<>"/" AND lang=:lang', ['lang' => $locale])
                         ->order('menu_show')->queryAll();
 
                     $this->widget('zii.widgets.CMenu', array(
@@ -93,9 +94,9 @@
                   'style' => 'margin: 0 0 0 -4px; border: none; float: left; box-shadow: 0 0 1px inset',
                   'class' => 'iconsearch'
                 ));
-                switch ($profile->price_country) {
+                switch ($locale) {
                   case 'KZ':
-                    $country_code = $profile->price_country;
+                    $country_code = $locale;
                     $flag = 'flag_kz';
                     break;
                   default :

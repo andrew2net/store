@@ -121,6 +121,7 @@ $site_config = array(
     ),
     // uncomment the following to enable URLs in path-format
     'urlManager' => array(
+      'class'=>'application.components.UrlManager',
       'urlFormat' => 'path',
       'showScriptName' => FALSE,
       'rules' => array(
@@ -136,6 +137,7 @@ $site_config = array(
         'admin/auth/<_c:\w+>' => 'auth/<_c>',
         'admin/auth/<_c:\w+>/<_a:\w+>' => 'auth/<_c>/<_a>',
         '<_c:(login|logout)>' => 'profile/<_c>',
+        '<language:(ru|kz)>/info/<url:\w+>' => 'site/page',
         'info/<url:\w+>' => 'site/page',
         '<controller:\w+>/<id:\d+>' => '<controller>',
         'user/recovery/<activkey>/<email>' => 'user/recovery',
@@ -147,11 +149,6 @@ $site_config = array(
 //        '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
       ),
     ),
-    /*
-      'db'=>array(
-      'connectionString' => 'sqlite:'.dirname(__FILE__).'/../data/testdrive.db',
-      ),
-     */
 // uncomment the following to use a MySQL database
     /*
       'db' => array(

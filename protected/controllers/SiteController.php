@@ -8,8 +8,12 @@ class SiteController extends Controller {
     $page = new Page();
     if (Yii::app()->params['country']) {
       $locale = Yii::app()->params['country'];
-    }  else {
-      $locale = ProfileController::getProfile()->price_country;
+    } else {
+      if (isset($_GET['language'])) {
+        $locale = strtoupper($_GET['language']);
+      }else{
+        $locale = ProfileController::getProfile()->price_country;
+      }
     }
     $model = $page->findByAttributes(array('url' => $url, 'lang' => $locale));
     Yii::import('application.modules.catalog.models.Category');
