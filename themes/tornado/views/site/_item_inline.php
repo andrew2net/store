@@ -51,7 +51,7 @@ foreach ($data->prices as $p) {
   if ($p->price && ($webUser->isGuest || !$user->customerProfile->price || $p->price_type->summ > $user->customerProfile->price->summ))
     $wholesalePrices[] = array(
       $p->price_type->summ,
-      $p->price,
+      $p->price * ($discount ? 1 - $discount / 100 : 1),
     );
 }
 
