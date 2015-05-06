@@ -103,9 +103,9 @@ class NewsletterController extends Controller {
     if (isset($_POST['NewsletterBlock'])) {
       foreach ($_POST['NewsletterBlock'] as $key => $value) {
         $blocks[$key] = NewsletterBlock::model()->findByAttributes(['newsletter_id' => $model->id, 'id' => $key]);
-//        if (!$blocks[$key]) {
+        if (!$blocks[$key]) {
           $blocks[$key] = new NewsletterBlock;
-//        }
+        }
         $blocks[$key]->text = $value['text'];
         if (isset($oldBlocks[$key])){
           $blocks[$key]->image = $oldBlocks[$key]->image;
@@ -253,7 +253,22 @@ class NewsletterController extends Controller {
     $model->unsetAttributes();  // clear any default values
     if (isset($_GET['Newsletter'])) {
       $model->attributes = $_GET['Newsletter'];
+      Yii::app()->user->setState('Newsletter', $_GET['Newsletter']);
     }
+    elseif (Yii::app()->user->hasState('Newsletter')) {
+      $model->attributes = Yii::app()->user->getState('Newsletter');
+    }
+    if (isset($_GET['Newsletter_page']))
+      Yii::app()->user->setState('Newsletter_page', $_GET['Newsletter_page']);
+    elseif (isset($_GET['ajax']))
+      Yii::app()->user->setState('Newsletter_page', NULL);
+    elseif (Yii::app()->user->hasState('Newsletter_page'))
+      $_GET['Newsletter_page'] = (int) Yii::app()->user->getState('Newsletter_page');
+
+    if (isset($_GET['Newsletter_sort']))
+      Yii::app()->user->setState('Newsletter_sort', $_GET['Newsletter_sort']);
+    elseif (Yii::app()->user->hasState('Newsletter_sort'))
+      $_GET['Newsletter_sort'] = Yii::app()->user->getState('Newsletter_sort');
 
     $this->render('admin', array(
       'model' => $model,
