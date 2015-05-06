@@ -168,6 +168,7 @@ class Category extends CActiveRecord {
   }
 
   public function hasProducts($root = null, $level = 1) {
+    Yii::import('application.controllers.ProfileController');
     $cp = ProfileController::getProfile();
     $this->getDbCriteria()->mergeWith(array(
 //      'with' => array('subcategories' => array(
