@@ -182,7 +182,7 @@ $(document).ready(function () {
                 if (pricesData.length > 0) {
                     text = '<div>Цена зависит от общей суммы заказа</div><table style="margin-bottom:0"><tr><th colspan=2 style="text-align:center">сумма заказа<span class="ruble">Р</span></th><th style="text-align:center">цена<span class="ruble">Р</span></th></tr>';
                     $.each(pricesData, function (index, elment) {
-                        text += '<tr><td style="text-align:right">от</td><td style="text-align:right;padding-right:35px">' + elment[0].formatMoney(0) + '</td><td style="text-align:right;padding-right:20px">' + elment[1].formatMoney(2) + '</td></tr>';
+                        text += '<tr><td style="text-align:right">от</td><td style="text-align:right;padding-right:35px">' + elment[0].formatMoney(0) + '</td><td style="text-align:right;padding-right:20px">' + elment[1].formatMoney(0) + '</td></tr>';
                     });
                     text += '</table>'
                 }
