@@ -14,7 +14,7 @@
 class UrlManager extends CUrlManager {
 
   public function createUrl($route, $params = array(), $ampersand = '&') {
-    if (!isset($params['language'])) {
+    if (!isset($params['language']) && !Yii::app()->params['country']) {
       if (Yii::app()->user->hasState('language'))
         Yii::app()->language = Yii::app()->user->getState('language');
       else if (isset(Yii::app()->request->cookies['language']))
