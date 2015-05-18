@@ -23,7 +23,7 @@ class UrlManager extends CUrlManager {
       unset($params['no_language']);
     }
     $url = parent::createUrl($route, $params, $ampersand);
-    if (preg_match('/language\/(?:ru|kz)/', $url)) {
+    if (preg_match('/language(?:\/|=)(?:ru|kz)/', $url)) {
       unset($params['language']);
       $url = parent::createUrl($route, $params, $ampersand);
     }

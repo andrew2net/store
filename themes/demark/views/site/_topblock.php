@@ -1,7 +1,7 @@
 <div class="container">
     <div class="table" style="padding-bottom: 10px; margin: 0">
         <div class="table-cell valign-middle" style="width: 250px">
-            <a href="/"><img width="248" height="47" alt="DeMARK" src="/themes/<?php echo Yii::app()->theme->name; ?>/img/logo.png"/></a>
+            <a href="<?php echo $this->createUrl('/'); ?>"><img width="248" height="47" alt="DeMARK" src="/themes/<?php echo Yii::app()->theme->name; ?>/img/logo.png"/></a>
         </div>
         <div class="table-cell" style="position: relative">
             <div style="position: absolute; top: 20px; left: 40px">
@@ -104,13 +104,17 @@
                     $flag = 'flag_ru';
                 }
                 echo CHtml::endForm();
+                $url_wo_locale = preg_replace('/^\/(?:ru|kz)/', '', Yii::app()->request->url);
+                $url_params_ru = $url_params_kz =$_GET;
+                $url_params_ru['language'] = 'ru';
+                $url_params_kz['language'] = 'kz';
                 ?>
                 <div style="display: inline-block; width: 48px; height: 24px; margin-left: 20px; position: relative; top: -8px">
                     <span id="country" class="wrapper-country <?php echo $flag ?>"><?php echo $country_code; ?></span>
                 </div>
                 <div id="country-select" style="display: none; position: absolute; top: 6px; right: -3px; width: 46px; height: 52px; border: solid 1px #BBB; padding-left: 4px; background-color: white; box-shadow: 1px 1px 2px -1px; z-index: 300">
-                    <div id="select-ru" class="flag_ru" style="position: absolute; top: -7px">RU</div>
-                    <div id="select-kz" class="flag_kz" style="position: absolute; top: 20px">KZ</div>
+                    <div id="select-ru" class="flag_ru" style="position: absolute; top: -7px"><a href="<?php echo $this->createUrl('', $url_params_ru); ?>">RU</a></div>
+                    <div id="select-kz" class="flag_kz" style="position: absolute; top: 20px"><a href="<?php echo $this->createUrl('', $url_params_kz); ?>">KZ</a></div>
                 </div>
             </div>
         </div>
@@ -284,8 +288,9 @@
           });
       });
       select.click(function (event) {
-          if (this.innerHTML !== country.html()) {
-              var locale = this.innerHTML;
+        var locale = $(this).find('a').html();
+          if (locale !== country.html()) {
+//              var locale = this.innerHTML;
               event.stopPropagation();
               country_select.slideUp();
               $.post('/profile/savecountry', {country: locale}, function () {
