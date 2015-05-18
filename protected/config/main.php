@@ -144,6 +144,7 @@ $site_config = array(
         '<language:(ru|kz)>/group/<id:\d+>' => 'group/index',
         'group/<id:\d+>' => 'group/index',
         '<language:(ru|kz)>/search' => 'search',
+        '<language:(ru|kz)>/discount_product' => 'discount_product',
         '<language:(ru|kz)>/<controller:\w+>/<id:\d+>' => '<controller>',
         '<controller:\w+>/<id:\d+>' => '<controller>',
         'pay/<action:\w+>/<id:\d+>' => 'pay/<action>',
