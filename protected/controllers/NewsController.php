@@ -1,6 +1,6 @@
 <?php
 
-class NewsController extends CController
+class NewsController extends Controller
 {
 
 	public function actionItem($id)

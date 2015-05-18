@@ -4,7 +4,7 @@
  * Description of DiscountController
  *
  */
-class Discount_productController extends CController {
+class Discount_productController extends Controller {
 
   public function actionIndex() {
     Yii::import('application.modules.catalog.models.Product');

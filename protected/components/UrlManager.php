@@ -14,14 +14,20 @@
 class UrlManager extends CUrlManager {
 
   public function createUrl($route, $params = array(), $ampersand = '&') {
-    if (!isset($params['language']) && !Yii::app()->params['country']) {
+    if (!isset($params['language']) && !isset($params['no_language']) && !Yii::app()->params['country']) {
       if (Yii::app()->user->hasState('language'))
-        Yii::app()->language = Yii::app()->user->getState('language');
+        $params['language'] = Yii::app()->user->getState('language');
       else if (isset(Yii::app()->request->cookies['language']))
-        Yii::app()->language = Yii::app()->request->cookies['language']->value;
-      $params['language'] = Yii::app()->language;
+        $params['language'] = Yii::app()->request->cookies['language']->value;
+    }elseif (isset($params['no_language'])) {
+      unset($params['no_language']);
     }
-    return parent::createUrl($route, $params, $ampersand);
+    $url = parent::createUrl($route, $params, $ampersand);
+    if (preg_match('/language\/(?:ru|kz)/', $url)) {
+      unset($params['language']);
+      $url = parent::createUrl($route, $params, $ampersand);
+    }
+    return $url;
   }
 
 }

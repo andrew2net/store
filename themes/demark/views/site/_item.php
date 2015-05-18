@@ -29,7 +29,7 @@ if ($discount) {
 }
 $remainderLocale = "remainder_$profile->price_country";
 $remainder = $data->$remainderLocale > 0 ? 'В наличии' : 'Нет на складе';
-$href_params = array('id' => $data->id);
+$href_params = array('id' => $data->id, 'back' => Yii::app()->request->url);
 $prodName = html_entity_decode($data->name, ENT_COMPAT, 'UTF-8');
 if (isset($index) && $index == 0)
   echo CHtml::hiddenField('currentPage', $widget->dataProvider->getPagination()->getCurrentPage());

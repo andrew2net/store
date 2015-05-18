@@ -299,6 +299,7 @@ class ProfileController extends Controller {
       $profile = $this->getProfile();
       $profile->price_country = $_POST['country'];
       $profile->update('price_country');
+      Yii::app()->language = strtolower($_POST['country']);
     }
     Yii::app()->end();
   }

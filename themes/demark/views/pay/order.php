@@ -17,7 +17,7 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
     Yii::import('application.modules.catalog.models.Product');
     Yii::import('application.modules.payments.models.Payment');
     ?>
-    <?php if ($errors) echo CHtml::tag('p', array('class' => 'red', $errors)); ?>
+    <?php if ($errors) echo CHtml::tag('p', array('class' => 'red'), $errors); ?>
     <h1 class="bold blue" style="margin: 20px 0">Информация о заказе:</h1>
     <div><b>Заказ №:</b> <?php echo $order->id; ?> <b>от</b> <?php echo Yii::app()->dateFormatter->format('DD.MM.yyyy', $order->time); ?></div>
     <div><b>Статус заказа:</b> <?php echo $order->status; ?></div>

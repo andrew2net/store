@@ -4,7 +4,7 @@
  * Description of SearchController
  *
  */
-class SearchController extends CController {
+class SearchController extends Controller {
 
   public function actionIndex() {
     Yii::import('application.modules.catalog.models.Product');

@@ -4,7 +4,7 @@
  * Description of GroupController
  *
  */
-class GroupController extends CController {
+class GroupController extends Controller {
 
   public function actionIndex($id, array $filter = []) {
     Yii::import('application.modules.catalog.models.Product');

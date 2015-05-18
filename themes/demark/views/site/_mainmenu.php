@@ -13,7 +13,7 @@
         if (!$this instanceof CartController)
           $items[] = array(
             'label' => SiteController::cartLabel(),
-            'url' => array('/cart'),
+            'url' => Yii::app()->createUrl('cart', ['no_language' => true]), //array('/cart'),
             'linkOptions' => array('id' => 'shoppingCart'),
             'itemOptions' => array('class' => 'align-right icon-cart', 'style'=>'width: initial'),
           );

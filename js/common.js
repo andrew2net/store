@@ -89,21 +89,25 @@ $(document).ready(function () {
         $('form').submit();
     });
 
-    $(document).on('click', '.item-link', function (event) {
-        event.preventDefault();
-        $('#item-submit').attr('action', $(this).attr('href'));
-        $('#item-submit').submit();
-    });
+//    $(document).on('click', '.item-link', function (event) {
+//        event.preventDefault();
+//        $('#item-submit').attr('action', $(this).attr('href'));
+//        $('#item-submit').submit();
+//    });
     $(document).on('click', '.fancybox', function (event) {
         event.stopPropagation();
     });
 
     $('.brandFilter').change(function () {
         var listId = 'product-list';
-        var form = $('#filterForm');
-        var filter = form.serialize();
+        var form = $('#filterForm').find('input[name="filter[brands][]"]');
+        var filter = form.serialize();//.replace(/(&|\?)filter\[brands\]\[\d+\]=\d+/g, '');
         var url = $.fn.yiiListView.getUrl(listId).replace(/(&|\/)filter(.*?)(=|\/)\d+/, '');
         $.fn.yiiListView.update(listId, {url: url, data: filter});
+        var title = $('title').text();
+        filter = filter ? '?' + filter : filter
+        var path = window.location.pathname;
+        window.history.pushState({filter:'1'}, title, window.location.pathname + filter)
     });
 
     $(document).on('keydown', ".input-number", function (event) {

@@ -158,7 +158,7 @@ class CartController extends Controller {
           }
           if ($fl) {
             $this->sendConfirmOrderMessage($order);
-            $this->redirect(Yii::app()->createUrl('/pay/order', array('id' => $order->id)));
+            $this->redirect(Yii::app()->createUrl('/pay/order', ['id' => $order->id]));
           }
         }
       }

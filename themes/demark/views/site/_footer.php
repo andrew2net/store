@@ -27,7 +27,7 @@ $groups = Category::model()->roots()->findAll();
                             Yii::import('application.controllers.ProfileController');
                             $profile = ProfileController::getProfile();
                             $items = Yii::app()->db->createCommand()
-                                ->select("title AS label, CONCAT('/info/', url) AS url")
+                                ->select("title AS label, CONCAT('/', LOWER(lang), '/info/', url) AS url")
                                 ->from('{{page}}')
                                 ->where('menu_show>0 AND url<>"/" AND lang=:lang', ['lang' => $profile->price_country])
                                 ->order('menu_show')->queryAll();

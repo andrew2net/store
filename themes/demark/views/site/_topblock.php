@@ -285,14 +285,17 @@
       });
       select.click(function (event) {
           if (this.innerHTML !== country.html()) {
+              var locale = this.innerHTML;
               event.stopPropagation();
               country_select.slideUp();
-              $.post('/profile/savecountry', {country: this.innerHTML}, function () {
+              $.post('/profile/savecountry', {country: locale}, function () {
                   if (requestMethod.attr('content') === 'POST') {
                       reloadPost.val(1);
                       $('form').submit();
-                  } else
-                      window.location.reload();
+                  } else {
+                      var current_url = window.location.pathname.replace(/^(\/)(ru|kz)($|\/)/, '$1' + locale.toLowerCase() + '$3');
+                      window.location.replace(current_url);
+                  }
               });
           }
       });

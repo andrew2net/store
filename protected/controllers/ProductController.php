@@ -4,7 +4,7 @@
  *
  * @author Greg Bakos <greg@londonfreelancers.co.uk>
  */
-class ProductController extends CController{
+class ProductController extends Controller{
 
   public function actionIndex($id) {
     Yii::import('application.modules.catalog.models.Product');
@@ -30,10 +30,10 @@ class ProductController extends CController{
       'product' => $product,
       'productForm' => $productForm,
     );
-    if (isset($_POST['currentPage']))
-      $params['page'] = $_POST['currentPage'];
-    if (isset($_POST['url']))
-      $params['url'] = $_POST['url'];
+//    if (isset($_POST['currentPage']))
+//      $params['page'] = $_POST['currentPage'];
+    if (isset($_GET['back']))
+      $params['url'] = $_GET['back'];
 
     $this->render('product', $params);
   }
