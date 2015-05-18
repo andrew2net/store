@@ -143,6 +143,7 @@ $site_config = array(
         'info/<url:\w+>' => 'site/page',
         '<language:(ru|kz)>/group/<id:\d+>' => 'group/index',
         'group/<id:\d+>' => 'group/index',
+        '<language:(ru|kz)>/search' => 'search',
         '<language:(ru|kz)>/<controller:\w+>/<id:\d+>' => '<controller>',
         '<controller:\w+>/<id:\d+>' => '<controller>',
         'pay/<action:\w+>/<id:\d+>' => 'pay/<action>',

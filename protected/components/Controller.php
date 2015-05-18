@@ -50,7 +50,9 @@ class Controller extends CController {
       $cookie = new CHttpCookie('language', $lang);
       $cookie->expire = time() + (60 * 60 * 24 * 365); // (1 year)
       Yii::app()->request->cookies['language'] = $cookie;
-      $url = $this->createUrl(Yii::app()->request->url, ['language' => $lang]);
+      $params = $_GET;
+      $params['language'] = $lang;
+      $url = Yii::app()->createUrl(Yii::app()->urlManager->parseUrl(Yii::app()->request), $params);
       if (preg_match('/(?!language\/(?:ru|kz))(?=^\/(?:ru|kz))/', $url)) {
         $this->redirect($url);
       }

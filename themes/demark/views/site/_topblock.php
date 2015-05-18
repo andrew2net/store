@@ -83,7 +83,7 @@
             </div>
             <div style="float: right; margin: 4px 5px; position: relative">
                 <?php
-                echo CHtml::beginForm('/search', 'get', array('id' => 'search-form', 'style' => 'display:inline-block; margin: 0'));
+                echo CHtml::beginForm(Yii::app()->createUrl('search'), 'get', array('id' => 'search-form', 'style' => 'display:inline-block; margin: 0'));
                 $search = new Search;
                 echo CHtml::activeTextField($search, 'text', array(
                   'style' => 'border: none; width: 180px; height: 23px; padding: 0 0 2px 10px; float: left; background:whitesmoke; 
