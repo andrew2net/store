@@ -169,7 +169,7 @@ class SiteController extends Controller {
       $currencyTo->convert($currency->code, $value);
     }
     $result['value'] = $value;
-    Yii::log('rsult ' . $value, CLogger::LEVEL_ERROR, 'add_to_cart');
+    Yii::log('result ' . json_encode($result), CLogger::LEVEL_ERROR, 'add_to_cart');
 
     echo json_encode($result);
     Yii::app()->end();
