@@ -141,6 +141,7 @@ class SiteController extends Controller {
   }
 
   public function actionAddToCart() {
+    Yii::log('add to cart begin', CLogger::LEVEL_ERROR, 'add_to_cart');
     Yii::import('application.modules.catalog.models.Price');
     Yii::import('application.modules.catalog.models.Product');
     Yii::import('application.modules.payments.models.Currency');
