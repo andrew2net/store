@@ -141,7 +141,6 @@ class SiteController extends Controller {
   }
 
   public function actionAddToCart() {
-    Yii::log('add to cart begin', CLogger::LEVEL_ERROR, 'add_to_cart');
     Yii::import('application.modules.catalog.models.Price');
     Yii::import('application.modules.catalog.models.Product');
     Yii::import('application.modules.payments.models.Currency');
@@ -154,7 +153,6 @@ class SiteController extends Controller {
     $new_price_type = Price::getPrice();
     $result = array('refresh' => $old_price_type != $new_price_type);
     $result['cart'] = $this->cartLabel();
-    Yii::log('cart label ' . $result['cart'], CLogger::LEVEL_ERROR, 'add_to_cart');
     if ($new_price_type) {
       $result['price'] = 'Установлена цена "' . $new_price_type->name . '"';
     }
@@ -192,9 +190,6 @@ class SiteController extends Controller {
     Yii::import('application.controllers.ProfileController');
     $session_id = ProfileController::getSession();
 
-    Yii::log("session id = $session_id", CLogger::LEVEL_ERROR, 'add_to_cart');
-
-    $carts = Cart::model()->cartItem($session_id, $id)->findAll();
     if (isset($carts[0]))
       $cart = $carts[0];
     else {
@@ -212,8 +207,7 @@ class SiteController extends Controller {
       $cart->quantity += $quantity;
 
     $cart->time = date('Y-m-d H:i:s');
-    $res = $cart->save();
-    Yii::log("res $res", CLogger::LEVEL_ERROR, 'add_to_cart');
+    $cart->save();
   }
 
   /**
