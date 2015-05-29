@@ -157,6 +157,7 @@ class SiteController extends Controller {
     if ($new_price_type) {
       $result['price'] = 'Установлена цена "' . $new_price_type->name . '"';
     }
+    Yii::log('after price', CLogger::LEVEL_ERROR, 'add_to_cart');
 
     $profile = ProfileController::getProfile();
     $product = \Product::model()->findByAttributes(['id' => $id]);
@@ -168,6 +169,7 @@ class SiteController extends Controller {
       $currencyTo->convert($currency->code, $value);
     }
     $result['value'] = $value;
+    Yii::log('rsult ' . $value, CLogger::LEVEL_ERROR, 'add_to_cart');
 
     echo json_encode($result);
     Yii::app()->end();
