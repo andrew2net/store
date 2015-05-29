@@ -150,7 +150,6 @@ class SiteController extends Controller {
     $quantity = filter_input(INPUT_POST, 'quantity');
 
     $old_price_type = Price::getPrice();
-    Yii::log("id = $id  quantity = $quantity", CLogger::LEVEL_ERROR, 'add_to_cart');
     self::addToCart($id, $quantity);
     $new_price_type = Price::getPrice();
     $result = array('refresh' => $old_price_type != $new_price_type);
@@ -159,7 +158,6 @@ class SiteController extends Controller {
     if ($new_price_type) {
       $result['price'] = 'Установлена цена "' . $new_price_type->name . '"';
     }
-    Yii::log('after price', CLogger::LEVEL_ERROR, 'add_to_cart');
 
     $profile = ProfileController::getProfile();
     $product = \Product::model()->findByAttributes(['id' => $id]);
@@ -171,7 +169,6 @@ class SiteController extends Controller {
       $currencyTo->convert($currency->code, $value);
     }
     $result['value'] = $value;
-    Yii::log('result ' . json_encode($result), CLogger::LEVEL_ERROR, 'add_to_cart');
 
     echo json_encode($result);
     Yii::app()->end();
@@ -191,8 +188,11 @@ class SiteController extends Controller {
 
     if ($quantity < 0)
       return;
+    Yii::log("id = $id  quantity = $quantity", CLogger::LEVEL_ERROR, 'add_to_cart');
     Yii::import('application.controllers.ProfileController');
     $session_id = ProfileController::getSession();
+
+    Yii::log("session id = $session_id", CLogger::LEVEL_ERROR, 'add_to_cart');
 
     $carts = Cart::model()->cartItem($session_id, $id)->findAll();
     if (isset($carts[0]))
@@ -212,7 +212,8 @@ class SiteController extends Controller {
       $cart->quantity += $quantity;
 
     $cart->time = date('Y-m-d H:i:s');
-    $cart->save();
+    $res = $cart->save();
+    Yii::log("res $res", CLogger::LEVEL_ERROR, 'add_to_cart');
   }
 
   /**
