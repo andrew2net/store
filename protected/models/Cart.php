@@ -111,7 +111,7 @@ class Cart extends CActiveRecord {
 
   public function shoppingCart($session) {
     $this->getDbCriteria()->mergeWith(array(
-      'condition' => "(session_id=:sid AND :sid<>'') OR (user_id=:uid AND :sid<>'')",
+      'condition' => "(t.session_id=:sid AND :sid<>'') OR (user_id=:uid AND :sid='')",
       'params' => array(
         ':sid' => $session,
         ':uid' => Yii::app()->user->isGuest ? '' : Yii::app()->user->id,
