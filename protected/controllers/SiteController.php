@@ -150,10 +150,12 @@ class SiteController extends Controller {
     $quantity = filter_input(INPUT_POST, 'quantity');
 
     $old_price_type = Price::getPrice();
+    Yii::log("id = $id  quantity = $quantity", CLogger::LEVEL_ERROR, 'add_to_cart');
     self::addToCart($id, $quantity);
     $new_price_type = Price::getPrice();
     $result = array('refresh' => $old_price_type != $new_price_type);
     $result['cart'] = $this->cartLabel();
+    Yii::log('cart label ' . $result['cart'], CLogger::LEVEL_ERROR, 'add_to_cart');
     if ($new_price_type) {
       $result['price'] = 'Установлена цена "' . $new_price_type->name . '"';
     }
