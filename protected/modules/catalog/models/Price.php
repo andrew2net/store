@@ -147,7 +147,7 @@ class Price extends CActiveRecord {
 
     if (!$products_table){
       $sid = ProfileController::getSession();
-      $query->where("(session_id=:sid AND :sid_not_empty) OR (user_id=:uid AND :sid='')", array(
+      $query->where("(session_id=:sid AND :sid_not_empty) OR (user_id=:uid AND :sid_not_empty)", array(
         ':sid' => $sid,
         ':sid_not_empty' => !empty($sid),
         ':uid' => Yii::app()->user->isGuest ? '' : Yii::app()->user->id,
