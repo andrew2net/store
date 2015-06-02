@@ -25,6 +25,7 @@ class HourlyCommand extends CConsoleCommand {
     $mails = Mail::model()->findAll(array(
       'with' => array('user' => ['with' => 'profile']),
       'condition' => 't.status_id=1'));
+    echo 'start';
     /* @var $mails Mail[] */
     foreach ($mails as $mail) {
       try {
