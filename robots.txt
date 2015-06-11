@@ -3,5 +3,6 @@ Disallow: /cart
 Disallow: /login
 Disallow: /user/
 Disallow: /group/index/
+Disallow: /product/\d+\?back=
 Disallow: /popupWindow
 Disallow: /cgi-bin/
