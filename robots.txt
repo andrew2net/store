@@ -3,6 +3,6 @@ Disallow: /cart
 Disallow: /login
 Disallow: /user/
 Disallow: /group/index/
-Clean-param: back&Product_sort /*/product/
+Clean-param: back&Product_sort&Product_page /*/product/
 Disallow: /popupWindow
 Disallow: /cgi-bin/
