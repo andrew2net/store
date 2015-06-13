@@ -4,6 +4,6 @@ Disallow: /login
 Disallow: /user/
 Disallow: /*group/index/
 Clean-param: back&Product_sort&Product_page /*product/
-Clean-param: size&Product_sort /*group/
+Clean-param: size&Product_sort&Product_page /*group/
 Disallow: /*popupWindow
 Disallow: /cgi-bin/
