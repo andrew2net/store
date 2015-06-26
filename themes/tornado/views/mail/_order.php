@@ -26,14 +26,16 @@ echo CHtml::tag('div', array(), 'Вид доставки: ' . CHtml::encode($del
 echo CHtml::tag('div', array('style' => 'margin-bottom:1em'), 'Вид оплаты: ' . $order->payment->name);
 echo CHtml::closeTag('td');
 echo CHtml::tag('td', array('style' => 'vertical-align: top; padding-left: 20px'));
-echo CHtml::tag('div', array('style' => 'font-weight:bold;margin-top:1em'), 'Реквизиты для оплаты:');
-echo CHtml::tag('div', array(), 'Получатель: ' . Yii::app()->params['enterprise']['name']);
-echo CHtml::tag('div', array(), 'ИНН: ' . Yii::app()->params['enterprise']['inn'] . ' КПП:' . Yii::app()->params['enterprise']['kpp']);
-echo CHtml::tag('div', array(), 'Юр. адрес: ' . Yii::app()->params['enterprise']['legal_address']);
-echo CHtml::tag('div', array(), 'Банк получателя: ' . Yii::app()->params['enterprise']['bank']['name']);
-echo CHtml::tag('div', array(), 'БИК: ' . Yii::app()->params['enterprise']['bank']['bik']);
-echo CHtml::tag('div', array(), 'Корр. счет: ' . Yii::app()->params['enterprise']['bank']['ks']);
-echo CHtml::tag('div', array(), 'Расч. счет: ' . Yii::app()->params['enterprise']['bank']['rs']);
+if ($order->status_id == 4) {
+    echo CHtml::tag('div', array('style' => 'font-weight:bold;margin-top:1em'), 'Реквизиты для оплаты:');
+    echo CHtml::tag('div', array(), 'Получатель: ' . Yii::app()->params['enterprise']['name']);
+    echo CHtml::tag('div', array(), 'ИНН: ' . Yii::app()->params['enterprise']['inn'] . ' КПП:' . Yii::app()->params['enterprise']['kpp']);
+    echo CHtml::tag('div', array(), 'Юр. адрес: ' . Yii::app()->params['enterprise']['legal_address']);
+    echo CHtml::tag('div', array(), 'Банк получателя: ' . Yii::app()->params['enterprise']['bank']['name']);
+    echo CHtml::tag('div', array(), 'БИК: ' . Yii::app()->params['enterprise']['bank']['bik']);
+    echo CHtml::tag('div', array(), 'Корр. счет: ' . Yii::app()->params['enterprise']['bank']['ks']);
+    echo CHtml::tag('div', array(), 'Расч. счет: ' . Yii::app()->params['enterprise']['bank']['rs']);
+}
 echo CHtml::closeTag('td');
 echo CHtml::closeTag('table');
 
