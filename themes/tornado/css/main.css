@@ -1,7 +1,7 @@
 .blue{
     color: #1135bf;
 }
-blue-light{
+.blue-light{
     color: #607ef3;
 }
 .gray{
@@ -36,8 +36,6 @@ body
     min-width: max-content;
     min-width: -moz-max-content;
     min-width: -webkit-max-content;
-    min-width: -ms-max-content;
-    min-width: -o-max-content;
 }
 
 fieldset{
@@ -124,7 +122,7 @@ fieldset{
 }
 #mainmenu ul{
     margin: 0;
-    padding-left: 0px;
+    padding-left: 0;
 }
 #mainmenu ul li a{
     line-height: 33px;
@@ -494,7 +492,7 @@ input[type=checkbox]:checked + label:before, .weekcarousel-prev,
 .item-bt{
     position: absolute;
     font-size: 11pt;
-    width: 87px;
+    width: 88px;
 }
 .item-inline-bt{
     width: 50px;
@@ -531,7 +529,7 @@ input[type=checkbox]:checked + label:before, .weekcarousel-prev,
 }
 .item-add-proc{
     display: none;
-    background: url(../../..//images/load.gif) no-repeat;
+    background: url(../../../images/load.gif) no-repeat;
     background-position: center;
     height: 55px;
 }
@@ -600,7 +598,7 @@ span#Order_payment_id, span#Order_delivery_id{
     width: 250px;
     border: 0 !important;
     background: lightgray !important;
-    box-shadow: 0px 1px 1px 1px #999999 inset;
+    box-shadow: 0 1px 1px 1px #999999 inset;
     height: 9px !important;
 }
 .ui-slider .ui-slider-range{
@@ -773,7 +771,7 @@ span#Order_payment_id, span#Order_delivery_id{
     padding: 4px;
     font-size: 8pt;
     text-transform: uppercase;
-    text-shadow: 0px 1px 0px #fff;
+    text-shadow: 0 1px 0 #fff;
     color: #666;
     background: #ccc;
     border-radius: 3px;
@@ -792,18 +790,23 @@ span#Order_payment_id, span#Order_delivery_id{
     right: 0;
 }
 
-.payment-cash, .payment-cart{
+.payment-cash, .payment-cart, .payment-bank{
     background: url(./../img/pay-icons.png) no-repeat;
     width: 48px;
     display: inline-block;
     margin-right: 10px
 }
-.payment-cart{
+.payment-bank{
     height: 45px;
 }
 .payment-cash{
-    height: 38px;
+    height: 34px;
     background-position: 0 -45px;
+    margin-top: 3px;
+}
+.payment-cart{
+    height: 34px;
+    background-position: 0 -79px;
     margin-top: 3px;
 }
 
@@ -947,7 +950,7 @@ td.text-right{
     box-shadow: 1px 1px 2px -1px;
     width: 250px;
     height: 210px;
-    right: 0px;
+    right: 0;
     top: 27px;
 }
 #login-dialog:before{
@@ -984,7 +987,7 @@ td.text-right{
 }
 
 #left-menu-cont{
-    border: 2px solid #FFD324; width: 200px; font-size: 12pt; margin: 0px 14px 15px 0;
+    border: 2px solid #FFD324; width: 200px; font-size: 12pt; margin: 0 14px 15px 0;
 }
 .left-menu-item{
     position: relative;

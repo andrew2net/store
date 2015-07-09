@@ -104,7 +104,7 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
     <?php
     if ($to_pay > 0 && $order->status_id == Order::STATUS_WAITING_FOR_PAY && $order->payment->type_id != Payment::TYPE_CAHSH) {
       echo CHtml::beginForm($order->payment->getActionUrl());
-      $params = $order->payment->getParams($order);
+      $params = $order->payment->getParams();
       foreach ($params as $key => $value) {
         echo CHtml::hiddenField($key, $value);
       }

@@ -217,7 +217,7 @@ $site_config = array(
 
 $root = dirname(__FILE__);
 //$root = str_replace('/config', '', $root);
-$path = 'demark';
+$path = 'tornado';
 if (isset($_SERVER['SERVER_NAME']))
   if (!(strpos($_SERVER['SERVER_NAME'], 'demark') === FALSE))
     $path = 'demark';

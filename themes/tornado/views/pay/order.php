@@ -40,7 +40,7 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
             <div><b>Вид доставки: </b><?php echo CHtml::encode($delivery); ?></div>
             <div style="margin-bottom: 10px"><b>Вид оплаты: </b><?php echo $order->payment->name; ?></div>
         </div>
-        <?php if ($order->status_id == 4) { ?>
+        <?php if ($order->status_id == 4 && $order->payment->type_id == Payment::TYPE_BANK) { ?>
             <div style="display: table-cell">
                 <div class="bold">Реквизиты для оплаты</div>
                 <div><b>Получатель: </b><?php echo Yii::app()->params['enterprise']['name']; ?></div>
@@ -113,12 +113,21 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
             </tr>
         <?php } ?>
     </table>
+    <?php if ($to_pay > 0 && $order->status_id == Order::STATUS_WAITING_FOR_PAY && $order->payment->type_id == Payment::TYPE_LIQPAY) { ?>
+        <?php echo CHtml::beginForm($order->payment->getActionUrl()); ?>
+        <?php
+        $params = $order->payment->getParams($order);
+        foreach ($params as $key => $value)
+            echo CHtml::hiddenField($key, $value);
+        echo CHtml::hiddenField($order->payment->getSignName(), $order->payment->getSing($params));
+        ?>
+        <div style="margin: 40px 0 20px; height: 46px; position: relative">
+            <div class="main-submit submit">
+                <div>ОПЛАТИТЬ</div>
+            </div>
+            <img style="display: none; margin: auto; position: absolute;left: 0;right: 0;top: 0;bottom: 0" src="/images/load.gif" />
+        </div>
+        <?php echo CHtml::endForm(); ?>
+    <?php } ?>
     <a class="right" id="profile-link" href="/profile">Перейти в личный кабинет</a>
-    <?php // echo CHtml::beginForm($order->payment->getActionUrl()); ?>
-    <?php
-    //  $params = $order->payment->getParams();
-    //  foreach ($params as $key => $value)
-    //    echo CHtml::hiddenField($key, $value);
-    ?>
-    <?php // echo CHtml::endForm(); ?>
 </div>
