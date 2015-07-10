@@ -30,8 +30,8 @@ class PayController extends Controller
 
             $coupon_discount = $order->getCouponSumm();
             $total = $order->productSumm + $order->delivery_summ + $order->insuranceSumm - $coupon_discount;
-            $paied = $order->paySumm + $order->authSumm;
-            $to_pay = $total - $paied;
+            $payed = $order->paySumm + $order->authSumm;
+            $to_pay = $total - $payed;
 
             $errors = '';
 
@@ -84,7 +84,7 @@ class PayController extends Controller
                 'order' => $order,
                 'coupon_discount' => $coupon_discount,
                 'total' => $total,
-                'paied' => $paied,
+                'payed' => $payed,
                 'to_pay' => $to_pay,
                 'errors' => $errors,
             ));

@@ -138,7 +138,7 @@ class Order extends CActiveRecord {
       'payment' => array(self::BELONGS_TO, 'Payment', 'payment_id'),
       'pay' => array(self::HAS_MANY, 'Pay', 'order_id'),
       'paySumm' => array(self::STAT, 'Pay', 'order_id', 'select' => 'SUM(amount)',
-        'condition' => 'status_id=' . Pay::PAID),
+        'condition' => 'status_id in (' . Pay::PAID . ', ' . Pay::WAIT_ACCEPT . ', ' . Pay::WAIT_LC .')'),
       'authSumm' => array(self::STAT, 'Pay', 'order_id', 'select' => 'SUM(amount)',
         'condition' => 'status_id=' . Pay::AUTHORISED),
       'profile' => array(self::BELONGS_TO, 'CustomerProfile', 'profile_id'),

@@ -3,7 +3,7 @@
 /* @var $order Order */
 /* @var $coupon_discount float */
 /* @var $total float */
-/* @var $paied float */
+/* @var $payed float */
 /* @var $to_pay float */
 
 $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
@@ -101,11 +101,11 @@ $this->pageTitle = Yii::app()->name . ' - Информация о заказе';
             <td class="bold" style="text-align: right"><?php echo number_format($total, 0, '.', ' ') ?></td>
         </tr>
         <?php
-        if ($paied > 0) {
+        if ($payed > 0) {
             ?>
             <tr>
                 <td class="bold" colspan="4" style="text-align: right">Оплачено:</td>
-                <td class="bold" style="text-align: right"><?php echo number_format($paied, 0, '.', ' ') ?></td>
+                <td class="bold" style="text-align: right"><?php echo number_format($payed, 0, '.', ' ') ?></td>
             </tr>
             <tr>
                 <td class="bold" colspan="4" style="text-align: right">К оплате:</td>
