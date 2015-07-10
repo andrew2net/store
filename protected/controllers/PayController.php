@@ -359,7 +359,13 @@ class PayController extends Controller
         Yii::log('transaction ok', CLogger::LEVEL_INFO, 'pay_notify');
 
         $pay->attributes = $_POST;
+
+        Yii::log('attributes ok', CLogger::LEVEL_INFO, 'pay_notify');
+
         $statuses = $order->payment->getStatuses();
+
+        Yii::log('get statuses ok', CLogger::LEVEL_INFO, 'pay_notify');
+
         $pay->status_id = constant("Pay::{$statuses[$_POST['status']]}");
 
         Yii::log('status ok', CLogger::LEVEL_INFO, 'pay_notify');
