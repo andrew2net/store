@@ -337,12 +337,16 @@ class PayController extends Controller
         if ($_POST['signature'] != $sign)
             throw new CHttpException('401');
 
+        Yii::log('sign ok', CLogger::LEVEL_INFO, 'pay_notify');
+
         $profile = CustomerProfile::model()->findByAttributes(array('user_id' => $order->profile->user_id));
         /* @var $profile CustomerProfile */
         if (empty($profile->phone)) {
             $profile->phone = $_POST['sender_phone'];
             $profile->save();
         }
+
+        Yii::log('phone ok', CLogger::LEVEL_INFO, 'pay_notify');
 
         $pay = Pay::model()->findByAttributes(array('operation_id' => $_POST['transaction_id']));
         /* @var $pay Pay */
@@ -351,16 +355,27 @@ class PayController extends Controller
             $pay->operation_id = $_POST['transaction_id'];
             $pay->time = date('Y-m-d H:i:s');
         }
+
+        Yii::log('transaction ok', CLogger::LEVEL_INFO, 'pay_notify');
+
         $pay->attributes = $_POST;
         $statuses = $order->payment->getStatuses();
         $pay->status_id = constant("Pay::{$statuses[$_POST['status']]}");
+
+        Yii::log('status ok', CLogger::LEVEL_INFO, 'pay_notify');
+
         if ($_POST['currency'] == $order->currency_code) {
             Yii::import('application.modules.payments.models.Currency');
             $pay->currency_amount = $pay->amount;
             $pay->currency_iso = $order->currency->iso;
         }
+
+        Yii::log('currency ok', CLogger::LEVEL_INFO, 'pay_notify');
+
         if (!$pay->save())
             throw new CHttpException('501');
+
+        Yii::log('Save ok', CLogger::LEVEL_INFO, 'pay_notify');
 
         $pay->setData('Телефон покупателя', $_POST['sender_phone']);
 
