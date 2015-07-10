@@ -23,7 +23,7 @@ class Pay extends CActiveRecord {
 
   const NO_SUCH_TRANSACTION = 1, PENDING_CUSTOMER_INPUT = 2, PENDING_AUTH_RESULT = 3,
       AUTHORISED = 4, DECLINED = 5, REVERSED = 6, PAID = 7, REFUNDED = 8, INVALID_MID = 9,
-      MID_DISABLED = 10, WAIT_SECURE = 11;
+      MID_DISABLED = 10, WAIT_ACCEPT = 11;
 
   private static $statuses = array(
     0 => 'инициирован',
