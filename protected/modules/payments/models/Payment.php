@@ -43,6 +43,7 @@ class Payment extends CActiveRecord
             'failure' => 'DECLINED',
             'wait_secure' => 'PENDING_AUTH_RESULT',
             'sandbox' => 'PAID',
+            'wait_secure' => 'WAIT_SECURE'
         ),
         2 => array(),
         3 => array(),
