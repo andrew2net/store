@@ -78,7 +78,7 @@ class Payment extends CActiveRecord
         return self::$types[$this->type_id];
     }
 
-    public function getParams()
+    public function getParams($order)
     {
         $params = array();
         ob_start();
