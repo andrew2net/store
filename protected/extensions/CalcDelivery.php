@@ -577,7 +577,7 @@ class CalcDelivery {
       if ($delivery->size_method_id == Delivery::SIZE_EMS_KAZ) {
         $size_summ = $length + ($width + $height) * 2;
         if ($size_summ > $delivery->size_summ)
-          continue 2;
+          continue;
       }
 
       $data['length'] = $length;
