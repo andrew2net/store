@@ -193,25 +193,25 @@ class DefaultController extends Controller {
     Yii::app()->end();
   }
 
-  public function getCityDeliveries($city, $ajax = TRUE) {
-    $delivery = Delivery::model()->region($city)->findAll();
-    if (count($delivery) == 0)
-      $delivery = Delivery::model()->findAllByAttributes(array('name' => 'Другой город'));
-    $result = array();
-    foreach ($delivery as $value) {
-      $result[$value->id] = array(
-        'price' => 0,
-        'summ' => 0,
-      );
-      if ($ajax)
-        $result[$value->id]['text'] = $value->name;
-      if (isset($value->cityDeliveries[0])) {
-        $result[$value->id]['price'] = (float) $value->cityDeliveries[0]->price;
-        $result[$value->id]['summ'] = (float) $value->cityDeliveries[0]->summ;
-      }
-    }
-    return $result;
-  }
+//  public function getCityDeliveries($city, $ajax = TRUE) {
+//    $delivery = Delivery::model()->region($city)->findAll();
+//    if (count($delivery) == 0)
+//      $delivery = Delivery::model()->findAllByAttributes(array('name' => 'Другой город'));
+//    $result = array();
+//    foreach ($delivery as $value) {
+//      $result[$value->id] = array(
+//        'price' => 0,
+//        'summ' => 0,
+//      );
+//      if ($ajax)
+//        $result[$value->id]['text'] = $value->name;
+//      if (isset($value->cityDeliveries[0])) {
+//        $result[$value->id]['price'] = (float) $value->cityDeliveries[0]->price;
+//        $result[$value->id]['summ'] = (float) $value->cityDeliveries[0]->summ;
+//      }
+//    }
+//    return $result;
+//  }
 
   public function actionPayData($id) {
     $pay = Pay::model()->findByPk($id);
