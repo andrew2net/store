@@ -126,17 +126,17 @@ $groups = Category::model()->roots()->findAll();
           popupWindow.dialog('open');
       });
       var popup = $.cookie('popup');
-      switch (popup) {
-          case null:
-              $.cookie('popup', '0', {expires: 2592000, path: '/'});
-          case '0':
-              loadPopup();
-              popupWindow.dialog('open');
-              break;
-          case '1':
-              loadPopup();
-              showBottomBar();
-      }
+//      switch (popup) {
+//          case null:
+//              $.cookie('popup', '0', {expires: 2592000, path: '/'});
+//          case '0':
+//              loadPopup();
+//              popupWindow.dialog('open');
+//              break;
+//          case '1':
+//              loadPopup();
+//              showBottomBar();
+//      }
 
       var timeout_id;
 
