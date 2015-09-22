@@ -287,6 +287,7 @@ class Product extends CActiveRecord {
   }
 
   public function scopes() {
+      Yii::import('application.controllers.ProfileController');
     $cp = ProfileController::getProfile();
     return array_merge(parent::scopes(), array(
       'top' => array(
