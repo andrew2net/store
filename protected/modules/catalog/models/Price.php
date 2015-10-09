@@ -124,7 +124,7 @@ class Price extends CActiveRecord {
         if ($product) {
           $query .= "INSERT INTO {$table} VALUES ({$product->id}, {$item->quantity});";
         } else {
-          throw new Exception('Product not found. Product code: ' . $p->code);
+          throw new Exception('Product not found. Product code: ' . $product->code);
         }
       }
       Yii::app()->db->createCommand($query)->execute();
