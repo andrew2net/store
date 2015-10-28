@@ -12,7 +12,7 @@
     else
       $menu = $group;
 
-    $discount_products = Product::model()->subCategory($group->id)->availableOnly()->discount()->count();
+    $discount_products = Product::model()->subCategory($menu->id)->availableOnly()->discount()->count();
     if ($discount_products > 0) {
       echo CHtml::tag('a', array(
         'href' => Yii::app()->createUrl('discount_product', array('id' => $menu->id)),
