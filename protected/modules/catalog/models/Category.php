@@ -177,7 +177,7 @@ class Category extends CActiveRecord {
       'LEFT JOIN store_product_category pc ON pc.category_id=subcat.id ' .
       'LEFT JOIN store_product prod on prod.id=pc.product_id',
 //        )),
-      'select' => 't.id, t.name, t.lft, t.rgt, t.root, COUNT(pc.product_id) AS count_products',
+      'select' => 't.id, t.name, t.lft, t.rgt, t.level, t.root, COUNT(pc.product_id) AS count_products',
       'order' => 't.lft',
       'condition' => 't.level=:level AND (t.root=:root OR :root IS NULL) AND '
       . '(subcat.lft>:lft OR :lft IS NULL) AND (subcat.rgt<:rgt OR :rgt IS NULL) '
