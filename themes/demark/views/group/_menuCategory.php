@@ -21,7 +21,7 @@
           ), 'Товары со скидкой');
 //    echo CHtml::tag('div', array('class'=>'icon-dicount', 'style'=>'display:inline-block;background-size:34px 34px'), '&nbsp;');
     }
-    $categories = $menu->hasProducts()->descendants(2)->findAll(array('order' => 'lft'));
+    $categories = $menu->descendants(2)->hasProducts($menu->root)->findAll(array('order' => 'lft'));
     $level = 0;
     foreach ($categories as $category) {
       if ($category->level == $level)
