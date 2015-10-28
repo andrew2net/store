@@ -5,7 +5,7 @@
         <?php
         Yii::import('application.controllers.SiteController');
         Yii::import('application.modules.catalog.models.Category');
-        $groups = Category::model()->roots()->findAll();
+        $groups = Category::model()->roots()->hasProduct()->findAll();
         $items = array();
         foreach ($groups as $group) {
           $items[] = array('label' => $group->name, 'url' => Yii::app()->createUrl('group', array('id' => $group->id)));
