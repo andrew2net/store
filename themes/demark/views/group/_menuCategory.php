@@ -22,7 +22,7 @@
 //    echo CHtml::tag('div', array('class'=>'icon-dicount', 'style'=>'display:inline-block;background-size:34px 34px'), '&nbsp;');
     }
     $l = $group->level + 1;
-    $categories = $menu->descendants(2)->hasProducts($group->root)->findAll(array('order' => 'lft'));
+    $categories = $menu->descendants(2)->hasProducts($group->root, $l)->findAll(array('order' => 'lft'));
     $level = 0;
     foreach ($categories as $category) {
       if ($category->level == $level)
