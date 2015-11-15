@@ -10,18 +10,18 @@ Yii::import('application.modules.catalog.models.Category');
         <?php
         /* @var $groups Category */
         /* @var $groups NestedSetBehavior */
-        $groups = Category::model()->roots()->hasProducts()->findAll();
+        $groups = Category::model()->roots()->hasProducts()->findAll(['order' => 'name']);
         $items = array();
         $items[] = array('label' => 'Категории:');
         foreach ($groups as $value) {
           /* @var $value Category */
           /* @var $value NestedSetBehavior */
-          $groups1 = $value->hasProducts($value->root, 2)->findAll();
+          $groups1 = $value->hasProducts($value->root, 2)->findAll(['order' => 'name']);
           $items1 = array();
           foreach ($groups1 as $value1) {
             /* @var $value1 Category */
             /* @var $value1 NestedSetBehavior */
-            $groups2 = $value1->hasProducts($value->root, 3)->findAll();
+            $groups2 = $value1->hasProducts($value->root, 3)->findAll(['order' => 'name']);
             $items2 = array();
             foreach ($groups2 as $value2) {
               /* @var $value2 Category */
