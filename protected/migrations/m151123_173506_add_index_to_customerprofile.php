@@ -5,7 +5,6 @@ class m151123_173506_add_index_to_customerprofile extends CDbMigration
 	public function up()
 	{
 		$this->createIndex('customer_profile_user', 'store_customer_profile', 'user_id');
-//		$this->createIndex('customer_profile_session', 'store_customer_profile', 'session_id');
 	}
 
 	public function down()
