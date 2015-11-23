@@ -4,7 +4,7 @@ class m151123_221557_cart_add_index_product extends CDbMigration
 {
 	public function up()
 	{
-		$this->createIndex('cart_product', 'store_cart', 'product_id');
+		$this->dropIndex('mail_uid', 'store_mail');
 	}
 
 	public function down()
