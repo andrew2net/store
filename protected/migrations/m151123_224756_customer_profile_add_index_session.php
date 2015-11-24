@@ -4,7 +4,6 @@ class m151123_224756_customer_profile_add_index_session extends CDbMigration
 {
 	public function up()
 	{
-		$this->dropIndex('customer_profile_user', 'store_customer_profile');
 		$this->createIndex('customer_profile_session', 'store_customer_profile', 'session_id');
 	}
 

@@ -15,7 +15,7 @@ while (TRUE){
   $groupParent = $groupParent->getParent();
   if (is_null($groupParent))
     break;
-  $breadcrumbs[$groupParent->name] = array('group', 'id' => $groupParent->id);
+  $breadcrumbs[$groupParent->name] = array('/group', 'id' => $groupParent->id);
 }
 
 $this->pageTitle = Yii::app()->name . ' - ' . implode(' - ', array_reverse($parents)); //$group->name;
