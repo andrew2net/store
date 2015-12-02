@@ -101,6 +101,8 @@ class NewsletterController extends Controller {
     $oldBlocks = $blocks;
     $blocks = [];
     if (isset($_POST['NewsletterBlock'])) {
+
+      /* Check if all blocks are valid. */
       foreach ($_POST['NewsletterBlock'] as $key => $value) {
         $blocks[$key] = NewsletterBlock::model()->findByAttributes(['newsletter_id' => $model->id, 'id' => $key]);
         if (!$blocks[$key]) {
@@ -112,6 +114,8 @@ class NewsletterController extends Controller {
         }
         $valid = $blocks[$key]->validate(['text']) && $valid;
       }
+
+      /* If all blocks are valid */
       if ($valid) {
         $tr = Yii::app()->db->beginTransaction();
         try {
@@ -119,10 +123,14 @@ class NewsletterController extends Controller {
 //          $model->getErrors();
           $keys = [];
           $uploaddir = $this->getImageDir();
+
+          /* Save blocks */
           foreach ($blocks as $key => $value) {
             $value->newsletter_id = $model->id;
             $value->save();
             $keys[] = $value->id;
+
+            /* Delete image if it is marked to be deleted */
             if ($_POST['NewsletterBlock'][$key]['image'] == 'd') {
               if ($value->image && file_exists($uploaddir . $value->image)) {
                 unlink($uploaddir . $value->image);
@@ -131,6 +139,8 @@ class NewsletterController extends Controller {
               $value->update('image');
               continue;
             }
+
+            /* If save new letter then find images and change names to format "mailId_blockId.extension" */
             $files = glob($uploaddir . 'u' . Yii::app()->user->id . '_' . $key . '.*');
             foreach ($files as $file) {
               $fileInfo = new SplFileInfo(strtolower($file));
