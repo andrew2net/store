@@ -48,9 +48,9 @@ class HourlyCommand extends CConsoleCommand {
                 continue;
               }
               $image = Swift_Image::fromPath($imagepath . $block->image);
-              if (file_exists($image)) {
+//              if (file_exists($image)) {
                 $imageIds['blocks'][$key] = $message->embed($image);
-              }
+//              }
             }
 
             $pricepath = dirname(Yii::app()->getBasePath()) . '/uploads/' . Yii::app()->params['img_storage'] . '/price.xls';
