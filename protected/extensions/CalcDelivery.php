@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CalcDelivery is a class for making list of avalable deliveries 
+ * CalcDelivery is a class for making list of avalable deliveries
  * and calc delivery fee.
  *
  * @author Andrew <android.2net@gmail.com>
@@ -54,7 +54,11 @@ class CalcDelivery {
     }
 
     if (!$order->isNewRecord) {
-      $city_from = trim(Yii::app()->params['point_departure'][$order->country_code]);
+      if (array_key_exists($order->country_code, Yii::app()->params['point_departure'])){
+            $city_from = trim(Yii::app()->params['point_departure'][$order->country_code]);
+        }else{
+            $city_from = trim(current(Yii::app()->params['point_departure']));
+        }
     } elseif ($country_code) {
       $city_from = trim(Yii::app()->params['point_departure'][$country_code]);
     } else {
@@ -202,7 +206,7 @@ class CalcDelivery {
    * Function return type of the deliveri list and if the items is an array of strings then them
    * will be converted to an object with fields like Cart or OrderProduct has.
    * @param array $items Array of OrderProducts or String
-   * @return int type of return result: 0 - radio list options, 
+   * @return int type of return result: 0 - radio list options,
    * 1 - selest list options, 2 - list options for ajax
    */
   private static function getItemsType(&$items, $delivery_id) {
@@ -422,19 +426,19 @@ class CalcDelivery {
   }
 
   /**
-   * Check if there are items which sizes to big for the type of delivery. 
+   * Check if there are items which sizes to big for the type of delivery.
    * If not then plases them into boxes.
    * @param array $items quantity and sizes of items
    * @param array $volumes Tha amount of space for product placement
    * @param Delivery $delivery Type of delivery
-   * @return array Data of parcels. 
-   * 
+   * @return array Data of parcels.
+   *
    * Example when there are ovesize items:
-   * 
+   *
    * ['result' => false, 'oversize_items' => [11,35,48]]
-   * 
+   *
    * Example when all items can be placed into the boxes:
-   * 
+   *
    * <samp>
    * ['result' => true, 'parcels' => [
    * ['items' => Item[], 'length' => 55, 'width' => 42, 'height' => 25, weight => 8.33]
@@ -527,7 +531,7 @@ class CalcDelivery {
 
   /**
    * Get currency
-   * @param string $currencyCode 
+   * @param string $currencyCode
    * @return Currency currency
    */
   private static function getCurrency($currencyCode) {
@@ -610,7 +614,7 @@ class CalcDelivery {
 
 /**
  * Parcel class
- * 
+ *
  * @property boolean $result True if all items can be placed into the boxes
  * @property array $items Array of the products
  * @property float $lenght Length of the parcel
@@ -626,7 +630,7 @@ class Parcel {
 
 /**
  * Item class
- * 
+ *
  */
 class Item {
 
