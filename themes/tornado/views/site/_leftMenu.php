@@ -26,26 +26,50 @@ Yii::import('application.modules.catalog.models.Category');
             foreach ($groups2 as $value2) {
               /* @var $value2 Category */
               /* @var $value2 NestedSetBehavior */
+              if ($value2->url){
+                $url2 = $value2->url;
+                $linkOpt2 = ['target' => '_blank'];
+              }  else {
+                $url2 = Yii::app()->createUrl('group', array('id' => $value2->id));
+                $linkOpt2 = '';
+              }
               $items2[] = array(
                 'label' => $value2->name,
-                'url' => Yii::app()->createUrl('group', array('id' => $value2->id)),
+                'url' => $url2,
                 'active' => isset($group) && $value2->id == $group->id,
+                'linkOptions' => $linkOpt2,
               );
+            }
+            if ($value1->url){
+              $url1 = $value1->url;
+              $linkOpt1 = ['target' => '_blank'];
+            }  else {
+              $url1 = Yii::app()->createUrl('group', array('id' => $value1->id));
+              $linkOpt1 = '';
             }
             $items1[] = array(
               'label' => $value1->name,
-              'url' => Yii::app()->createUrl('group', array('id' => $value1->id)),
+              'url' => $url1,
               'active' => isset($group) && $value1->id == $group->id,
               'items' => $items2,
               'submenuOptions' => array('class' => 'left-submenu2'),
+              'linkOptions' => $linkOpt1,
             );
+          }
+          if ($value->url){
+              $url = $value->url;
+              $linkOpt = ['target' => '_blank'];
+          }  else {
+              $url = Yii::app()->createUrl('/group', array('id' => $value->id));
+              $linkOpt = '';
           }
           $items[] = array(
             'label' => $value->name,
-            'url' => Yii::app()->createUrl('/group', array('id' => $value->id)),
+            'url' => $url,
             'active' => isset($group) && ($value->id == $group->id || $group->isDescendantOf($value)),
             'items' => $items1,
             'submenuOptions' => array('class' => 'left-submenu1'),
+            'linkOptions' => $linkOpt,
           );
 //    $children = $value->children()->findAll();
         }

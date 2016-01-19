@@ -4,3 +4,4 @@
 /images/tornado/*
 !.gitignore
 /nbproject
+/.idea/

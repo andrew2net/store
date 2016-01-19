@@ -177,14 +177,14 @@ class Category extends CActiveRecord {
       'LEFT JOIN store_product_category pc ON pc.category_id=subcat.id ' .
       'LEFT JOIN store_product prod on prod.id=pc.product_id',
 //        )),
-      'select' => 't.id, t.name, t.lft, t.rgt, t.level, t.root, COUNT(pc.product_id) AS count_products',
+      'select' => 't.id, t.name, t.lft, t.rgt, t.level, t.root, t.url, COUNT(pc.product_id) AS count_products',
       'order' => 't.lft',
       'condition' => 't.level=:level AND (t.root=:root OR :root IS NULL) AND '
       . '(subcat.lft>:lft OR :lft IS NULL) AND (subcat.rgt<:rgt OR :rgt IS NULL) '
-      . "AND prod.show_me=1 AND prod.remainder_$cp->price_country>0",
+      . "AND (prod.show_me=1 AND prod.remainder_$cp->price_country>0 OR t.url<>'')",
       'group' => 't.id',
       'together' => 'true',
-      'having' => 'count_products>0',
+      'having' => "count_products>0 OR t.url<>''",
       'params' => array(':root' => $root, ':level' => $level, ':lft' => $this->lft, ':rgt' => $this->rgt),
     ));
     return $this;

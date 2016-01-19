@@ -183,6 +183,7 @@ class JsTreeBehavior extends CBehavior {
     $img_storage = '/images/' . Yii::app()->params['img_storage'] . '/category/';
     $model->name = $post_node['name'];
     $model->seo = $post_node['seo'];
+    $model->url = $post_node['url'];
     $old_file = Yii::getPathOfAlias('webroot') . $model->url;
     if ($post_node['url'] != $model->url) {
       if (strlen($post_node['url']) > 0) {

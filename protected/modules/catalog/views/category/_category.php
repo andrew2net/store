@@ -15,6 +15,14 @@
 </div>
 
 <div class="control-group">
+    <?php echo $form->label($model, 'url', ['class' => 'control-label']); ?>
+    <div class="controls">
+        <?php echo $form->textField($model, 'url', ['class' => 'span4', 'size' => 30, 'maxlength' => 255]); ?>
+        <p class="help-block"><?php echo $form->error($model, 'url'); ?></p>
+    </div>
+</div>
+
+<div class="control-group">
   <!--            <?php // echo $form->labelEx($model, 'url', array('class' => 'control-label'));         ?>
               <div class="controls">
   <?php //  $url=(!$model->isNewRecord)?$model->url:''   ?>
