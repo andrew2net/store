@@ -1,5 +1,7 @@
 User-agent: BingBot
 Disallow: /
+Crawl-delay: 60
+
 User-agent: *
 Disallow: /cart
 Disallow: /login
