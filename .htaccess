@@ -1,6 +1,8 @@
 Order Deny,Allow
 Deny from 191.232.136.182
 Deny from 191.232.136.124
+Deny from 40.77.167.21
+Deny from 157.55.39.131
 
 RewriteEngine on
 RedirectMatch 403 /\..*$
