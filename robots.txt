@@ -8,3 +8,5 @@ Clean-param: size&Product_sort&Product_page /*group/
 Disallow: /*popupWindow
 Disallow: /cgi-bin/
 Crawl-delay: 10
+User-agent: BingBot
+Disallow: /
