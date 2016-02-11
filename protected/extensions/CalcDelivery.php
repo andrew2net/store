@@ -57,7 +57,7 @@ class CalcDelivery {
       if (array_key_exists($order->country_code, Yii::app()->params['point_departure'])){
             $city_from = trim(Yii::app()->params['point_departure'][$order->country_code]);
         }else{
-            $city_from = trim(reset(Yii::app()->params['point_departure']));
+            $city_from = trim(Yii::app()->params['point_departure']['RU']);
         }
     } elseif ($country_code) {
       $city_from = trim(Yii::app()->params['point_departure'][$country_code]);
