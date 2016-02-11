@@ -59,7 +59,7 @@ class CalcDelivery {
             $city_from = trim(Yii::app()->params['point_departure'][$order->country_code]);
         }else{
             Yii::log('calc_delivery' + $city_from, CLogger::LEVEL_ERROR);
-            $city_from = trim(current(Yii::app()->params['point_departure']));
+            $city_from = trim(Yii::app()->params['point_departure'][0]);
         }
     } elseif ($country_code) {
       $city_from = trim(Yii::app()->params['point_departure'][$country_code]);
