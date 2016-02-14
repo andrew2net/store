@@ -67,7 +67,7 @@ echo CHtml::hiddenField('url', Yii::app()->request->url, array('id' => "url$data
     <img title="<?php echo $data->name; ?>" src="<?php echo (empty($data->small_img) ? '/images/noimage.png' : $data->small_img); ?>" alt="<?php echo $data->getSmallImageAlt(); ?>" data-big-img="<?php echo $data->img; ?>">
   </div>
   <div class="inline-blocks tooltip-price" data-price="<?php echo json_encode($wholesalePrices, JSON_NUMERIC_CHECK); ?>">
-    <div class="item-inline-art"><?php echo $data->article; ?></div>
+    <div class="item-inline-art bold"><?php echo $data->article; ?></div>
     <div class="item-inline-name">
         <h6><?php echo $data->name; ?></h6>
         <?php echo $data->description; ?>
