@@ -68,7 +68,10 @@ echo CHtml::hiddenField('url', Yii::app()->request->url, array('id' => "url$data
   </div>
   <div class="inline-blocks tooltip-price" data-price="<?php echo json_encode($wholesalePrices, JSON_NUMERIC_CHECK); ?>">
     <div class="item-inline-art"><?php echo $data->article; ?></div>
-    <div class="item-inline-name"><?php echo $data->name; ?></div>
+    <div class="item-inline-name">
+        <h6><?php echo $data->name; ?></h6>
+        <?php echo $data->description; ?>
+    </div>
     <div class="item-inline-rest <?php echo $remainder_class; ?>"><?php echo $remainder; ?></div>
     <div class="item-inline-price">
       <?php if ($discount) { ?>
