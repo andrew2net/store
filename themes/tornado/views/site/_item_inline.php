@@ -70,7 +70,7 @@ echo CHtml::hiddenField('url', Yii::app()->request->url, array('id' => "url$data
     <div class="item-inline-art bold"><?php echo $data->article; ?></div>
     <div class="item-inline-name">
         <h6><?php echo $data->name; ?></h6>
-        <?php echo $data->description; ?>
+        <?php echo preg_replace("/\r\n|\r|\n/",'<br/>', $data->description); ?>
     </div>
     <div class="item-inline-rest <?php echo $remainder_class; ?>"><?php echo $remainder; ?></div>
     <div class="item-inline-price">
