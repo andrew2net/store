@@ -27,11 +27,15 @@ Yii::import('application.modules.catalog.models.Category');
               /* @var $value2 Category */
               /* @var $value2 NestedSetBehavior */
               if ($value2->url){
-                $url2 = $value2->url;
-                $linkOpt2 = ['target' => '_blank'];
+              $url2 = $value2->url;
+              if (preg_match('/^http:/', $value2->url)){
+                  $linkOpt = ['target' => '_blank'];
+                }else{
+                  $linkOpt2 = [];
+                }
               }  else {
                 $url2 = Yii::app()->createUrl('group', array('id' => $value2->id));
-                $linkOpt2 = '';
+                $linkOpt2 = [];
               }
               $items2[] = array(
                 'label' => $value2->name,
@@ -42,10 +46,14 @@ Yii::import('application.modules.catalog.models.Category');
             }
             if ($value1->url){
               $url1 = $value1->url;
-              $linkOpt1 = ['target' => '_blank'];
+              if (preg_match('/^http:/', $value1->url)){
+                $linkOpt1 = ['target' => '_blank'];
+              }else{
+                $linkOpt1 = [];
+              }
             }  else {
               $url1 = Yii::app()->createUrl('group', array('id' => $value1->id));
-              $linkOpt1 = '';
+              $linkOpt1 = [];
             }
             $items1[] = array(
               'label' => $value1->name,
@@ -58,10 +66,14 @@ Yii::import('application.modules.catalog.models.Category');
           }
           if ($value->url){
               $url = $value->url;
-              $linkOpt = ['target' => '_blank'];
+              if (preg_match('/^http:/', $value->url)){
+                $linkOpt = ['target' => '_blank'];
+              }else{
+                $linkOpt = [];
+              }
           }  else {
               $url = Yii::app()->createUrl('/group', array('id' => $value->id));
-              $linkOpt = '';
+              $linkOpt = [];
           }
           $items[] = array(
             'label' => $value->name,
