@@ -111,9 +111,14 @@ $(document).ready(function () {
         cartSubmit.hide();
         var cartProc = cartSubmit.parent().find('img').show();
         var email = $('#User_email').val();
+        var submitTimeOut = setTimeout(function(){
+                cartProc.hide();
+                cartSubmit.show();            
+        }, 60000);
         $.post('/cart/checkemail', {
             email: email
         }, function (data) {
+            clearTimeout(submitTimeOut);
             if (data == 'ok') {
                 var priceDelivery = parseFloat($('#cart-delivery input:checked + label > span').attr('data-price'));
                 var summ = parseFloat(cartSumm.attr('summ'));
