@@ -11,7 +11,7 @@ $groups = Category::model()->roots()->findAll();
                     2014. Все права защищены.<br>Торнадо - аксессуары для<br>мобильных устройств. Все торговые марки являются собственностью их правообладателей.
                 </div>
                 <div style="margin-top: 4px; display: block">
-                    Разработка сайта<br>
+                    <a href="http://sitscan.com">Разработка сайта</a><br>
                     <a class="devem" style="text-decoration-line: initial; -moz-text-decoration-line: none" href="#">Andriano</a></div>
             </div>
 
