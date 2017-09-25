@@ -26,6 +26,7 @@ class ExchangeController extends CController {
    */
   public function setProduct($p, $hash) {
 
+    Yii::trace('Setting product is started', '1c_exchange');
     try {
       $resultDOM = new DOMDocument;
       $resultDOM->encoding = 'UTF-8';
@@ -42,6 +43,7 @@ class ExchangeController extends CController {
       }
       if (strtoupper(md5(((string) $xml->product[0]->code) . self::PASS)) != $hash) {
         $resultRootNode->appendChild($resultDOM->createElement('error', 'Token is invalid'));
+        Yii::trace('Token is invalid', '1c_exchange');
         return $resultDOM->saveXML();
       }
 
