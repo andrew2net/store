@@ -73,6 +73,7 @@ class HourlyCommand extends CConsoleCommand {
           $mail->status_id = 2;
           $mail->sent_time = Yii::app()->dateFormatter->format('dd-MM-yyyy HH:mm:ss', time());
           if (!$mail->validate()) {
+            echo "no valid mail" + $mail->id + "\n";
             $result = $mail->getErrors();
             foreach ($result as $item) {
               foreach ($item as $err) {
