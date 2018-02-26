@@ -83,7 +83,8 @@ class HourlyCommand extends CConsoleCommand {
           } else
             $mail->save();
         } else{
-          echo "not sent mail " + $mail->id + "\n";
+          echo "not sent mail " + $mail->id + " \n";
+          throw new CException('Email not sent to ' + $mail->user->email);
         }
       } catch (Exception $e) {
         if (is_null($mail->errors)) {
