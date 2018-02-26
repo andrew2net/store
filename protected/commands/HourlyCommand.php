@@ -73,17 +73,16 @@ class HourlyCommand extends CConsoleCommand {
           $mail->status_id = 2;
           $mail->sent_time = Yii::app()->dateFormatter->format('dd-MM-yyyy HH:mm:ss', time());
           if (!$mail->validate()) {
-            echo "no valid mail" + $mail->id + "\n";
             $result = $mail->getErrors();
             foreach ($result as $item) {
               foreach ($item as $err) {
                 Yii::log($err, CLogger::LEVEL_INFO, 'cron');
               }
             }
+            throw new CException('Email not sent to ' + $mail->user->email);
           } else
             $mail->save();
         } else{
-          echo "not sent mail " + $mail->id + " \n";
           throw new CException('Email not sent to ' + $mail->user->email);
         }
       } catch (Exception $e) {
