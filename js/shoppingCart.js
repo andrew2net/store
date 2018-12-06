@@ -112,7 +112,7 @@ $(document).ready(function () {
                     'eventAction': 'createorder',
                     'eventValue': summTotal
                 });
-                $('form.item-submit').submit();
+                $('form#item-submit').submit();
             } else {
                 cartProc.hide();
                 cartSubmit.show();
