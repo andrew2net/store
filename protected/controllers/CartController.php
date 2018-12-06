@@ -100,7 +100,7 @@ class CartController extends Controller
 
         $payment = Payment::model()->getPaymentList($currency->code);
 
-        Yii::log('Is set Customer profile:' + isset($_POST['CustomerProfile']), 'info', 'cart');
+        Yii::log('Is set Customer profile: '.isset($_POST['CustomerProfile']), 'info', 'cart');
         if (isset($_POST['CustomerProfile'])) {
             if (!isset($_POST['login']) || !$_POST['login'])
                 $customer_profile->attributes = $_POST['CustomerProfile'];
@@ -140,9 +140,9 @@ class CartController extends Controller
             }
 
             $valid = $order->validate(array('customer_delivery')) && $valid;
-            Yii::log('Is set reload post:' + isset($_POST['reload-post']), 'info', 'cart');
-            Yii::log('Is valid:' + $valid, 'info', 'cart');
-            Yii::log('Is set Cart:' + isset($_POST['Cart']), 'info', 'cart');
+            Yii::log('Is set reload post: '.isset($_POST['reload-post']), 'info', 'cart');
+            Yii::log('Is valid: '.$valid, 'info', 'cart');
+            Yii::log('Is set Cart: '.isset($_POST['Cart']), 'info', 'cart');
             if (!(isset($_POST['reload-post']) && $_POST['reload-post']) && $valid && isset($_POST['Cart'])) {
                 $count_products = $this->countProducts($coupon);
                 $count_products['summ'] -= $count_products['couponDisc'];
