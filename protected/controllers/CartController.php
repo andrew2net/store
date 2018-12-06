@@ -101,7 +101,7 @@ class CartController extends Controller
         $payment = Payment::model()->getPaymentList($currency->code);
 
         Yii::log('Is set Customer profile: '.(isset($_POST['CustomerProfile']) ? 'true' : 'false'), 'info', 'cart');
-        Yii::log('Customer profile city: '.$_POST['CustomerProfile']['city'], 'info', 'cart');
+        Yii::log('Customer profile city: '.$_POST, 'info', 'cart');
 
         if (isset($_POST['CustomerProfile'])) {
             if (!isset($_POST['login']) || !$_POST['login'])
